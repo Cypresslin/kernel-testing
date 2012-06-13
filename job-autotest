@@ -34,22 +34,9 @@ set -x
 
 
 
-# Prep for running autotest tests
-#
-sudo rm -rf autotest; scp -r $JENKINS_SERVER:testing/autotest .
-
 # Run the test
 #
 sudo autotest/client/bin/autotest autotest/client/tests/$AUTOTEST_TEST/$CONTROL_FILE
-
-# "Archive" our "artifacts"
-#
-sudo chown -R jenkins.jenkins autotest/client/results
-scp -r autotest/client/results $JENKINS_SERVER:$JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_ID/archive/
-
-# Process the results
-#
-sudo autotest/client/tools/results2junit.py autotest/client/results/default > $WORKSPACE/autotest-results.xml
 
 #
 # For benchmarks, process the results and send them for archiving
@@ -63,11 +50,11 @@ fi
 # results are aggregated together. Do that here.
 #
 if [ "$AGGREGATE_RESULTS" = "true" ]; then
-    tar jcf $JOB_NAME-results.tbz2 autotest/client/results
-    scp $JOB_NAME-results.tbz2 $JENKINS_SERVER:$AGGREGATE_RESULTS_DIR/
-    scp $WORKSPACE/autotest-results.xml $JENKINS_SERVER:$AGGREGATE_RESULTS_DIR/autotest-results.$JOB_NAME.xml
-    echo "cp $JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_NUMBER/log $AGGREGATE_RESULTS_DIR/$JOB_NAME-console-output.txt" > doit
-    scp doit $JENKINS_SERVER:$AGGREGATE_RESULTS_DIR/
+    sudo autotest/client/tools/results2junit.py autotest/client/results/default > $AGGREGATE_RESULTS_DIR/autotest-results.$TEST_NAME.xml
+else
+    # Process the results
+    #
+    sudo autotest/client/tools/results2junit.py autotest/client/results/default > $WORKSPACE/autotest-results.$TEST_NAME.xml
 fi
 
 # vi:set ts=4 sw=4 expandtab:

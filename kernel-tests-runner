@@ -1,9 +1,12 @@
+#!/bin/sh
+
 # kernel-tests-runner
 #
 # The master, control script for running the tests the Ubuntu kernel
 # team wants QA to run as part of their regression tests.
 #
 
+CDIR="`dirname $0`"
 TESTS=" qrt"
 TESTS="$TESTS ecryptfs"
 
@@ -12,10 +15,14 @@ if [ -z "$WORKSPACE" ]; then
     mkdir -p $WORKSPACE
 fi
 
-AGGREGATE_RESULTS=true
-AGGREGATE_RESULTS_DIR=$WORKSPACE
 
 set +e # We want _all_ the tests to run even if one of them errors out.
 for TEST in $TESTS; do
-    ./job-autotest -c control $TEST
+    TEST_NAME=$TEST AGGREGATE_RESULTS=true AGGREGATE_RESULTS_DIR=$WORKSPACE $CDIR/job-autotest -c control $TEST
 done
+
+# Stitch all the individual test results files together.
+#
+autotest/client/tools/glue_testsuites $WORKSPACE/*.xml > $WORKSPACE/kernel-results.xml
+
+# vi:set ts=4 sw=4 expandtab:

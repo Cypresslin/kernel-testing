@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # pre-testing-setup
 #
 # This script must be run before running the test-runner script. This
@@ -14,3 +16,5 @@ sudo apt-get install -y build-essential libcap2-bin gcc-multilib gdb gawk execst
 
 # ecryptfs:
 sudo apt-get install -y libglib2.0-dev intltool keyutils libkeyutils-dev libpam0g-dev libnss3-dev libtool acl xfsprogs btrfs-tools
+
+# vi:set ts=4 sw=4 expandtab:

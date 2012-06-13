@@ -1,0 +1,15 @@
+This project contains the files used to run the autotest tests that the Ubuntu
+kernel team wants run against all kernels as part of the regression testing that
+Ubuntu QA performs.
+
+
+Files:
+    pre-testing-setup               - Makes sure all the required packages are
+                                      installed.
+
+    kernel-tests-runner             - The control loop which runs all the tests.
+
+    job-autotest                    - Run a single autotest test. This does the
+                                      aggregation of results.
+
+# vi:set ts=4 sw=4 expandtab:
