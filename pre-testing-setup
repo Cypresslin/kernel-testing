@@ -1,0 +1,16 @@
+# pre-testing-setup
+#
+# This script must be run before running the test-runner script. This
+# script will perform all necessary configuration required by the
+# tests that test-runner runs.
+#
+# The types of configuration performed:
+#   1. Installing all required packages.
+#   2. Creating any temp directories.
+#
+
+# QRT tests:
+sudo apt-get install -y build-essential libcap2-bin gcc-multilib gdb gawk execstack exim4 libcap-dev
+
+# ecryptfs:
+sudo apt-get install -y libglib2.0-dev intltool keyutils libkeyutils-dev libpam0g-dev libnss3-dev libtool acl xfsprogs btrfs-tools

@@ -1,0 +1,21 @@
+# kernel-tests-runner
+#
+# The master, control script for running the tests the Ubuntu kernel
+# team wants QA to run as part of their regression tests.
+#
+
+TESTS=" qrt"
+TESTS="$TESTS ecryptfs"
+
+if [ -z "$WORKSPACE" ]; then
+    WORKSPACE=/tmp/workspace
+    mkdir -p $WORKSPACE
+fi
+
+AGGREGATE_RESULTS=true
+AGGREGATE_RESULTS_DIR=$WORKSPACE
+
+set +e # We want _all_ the tests to run even if one of them errors out.
+for TEST in $TESTS; do
+    ./job-autotest -c control $TEST
+done

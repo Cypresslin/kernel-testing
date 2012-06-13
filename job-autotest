@@ -1,0 +1,73 @@
+#!/bin/sh
+
+# job-autotest
+#
+# This shell script runs the autotest testcase that is specified on the
+# command line. It gethers the autotest results and gets them back to
+# the jenkins server.
+#
+
+set +x
+
+JENKINS_SERVER=kernel-jenkins
+CONTROL_FILE=control
+AUTOTEST_TEST=_bogus_
+
+while [ $# -ge 1 ]; do
+    case $1 in
+        -c*)    shift
+
+                CONTROL_FILE=$1
+                shift
+                ;;
+
+        *)      AUTOTEST_TEST=$1
+                shift
+                ;;
+    esac
+done
+
+echo ===============
+uname -a
+echo ===============
+set -x
+
+
+
+# Prep for running autotest tests
+#
+sudo rm -rf autotest; scp -r $JENKINS_SERVER:testing/autotest .
+
+# Run the test
+#
+sudo autotest/client/bin/autotest autotest/client/tests/$AUTOTEST_TEST/$CONTROL_FILE
+
+# "Archive" our "artifacts"
+#
+sudo chown -R jenkins.jenkins autotest/client/results
+scp -r autotest/client/results $JENKINS_SERVER:$JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_ID/archive/
+
+# Process the results
+#
+sudo autotest/client/tools/results2junit.py autotest/client/results/default > $WORKSPACE/autotest-results.xml
+
+#
+# For benchmarks, process the results and send them for archiving
+#
+if [ "$HAS_METRICS" = "true" ]; then
+    pwd
+    autotest/client/tools/process_metrics.py --testname=$AUTOTEST_TEST --path=autotest/client | sudo tee autotest/client/results/$BUILD_TAG.json > /dev/null
+    scp autotest/client/results/$BUILD_TAG.json $JENKINS_SERVER:$JENKINS_HOME/metrics/
+fi
+# If this test is being run as part of a larger set of tests where all the
+# results are aggregated together. Do that here.
+#
+if [ "$AGGREGATE_RESULTS" = "true" ]; then
+    tar jcf $JOB_NAME-results.tbz2 autotest/client/results
+    scp $JOB_NAME-results.tbz2 $JENKINS_SERVER:$AGGREGATE_RESULTS_DIR/
+    scp $WORKSPACE/autotest-results.xml $JENKINS_SERVER:$AGGREGATE_RESULTS_DIR/autotest-results.$JOB_NAME.xml
+    echo "cp $JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_NUMBER/log $AGGREGATE_RESULTS_DIR/$JOB_NAME-console-output.txt" > doit
+    scp doit $JENKINS_SERVER:$AGGREGATE_RESULTS_DIR/
+fi
+
+# vi:set ts=4 sw=4 expandtab:
