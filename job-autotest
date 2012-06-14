@@ -46,6 +46,7 @@ if [ "$HAS_METRICS" = "true" ]; then
     autotest/client/tools/process_metrics.py --testname=$AUTOTEST_TEST --path=autotest/client | sudo tee autotest/client/results/$BUILD_TAG.json > /dev/null
     scp autotest/client/results/$BUILD_TAG.json $JENKINS_SERVER:$JENKINS_HOME/metrics/
 fi
+
 # If this test is being run as part of a larger set of tests where all the
 # results are aggregated together. Do that here.
 #
@@ -56,5 +57,10 @@ else
     #
     sudo autotest/client/tools/results2junit.py autotest/client/results/default > $WORKSPACE/autotest-results.$TEST_NAME.xml
 fi
+
+# Gather up the files that will be helpful is any of the tests fail.
+#
+sudo chown -R jenkins.jenkins autotest/client/results
+tar jcf $TEST_NAME-results.tbz2 autotest/client/results
 
 # vi:set ts=4 sw=4 expandtab:
