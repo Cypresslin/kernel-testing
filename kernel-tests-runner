@@ -6,6 +6,7 @@
 # team wants QA to run as part of their regression tests.
 #
 
+
 CDIR="`dirname $0`"
 TESTS=" qrt"
 TESTS="$TESTS ecryptfs"
@@ -15,6 +16,7 @@ if [ -z "$WORKSPACE" ]; then
     mkdir -p $WORKSPACE
 fi
 
+./$CDIR/gather-attributes
 
 set +e # We want _all_ the tests to run even if one of them errors out.
 for TEST in $TESTS; do
