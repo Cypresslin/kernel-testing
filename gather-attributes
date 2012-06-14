@@ -1,0 +1,122 @@
+#!/usr/bin/env python
+#
+# This application takes a list json file as input. That json file
+# contains a 'dictionary' of key value pairs where the key is a
+# LauncPad bug id and the value is the source package of interest.
+#
+
+from sys                                import argv
+from os                                 import environ
+import platform
+import re
+from  subprocess                        import Popen, PIPE
+
+from lib.cmdline                        import Cmdline, CmdlineError
+from lib.dbg                            import Dbg
+from lib.utils                          import dump, stdo
+
+# Exit
+#
+class Exit():
+    """
+    If an error message has already been displayed and we want to just exit the app, this
+    exception is raised.
+    """
+    pass
+
+# Gather
+#
+class Gather():
+    """
+    This class/script examines all 'open' bugs. If a given bug was filed against a
+    version of Ubuntu that is no longer supported, change the status of that bug
+    to "Won't Fix" and add a comment explaining why it was marked as such.
+    """
+
+    # __init__
+    #
+    def __init__(self, cfg):
+        Dbg.enter("Gather.__init__")
+
+        self.cfg    = cfg
+
+        Dbg.leave("Gather.__init__")
+
+    def kernel_version(self):
+        m = re.match('^(\d+\.\d+\.\d+-\d+)-.*$', platform.release())
+        version = m.group(1)
+
+        m = re.match('^#(\d+.*)-Ubuntu .*$', platform.version())
+        upload = m.group(1)
+
+        retval = "%s.%s" % (version, upload)
+        return retval
+
+    def distro_release(self):
+        p = Popen(['lsb_release', '-sir'], stdout=PIPE, stderr=PIPE, close_fds=True)
+        retval = p.communicate()[0].strip().replace('\n', ' ')
+        return retval
+
+
+    # main
+    #
+    def main(self):
+        Dbg.enter("Gather.main")
+
+        data = {}
+        try:
+            # Gather the environment variables.
+            #
+            data['environ'] = {}
+            for e in environ:
+                data['environ'][e] = environ[e]
+
+            # Gather platform data.
+            #
+            data['platform'] = {}
+            data['platform']['arch'] = {}
+            (data['platform']['arch']['bits'], data['platform']['arch']['linkage']) = platform.architecture()
+
+            data['platform']['libc'] = {}
+            (data['platform']['libc']['lib'], data['platform']['libc']['version']) = platform.libc_ver()
+
+
+            data['platform']['machine']  = platform.machine()
+            data['platform']['proc']     = platform.processor()
+            data['platform']['hostname'] = platform.node()
+
+            data['kernel'] = self.kernel_version()
+            data['distro-release'] = self.distro_release()
+
+            stdo('>>>  test-attributes begin\n')
+            dump(data)
+            stdo('>>>  test-attributes end\n')
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            pass
+
+        except Exit:
+            pass
+
+        Dbg.leave("Gather.main")
+        return
+
+
+if __name__ == '__main__':
+    defaults = {}
+    defaults['app_name'] = argv[0]
+
+    # The cmdline processing is done here partially so the debug options
+    # can be processed right away.
+    #
+    cmdline = Cmdline()
+    try:
+        app = Gather(cmdline.process(argv, defaults))
+        app.main()
+    except CmdlineError as e:
+        cmdline.error(e.msg, defaults)
+
+# vi:set ts=4 sw=4 expandtab:
+
