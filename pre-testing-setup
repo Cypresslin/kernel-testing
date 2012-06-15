@@ -17,4 +17,9 @@ sudo apt-get install -y build-essential libcap2-bin gcc-multilib gdb gawk execst
 # ecryptfs:
 sudo apt-get install -y libglib2.0-dev intltool keyutils libkeyutils-dev libpam0g-dev libnss3-dev libtool acl xfsprogs btrfs-tools
 
+
+# xfstests:
+sudo mkdir -p /media/xfsmount
+sudo apt-get install -y uuid-dev xfslibs-dev xfsdump autoconf kpartx libtool python-xattr libacl1-dev libaio-dev quota bc libdm0-dev btrfs-tools
+
 # vi:set ts=4 sw=4 expandtab:

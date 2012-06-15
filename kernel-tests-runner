@@ -8,8 +8,12 @@
 
 
 CDIR="`dirname $0`"
-TESTS=" qrt"
-TESTS="$TESTS ecryptfs"
+
+# All the tests that use the standard "control" file.
+#
+TESTS=" "
+#TESTS=" qrt"
+#TESTS="$TESTS ecryptfs"
 
 if [ -z "$WORKSPACE" ]; then
     WORKSPACE=/tmp/workspace
@@ -21,6 +25,17 @@ fi
 set +e # We want _all_ the tests to run even if one of them errors out.
 for TEST in $TESTS; do
     TEST_NAME=$TEST AGGREGATE_RESULTS=true AGGREGATE_RESULTS_DIR=$WORKSPACE $CDIR/job-autotest -c control $TEST
+done
+
+
+# All the tests that use the non-standard "control.ubuntu" file.
+#
+TESTS=" "
+TESTS="$TESTS xfstests"
+
+set +e # We want _all_ the tests to run even if one of them errors out.
+for TEST in $TESTS; do
+    TEST_NAME=$TEST AGGREGATE_RESULTS=true AGGREGATE_RESULTS_DIR=$WORKSPACE $CDIR/job-autotest -c control.ubuntu $TEST
 done
 
 # Stitch all the individual test results files together.
