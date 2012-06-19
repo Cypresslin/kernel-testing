@@ -31,7 +31,7 @@ done
 # All the tests that use the non-standard "control.ubuntu" file.
 #
 TESTS=" "
-#TESTS="$TESTS xfstests"
+TESTS="$TESTS xfstests"
 
 set +e # We want _all_ the tests to run even if one of them errors out.
 for TEST in $TESTS; do
