@@ -38,6 +38,14 @@ set -x
 #
 sudo autotest/client/bin/autotest autotest/client/tests/$AUTOTEST_TEST/$CONTROL_FILE
 
+# Only the jobs that the Kerne Team runs should have this envrironment
+# variable set. This is so we can do things in our scripts that we don't
+# want QA doing.
+#
+if [ -n "$KERNEL_TEAM_JOB" ]; then
+    scp -r autotest/client/results $JENKINS_SERVER:$JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_ID/archive/
+fi
+
 #
 # For benchmarks, process the results and send them for archiving
 #
