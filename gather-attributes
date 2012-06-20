@@ -10,10 +10,11 @@ from os                                 import environ
 import platform
 import re
 from  subprocess                        import Popen, PIPE
+from datetime                           import datetime
 
 from lib.cmdline                        import Cmdline, CmdlineError
 from lib.dbg                            import Dbg
-from lib.utils                          import dump, stdo
+from lib.utils                          import dump, stdo, date_to_string
 
 # Exit
 #
@@ -65,6 +66,10 @@ class Gather():
 
         data = {}
         try:
+            # Timestamp
+            #
+            data['timestamp'] = date_to_string(datetime.utcnow())
+
             # Gather the environment variables.
             #
             data['environ'] = {}
@@ -88,9 +93,7 @@ class Gather():
             data['kernel'] = self.kernel_version()
             data['distro-release'] = self.distro_release()
 
-            stdo('>>>  test-attributes begin\n')
             dump(data)
-            stdo('>>>  test-attributes end\n')
 
         # Handle the user presses <ctrl-C>.
         #
