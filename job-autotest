@@ -43,7 +43,7 @@ sudo autotest/client/bin/autotest autotest/client/tests/$AUTOTEST_TEST/$CONTROL_
 #
 if [ "$HAS_METRICS" = "true" ]; then
     pwd
-    autotest/client/tools/process_metrics.py --testname=$AUTOTEST_TEST --path=autotest/client | sudo tee autotest/client/results/$BUILD_TAG.json > /dev/null
+    autotest/client/tools/process_metrics.py | sudo tee autotest/client/results/$BUILD_TAG.json > /dev/null
     scp autotest/client/results/$BUILD_TAG.json $JENKINS_SERVER:$JENKINS_HOME/metrics/
 fi
 
