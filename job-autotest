@@ -60,7 +60,7 @@ fi
 
 # Gather up the files that will be helpful is any of the tests fail.
 #
-sudo chown -R jenkins.jenkins autotest/client/results
+sudo chown -R $USER.$USER autotest/client/results
 tar jcf $TEST_NAME-results.tbz2 autotest/client/results
 
 # vi:set ts=4 sw=4 expandtab:
