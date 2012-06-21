@@ -72,7 +72,7 @@ if [ -n "$KERNEL_TEAM_JOB" ]; then
     # on the server. This is for debugging test failures.
     #
     ssh $JENKINS_SERVER mkdir -p $JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_ID/archive
-    scp -r autotest/client/results $JENKINS_SERVER:$JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_ID/archive/
+    scp -r autotest/client/results $JENKINS_SERVER:$JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_ID/archive/$TEST_NAME
 fi
 
 
