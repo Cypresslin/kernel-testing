@@ -14,6 +14,7 @@ CDIR="`dirname $0`"
 TESTS=" "
 TESTS="$TESTS qrt"
 TESTS="$TESTS ecryptfs"
+TESTS="$TESTS stress"
 
 if [ -z "$WORKSPACE" ]; then
     WORKSPACE=/tmp/workspace
