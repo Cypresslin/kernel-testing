@@ -51,11 +51,11 @@ fi
 # results are aggregated together. Do that here.
 #
 if [ "$AGGREGATE_RESULTS" = "true" ]; then
-    sudo autotest/client/tools/results2junit.py autotest/client/results/default > $AGGREGATE_RESULTS_DIR/autotest-results.$JOB_NAME.xml
+    sudo autotest/client/tools/results2junit.py autotest/client/results/default > $AGGREGATE_RESULTS_DIR/autotest-results.$TEST_NAME.xml
 else
     # Process the results
     #
-    sudo autotest/client/tools/results2junit.py autotest/client/results/default > $WORKSPACE/autotest-results.$JOB_NAME.xml
+    sudo autotest/client/tools/results2junit.py autotest/client/results/default > $WORKSPACE/autotest-results.$TEST_NAME.xml
 fi
 
 # Gather up the files that will be helpful is any of the tests fail.
