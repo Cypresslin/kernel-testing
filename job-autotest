@@ -9,7 +9,9 @@
 
 set +x
 
-JENKINS_SERVER=kernel-jenkins
+if [ -z "$JENKINS_SERVER" ]; then
+    JENKINS_SERVER=kernel-jenkins
+fi
 CONTROL_FILE=control
 AUTOTEST_TEST=_bogus_
 
