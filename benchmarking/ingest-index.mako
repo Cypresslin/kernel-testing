@@ -120,6 +120,7 @@ title = "%s - %s - %s" % (test_attributes['environ']['JOB_NAME'], test_attribute
                                             % for case in suite['cases']:
                                                 % if 'errorDetails' in case:
                                                 <%
+                                                    name = suite['name'].replace('autotest.','')
                                                     hrs = case['duration'] / 3600
                                                     minutes = (case['duration'] / 60) % 60
                                                     seconds = case['duration'] % 60
@@ -130,9 +131,12 @@ title = "%s - %s - %s" % (test_attributes['environ']['JOB_NAME'], test_attribute
                                                         duration = "%d min" % (minutes)
                                                     else:
                                                         duration = "%d sec" % (seconds)
+
+                                                    error_link = "%s" % name
+                                                    error_link += "/default/%s.%s/debug/%s.%s.DEBUG" % (name, case['name'], name, case['name'])
                                                 %>
                                                 <tr>
-                                                    <td>&nbsp;</td><td>${ case['name'] }</td> <td align="right">${ duration }</td>
+                                                    <td>&nbsp;</td><td><a href="${ error_link }">${ case['name'] }</a></td> <td align="right">${ duration }</td>
                                                 </tr>
                                                 % endif
                                             % endfor

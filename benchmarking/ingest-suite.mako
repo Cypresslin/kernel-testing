@@ -60,11 +60,15 @@ title = "%s - %s - %s" % (target_suite.replace('autotest.', ''), test_attributes
 
                     <br />
 
+                    <%
+                        link = "%s/default/" % target_suite.replace('autotest.', '')
+                    %>
                     <div class="dash-section">
                         <table width="100%" border="0" style="font-size: 0.9em">
                             <tr> <td width="100" align="right">timestamp :</td> <td width="2">&nbsp;</td> <td align="left">${ test_attributes['timestamp'] }</td> </tr>
                             <tr> <td width="100" align="right">kernel :</td> <td width="2">&nbsp;</td> <td align="left">${ test_attributes['kernel'] }</td> </tr>
                             <tr> <td width="100" align="right">test suite :</td> <td width="2">&nbsp;</td> <td align="left">${ target_suite }</td> </tr>
+                            <tr> <td width="100" align="right">archive :</td> <td width="2">&nbsp;</td> <td align="left"><a href="${ link }">files</a></td> </tr>
                         </table>
                     </div>
 
@@ -75,7 +79,7 @@ title = "%s - %s - %s" % (target_suite.replace('autotest.', ''), test_attributes
                                     <table width="100%" style="font-size: 0.9em">
                                         <tr><td> &nbsp; </td></tr>
                                         <tr>
-                                            <td style="background: #e9e7e5;" colspan="6"><span style="font-weight: normal;font-size: 14px;">Errors</span></td>
+                                            <td style="background: #e9e7e5;" colspan="6"><span style="font-weight: normal;font-size: 14px;">Tests</span></td>
                                         </tr>
                                         <tr>
                                             <th width="10">&nbsp;</th><th>Name</th> <th width="100" align="center">Duration</th><th width="50">Status</th>
@@ -98,12 +102,14 @@ title = "%s - %s - %s" % (target_suite.replace('autotest.', ''), test_attributes
                                                 else:
                                                     duration = "%d sec" % (seconds)
 
+                                                status_color = 'green'
                                                 status = "Passed"
                                                 if 'errorDetails' in case:
                                                     status = "Failed"
+                                                    status_color = 'red'
                                             %>
                                             <tr>
-                                                <td>&nbsp;</td><td>${ case['name'] }</td> <td align="right">${ duration }</td><td>${ status }</td>
+                                                <td>&nbsp;</td><td>${ case['name'] }</td> <td align="center">${ duration }</td><td style="color: ${ status_color }">${ status }</td>
                                             </tr>
                                         % endfor
                                     </table>
