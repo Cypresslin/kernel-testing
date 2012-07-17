@@ -15,8 +15,8 @@ from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
 
 from grinder                            import CmdlineError, Exit, TestResultsRepository, TestResultsRepositoryError, JenkinsTestResultsTree, JenkinsTestResultsTreeError
-from lib.core.dbg                       import Dbg
-from lib.core.utils                     import error, stdo, dump, file_load
+from lib.dbg                            import Dbg
+from lib.utils                          import error, stdo, dump, file_load
 
 # Cmdline
 #

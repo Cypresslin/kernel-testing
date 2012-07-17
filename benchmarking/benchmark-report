@@ -7,9 +7,9 @@ from getopt                             import getopt, GetoptError
 from datetime                           import datetime
 import json
 
-from lib.core.utils                     import stdo, error, json_load, file_load, Exit, FileDoesntExist, dump, o2ascii
-from lib.core.dbg                       import Dbg
-from lib.core.cfg                       import Cfg, CfgError
+from lib.utils                          import stdo, error, json_load, file_load, Exit, FileDoesntExist, dump, o2ascii
+from lib.dbg                            import Dbg
+from lib.cfg                            import Cfg, CfgError
 
 from mako.template                      import Template, exceptions
 from mako.exceptions                    import RichTraceback

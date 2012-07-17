@@ -5,8 +5,8 @@ from os                                 import path, makedirs, listdir
 from shutil                             import rmtree, copytree
 import json
 
-from lib.core.utils                     import json_load, file_load, FileDoesntExist
-from lib.core.dbg                       import Dbg
+from lib.utils                          import json_load, file_load, FileDoesntExist
+from lib.dbg                            import Dbg
 
 # CmdlineError
 #

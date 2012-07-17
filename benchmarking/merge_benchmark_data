@@ -10,8 +10,8 @@ from getopt                             import getopt, GetoptError
 from os                                 import listdir
 from json                               import dumps
 
-from lib.core.utils                     import stdo, error, json_load
-from lib.core.dbg                       import Dbg
+from lib.utils                          import stdo, error, json_load
+from lib.dbg                            import Dbg
 
 
 # CmdlineError
