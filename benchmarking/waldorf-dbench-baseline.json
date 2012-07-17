@@ -1,0 +1,21 @@
+{
+    "meta": {
+        "BUILD_ID": "2012-06-01_16-31-36", 
+        "BUILD_NUMBER": "2", 
+        "BUILD_TAG": "jenkins-waldorf-dbench-2", 
+        "EXECUTOR_NUMBER": "0", 
+        "JOB_NAME": "waldorf-dbench", 
+        "NODE_LABELS": "amd64 bare-metal precise waldorf", 
+        "NODE_NAME": "waldorf", 
+        "results_processed": "Friday, 01. June 2012 16:43 UTC", 
+        "sysinfo-memtotal-in-kb": "32895668", 
+        "sysinfo-phys-mbytes": "32768", 
+        "sysinfo-uname": "3.2.0-24-generic #39-Ubuntu SMP Mon May 21 16:52:17 UTC 2012 x86_64 x86_64 x86_64 GNU/Linux", 
+        "testname": "dbench", 
+        "version": "3"
+    }, 
+    "metrics": {
+        "procs{perf}": "32", 
+        "throughput{perf}": "10248.2"
+    }
+}

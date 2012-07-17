@@ -1,0 +1,276 @@
+#!/usr/bin/env python
+#
+
+from sys                                import argv
+from os                                 import path, listdir
+from getopt                             import getopt, GetoptError
+from datetime                           import datetime
+import json
+
+from lib.core.utils                     import stdo, error, json_load, file_load, Exit, FileDoesntExist, dump, o2ascii
+from lib.core.dbg                       import Dbg
+from lib.core.cfg                       import Cfg, CfgError
+
+from mako.template                      import Template, exceptions
+from mako.exceptions                    import RichTraceback
+
+# itemgetter
+#
+def itemgetter(*items):
+    if len(items) == 1:
+        item = items[0]
+        def g(obj):
+            return obj[item]
+    else:
+        def g(obj):
+            return tuple(obj[item] for item in items)
+    return g
+
+# CmdlineError
+#
+# The type of exception that will be raised by Cmdline.process() if there
+# are command line processing errors.
+#
+class CmdlineError(Exception):
+    # __init__
+    #
+    def __init__(self, error):
+        self.msg = error
+
+# Cmdline
+#
+class Cmdline:
+    """
+    Handle all the command line processing for the application.
+    """
+    # error
+    #
+    def error(self, e, defaults):
+        """
+        Simple helper which prints out an error message and then prints out the usage.
+        """
+        if e != '': error("%s\n" % e)
+        self.usage(defaults)
+
+    # usage
+    #
+    def usage(self, defaults):
+        """
+        Prints out the help text which explains the command line options.
+        """
+        stdo("    Usage:                                                                                   \n")
+        stdo("        %s [--verbose] [--debug=<dbg options>] [data_file data_file ...]                            \n" % defaults['app_name'])
+        stdo("                                                                                             \n")
+        stdo("    Options:                                                                                 \n")
+        stdo("        --help           Prints this text.                                                   \n")
+        stdo("                                                                                             \n")
+        stdo("        --verbose        Give some feedback of what is happening while the script is         \n")
+        stdo("                         running.                                                            \n")
+        stdo("                                                                                             \n")
+        stdo("        --onepage        Create one html page with multiple charts, one for each data file   \n")
+        stdo("                         running.                                                            \n")
+        stdo("                                                                                             \n")
+        stdo("        --2up            Present charts smaller and two across                               \n")
+        stdo("                                                                                             \n")
+        stdo("        --debug=<debug options>                                                              \n")
+        stdo("                         Performs additional output related to the option enabled and        \n")
+        stdo("                         the application defined support for the option.                     \n")
+        stdo("                                                                                             \n")
+        stdo("                         Recognized debug options:                                           \n")
+        stdo("                             enter                                                           \n")
+        stdo("                             leave                                                           \n")
+        stdo("                             verbose                                                         \n")
+        stdo("                             cfg                                                             \n")
+        stdo("                                                                                             \n")
+        stdo("        --title=<string>                                                                     \n")
+        stdo("                         Use the specified page title                                        \n")
+        stdo("                                                                                             \n")
+        stdo("    Examples:                                                                                \n")
+        stdo("        %s --debug=\"enter,leave,verbose\"                                                   \n" % defaults['app_name'])
+
+    # process
+    #
+    def process(self, argv, defaults):
+        """
+        This method is responsible for calling the getopt function to process the command
+        line. All parameters are processed into class variables for use by other methods.
+        """
+        result = True
+        try:
+            cfg = defaults
+            cfg['title'] = 'Default Title'
+            cfg['doing_2up'] = False
+            optsShort = ''
+            optsLong  = ['help', 'verbose', 'onepage', '2up', 'debug=', 'title=']
+            opts, args = getopt(argv[1:], optsShort, optsLong)
+
+            for opt, val in opts:
+                if (opt == '--help'):
+                    raise CmdlineError('')
+
+                elif (opt == '--verbose'):
+                    cfg['verbose'] = True
+                    if 'verbose' not in Dbg.levels:
+                        Dbg.levels.append('verbose')
+
+                elif (opt == '--onepage'):
+                    cfg['onepage'] = True
+
+                elif (opt == '--2up'):
+                    cfg['doing_2up'] = True
+
+                elif (opt == '--title'):
+                    cfg['title'] = val
+
+                elif opt in ('--debug'):
+                    cfg['debug'] = val.split(',')
+                    for level in cfg['debug']:
+                        if level not in Dbg.levels:
+                            Dbg.levels.append(level)
+
+            if result: # No errors yet
+
+                if len(args) > 0:
+                    cfg['analyst-files'] = args
+                if len(args) > 1 and "onepage" not in cfg:
+                    print "WARNING: you specified more than one data file but not --onepage"
+
+
+        except GetoptError, error:
+            raise CmdlineError(error)
+
+        return cfg
+
+
+# BenchmarkReport
+#
+class BenchmarkReport():
+    """
+    This class/script builds a number of reports based on the data in a "report
+    configuration file" and the bug database.
+    """
+
+    # __init__
+    #
+    def __init__(self, cfg):
+        Dbg.enter("BenchmarkReport.__init__")
+        self.cfg    = cfg
+        Dbg.leave("BenchmarkReport.__init__")
+
+    # initialize
+    #
+    def initialize(self):
+        """
+        A separate initialize that we can control when it gets called (not
+        when the object is instantiated).
+        """
+        Dbg.enter("BenchmarkReport.initialize")
+
+        try:
+            # Process the command line arguments, and any configuration file options. Make sure
+            # that any required parameters have been provided.
+            #
+            self.cfg = Cfg.merge_options(defaults, self.cfg)
+
+        except KeyboardInterrupt:
+            Dbg.leave("BenchmarkReport.initialize")
+            raise Exit()
+
+        except CfgError as e:
+            error(e)
+            Dbg.leave("BenchmarkReport.initialize")
+            raise Exit()
+
+        Dbg.leave("BenchmarkReport.initialize")
+        return
+
+    def setMaxMinY(value):
+        if self.minY is None:
+            self.minY = value
+        elif value < self.minY:
+            self.minY = value
+        if self.maxY is None:
+            self.maxY = value
+        elif value > self.maxY:
+            self.maxY = value
+        return
+
+    # report
+    #
+    def report(self, data):
+        # Get the main keys, so we can sort them (which ends up chronological) 
+        #
+                    
+        # The primary key graph files.
+        #
+        try:
+            mako_template = Template(file_load('%sindex-chart.mako' % argv[0].replace('benchmark-report', '')))
+            with open('index.html', 'w') as f:
+                f.write(mako_template.render(template_data_list = data, report_title = self.cfg['title'], doing_2up = self.cfg['doing_2up']))
+        except:
+            print "==== EXCEPTION while rendering template ====="
+            traceback = RichTraceback()
+            for (filename, lineno, function, line) in traceback.traceback:
+                print("File %s, line %s, in %s" % (filename, lineno, function))
+                print(line, "\n")
+            print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
+    # main
+    #
+    def main(self):
+        Dbg.enter("BenchmarkReport.main")
+
+        try:
+            self.initialize()
+
+            if 'onepage' in self.cfg:
+                data_list = []
+                for fid in self.cfg['analyst-files']:
+                    # Only one chart per report
+                    chartdata = json_load(fid)
+                    if len(chartdata) == 0:
+                        raise ValueError("There are no data records in the input file <%s>" % fid)
+                    data_list.append(chartdata)
+                self.report(data_list)
+                # Put all files into one page
+            else:
+                for fid in self.cfg['analyst-files']:
+                    # Only one chart per report
+                    # TODO generate multiple output file names somehow
+                    data_list = []
+                    chartdata = json_load(fid)
+                    if len(chartdata) == 0:
+                        raise ValueError("There are no data records in the input file <%s>" % fid)
+                    data_list.append(chartdata)
+                    self.report(data_list)
+
+        except FileDoesntExist as e:
+            e.print_std_error()
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            pass
+
+        except Exit:
+            pass
+
+        Dbg.leave("BenchmarkReport.main")
+        return
+
+
+if __name__ == '__main__':
+    defaults = {}
+    defaults['app_name'] = argv[0]
+    defaults['secondary'] = True
+
+    # The cmdline processing is done here partially so the debug options
+    # can be processed right away.
+    #
+    cmdline = Cmdline()
+    try:
+        app = BenchmarkReport(cmdline.process(argv, defaults))
+        app.main()
+    except CmdlineError as e:
+        cmdline.error(e.msg, defaults)
+
+# vi:set ts=4 sw=4 expandtab:

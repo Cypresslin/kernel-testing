@@ -1,0 +1,13 @@
+{
+    "statler" : {
+        "platform" : "Intel Emerald-Ridge",
+        "processors" : "4 x Intel Xeon E7-4860; 10 cores each; +hyperthreaded (80 effective processors)",
+        "memory" : "64GB"
+    },
+
+    "waldorf" : {
+        "platform" : "Intel Romley",
+        "processors" : "2 x Intel E5-2680; 8 cores each; +hyperthreaded (32 effective processors)",
+        "memory" : "32GB"
+    }
+}

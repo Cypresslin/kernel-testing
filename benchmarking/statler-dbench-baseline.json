@@ -1,0 +1,21 @@
+{
+    "meta": {
+        "BUILD_ID": "2012-05-31_22-44-55", 
+        "BUILD_NUMBER": "10", 
+        "BUILD_TAG": "jenkins-statler-dbench-10", 
+        "EXECUTOR_NUMBER": "0", 
+        "JOB_NAME": "statler-dbench", 
+        "NODE_LABELS": "amd64 bare-metal quantal statler", 
+        "NODE_NAME": "statler", 
+        "results_processed": "Thursday, 31. May 2012 22:57 UTC", 
+        "sysinfo-memtotal-in-kb": "65894472", 
+        "sysinfo-phys-mbytes": "65536", 
+        "sysinfo-uname": "3.4.0-3-generic #8-Ubuntu SMP Sat May 26 01:46:46 UTC 2012 x86_64 x86_64 x86_64 GNU/Linux", 
+        "testname": "dbench", 
+        "version": "3"
+    }, 
+    "metrics": {
+        "procs{perf}": "80", 
+        "throughput{perf}": "5267.75"
+    }
+}
