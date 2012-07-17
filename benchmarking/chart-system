@@ -1,0 +1,192 @@
+#!/bin/sh
+
+set +e
+
+#
+# This generates charts for a specific host, Host name in the environment variables
+# SYSNAME and TITLENAME
+#
+# environment variable PRIVATE determines whether we are generating private or public reports
+#
+
+# Where are the data files from the benchmarks?
+DATALOC=~/metrics
+
+# where to publish?
+PRIVATE_PUBLISH_DIR=~jenkins/rsync/private-reports
+PUBLIC_PUBLISH_DIR=~jenkins/rsync/zinc.canonical.com/public-reports
+
+# ===== End of global configuration =====
+
+if [ -n "${PRIVATE:+x}" ]; then
+    echo "Preparing private reports"
+    # If public then we normalize actual numbers to obscure them
+    # and we publish to a different place
+    PUBLISH_TO=$PRIVATE_PUBLISH_DIR
+else
+    echo "Preparing public reports"
+    PUBLISH_TO=$PUBLIC_PUBLISH_DIR
+    # The baseline file must contain all the metrics to be published. It can also contain additional ones, which will be ignored
+    BONNIE_BASELINE="--baseline=$SYSNAME-bonnie-baseline.json"
+    DBENCH_BASELINE="--baseline=$SYSNAME-dbench-baseline.json"
+    COMPILEBENCH_BASELINE="--baseline=$SYSNAME-compilebench-baseline.json"
+fi
+
+#
+# One section for each set of charts
+#
+
+# Pick filters to decide which test result files are included
+JOBNAME=$SYSNAME-bonnie
+KERNVERS="--kernel-version=3.2.0"
+DISTNAME="Precise"
+REPORTNAME="$SYSNAME-bonnie-$DISTNAME"
+
+# Charts for Bonnie Precise - Block and Char
+
+echo "Preparing $REPORTNAME"
+rm -f /tmp/block.json /tmp/char.json
+
+./merge_benchmark_data --job-name=$JOBNAME $KERNVERS $BONNIE_BASELINE --chart-title="Block I/O" \
+        --only-metrics="seqin_perblk_ksec{perf},seqout_perblk_ksec{perf}" $DATALOC/*.json > /tmp/block.json
+if [ $? -eq 0 ]
+    then
+    ./merge_benchmark_data --job-name=$JOBNAME $KERNVERS $BONNIE_BASELINE --chart-title="Char I/O" \
+        --only-metrics="seqin_perchr_ksec{perf},seqout_perchr_ksec{perf}" $DATALOC/*.json > /tmp/char.json
+    if [ $? -eq 0 ]
+        then
+	./benchmark-report --onepage --2up --title="$DISTNAME Bonnie Results" /tmp/block.json /tmp/char.json
+	mv index.html $REPORTNAME.html
+	cp $REPORTNAME.html $PUBLISH_TO
+    fi
+fi
+
+#
+# Charts for Bonnie Precise - ALL
+#
+
+rm -f /tmp/bonnie.json
+
+./merge_benchmark_data --job-name=$JOBNAME $KERNVERS $BONNIE_BASELINE --chart-title="All Metrics" \
+    --mute-metrics="size{perf}" $DATALOC/*.json > /tmp/bonnie.json
+
+if [ $? -eq 0 ]
+    then
+    ./benchmark-report --title="$DISTNAME Bonnie - All" /tmp/bonnie.json
+    mv index.html $REPORTNAME-all.html
+    cp $REPORTNAME-all.html $PUBLISH_TO
+fi
+
+rm -f $REPORTNAME.html $REPORTNAME-all.html
+
+JOBNAME=$SYSNAME-bonnie
+KERNVERS="--kernel-version=3.4.0,3.5.0"
+DISTNAME="Quantal"
+REPORTNAME="$SYSNAME-bonnie-$DISTNAME"
+
+# Charts for Bonnie - Block and Char
+
+echo "Preparing $REPORTNAME"
+rm -f /tmp/block.json /tmp/char.json
+./merge_benchmark_data --job-name=$JOBNAME $KERNVERS $BONNIE_BASELINE --chart-title="Block I/O" \
+    --only-metrics="seqin_perblk_ksec{perf},seqout_perblk_ksec{perf}" $DATALOC/*.json > /tmp/block.json
+if [ $? -eq 0 ]
+    then
+    ./merge_benchmark_data --job-name=$JOBNAME $KERNVERS $BONNIE_BASELINE --chart-title="Char I/O" \
+	--only-metrics="seqin_perchr_ksec{perf},seqout_perchr_ksec{perf}" $DATALOC/*.json > /tmp/char.json
+    if [ $? -eq 0 ]
+        then
+	./benchmark-report --onepage --2up --title="$DISTNAME Bonnie Results" /tmp/block.json /tmp/char.json
+	mv index.html $REPORTNAME.html
+	cp $REPORTNAME.html $PUBLISH_TO
+    fi
+fi
+
+#
+# Charts for Bonnie Precise - ALL
+#
+
+rm -f /tmp/bonnie.json
+./merge_benchmark_data --job-name=$JOBNAME $KERNVERS $BONNIE_BASELINE --chart-title="All Metrics" \
+    --mute-metrics="size{perf}" $DATALOC/*.json > /tmp/bonnie.json
+if [ $? -eq 0 ]
+    then
+    ./benchmark-report --title="$DISTNAME Bonnie - All" /tmp/bonnie.json
+    mv index.html $REPORTNAME-all.html
+    cp $REPORTNAME-all.html $PUBLISH_TO
+fi
+
+rm -f $REPORTNAME.html $REPORTNAME-all.html
+
+#
+# Charts for dbench Precise (no results to do yet)
+#
+JOBNAME=$SYSNAME-dbench
+KERNVERS="--kernel-version=3.2.0"
+DISTNAME="Precise"
+REPORTNAME="$SYSNAME-dbench-$DISTNAME"
+
+echo "Preparing $REPORTNAME"
+rm -f /tmp/dbench.json
+./merge_benchmark_data --job-name=$JOBNAME $KERNVERS $DBENCH_BASELINE --chart-title="$DISTNAME dbench on $TITLENAME" \
+    --mute-metrics="procs{perf}" $DATALOC/*.json > /tmp/dbench.json
+if [ $? -eq 0 ]
+    then
+        ./benchmark-report --title="$DISTNAME Dbench" /tmp/dbench.json
+        cp index.html $PUBLISH_TO/$REPORTNAME.html
+fi
+
+#
+# Charts for dbench Quantal
+#
+JOBNAME=$SYSNAME-dbench
+KERNVERS="--kernel-version=3.4.0,3.5.0"
+DISTNAME="Quantal"
+REPORTNAME="$SYSNAME-dbench-$DISTNAME"
+
+echo "Preparing $REPORTNAME"
+rm -f /tmp/dbench.json
+./merge_benchmark_data --job-name=$JOBNAME  $KERNVERS $DBENCH_BASELINE --chart-title="$DISTNAME dbench on $TITLENAME" \
+    --mute-metrics="procs{perf}" $DATALOC/*.json > /tmp/dbench.json
+if [ $? -eq 0 ]
+    then
+        ./benchmark-report --title="$DISTNAME Dbench" /tmp/dbench.json
+        cp index.html $PUBLISH_TO/$REPORTNAME.html
+fi
+
+#
+# Charts for compilebench Precise
+#
+JOBNAME=$SYSNAME-compilebench
+KERNVERS="--kernel-version=3.2.0"
+DISTNAME="Precise"
+REPORTNAME="$SYSNAME-compilebench-$DISTNAME"
+
+echo "Preparing $REPORTNAME"
+rm -f /tmp/compilebench.json
+./merge_benchmark_data --job-name=$JOBNAME  $KERNVERS $COMPILEBENCH_BASELINE --chart-title="$DISTNAME compilebench on $TITLENAME" \
+    --mute-metrics="procs{perf}" $DATALOC/*.json > /tmp/compilebench.json
+if [ $? -eq 0 ]
+    then
+        ./benchmark-report --title="$DISTNAME compilebench" /tmp/compilebench.json
+        cp index.html $PUBLISH_TO/$REPORTNAME.html
+fi
+
+#
+# Charts for compilebench Quantal
+#
+JOBNAME=$SYSNAME-compilebench
+KERNVERS="--kernel-version=3.4.0,3.5.0"
+DISTNAME="Quantal"
+REPORTNAME="$SYSNAME-compilebench-$DISTNAME"
+
+echo "Preparing $REPORTNAME"
+rm -f /tmp/compilebench.json
+./merge_benchmark_data --job-name=$JOBNAME  $KERNVERS $COMPILEBENCH_BASELINE --chart-title="$DISTNAME compilebench on $TITLENAME" \
+    --mute-metrics="procs{perf}" $DATALOC/*.json > /tmp/compilebench.json
+if [ $? -eq 0 ]
+    then
+        ./benchmark-report --title="$DISTNAME compilebench" /tmp/compilebench.json
+        cp index.html $PUBLISH_TO/$REPORTNAME.html
+fi
+

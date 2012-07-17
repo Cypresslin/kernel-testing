@@ -1,0 +1,29 @@
+{
+    "meta": {
+        "BUILD_ID": "2012-06-01_16-48-32", 
+        "BUILD_NUMBER": "6", 
+        "BUILD_TAG": "jenkins-waldorf-compilebench-6", 
+        "EXECUTOR_NUMBER": "0", 
+        "JOB_NAME": "waldorf-compilebench", 
+        "NODE_LABELS": "amd64 bare-metal precise waldorf", 
+        "NODE_NAME": "waldorf", 
+        "results_processed": "Friday, 01. June 2012 16:53 UTC", 
+        "sysinfo-memtotal-in-kb": "32895668", 
+        "sysinfo-phys-mbytes": "32768", 
+        "sysinfo-uname": "3.2.0-24-generic #39-Ubuntu SMP Mon May 21 16:52:17 UTC 2012 x86_64 x86_64 x86_64 GNU/Linux", 
+        "testname": "compilebench", 
+        "version": "1"
+    }, 
+    "metrics": {
+        "clean_MB_s{perf}": "451.02", 
+        "compile_MB_s{perf}": "55.41", 
+        "delete_tree_secs{perf}": "2.12", 
+        "initial_create_MB_s{perf}": "237.48", 
+        "new_create_MB_s{perf}": "30.86", 
+        "patch_MB_s{perf}": "17.58", 
+        "read_compiled_tree_MB_s{perf}": "41.84", 
+        "read_tree_MB_s{perf}": "31.98", 
+        "stat_compiled_tree_secs{perf}": "1.98", 
+        "stat_tree_secs{perf}": "1.59"
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "meta": {
+        "BUILD_ID": "2012-06-01_20-38-39", 
+        "BUILD_NUMBER": "1", 
+        "BUILD_TAG": "jenkins-statler-compilebench-1", 
+        "EXECUTOR_NUMBER": "0", 
+        "JOB_NAME": "statler-compilebench", 
+        "NODE_LABELS": "amd64 bare-metal quantal statler", 
+        "NODE_NAME": "statler", 
+        "results_processed": "Friday, 01. June 2012 20:43 UTC", 
+        "sysinfo-memtotal-in-kb": "65894472", 
+        "sysinfo-phys-mbytes": "65536", 
+        "sysinfo-uname": "3.4.0-3-generic #8-Ubuntu SMP Sat May 26 01:46:46 UTC 2012 x86_64 x86_64 x86_64 GNU/Linux", 
+        "testname": "compilebench", 
+        "version": "1"
+    }, 
+    "metrics": {
+        "clean_MB_s{perf}": "917.41", 
+        "compile_MB_s{perf}": "74.05", 
+        "delete_tree_secs{perf}": "1.91", 
+        "initial_create_MB_s{perf}": "128.87", 
+        "new_create_MB_s{perf}": "40.59", 
+        "patch_MB_s{perf}": "21.61", 
+        "read_compiled_tree_MB_s{perf}": "57.99", 
+        "read_tree_MB_s{perf}": "39.30", 
+        "stat_compiled_tree_secs{perf}": "1.20", 
+        "stat_tree_secs{perf}": "1.17"
+    }
+}

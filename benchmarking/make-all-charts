@@ -1,0 +1,36 @@
+#!/bin/sh
+
+set +e
+
+#
+# Do public Charts
+#
+echo "==============="
+unset PRIVATE
+export SYSNAME="statler"
+export TITLENAME="Statler"
+./chart-system
+export SYSNAME="waldorf"
+export TITLENAME="Waldorf"
+./chart-system
+
+#
+# Do private Charts
+#
+
+echo "==============="
+export PRIVATE=True
+export SYSNAME="statler"
+export TITLENAME="Statler"
+./chart-system
+export SYSNAME="waldorf"
+export TITLENAME="Waldorf"
+./chart-system
+
+echo "==============="
+#
+# Eventually, trigger the rsync here
+#
+export RSYNC_PASSWORD=WcjfuZWpyI9R
+rsync -av /var/lib/jenkins/rsync/zinc.canonical.com/public-reports/ jenkins-kernel-sync@zinc.canonical.com::jenkins-kernel-reports
+#scp /var/lib/jenkins/rsync/zinc.canonical.com/private-reports/* {to where?}

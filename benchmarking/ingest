@@ -1,0 +1,211 @@
+#!/usr/bin/env python
+#
+# Take a Jenkins test archive tree and process it into the long-term storage
+# format that we want. This long-term storage format will be added to the
+# results from other test runs. Other scripts run over this "database" of
+# test results runs to generate the kernel test results web pages/reports.
+#
+
+from sys                                import argv
+from getopt                             import getopt, GetoptError
+from datetime                           import timedelta, datetime
+from os                                 import path
+
+from mako.template                      import Template
+from mako.exceptions                    import RichTraceback
+
+from grinder                            import CmdlineError, Exit, TestResultsRepository, TestResultsRepositoryError, JenkinsTestResultsTree, JenkinsTestResultsTreeError
+from lib.core.dbg                       import Dbg
+from lib.core.utils                     import error, stdo, dump, file_load
+
+# Cmdline
+#
+class Cmdline:
+    """
+    Handle all the command line processing for the application.
+    """
+    # error
+    #
+    def error(self, e, defaults):
+        """
+        Simple helper which prints out an error message and then prints out the usage.
+        """
+        if e != '': error("%s\n" % e)
+        self.usage(defaults)
+
+    # usage
+    #
+    def usage(self, defaults):
+        """
+        Prints out the help text which explains the command line options.
+        """
+        stdo("    Usage:                                                                                   \n")
+        stdo("        %s [<options>] <test-results-root>                                                   \n" % defaults['app_name'])
+        stdo("                                                                                             \n")
+        stdo("    Options:                                                                                 \n")
+        stdo("        --help           Prints this text.                                                   \n")
+        stdo("                                                                                             \n")
+        stdo("        --debug=<debug options>                                                              \n")
+        stdo("                         Performs additional output related to the option enabled and        \n")
+        stdo("                         the application defined support for the option.                     \n")
+        stdo("                                                                                             \n")
+        stdo("                         Recognized debug options:                                           \n")
+        stdo("                             enter                                                           \n")
+        stdo("                             leave                                                           \n")
+        stdo("                             verbose                                                         \n")
+        stdo("                             cfg                                                             \n")
+        stdo("                                                                                             \n")
+        stdo("    Examples:                                                                                \n")
+        stdo("        %s --debug=\"enter,leave,verbose\" 01                                                \n" % defaults['app_name'])
+        stdo("        %s /var/lib/jenkins/jobs/foo/builds/01                                               \n" % defaults['app_name'])
+
+    # process
+    #
+    def process(self, argv, defaults):
+        """
+        This method is responsible for calling the getopt function to process the command
+        line. All parameters are processed into class variables for use by other methods.
+        """
+        result = True
+        try:
+            cfg = defaults
+
+            optsShort = ''
+            optsLong  = ['help', 'debug=']
+            opts, args = getopt(argv[1:], optsShort, optsLong)
+
+            for opt, val in opts:
+                if (opt == '--help'):
+                    raise CmdlineError('')
+
+                elif opt in ('--debug'):
+                    cfg['debug'] = val.split(',')
+                    for level in cfg['debug']:
+                        if level not in Dbg.levels:
+                            Dbg.levels.append(level)
+
+            if result: # No errors yet
+                # There might be some bugs listed on the command line.
+                #
+                if len(args) > 0:
+                    cfg['root'] = args[0]
+
+
+            # Required options:
+            #
+            if 'root' not in cfg:
+                raise CmdlineError("You must specify the root directory of the test results that you wish to incorporate into the test-results repository.")
+
+        except GetoptError, error:
+            raise CmdlineError(error)
+
+        return cfg
+
+# Ingest
+#
+class Ingest():
+    """
+    """
+
+    # __init__
+    #
+    def __init__(self, cfg):
+        Dbg.enter("Ingest.__init__")
+
+        self.cfg = cfg
+        self.cfg['index template'] = 'ingest-index.mako'
+        self.cfg['suite template'] = 'ingest-suite.mako'
+
+        Dbg.leave("Ingest.__init__")
+
+    # initialize
+    #
+    def initialize(self):
+        Dbg.enter("Ingest.initialize")
+
+        try:
+            self.trr = TestResultsRepository()
+            self.jtr = JenkinsTestResultsTree(self.cfg['root'])
+
+            self.index_template = Template(file_load(self.cfg['index template']))
+            self.suite_template = Template(file_load(self.cfg['suite template']))
+
+        except TestResultsRepositoryError as e:
+            error(e.msg)
+            Dbg.leave("Ingest.initialize")
+            raise Exit()
+
+        except JenkinsTestResultsTreeError as e:
+            error(e.msg)
+            raise Exit()
+
+        Dbg.leave("Ingest.initialize")
+
+    # main
+    #
+    def main(self):
+        Dbg.enter("Ingest.main")
+
+        try:
+            self.initialize()
+            self.trr.ingest(self.jtr)
+
+            # Generate the web pages for the test results.
+            #
+            data = {}
+            data['results'] = self.jtr.results
+            data['attributes'] = self.jtr.attributes
+            #dump(data)
+            try:
+                template = self.index_template.render(data = data, timestamp = datetime.utcnow())
+                dest = path.join(self.trr.results_dir, 'results-index.html')
+                with open(dest, 'w') as f:
+                    f.write(template)
+
+                for suite in data['results']['suites']:
+                    name = suite['name'].replace('autotest.', '')
+                    file_name = "%s-test-suite.html" % name
+
+                    dest = path.join(self.trr.results_dir, file_name)
+                    template = self.suite_template.render(data = data, target_suite = suite['name'], timestamp = datetime.utcnow())
+                    with open(dest, 'w') as f:
+                        f.write(template)
+
+            except:
+                traceback = RichTraceback()
+                for (filename, lineno, function, line) in traceback.traceback:
+                    print("File %s, line %s, in %s" % (filename, lineno, function))
+                    print(line, "\n")
+                print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
+
+
+            #dump(self.jtr.results)
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            pass
+
+        except Exit:
+            pass
+
+        Dbg.leave("Ingest.main")
+        return
+
+
+if __name__ == '__main__':
+    defaults = {}
+    defaults['app_name'] = argv[0]
+
+    # The cmdline processing is done here partially so the debug options
+    # can be processed right away.
+    #
+    cmdline = Cmdline()
+    try:
+        app = Ingest(cmdline.process(argv, defaults))
+        app.main()
+    except CmdlineError as e:
+        cmdline.error(e.msg, defaults)
+
+# vi:set ts=4 sw=4 expandtab:
+
