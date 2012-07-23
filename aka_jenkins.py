@@ -11,9 +11,22 @@ from argparse                           import ArgumentParser, RawDescriptionHel
 from lib.jenkins                        import Jenkins, JenkinsException, LAUNCHER_SSH, LAUNCHER_COMMAND, LAUNCHER_WINDOWS_SERVICE
 import json
 
+# load_cfg
+#
+def load_cfg(file_name):
+    """
+    Load the configuration file, returning the same as a python object.
+    """
+    retval = None
+    with open(file_name, 'r') as f:
+        retval = json.load(f)
+
+    return retval
+
 # Server
 #
 class Server():
+    cfg = load_cfg('aka.cfg')
     server_url = 'http://red:32666'
     jenkins = Jenkins(server_url)
 
