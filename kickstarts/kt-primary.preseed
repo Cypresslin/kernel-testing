@@ -93,4 +93,5 @@ d-i     preseed/late_command                    string      true && \
 							    in-target sh -c 'chown -R jenkins:jenkins /var/lib/jenkins/.ssh' && \
 							    in-target sh -c 'echo "jenkins ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers' && \
 							    in-target sh -c 'echo $hostname > /etc/hostname' && \
+                                $SNIPPET('orchestra_disable_pxe') && \
 							    true

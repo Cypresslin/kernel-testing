@@ -94,6 +94,7 @@ d-i     preseed/late_command                    string      true && \
 							    in-target sh -c 'chmod -R 755 /var/lib/jenkins/.ssh' && \
 							    in-target sh -c 'chmod 600 /var/lib/jenkins/.ssh/authorized_keys' && \
 							    in-target sh -c 'chown -R jenkins:jenkins /var/lib/jenkins/.ssh' && \
+                                $SNIPPET('orchestra_disable_pxe') && \
 							    true
 
 
