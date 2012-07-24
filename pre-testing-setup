@@ -24,4 +24,16 @@ sudo apt-get install -y uuid-dev xfslibs-dev xfsdump autoconf kpartx libtool pyt
 sudo mkdir -p /media/xfsmount
 sudo adduser --quiet --disabled-password -gecos "XFS test user,,," fsgqa || true
 
+# partition the second drive for use with xfstests
+#
+TARGET=/dev/sdb
+
+sudo parted $TARGET print
+sudo parted $TARGET rm -s 1
+sudo parted $TARGET rm -s 2
+sudo parted $TARGET mklabel -s gpt
+sudo parted $TARGET mkpart -s p1 ext4 1MiB 1000MiB
+sudo parted $TARGET mkpart -s p2 ext4 1001MiB 2000MiB
+sudo parted $TARGET print
+
 # vi:set ts=4 sw=4 expandtab:
