@@ -36,7 +36,7 @@ done
 #
 if [ -z "$TESTS_CONTROL_UBUNTU" ]; then
     TESTS_CONTROL_UBUNTU=" "
-    TESTS_CONTROL_UBUNTU="$TESTS_CONTROL_UBUNTU xfstests"
+#    TESTS_CONTROL_UBUNTU="$TESTS_CONTROL_UBUNTU xfstests"
 fi
 
 set +e # We want _all_ the tests to run even if one of them errors out.
