@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# This is pretty hackish but ...
+
+NODE=$1
+NODE_IP=$2
+NODE_TAGS=$3
+
+# Create the jenkins slave node.
+#
+cd /var/lib/jenkins/kernel-testing
+./aka -u http://kernel-jenkins:8080 node-delete $NODE
+./aka -u http://kernel-jenkins:8080 node-create -e 1 -t "$NODE_TAGS" -l ssh -f /var/lib/jenkins -p "{\"host\":\"$NODE_IP\", \"username\":\"jenkins\", \"password\":\"LcRZz/GLEYLQ8XuAsK+moZSLxaZRT0C/hBdTWRxpmVY=\",\"privatekey\":\"/var/lib/jenkins/.ssh/id_rsa\"}" $NODE
+
+# vi:set ts=4 sw=4 expandtab:
