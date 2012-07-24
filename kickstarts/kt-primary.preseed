@@ -87,7 +87,7 @@ d-i     preseed/late_command                    string      true && \
 							    in-target sh -c 'echo "jenkins ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers' && \
 							    in-target sh -c 'mkdir -p /var/lib/jenkins/.ssh' && \
 							    in-target sh -c 'touch /var/lib/jenkins/.ssh/authorized_keys' && \
-                                in-target sh -c 'echo ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCohqfzj6iGtSQ6LVK7yR9LA131Yen9ZyvuFsWvY2qWF4p6p0L0tCmD93SXRXTv2jhntXWILdl5tH8lQx8FSsDB/ed5wUBjd18Y+QwKDOl39Wm65UDQqz2EtWSsVDkrof1lCkI9uk5JDoRgFxNGfgX6NeOneRpoKKIel88QjKcJXeM9whG+qaeiJLD+X2tBucCT9jKuBO2Ootw9TeJbw0eeldWUaCFk6rB4O7B2Udyf8DSuOWS8LWbMEra+kVV406VoEMnsOlK/sqNHDIGwNMlcgpAM0hDsvABb8b3CXpLussrSizq3186kbwFvsQgqASY2D1zQJ26wqLRzo0nmK0KH jenkins@kernel-jenkins  > /var/lib/jenkins/.ssh/authorized_keys' && \
+                                in-target sh -c 'echo ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDg0Kunu2uK+BV1xkaismqmJt04SP9KneJzbQkCiqnrtrIRwI7BoOycXtwB0M+lX/MInGu0l1TirhR8OtHbZCsQH8oyHSvhEoAJrfm+GwjVfbili+Hz7qFLgYQBWSlLvqTpNdMUVvHCqvN7K2zWcs9UjD+ntqrZkTWJt2h+CIcb55FH54G5uzJfOAwoyeee1ueEgiU30vCDZI214s3L/d2cSiAVsGSOnz8JhqOk5U6AAykoWPn1tThSsMxCz/x1LtUYM0Hu2wuFGDVt8oeoh9lwkBoBhoR/R1PNR9dlrAL/vQOYfKX8J/krXHqaB6GHwka/TuB+FHt3zaJqQEh+85ox jenkins@kernel-jenkins > /var/lib/jenkins/.ssh/authorized_keys' && \
 							    in-target sh -c 'chmod -R 755 /var/lib/jenkins/.ssh' && \
 							    in-target sh -c 'chmod 600 /var/lib/jenkins/.ssh/authorized_keys' && \
 							    in-target sh -c 'chown -R jenkins:jenkins /var/lib/jenkins/.ssh' && \
