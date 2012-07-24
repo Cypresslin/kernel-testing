@@ -61,6 +61,7 @@ class Nodes(Common):
     def details(cls, args):
         debug('Enter: Nodes.details')
         retval = 0
+        cls._Common__common(args)
 
         if len(args.nodes) > 0:
             for n in args.nodes:
@@ -79,6 +80,7 @@ class Nodes(Common):
     def lister(cls, args):
         debug('Enter: Nodes.lister')
         retval = 0
+        cls._Common__common(args)
 
         if len(args.nodes) == 0:
             data = cls.jenkins.get_node_info()['computer']
@@ -105,6 +107,7 @@ class Nodes(Common):
     def delete(cls, args):
         debug('Enter: Nodes.delete')
         retval = 0
+        cls._Common__common(args)
 
         for n in args.nodes:
             try:
@@ -123,6 +126,7 @@ class Nodes(Common):
     def create(cls, args):
         debug('Enter: Nodes.create')
         retval = 0
+        cls._Common__common(args)
 
         if args.launcher == 'ssh':
             launcher = LAUNCHER_SSH
