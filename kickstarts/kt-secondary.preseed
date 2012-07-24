@@ -90,7 +90,7 @@ d-i     preseed/late_command                    string      true && \
 							    in-target sh -c 'useradd -m -d /var/lib/jenkins jenkins' && \
 							    in-target sh -c 'mkdir -p /var/lib/jenkins/.ssh' && \
 							    in-target sh -c 'touch /var/lib/jenkins/.ssh/authorized_keys' && \
-							    in-target sh -c 'echo ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCkxWo6aWT/bd0n0bfI4cjxAI7OAjf4YASne80Jc+t3GtY2XRE0R4yeCw8h/9PEFE4ItwDa2yw/ZCVR9iMl6+0RmqCrp7kg3GEt/gyvXvIaiGjNSzq3DSMbiJyxy0d5/OvXW3xLeAoWkICy+6s32hL6XsSzGZwFSCLThlM95acpck0JaClBMtrVtqx0eDTBfVqOcFeaWJDZ+Qu3MVqTO2Isx6NFrjgPYrgb72788KgekFi3TA1YAqMubrZz+N226iGcHu0wyyYD/QCwC1JXOMNsNupyT0mHfTwIP0v/H53wwaWMNil+aQAkrliABrExbbPHRB+aYqZLk6GU0LFrKTOz jenkins@red > /var/lib/jenkins/.ssh/authorized_keys' && \
+                                in-target sh -c 'echo ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCohqfzj6iGtSQ6LVK7yR9LA131Yen9ZyvuFsWvY2qWF4p6p0L0tCmD93SXRXTv2jhntXWILdl5tH8lQx8FSsDB/ed5wUBjd18Y+QwKDOl39Wm65UDQqz2EtWSsVDkrof1lCkI9uk5JDoRgFxNGfgX6NeOneRpoKKIel88QjKcJXeM9whG+qaeiJLD+X2tBucCT9jKuBO2Ootw9TeJbw0eeldWUaCFk6rB4O7B2Udyf8DSuOWS8LWbMEra+kVV406VoEMnsOlK/sqNHDIGwNMlcgpAM0hDsvABb8b3CXpLussrSizq3186kbwFvsQgqASY2D1zQJ26wqLRzo0nmK0KH jenkins@kernel-jenkins  > /var/lib/jenkins/.ssh/authorized_keys' && \
 							    in-target sh -c 'chmod -R 755 /var/lib/jenkins/.ssh' && \
 							    in-target sh -c 'chmod 600 /var/lib/jenkins/.ssh/authorized_keys' && \
 							    in-target sh -c 'chown -R jenkins:jenkins /var/lib/jenkins/.ssh' && \
