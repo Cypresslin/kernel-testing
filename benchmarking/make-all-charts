@@ -33,4 +33,4 @@ echo "==============="
 #
 export RSYNC_PASSWORD=WcjfuZWpyI9R
 rsync -av /var/lib/jenkins/rsync/zinc.canonical.com/public-reports/ jenkins-kernel-sync@zinc.canonical.com::jenkins-kernel-reports
-#scp /var/lib/jenkins/rsync/zinc.canonical.com/private-reports/* {to where?}
+scp -r /var/lib/jenkins/rsync/private-reports kernel@chinstrap.canonical.com:public_html/
