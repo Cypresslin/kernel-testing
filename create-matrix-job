@@ -105,11 +105,13 @@ class KernelMatrixJob():
     # create_hw_testing_jobs
     #
     def create_hw_testing_jobs(self, cfg):
+        job_name = '%s-%s-%s-test' % (cfg.test_host, cfg.target_series, cfg.kernel_arch)
+        self.create_job(job_name, 'testing-job.mako', cfg)
+
         job_name = 'hw-provisioning-%s-%s' % (cfg.target_series, cfg.kernel_arch)
         self.create_job(job_name, 'hw-provisioning-job.mako', cfg)
 
-        job_name = '%s-%s-%s-test' % (cfg.test_host, cfg.target_series, cfg.kernel_arch)
-        self.create_job(job_name, 'testing-job.mako', cfg)
+        self.jenkins.build_job(job_name)
 
     # create_vm_testing_jobs
     #
