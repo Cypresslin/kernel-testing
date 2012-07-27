@@ -2,6 +2,7 @@
 #
 
 from os                                 import path, makedirs, listdir
+from sys                                import argv
 from shutil                             import rmtree, copytree
 import json
 
@@ -236,7 +237,17 @@ class TestResultsRepository():
         Dbg.enter("TestResultsRepository.__init__")
 
         try:
-            self.cfg = json_load(rc)
+            # Find it ...
+            #
+            fid = rc
+            if not path.exists(fid): # Current directory
+                fid = path.join(path.expanduser('~'), rc)
+                if not path.exists(fid): # Users home directory
+                    fid = path.join(path.pathname(argv[0]), rc)
+                    if not path.exists(fid):
+                        raise FileDoesntExist(rc)
+
+            self.cfg = json_load(fid)
 
         except FileDoesntExist as e:
             raise TestResultsRepositoryError('The file (%s) does not exist.\n' % e.file_name)
