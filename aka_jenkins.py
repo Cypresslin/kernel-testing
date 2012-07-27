@@ -4,8 +4,8 @@
 # reports.
 #
 
-from os                                 import getenv
-from sys                                import exit
+from os                                 import getenv, path
+from sys                                import exit, argv
 from logging                            import debug, error, basicConfig, DEBUG, WARNING
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
 from lib.jenkins                        import Jenkins, JenkinsException, LAUNCHER_SSH, LAUNCHER_COMMAND, LAUNCHER_WINDOWS_SERVICE
@@ -18,8 +18,22 @@ def load_cfg(file_name):
     Load the configuration file, returning the same as a python object.
     """
     retval = None
-    with open(file_name, 'r') as f:
-        retval = json.load(f)
+
+    # Find it ...
+    #
+    fid = file_name
+    if not path.exists(fid): # Current directory
+        fid = path.join(path.expanduser('~'), file_name)
+        if not path.exists(fid): # Users home directory
+            fid = path.join(path.dirname(argv[0]), file_name)
+            if not path.exists(fid):
+                fid = None
+
+    if fid is not None:
+        with open(fid, 'r') as f:
+            retval = json.load(f)
+    else:
+        print("Error: Failed to find the configuration file.")
 
     return retval
 
