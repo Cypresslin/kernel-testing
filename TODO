@@ -1,0 +1,16 @@
+1. Need a way of getting a version of a "release" of these tests.
+    a) We should put a changelog in place and have a way of updating
+       it from the git history. It may be worth it to do this in a
+       "debian" directory so that if someday we produce a package of
+       these tests, that part will be in place.
+
+2. Need to be able to disable the xfstests for systems that only
+   have a single drive.
+    a) Should we first reimplement the kernel-tests-runner so that
+       it just works from a single list of autotest test to run and
+       that for each test we look in the client tests directory for
+       the right control file?
+
+         first: Look for a <test>/control.<series>
+        second: Look for a <test>/control.ubuntu   
+       finally: Use the <test>/control
