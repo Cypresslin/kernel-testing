@@ -82,7 +82,7 @@ d-i     debian-installer/exit/poweroff          boolean     false
 
 # Packages
 #d-i     pkgsel/include                          string      openssh-server build-essential libcap2-bin gcc-multilib gdb gawk execstack exim4 jenkins-slave python-software-properties
-d-i     pkgsel/include                          string      openssh-server vim build-essential jenkins-slave
+d-i     pkgsel/include                          string      openssh-server vim build-essential jenkins-slave htop
 
 # Post scripts. Executes late command and disables PXE
 #
