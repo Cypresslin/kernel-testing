@@ -1,0 +1,7 @@
+ubuntu-kernel-tests (0.0.2-1) unstable; urgency=low
+
+  * remove xfstests until we figure out how to deal with requiring scratch partitions
+  * Switch to debian release versioning
+  * Add changelog
+
+ -- Steve Conklin <sconklin@canonical.com>  Tue, 31 Jul 2012 09:38:16 -0600

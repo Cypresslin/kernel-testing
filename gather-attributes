@@ -6,7 +6,7 @@
 #
 
 from sys                                import argv
-from os                                 import environ
+from os                                 import environ, path
 import platform
 import re
 from  subprocess                        import Popen, PIPE
@@ -69,6 +69,14 @@ class Gather():
             # Timestamp
             #
             data['timestamp'] = date_to_string(datetime.utcnow())
+
+            # Version
+            #
+            clpath = path.join(path.dirname(argv[0]), "debian/changelog")
+            with open(clpath, 'r') as f:
+                fl = f.readline()
+
+            data['version'] = fl[fl.find("(")+1:fl.find(")")]
 
             # Gather the environment variables.
             #
