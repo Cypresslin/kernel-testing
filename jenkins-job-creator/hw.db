@@ -1,0 +1,22 @@
+{
+    "hw pool" : {
+        "think" : {
+	    "orchestra server" : "red",
+	    "jenkins server" : "red",
+	    "mac address" : "00:22:68:16:b6:e5",
+	    "cdu" : {
+	        "ip" : "",
+		"port" : ""
+	    }
+	},
+	"rizzo" : {
+	    "orchestra server" : "magners-orchestra",
+	    "jenkins server" : "kernel-jenkins",
+	    "mac address" : "d4:ae:52:a3:6a:22",
+	    "cdu" : {
+	        "ip" : "10.97.0.11",
+		"port" : "Rizzo_PS1"
+	    }
+	}
+    }
+}

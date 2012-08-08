@@ -5,7 +5,7 @@
     <keepDependencies>false</keepDependencies>
     <properties/>
     <scm class="hudson.scm.NullSCM"/>
-    <assignedNode>${data.kernel_arch}&amp;&amp;${data.target_series}&amp;&amp;${data.test_host}</assignedNode>
+    <assignedNode>${data.sut_name}</assignedNode>
     <canRoam>false</canRoam>
     <disabled>false</disabled>
     <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
@@ -26,13 +26,16 @@ sudo rm -rf *
 
 # Fetch the relevant test scripts from the jenkins server
 #
-rsync -arv kernel-jenkins:autotest/ ./autotest/
-rsync -arv kernel-jenkins:kernel-testing .
+rsync -arv ${data.hw['jenkins server']}:autotest/ ./autotest/
+rsync -arv ${data.hw['jenkins server']}:kernel-testing .
 
 # This variable is unique to the jobs that the kernel team runs on their
 # jenkins server.
 #
 export KERNEL_TEAM_JOB=&quot;true&quot;
+
+export TESTS_CONTROL="stress"
+export TESTS_CONTROL_UBUNTU=" "
 
 # Make sure we have all the packages installed that we are going to
 # need for these tests.

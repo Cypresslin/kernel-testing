@@ -1,0 +1,5 @@
+VIRT_HOST_SERIES=precise
+VIRT_HOST_ARCH=amd64
+SUT_SERIES=precise
+SUT_ARCH=i386
+/var/lib/jenkins/kt.bjf/jenkins-job-creator/jjc --hw=rizzo --vh-name=rizzo --vh-series=$VIRT_HOST_SERIES --vh-arch=$VIRT_HOST_ARCH --sut=virtual --sut-name=vm-rizzo --sut-series=$SUT_SERIES --sut-arch=$SUT_ARCH

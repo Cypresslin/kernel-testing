@@ -1,0 +1,238 @@
+#!/usr/bin/env python
+#
+# Called by one of the jenkins matix jobs for every cell of
+# the matix. This job creates the correct provision-job,
+# testing-job combination based on the environment variables
+# of the matrix job.
+#
+
+from sys                                import stdout, argv, exit
+from os                                 import getenv, path
+import json
+from argparse                           import ArgumentParser
+from logging                            import debug, info, basicConfig, DEBUG, INFO
+from mako.template                      import Template
+from mako.exceptions                    import RichTraceback
+from lib.jenkins                        import Jenkins, JenkinsException, LAUNCHER_SSH, LAUNCHER_COMMAND, LAUNCHER_WINDOWS_SERVICE
+
+from lib.ubuntu                         import Ubuntu
+
+# load_cfg
+#
+def load_cfg(file_name):
+    """
+    Load the configuration file, returning the same as a python object.
+    """
+    retval = None
+
+    # Find it ...
+    #
+    fid = file_name
+    if not path.exists(fid): # Current directory
+        fid = path.join(path.expanduser('~'), file_name)
+        if not path.exists(fid): # Users home directory
+            fid = path.join(path.dirname(argv[0]), file_name)
+            if not path.exists(fid):
+                fid = None
+
+    if fid is not None:
+        with open(fid, 'r') as f:
+            retval = json.load(f)
+    else:
+        print("Error: Failed to find the configuration file.")
+
+    return retval
+
+# Exit
+#
+class Exit():
+    """
+    If an error message has already been displayed and we want to just exit the app, this
+    exception is raised.
+    """
+    pass
+
+# InvalidException
+#
+class InvalidException(Exception):
+    def __init__(self, v):
+        self.value = v
+    def __str__(self):
+        return self.value
+
+# InvalidSystemType
+#
+class InvalidSystemType(InvalidException):
+    def __init__(self, v):
+        InvalidException.__init__(self, v)
+
+# InvalidKernelArch
+#
+class InvalidKernelArch(InvalidException):
+    def __init__(self, v):
+        InvalidException.__init__(self, v)
+
+# InvalidKernelType
+#
+class InvalidKernelType(InvalidException):
+    def __init__(self, v):
+        InvalidException.__init__(self, v)
+
+# InvalidSeries
+#
+class InvalidSeries(InvalidException):
+    def __init__(self, v):
+        InvalidException.__init__(self, v)
+
+# SutJobsFactory
+#
+class SutJobsFactory():
+
+    # __init__
+    #
+    def __init__(self, args):
+        self.cfg = args
+        server_url = self.cfg.jenkins_url
+        self.jenkins = Jenkins(server_url)
+        print(args.hw)
+
+    # load_template
+    #
+    def load_template(self, file_name):
+        """
+        Load the indicated mako template file. Return a mako Template()
+        instance.
+        """
+        retval = None
+        with open(file_name, 'r') as f:
+            retval = Template(f.read())
+
+        return retval
+
+    # create_test_job
+    #
+    def create_job(self, job_name, template_name, cfg):
+        template = self.load_template(path.join(path.dirname(argv[0]), template_name))
+        job_xml = template.render(data=cfg)
+
+        try:
+            self.jenkins.delete_job(job_name)
+        except:
+            pass
+        self.jenkins.create_job(job_name, job_xml)
+        info('created jenkins job: %s' % job_name)
+
+    # bare_metal_sut_jobs
+    #
+    def bare_metal_sut_jobs(self, cfg):
+        setattr(cfg, 'testing_job_name', '%s-%s-%s-test' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch))
+        setattr(cfg, 'provisioning_job_name', '%s-hw-provisioning-%s-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch))
+
+        self.create_job(cfg.testing_job_name,      'testing-job.mako',         cfg)
+        self.create_job(cfg.provisioning_job_name, 'hw-provisioning-job.mako', cfg)
+
+        self.jenkins.build_job(cfg.provisioning_job_name)
+
+    # virtual_sut_jobs
+    #
+    def virtual_sut_jobs(self, cfg):
+        setattr(cfg, 'testing_job_name', '%s-%s-%s_on_%s-%s-test' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch))
+        setattr(cfg, 'vh_provisioning_job_name', '%s-hw4vm-provisioning-%s-%s_%s-%s' % (cfg.vh_name, cfg.vh_series, cfg.vh_arch, cfg.sut_series, cfg.sut_arch))
+        setattr(cfg, 'vm_client_provisioning_job_name', '%s-vm-client-provisioning-%s-%s_on_%s-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch))
+
+        self.create_job(cfg.testing_job_name, 'testing-job.mako', cfg)
+        self.create_job(cfg.vh_provisioning_job_name, 'hw4vm-provisioning-job.mako', cfg)
+        self.create_job(cfg.vm_client_provisioning_job_name, 'vm-client-provisioning-job.mako', cfg)
+
+        self.jenkins.build_job(cfg.vh_provisioning_job_name)
+
+    # main
+    #
+    def main(self):
+        retval = 1
+        try:
+            # Now, actually do something.
+            #
+            try:
+                if self.cfg.sut == 'real':
+                    self.bare_metal_sut_jobs(self.cfg)
+                else:
+                    self.virtual_sut_jobs(self.cfg)
+                retval = 0
+
+            except:
+                traceback = RichTraceback()
+                for (filename, lineno, function, line) in traceback.traceback:
+                    print("File %s, line %s, in %s" % (filename, lineno, function))
+                    for s in line:
+                        stdout.write(s)
+                print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            pass
+
+        return retval
+
+
+if __name__ == '__main__':
+
+    result = 0
+
+    if getenv('DEBUG'):
+        LOGLEVEL = DEBUG
+    else:
+        LOGLEVEL = INFO
+    basicConfig(level=LOGLEVEL, format="%(asctime)-15s-%(levelname)s - %(message)s")
+    info('Started')
+
+    hw = load_cfg('hw.db')
+
+    # The purpose is to produce all the individual jenkins jobs to make up
+    # a single test. That single test will test a single kernel. There are
+    # several combinations that we want to be able to handle.
+    #
+    # 1. Provision a bare metal system from scratch. Run the standard
+    #    kernel tests on it. Support all series Lucid and newer.
+    #
+    # 2. Provision a bare metal system from scratch. On that, provision
+    #    a kvm system from scratch. Again, run the standard kernel tests
+    #    on the virtual client. Support all variations of kernel host
+    #    and virtual clients.
+    #
+    # Terms:
+    #
+    #   sut - (System Under Test). This is the system on which the tests
+    #         will be run. If this is a bare-metal system then it is that
+    #         bare-metal system that is the sut. However, if it a virtual
+    #         machine that is being tested, it is the virtual-client that
+    #         is the sut.
+    #
+    parser = ArgumentParser()
+
+    parser.add_argument('--sut',          required=True, choices=['real', 'virtual'], help='Kind of SUT to be created.')
+    parser.add_argument('--sut-name',     required=True,  help='Hostname of the SUT. This is the name jenkins will attempt to use to connect to the SUT.')
+    parser.add_argument('--sut-series',   required=True,  help='The series that is to be installed on the SUT. lts-hwe-<series> denotes that a lts-hwe kernel is to be run on the appropriate lts series.')
+    parser.add_argument('--sut-arch',     required=True, choices=['amd64', 'i386'], help='The architecture (amd64 or i386) that is to be installed on the SUT.')
+
+    parser.add_argument('--vh-name',      required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the name of that virtual host.')
+    parser.add_argument('--vh-series',    required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the series of that virtual host.')
+    parser.add_argument('--vh-arch',      required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the arch of that virtual host.')
+
+    parser.add_argument('--hw-id',           required=True,  choices=hw['hw pool'].keys(), help='The hardware-name for the system in the hardware database that will be used for the bare metal installation portion of any of these jobs.')
+
+    parser.add_argument('--jenkins-url',  required=False, default='http://kernel-jenkins:8080', help='URL to the jenkins host.')
+
+    args = parser.parse_args()
+
+
+    setattr(args, 'hw', hw['hw pool'][args.hw_id])
+    app = SutJobsFactory(args)
+    result = app.main()
+
+    info('That\'s All Folks!')
+    exit(result)
+
+# vi:set ts=4 sw=4 expandtab:
+
