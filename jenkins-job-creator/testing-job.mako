@@ -48,7 +48,7 @@ export TESTS_CONTROL_UBUNTU=" "
 
 # Publish the results
 #
-test-results/ingest $HOME/jobs/$JOB_NAME/builds/$BUILD_ID
+kernel-testing/test-results/ingest $HOME/jobs/$JOB_NAME/builds/$BUILD_ID
             </command>
         </hudson.tasks.Shell>
     </builders>
