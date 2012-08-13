@@ -30,7 +30,7 @@ class Exit():
     pass
 
 from xml.dom.minidom                    import Node, parseString
-from lib.core.utils                     import dump
+from lib.utils                          import dump
 
 # x2dict
 #
