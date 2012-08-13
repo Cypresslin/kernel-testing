@@ -16,8 +16,8 @@ from grinder                            import CmdlineError, Exit, TestResultsRe
 from lib.dbg                            import Dbg
 from lib.utils                          import error, stdo, dump, file_load, string_to_date, json_load
 
-from ktl.ubuntu                         import Ubuntu
-from ktl.debian                         import Debian
+from lib.ubuntu                         import Ubuntu
+from lib.debian                         import Debian
 
 # Cmdline
 #
