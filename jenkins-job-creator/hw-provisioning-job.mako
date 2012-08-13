@@ -77,6 +77,13 @@ scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh $TARGET_HOST:
 java -jar /run/jenkins/war/WEB-INF/jenkins-cli.jar -s ${data.jenkins_url} build -s ${data.testing_job_name}
             </command>
         </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
+            <command>
+# Publish the results
+#
+kernel-testing/test-results/ingest $HOME/jobs/${data.testing_job_name}/builds/1
+            </command>
+        </hudson.tasks.Shell>
     </builders>
     <publishers/>
     <buildWrappers/>

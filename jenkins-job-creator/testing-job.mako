@@ -45,10 +45,6 @@ export TESTS_CONTROL_UBUNTU=" "
 # Now run all the tests.
 #
 /bin/sh kernel-testing/kernel-tests-runner
-
-# Publish the results
-#
-kernel-testing/test-results/ingest $HOME/jobs/$JOB_NAME/builds/$BUILD_ID
             </command>
         </hudson.tasks.Shell>
     </builders>
