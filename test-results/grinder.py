@@ -9,6 +9,30 @@ import json
 from lib.utils                          import json_load, file_load, FileDoesntExist
 from lib.dbg                            import Dbg
 
+# load_template
+#
+def load_template(file_name):
+    """
+    Load the template file.
+    """
+    retval = None
+
+    # Find it ...
+    #
+    fid = file_name
+    if not path.exists(fid): # Current directory
+        fid = path.join(path.dirname(argv[0]), file_name)
+        if not path.exists(fid):
+            fid = None
+
+    if fid is not None:
+        with open(fid, 'r') as f:
+            retval = f.read()
+    else:
+        print("Error: Failed to find the template file.")
+
+    return retval
+
 # CmdlineError
 #
 # The type of exception that will be raised by Cmdline.process() if there
@@ -243,7 +267,7 @@ class TestResultsRepository():
             if not path.exists(fid): # Current directory
                 fid = path.join(path.expanduser('~'), rc)
                 if not path.exists(fid): # Users home directory
-                    fid = path.join(path.pathname(argv[0]), rc)
+                    fid = path.join(path.dirname(argv[0]), rc)
                     if not path.exists(fid):
                         raise FileDoesntExist(rc)
 

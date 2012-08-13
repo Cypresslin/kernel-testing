@@ -14,9 +14,9 @@ from os                                 import path
 from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
 
-from grinder                            import CmdlineError, Exit, TestResultsRepository, TestResultsRepositoryError, JenkinsTestResultsTree, JenkinsTestResultsTreeError
+from grinder                            import CmdlineError, Exit, TestResultsRepository, TestResultsRepositoryError, JenkinsTestResultsTree, JenkinsTestResultsTreeError, load_template
 from lib.dbg                            import Dbg
-from lib.utils                          import error, stdo, dump, file_load
+from lib.utils                          import error, stdo, dump
 
 # Cmdline
 #
@@ -127,8 +127,8 @@ class Ingest():
             self.trr = TestResultsRepository()
             self.jtr = JenkinsTestResultsTree(self.cfg['root'])
 
-            self.index_template = Template(file_load(self.cfg['index template']))
-            self.suite_template = Template(file_load(self.cfg['suite template']))
+            self.index_template = Template(load_template(self.cfg['index template']))
+            self.suite_template = Template(load_template(self.cfg['suite template']))
 
         except TestResultsRepositoryError as e:
             error(e.msg)
