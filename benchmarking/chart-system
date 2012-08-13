@@ -10,7 +10,7 @@ set +e
 #
 
 # Where are the data files from the benchmarks?
-DATALOC=~/metrics
+DATALOC=~/metrics/benchmarking
 
 # where to publish?
 PRIVATE_PUBLISH_DIR=~jenkins/rsync/private-reports
