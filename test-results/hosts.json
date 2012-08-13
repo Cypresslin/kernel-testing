@@ -1,19 +1,19 @@
 {
     "statler" : {
         "platform" : "Intel Emerald-Ridge",
-        "processors" : "4 x Intel Xeon E7-4860; 10 cores each; +hyperthreaded (80 effective processors)",
+        "processors" : "4 x Intel Xeon E7-4860; 10 cores each; +hyper-threaded (80 effective processors)",
         "memory" : "64GB"
     },
 
     "waldorf" : {
         "platform" : "Intel Romley",
-        "processors" : "2 x Intel E5-2680; 8 cores each; +hyperthreaded (32 effective processors)",
+        "processors" : "2 x Intel E5-2680; 8 cores each; +hyper-threaded (32 effective processors)",
         "memory" : "32GB"
     },
 
     "rizzo" : {
-        "platform" : "Dell something or other",
-        "processors: "1 x Intel Xeon X3470",
+        "platform" : "Dell PowerEdge R310",
+        "processors: "1 x Intel Xeon X3470; 4 cores; +hyper-threaded (8 effective processors)",
         "memory" : "8GB"
     }
 }
