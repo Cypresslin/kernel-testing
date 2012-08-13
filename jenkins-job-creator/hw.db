@@ -17,6 +17,23 @@
 	        "ip" : "10.97.0.11",
 		"port" : "Rizzo_PS1"
 	    }
+	},
+	"waldorf" : {
+	    "orchestra server" : "magners-orchestra",
+	    "jenkins server" : "kernel-jenkins",
+	    "mac address" : "00:1e:67:34:b8:5c",
+	    "cdu" : {
+	        "ip" : "10.97.0.11",
+		"port" : "Waldorf"
+	    }
+	},
+	"statler" : {
+	    "orchestra server" : "magners-orchestra",
+	    "jenkins server" : "kernel-jenkins",
+	    "mac address" : "60:eb:69:21:2c:6c",
+	    "cdu" : {
+	        "ip" : "10.97.0.11",
+		"port" : "Statler_PS1"
+	    }
 	}
-    }
 }
