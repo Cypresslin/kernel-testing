@@ -103,7 +103,7 @@ java -jar /run/jenkins/war/WEB-INF/jenkins-cli.jar -s ${data.jenkins_url} build 
             <command>
 # Publish the results
 #
-kernel-testing/test-results/ingest $HOME/jobs/${data.testing_job_name}/builds/1
+/var/lib/jenkins/kernel-testing/test-results/ingest $HOME/jobs/${data.testing_job_name}/builds/1
             </command>
         </hudson.tasks.Shell>
     </builders>
