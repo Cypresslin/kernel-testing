@@ -9,5 +9,11 @@
         "platform" : "Intel Romley",
         "processors" : "2 x Intel E5-2680; 8 cores each; +hyperthreaded (32 effective processors)",
         "memory" : "32GB"
+    },
+
+    "rizzo" : {
+        "platform" : "Dell something or other",
+        "processors: "1 x Intel Xeon X3470",
+        "memory" : "8GB"
     }
 }
