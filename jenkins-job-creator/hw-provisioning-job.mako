@@ -70,6 +70,20 @@ set +e # Continue if the node doesn&apos;t exist
 scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh $TARGET_HOST:
             </command>
         </hudson.tasks.Shell>
+% if data.sut_series in ['lucid', 'natty']:
+        <org.jvnet.hudson.plugins.SSHBuilder>
+            <siteName>${data.sut_name}</siteName>
+            <command>
+# On Lucid and Natty series installs we have to install the jdk ourselves. There is
+# no jenkins-slave package.
+#
+sudo apt-get install -y python-software-properties
+sudo add-apt-repository ppa:sun-java-community-team/sun-java6
+sudo apt-get update
+sudo apt-get install -y sun-java6-jdk
+            </command>
+        </org.jvnet.hudson.plugins.SSHBuilder>
+% endif
         <hudson.tasks.Shell>
             <command>
 # Build the follow on job(s) waiting for them to finish.

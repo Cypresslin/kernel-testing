@@ -26,8 +26,8 @@ sudo rm -rf *
 
 # Fetch the relevant test scripts from the jenkins server
 #
-rsync -arv ${data.hw['jenkins server']}:autotest/ ./autotest/
-rsync -arv ${data.hw['jenkins server']}:kernel-testing .
+rsync -arv -e "ssh -o StrictHostKeyChecking=no" ${data.hw['jenkins server']}:autotest/ ./autotest/
+rsync -arv -e "ssh -o StrictHostKeyChecking=no" ${data.hw['jenkins server']}:kernel-testing .
 
 # This variable is unique to the jobs that the kernel team runs on their
 # jenkins server.
