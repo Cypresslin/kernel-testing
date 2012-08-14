@@ -12,9 +12,9 @@ from os                                 import path
 from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
 
-from grinder                            import CmdlineError, Exit, TestResultsRepository, TestResultsRepositoryError
+from grinder                            import CmdlineError, Exit, TestResultsRepository, TestResultsRepositoryError, load_template
 from lib.dbg                            import Dbg
-from lib.utils                          import error, stdo, dump, file_load, string_to_date, json_load
+from lib.utils                          import error, stdo, dump, string_to_date, json_load
 
 from lib.ubuntu                         import Ubuntu
 from lib.debian                         import Debian
@@ -114,8 +114,8 @@ class Digest():
             self.trr = TestResultsRepository()
             self.ubuntu = Ubuntu()
 
-            self.index_template = Template(file_load(self.cfg['template']))
-            self.host_template = Template(file_load('host.mako'))
+            self.index_template = Template(load_template(self.cfg['template']))
+            self.host_template = Template(load_template('host.mako'))
 
             self.hosts_info = json_load('hosts.json')
 
