@@ -1,6 +1,6 @@
 sudo apt-get install -y python-software-properties
 sudo echo sun-java6-jre shared/accepted-sun-dlj-v1-1 select true | sudo /usr/bin/debconf-set-selections
-sudo add-apt-repository \"deb http://archive.canonical.com/ lucid partner\" 
+sudo add-apt-repository ppa:sun-java-community-team/sun-java6
 sudo apt-get update
 sudo apt-get install --yes sun-java6-jdk
 
