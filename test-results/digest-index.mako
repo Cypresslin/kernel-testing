@@ -124,9 +124,9 @@
                         </table>
                     </div> <!-- dash-section -->
 
+                    <!--
                     <h1>Benchmarks</h1>
                     <div class="dash-section">
-                        <!--
                         <table width="100%">
                             <tr> <td style="background: #e9e7e5;">quantal</td> </tr>
                             <tr>
@@ -204,8 +204,8 @@
                                 </td>
                             </tr>
                         </table>
-                        -->
                     </div>
+                    -->
 
                     <div class="index-bottom-section">
                         <table width="100%"> <!-- The section is one big table -->
