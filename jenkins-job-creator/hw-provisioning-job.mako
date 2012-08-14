@@ -83,13 +83,12 @@ ssh ${data.sut_name} /bin/sh manual-slave-install
 % endif
         <hudson.tasks.Shell>
             <command>
+set +e # No matter what, try to collect the results
+
 # Build the follow on job(s) waiting for them to finish.
 #
 java -jar /run/jenkins/war/WEB-INF/jenkins-cli.jar -s ${data.jenkins_url} build -s ${data.testing_job_name}
-            </command>
-        </hudson.tasks.Shell>
-        <hudson.tasks.Shell>
-            <command>
+
 # Publish the results
 #
 /var/lib/jenkins/kernel-testing/test-results/ingest $HOME/jobs/${data.testing_job_name}/builds/1
