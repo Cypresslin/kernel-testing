@@ -13,7 +13,7 @@
 
     "rizzo" : {
         "platform" : "Dell PowerEdge R310",
-        "processors: "1 x Intel Xeon X3470; 4 cores; +hyper-threaded (8 effective processors)",
+        "processors": "1 x Intel Xeon X3470; 4 cores; +hyper-threaded (8 effective processors)",
         "memory" : "8GB"
     }
 }
