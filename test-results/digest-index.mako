@@ -65,53 +65,39 @@
                                             <td width="100%">
                                                 <table id="" width="100%" border="0">
                                                     <tbody>
+                                                        <tr>
+                                                            <th width="100">Kernel</th>
+                                                            <th align="left" width="100">&nbsp; Host &nbsp;</th>
+                                                            <th align="left" width="40">&nbsp; Arch &nbsp;</th>
+                                                            <th align="center" width="150">Date</th>
+
+                                                            <th align="center" width="40">Ran</th>
+                                                            <th align="center" width="40">Passed</th>
+                                                            <th align="center" width="40">Failed</th>
+
+                                                            <th align="center"><!--Benchmarks--></th>
+                                                        </tr>
                                                         % for kernel_version in data[ubuntu_series]:
                                                         <tr>
-                                                            <td>
-                                                                <table width="100%">
-                                                                    <tr>
-                                                                        <td align="left" width="150">${ kernel_version } </td> <td> </td>
-                                                                    </tr>
-                                                                </table>
-                                                            <td>
+                                                            <td align="left" width="150" colspan="8">${ kernel_version } </td> <td> </td>
                                                         </tr>
-                                                        <tr>
-                                                            <td>
-                                                                <table width="100%" border="0">
-                                                                    <tbody>
-                                                                    <tr>
-                                                                        <th width="100">&nbsp;</th>
-                                                                        <th align="left" width="100">&nbsp; Host &nbsp;</th>
-                                                                        <th align="left" width="40">&nbsp; Arch &nbsp;</th>
-                                                                        <th align="center" width="150">Date</th>
+                                                            % for record in data[ubuntu_series][kernel_version]:
+                                                            <%
+                                                                total = 0
+                                                                passed = 0
+                                                                failed = 0
+                                                                for suite in record['results']['suites']:
+                                                                    total += suite['tests run']
+                                                                    passed += suite['tests run'] - suite['tests failed']
+                                                                    failed += suite['tests failed']
 
-                                                                        <th align="center" width="40">Ran</th>
-                                                                        <th align="center" width="40">Passed</th>
-                                                                        <th align="center" width="40">Failed</th>
-
-                                                                        <th align="center"><!--Benchmarks--></th>
-                                                                    </tr>
-                                                                        % for record in data[ubuntu_series][kernel_version]:
-                                                                        <%
-                                                                            total = 0
-                                                                            passed = 0
-                                                                            failed = 0
-                                                                            for suite in record['results']['suites']:
-                                                                                total += suite['tests run']
-                                                                                passed += suite['tests run'] - suite['tests failed']
-                                                                                failed += suite['tests failed']
-
-                                                                            link = "http://kernel.ubuntu.com/beta/testing/test-results/%s.%s/results-index.html" % (record['attributes']['environ']['NODE_NAME'], record['attributes']['environ']['BUILD_ID'])
-                                                                        %>
-                                                                        <tr>
-                                                                            <td>&nbsp;</td>
-                                                                            <td><a href="test-results/${ record['attributes']['environ']['NODE_NAME'] }.html">${ record['attributes']['environ']['NODE_NAME'] }</a></td><td>${ record['attributes']['platform']['arch']['bits'] } </td> <td align="center">${ record['attributes']['timestamp'] }</td> <td align="center"><a href="${ link }">${ total }</a></td> <td align="center"><a href="${ link }">${ passed }</a></td> <td align="center"><a href="${ link }">${ failed }</a></td><td></td>
-                                                                        </tr>
-                                                                        % endfor
-                                                                    </tbody>
-                                                                </table>
-                                                            </td>
-                                                        </tr>
+                                                                link = "http://kernel.ubuntu.com/beta/testing/test-results/%s.%s/results-index.html" % (record['attributes']['environ']['NODE_NAME'], record['attributes']['environ']['BUILD_ID'])
+                                                            %>
+                                                            <tr>
+                                                                <td>&nbsp;</td>
+                                                                <td><a href="test-results/${ record['attributes']['environ']['NODE_NAME'] }.html">${ record['attributes']['environ']['NODE_NAME'] }</a></td><td>${ record['attributes']['platform']['arch']['bits'] } </td> <td align="center">${ record['attributes']['timestamp'] }</td> <td align="center"><a href="${ link }">${ total }</a></td> <td align="center"><a href="${ link }">${ passed }</a></td> <td align="center"><a href="${ link }">${ failed }</a></td><td></td>
+                                                            </tr>
+                                                            % endfor
                                                         % endfor
                                                     </tbody>
                                                 </table>
