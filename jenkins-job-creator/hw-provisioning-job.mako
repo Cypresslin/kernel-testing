@@ -21,7 +21,7 @@ else:
             <maxConcurrentPerNode>1</maxConcurrentPerNode>
             <maxConcurrentTotal>100</maxConcurrentTotal>
             <categories>
-                <string>rizzo-hw-throttle</string>
+                <string>${data.sut_name}-hw-throttle</string>
             </categories>
             <throttleEnabled>true</throttleEnabled>
             <throttleOption>category</throttleOption>
