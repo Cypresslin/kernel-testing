@@ -131,7 +131,8 @@ class SutJobsFactory():
         self.create_job(cfg.testing_job_name,      'testing-job.mako',         cfg)
         self.create_job(cfg.provisioning_job_name, 'hw-provisioning-job.mako', cfg)
 
-        self.jenkins.build_job(cfg.provisioning_job_name)
+        if not cfg.no_autostart:
+            self.jenkins.build_job(cfg.provisioning_job_name)
 
     # virtual_sut_jobs
     #
@@ -144,7 +145,8 @@ class SutJobsFactory():
         self.create_job(cfg.vh_provisioning_job_name, 'hw4vm-provisioning-job.mako', cfg)
         self.create_job(cfg.vm_client_provisioning_job_name, 'vm-client-provisioning-job.mako', cfg)
 
-        self.jenkins.build_job(cfg.vh_provisioning_job_name)
+        if not cfg.no_autostart:
+            self.jenkins.build_job(cfg.vh_provisioning_job_name)
 
     # main
     #
@@ -220,9 +222,10 @@ if __name__ == '__main__':
     parser.add_argument('--vh-series',    required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the series of that virtual host.')
     parser.add_argument('--vh-arch',      required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the arch of that virtual host.')
 
-    parser.add_argument('--hw-id',           required=True,  choices=hw['hw pool'].keys(), help='The hardware-name for the system in the hardware database that will be used for the bare metal installation portion of any of these jobs.')
+    parser.add_argument('--hw-id',        required=True,  choices=hw['hw pool'].keys(), help='The hardware-name for the system in the hardware database that will be used for the bare metal installation portion of any of these jobs.')
 
     parser.add_argument('--jenkins-url',  required=False, default='http://kernel-jenkins:8080', help='URL to the jenkins host.')
+    parser.add_argument('--no-autostart', required=False, default=False, help='Create the jenkins jobs but do not start them.')
 
     args = parser.parse_args()
 
