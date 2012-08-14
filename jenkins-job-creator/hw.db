@@ -30,7 +30,7 @@
 	    "statler" : {
 	        "orchestra server" : "magners-orchestra",
 	        "jenkins server" : "kernel-jenkins",
-	        "mac address" : "60:eb:69:21:2c:6c",
+	        "mac address" : "60:eb:69:21:2c:6d",
 	        "cdu" : {
 	            "ip" : "10.97.0.11",
                 "port" : "Statler_PS1"
