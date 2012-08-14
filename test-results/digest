@@ -117,7 +117,7 @@ class Digest():
             self.index_template = Template(load_template(self.cfg['template']))
             self.host_template = Template(load_template('host.mako'))
 
-            self.hosts_info = json_load('hosts.json')
+            self.hosts_info = json_load(path.join(path.dirname(argv[0]), 'hosts.json'))
 
         except TestResultsRepositoryError as e:
             error(e.msg)
