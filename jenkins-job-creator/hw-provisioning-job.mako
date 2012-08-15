@@ -1,8 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <%
-if data.sut_series in ['lucid', 'natty']:
+if data.sut_series in ['lucid']:
     sut_distro = ''
     sut_seed = 'secondary'
+elif data.sut_series in ['natty']:
+    sut_distro = ''
+    sut_seed = 'natty'
 else:
     sut_distro = '-server'
     sut_seed = 'primary'
@@ -70,10 +73,10 @@ set +e # Continue if the node doesn&apos;t exist
 scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh $TARGET_HOST:
             </command>
         </hudson.tasks.Shell>
-% if data.sut_series in ['lucid', 'natty']:
+% if data.sut_series in ['lucid']:
         <hudson.tasks.Shell>
             <command>
-# On Lucid and Natty series installs we have to install the jdk ourselves. There is
+# On Lucid series installs we have to install the jdk ourselves. There is
 # no jenkins-slave package.
 #
 scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing/jenkins-job-creator/manual-slave-install ${data.sut_name}:

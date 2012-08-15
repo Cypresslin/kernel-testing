@@ -1,15 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <%
-if data.vh_series in ['lucid', 'natty']:
+if data.vh_series in ['lucid']:
     vh_distro = ''
     vh_seed = 'secondary'
+elif data.vh_series in ['natty']:
+    vh_distro = ''
+    vh_seed = 'natty'
 else:
     vh_distro = '-server'
     vh_seed = 'primary'
 
-if data.sut_series in ['lucid', 'natty']:
+if data.sut_series in ['lucid']:
     sut_distro = ''
     sut_seed = 'secondary'
+elif data.sut_series in ['natty']:
+    sut_distro = ''
+    sut_seed = 'natty'
 else:
     sut_distro = '-server'
     sut_seed = 'primary'
@@ -92,10 +98,10 @@ scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh $TARGET_HOST:
 java -jar /run/jenkins/war/WEB-INF/jenkins-cli.jar -s ${data.jenkins_url} build -s ${data.vm_client_provisioning_job_name}
             </command>
         </hudson.tasks.Shell>
-% if data.sut_series in ['lucid', 'natty']:
+% if data.sut_series in ['lucid']:
         <hudson.tasks.Shell>
             <command>
-# On Lucid and Natty series installs we have to install the jdk ourselves. There is
+# On Lucid series installs we have to install the jdk ourselves. There is
 # no jenkins-slave package.
 #
 scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing/jenkins-job-creator/manual-slave-install ${data.sut_name}:
