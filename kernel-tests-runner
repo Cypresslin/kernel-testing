@@ -35,12 +35,12 @@ echo ">>>  test-attributes end"
 
 set +e # We want _all_ the tests to run even if one of them errors out.
 
-for TEST in $TESTS_CONTROL_UBUNTU; do
-    TEST_NAME=$TEST AGGREGATE_RESULTS=true AGGREGATE_RESULTS_DIR=$WORKSPACE $CDIR/job-autotest -c control.ubuntu $TEST
-done
-
 for TEST in $TESTS_CONTROL; do
     TEST_NAME=$TEST AGGREGATE_RESULTS=true AGGREGATE_RESULTS_DIR=$WORKSPACE $CDIR/job-autotest -c control $TEST
+done
+
+for TEST in $TESTS_CONTROL_UBUNTU; do
+    TEST_NAME=$TEST AGGREGATE_RESULTS=true AGGREGATE_RESULTS_DIR=$WORKSPACE $CDIR/job-autotest -c control.ubuntu $TEST
 done
 
 # Stitch all the individual test results files together.
