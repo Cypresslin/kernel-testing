@@ -63,11 +63,11 @@ scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh $TARGET_HOST:
             <command>
 % if data.sut_hwe_series == 'quantal':
     scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing/jenkins-job-creator/lts-hwe-development-install ${data.sut_name}:
-    ssh ${data.sut_name} /bin/sh lts-hwe-development-install
+    ssh -o StrictHostKeyChecking=no ${data.sut_name} /bin/sh lts-hwe-development-install
 % else:
-    ssh ${data.sut_name} sudo apt-get update
-    ssh ${data.sut_name} sudo apt-get install --yes %{data.sut_hwe_package}
-    ssh ${data.sut_name} sudo reboot
+    ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get update
+    ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get install --yes %{data.sut_hwe_package}
+    ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo reboot
 %endif
 /var/lib/jenkins/kernel-testing/wait-for-system ${data.sut_name}
             </command>
@@ -82,7 +82,7 @@ scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh $TARGET_HOST:
 # no jenkins-slave package.
 #
 scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing/jenkins-job-creator/manual-slave-install ${data.sut_name}:
-ssh ${data.sut_name} /bin/sh manual-slave-install
+ssh -o StrictHostKeyChecking=no ${data.sut_name} /bin/sh manual-slave-install
             </command>
         </hudson.tasks.Shell>
 % endif

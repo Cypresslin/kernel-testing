@@ -74,7 +74,7 @@ java -jar /run/jenkins/war/WEB-INF/jenkins-cli.jar -s ${data.jenkins_url} build 
 # no jenkins-slave package.
 #
 scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing/jenkins-job-creator/manual-slave-install ${data.sut_name}:
-ssh ${data.sut_name} /bin/sh manual-slave-install
+ssh -o StrictHostKeyChecking=no ${data.sut_name} /bin/sh manual-slave-install
             </command>
         </hudson.tasks.Shell>
 % endif
