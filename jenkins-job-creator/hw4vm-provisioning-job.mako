@@ -78,6 +78,8 @@ ssh -o StrictHostKeyChecking=no ${data.sut_name} /bin/sh manual-slave-install
             </command>
         </hudson.tasks.Shell>
 % endif
+
+% if not data.no_test:
         <hudson.tasks.Shell>
             <command>
 set +e # No matter what, try to collect the results
@@ -91,6 +93,8 @@ java -jar /run/jenkins/war/WEB-INF/jenkins-cli.jar -s ${data.jenkins_url} build 
 /var/lib/jenkins/kernel-testing/test-results/ingest $HOME/jobs/${data.testing_job_name}/builds/1
             </command>
         </hudson.tasks.Shell>
+% endif
+
     </builders>
     <publishers/>
     <buildWrappers/>

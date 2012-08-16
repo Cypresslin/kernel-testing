@@ -176,7 +176,8 @@ class SutJobsFactory():
             setattr(cfg, 'sut_hwe_package', self.kmap['series'][cfg.sut_series]['hwe package'])
             cfg.sut_series = self.kmap['series'][cfg.sut_series]['hwe series']
 
-        self.create_job(cfg.testing_job_name,      'testing-job.mako',         cfg)
+        if not cfg.no_test:
+            self.create_job(cfg.testing_job_name,      'testing-job.mako',         cfg)
         self.create_job(cfg.provisioning_job_name, 'hw-provisioning-job.mako', cfg)
 
         if not cfg.no_autostart:
@@ -216,7 +217,8 @@ class SutJobsFactory():
         setattr(cfg, 'sut_preseed', self.kmap['series'][cfg.sut_series]['preseed'])
         setattr(cfg, 'sut_server_distro_decoration', self.kmap['series'][cfg.sut_series]['server distro decoration'])
 
-        self.create_job(cfg.testing_job_name, 'testing-job.mako', cfg)
+        if not cfg.no_test:
+            self.create_job(cfg.testing_job_name, 'testing-job.mako', cfg)
         self.create_job(cfg.vh_provisioning_job_name, 'hw4vm-provisioning-job.mako', cfg)
         self.create_job(cfg.vm_client_provisioning_job_name, 'vm-client-provisioning-job.mako', cfg)
 
@@ -303,6 +305,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--jenkins-url',  required=False, default='http://kernel-jenkins:8080', help='URL to the jenkins host.')
     parser.add_argument('--no-autostart', required=False, action='store_true', default=False, help='Create the jenkins jobs but do not start them.')
+    parser.add_argument('--no-test',      required=False, action='store_true', default=False, help='Don\'t create the test job. Sometimes you just want the job(s) that do the provisioning.')
 
     args = parser.parse_args()
 
