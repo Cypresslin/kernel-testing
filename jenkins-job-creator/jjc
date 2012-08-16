@@ -88,6 +88,43 @@ class InvalidSeries(InvalidException):
 #
 class SutJobsFactory():
 
+    kmap = {
+        'orchestra arch' : {
+            'amd64' : 'x86_64',
+            'i386' : 'i386'
+        },
+        'series' : {
+            'lucid' : {
+                'hwe series' : None,
+                'preseed' : 'secondary',
+                'server distro decoration' : '',
+            },
+            'natty' : {
+                'hwe series' : 'lucid',
+                'hwe package' : 'linux-image-generic-lts-backport-natty',
+                'preseed' : 'natty',
+                'server distro decoration' : '',
+            },
+            'oneiric' : {
+                'hwe series' : 'lucid',
+                'hwe package' : 'linux-image-generic-lts-backport-oneiric',
+                'preseed' : 'primary',
+                'server distro decoration' : '-server',
+            },
+            'precise' : {
+                'hwe series' : None,
+                'preseed' : 'primary',
+                'server distro decoration' : '-server',
+            },
+            'quantal' : {
+                'hwe series' : 'precise',
+                'hwe package' : 'linux-generic-lts-quantal',
+                'preseed' : 'primary',
+                'server distro decoration' : '-server',
+            },
+        }
+    }
+
     # __init__
     #
     def __init__(self, args):
@@ -128,6 +165,17 @@ class SutJobsFactory():
         setattr(cfg, 'testing_job_name', '%s-%s-%s-test' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch))
         setattr(cfg, 'provisioning_job_name', '%s-hw-provisioning-%s-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch))
 
+        setattr(cfg, 'sut_orchestra_arch', self.kmap['orchestra arch'][cfg.sut_arch])
+        setattr(cfg, 'sut_preseed', self.kmap['series'][cfg.sut_series]['preseed'])
+        setattr(cfg, 'sut_server_distro_decoration', self.kmap['series'][cfg.sut_series]['server distro decoration'])
+
+        if cfg.sut_hwe:
+            cfg.testing_job_name = '%s-lts-%s-%s-test' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch)
+            cfg.provisioning_job_name = '%s-hw-provisioning-lts-%s-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch)
+            setattr(cfg, 'sut_hwe_series', cfg.sut_series)
+            setattr(cfg, 'sut_hwe_package', self.kmap['series'][cfg.sut_series]['hwe package'])
+            cfg.sut_series = self.kmap['series'][cfg.sut_series]['hwe series']
+
         self.create_job(cfg.testing_job_name,      'testing-job.mako',         cfg)
         self.create_job(cfg.provisioning_job_name, 'hw-provisioning-job.mako', cfg)
 
@@ -140,6 +188,33 @@ class SutJobsFactory():
         setattr(cfg, 'testing_job_name', '%s-%s-%s_on_%s-%s-test' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch))
         setattr(cfg, 'vh_provisioning_job_name', '%s-hw4vm-provisioning-%s-%s_%s-%s' % (cfg.vh_name, cfg.vh_series, cfg.vh_arch, cfg.sut_series, cfg.sut_arch))
         setattr(cfg, 'vm_client_provisioning_job_name', '%s-vm-client-provisioning-%s-%s_on_%s-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch))
+
+        if cfg.vh_hwe:
+            if cfg.sut_hwe:
+                cfg.testing_job_name = '%s-hwe-%s-%s_on_hwe-%s-%s-test' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch)
+                cfg.vh_provisioning_job_name = '%s-hw4vm-provisioning-hwe-%s-%s_hwe-%s-%s' % (cfg.vh_name, cfg.vh_series, cfg.vh_arch, cfg.sut_series, cfg.sut_arch)
+                cfg.vm_client_provisioning_job_name = '%s-vm-client-provisioning-hwe-%s-%s_on_hwe-%s-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch)
+            else:
+                cfg.testing_job_name = '%s-%s-%s_on_hwe-%s-%s-test' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch)
+                cfg.vh_provisioning_job_name = '%s-hw4vm-provisioning-hwe-%s-%s_%s-%s' % (cfg.vh_name, cfg.vh_series, cfg.vh_arch, cfg.sut_series, cfg.sut_arch)
+                cfg.vm_client_provisioning_job_name = '%s-vm-client-provisioning-%s-%s_on_hwe-%s-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch)
+
+            setattr(cfg, 'vh_hwe_series', cfg.sut_series)
+            setattr(cfg, 'vh_hwe_package', self.kmap['series'][cfg.vh_series]['hwe package'])
+            cfg.vh_series = self.kmap['series'][cfg.vh_series]['hwe series']
+
+        setattr(cfg, 'vh_orchestra_arch', self.kmap['orchestra arch'][cfg.vh_arch])
+        setattr(cfg, 'vh_preseed', self.kmap['series'][cfg.vh_series]['preseed'])
+        setattr(cfg, 'vh_server_distro_decoration', self.kmap['series'][cfg.vh_series]['server distro decoration'])
+
+        if cfg.sut_hwe:
+            setattr(cfg, 'sut_hwe_series', cfg.sut_series)
+            setattr(cfg, 'sut_hwe_package', self.kmap['series'][cfg.sut_series]['hwe package'])
+            cfg.sut_series = self.kmap['series'][cfg.sut_series]['hwe series']
+
+        setattr(cfg, 'sut_orchestra_arch', self.kmap['orchestra arch'][cfg.sut_arch])
+        setattr(cfg, 'sut_preseed', self.kmap['series'][cfg.sut_series]['preseed'])
+        setattr(cfg, 'sut_server_distro_decoration', self.kmap['series'][cfg.sut_series]['server distro decoration'])
 
         self.create_job(cfg.testing_job_name, 'testing-job.mako', cfg)
         self.create_job(cfg.vh_provisioning_job_name, 'hw4vm-provisioning-job.mako', cfg)
@@ -213,19 +288,21 @@ if __name__ == '__main__':
     #
     parser = ArgumentParser()
 
-    parser.add_argument('--sut',          required=True, choices=['real', 'virtual'], help='Kind of SUT to be created.')
+    parser.add_argument('--sut',          required=True,  choices=['real', 'virtual'], help='Kind of SUT to be created.')
     parser.add_argument('--sut-name',     required=True,  help='Hostname of the SUT. This is the name jenkins will attempt to use to connect to the SUT.')
     parser.add_argument('--sut-series',   required=True,  help='The series that is to be installed on the SUT. lts-hwe-<series> denotes that a lts-hwe kernel is to be run on the appropriate lts series.')
-    parser.add_argument('--sut-arch',     required=True, choices=['amd64', 'i386'], help='The architecture (amd64 or i386) that is to be installed on the SUT.')
+    parser.add_argument('--sut-arch',     required=True,  choices=['amd64', 'i386'], help='The architecture (amd64 or i386) that is to be installed on the SUT.')
+    parser.add_argument('--sut-hwe',      required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
 
     parser.add_argument('--vh-name',      required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the name of that virtual host.')
     parser.add_argument('--vh-series',    required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the series of that virtual host.')
     parser.add_argument('--vh-arch',      required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the arch of that virtual host.')
+    parser.add_argument('--vh-hwe',       required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
 
     parser.add_argument('--hw-id',        required=True,  choices=hw['hw pool'].keys(), help='The hardware-name for the system in the hardware database that will be used for the bare metal installation portion of any of these jobs.')
 
     parser.add_argument('--jenkins-url',  required=False, default='http://kernel-jenkins:8080', help='URL to the jenkins host.')
-    parser.add_argument('--no-autostart', required=False, default=False, help='Create the jenkins jobs but do not start them.')
+    parser.add_argument('--no-autostart', required=False, action='store_true', default=False, help='Create the jenkins jobs but do not start them.')
 
     args = parser.parse_args()
 

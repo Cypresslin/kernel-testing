@@ -1,20 +1,4 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<%
-if data.sut_series in ['lucid']:
-    sut_distro = ''
-    sut_seed = 'secondary'
-elif data.sut_series in ['natty']:
-    sut_distro = ''
-    sut_seed = 'natty'
-else:
-    sut_distro = '-server'
-    sut_seed = 'primary'
-
-if data.sut_arch == 'amd64':
-    orchestra_arch = 'x86_64'
-else:
-    orchestra_arch = data.sut_arch
-%>
 <project>
     <actions/>
     <description></description>
@@ -45,7 +29,7 @@ else:
 # Get rid of any previous profile (and system) with the same name
 #
 sudo cobbler profile remove --name=${data.sut_name}
-sudo cobbler profile add --name=${data.sut_name} --distro=${data.sut_series}${sut_distro}-${orchestra_arch} --kickstart=/var/lib/cobbler/kickstarts/kernel/kt-${sut_seed}.preseed --repos=&quot;${data.sut_series}-${orchestra_arch} ${data.sut_series}-${orchestra_arch}-security&quot;
+sudo cobbler profile add --name=${data.sut_name} --distro=${data.sut_series}${data.sut_server_distro_decoration}-${data.sut_orchestra_arch} --kickstart=/var/lib/cobbler/kickstarts/kernel/kt-${data.sut_preseed}.preseed --repos=&quot;${data.sut_series}-${data.sut_orchestra_arch} ${data.sut_series}-${data.sut_orchestra_arch}-security&quot;
 sudo cobbler system add --name=${data.sut_name} --profile=${data.sut_name} --hostname=${data.sut_name} --mac=${data.hw['mac address']}
 
 % if data.hw['cdu']['ip'] != '':
@@ -73,6 +57,24 @@ set +e # Continue if the node doesn&apos;t exist
 scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh $TARGET_HOST:
             </command>
         </hudson.tasks.Shell>
+
+% if data.sut_hwe:
+        <hudson.tasks.Shell>
+            <command>
+% if data.sut_hwe_series == 'quantal':
+    scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing/jenkins-job-creator/lts-hwe-development-install ${data.sut_name}:
+    ssh ${data.sut_name} /bin/sh lts-hwe-development-install
+% else:
+    ssh ${data.sut_name} sudo apt-get update
+    ssh ${data.sut_name} sudo apt-get install --yes %{data.sut_hwe_package}
+    ssh ${data.sut_name} sudo reboot
+%endif
+/var/lib/jenkins/kernel-testing/wait-for-system ${data.sut_name}
+            </command>
+        </hudson.tasks.Shell>
+% endif
+
+
 % if data.sut_series in ['lucid']:
         <hudson.tasks.Shell>
             <command>

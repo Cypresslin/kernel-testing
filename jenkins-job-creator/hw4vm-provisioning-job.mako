@@ -1,35 +1,4 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<%
-if data.vh_series in ['lucid']:
-    vh_distro = ''
-    vh_seed = 'secondary'
-elif data.vh_series in ['natty']:
-    vh_distro = ''
-    vh_seed = 'natty'
-else:
-    vh_distro = '-server'
-    vh_seed = 'primary'
-
-if data.sut_series in ['lucid']:
-    sut_distro = ''
-    sut_seed = 'secondary'
-elif data.sut_series in ['natty']:
-    sut_distro = ''
-    sut_seed = 'natty'
-else:
-    sut_distro = '-server'
-    sut_seed = 'primary'
-
-if data.vh_arch == 'amd64':
-    orchestra_vh_arch = 'x86_64'
-else:
-    orchestra_vh_arch = data.vh_arch
-
-if data.sut_arch == 'amd64':
-    orchestra_sut_arch = 'x86_64'
-else:
-    orchestra_sut_arch = data.sut_arch
-%>
 <project>
     <actions/>
     <description></description>
@@ -60,11 +29,11 @@ else:
 # Get rid of any previous profile (and system) with the same name
 #
 sudo cobbler profile remove --name=${data.vh_name}
-sudo cobbler profile add --name=${data.vh_name} --distro=${data.vh_series}${vh_distro}-${orchestra_vh_arch} --kickstart=/var/lib/cobbler/kickstarts/kernel/kt-${vh_seed}.preseed --repos=&quot;${data.vh_series}-${orchestra_vh_arch} ${data.vh_series}-${orchestra_vh_arch}-security&quot;
+sudo cobbler profile add --name=${data.vh_name} --distro=${data.vh_series}${data.vh_server_distro_decoration}-${data.vh_orchestra_arch} --kickstart=/var/lib/cobbler/kickstarts/kernel/kt-${data.vh_preseed}.preseed --repos=&quot;${data.vh_series}-${data.vh_orchestra_arch} ${data.vh_series}-${data.vh_orchestra_arch}-security&quot;
 sudo cobbler system add --name=${data.vh_name} --profile=${data.vh_name} --hostname=${data.vh_name} --mac=${data.hw['mac address']}
 
 sudo cobbler profile remove --name=${data.sut_name}
-sudo cobbler profile add --name=${data.sut_name} --distro=${data.sut_series}${sut_distro}-${orchestra_sut_arch} --kickstart=/var/lib/cobbler/kickstarts/kernel/kt-virt-${sut_seed}.preseed --ksmeta=hostname=${data.sut_name} --virt-file-size=20 --virt-ram=1000
+sudo cobbler profile add --name=${data.sut_name} --distro=${data.sut_series}${data.sut_server_distro_decoration}-${data.sut_orchestra_arch} --kickstart=/var/lib/cobbler/kickstarts/kernel/kt-virt-${data.sut_preseed}.preseed --ksmeta=hostname=${data.sut_name} --virt-file-size=20 --virt-ram=1000
 
 % if data.hw['cdu']['ip'] != '':
 # Power cycle the system so it will netboot and install
