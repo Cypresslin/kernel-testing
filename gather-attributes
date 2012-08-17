@@ -58,6 +58,17 @@ class Gather():
         retval = p.communicate()[0].strip().replace('\n', ' ')
         return retval
 
+    def kind_of_hardware(self):
+        retval = 'real'
+        with open('/proc/cpuinfo', 'r') as f:
+            line = f.readline()
+            while line:
+                if 'model name' in line:
+                    if 'QEMU Virtual CPU' in line:
+                        retval = 'virtual'
+                    break
+                line = f.readline()
+        return retval
 
     # main
     #
@@ -97,6 +108,8 @@ class Gather():
             data['platform']['machine']  = platform.machine()
             data['platform']['proc']     = platform.processor()
             data['platform']['hostname'] = platform.node()
+
+            data['platform']['hardware'] = self.kind_of_hardware()
 
             data['kernel'] = self.kernel_version()
             data['distro-release'] = self.distro_release()
