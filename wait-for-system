@@ -4,6 +4,7 @@ TARGET_HOST=$1
 
 timeout=0
 is_started=0
+date
 while [ $is_started -ne 1 ]; do
     set +e
     # force connect/disconnect
@@ -15,7 +16,8 @@ while [ $is_started -ne 1 ]; do
         sleep 60
         let timeout=timeout+1
         if [ $timeout -ge 60 ]; then
-            echo "Aborting installation. $timeout_limit min timeout reached."
+            echo "Aborting installation. $timeout_limit timeout reached."
+            date
             exit 1
         fi
     fi
