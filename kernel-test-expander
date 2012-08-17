@@ -1,0 +1,255 @@
+#!/usr/bin/env python
+#
+# Process a list of requested tests and testcollections
+# Create shell scripts to be used to set them up and run them
+#
+
+from os                                 import getenv, listdir
+from sys                                import exit, argv
+from subprocess                         import check_output
+from logging                            import debug, error, basicConfig, DEBUG, WARNING
+from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+#from lib.jenkins                        import JenkinsException
+
+#from aka_jenkins                        import Server, Nodes, Jobs
+
+# Test dependencies are organized by autotest test name. They include:
+#
+# 'package': required packages which will be installed before running tests
+# 'command': A command line which will be executed before running tests
+# 'scratch': If this exists, it indicates a requirement for a scratch device,
+#            and triggers partitioning and formatting of that device
+# 'atargs' : Autotest arguments to be passed to the control file. Can include expansion of shell variables
+#
+testDependencies = {
+'qrt' : {
+    'packages' : ['build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev'],
+    },
+'ecryptfs' : {
+    'packages' : ['libglib2.0-dev', 'intltool', 'keyutils', 'libkeyutils-dev', 'libpam0g-dev', 'libnss3-dev', 'libtool', 'acl', 'xfsprogs', 'btrfs-tools'],
+    },
+'xfstests' : {
+    'packages' : ['uuid-dev', 'xfslibs-dev', 'xfsdump', 'autoconf', 'kpartx', 'libtool', 'python-xattr', 'libacl1-dev', 'libaio-dev', 'quota', 'bc', 'libdm0-dev', 'btrfs-tools', 'attr'],
+    'command' : 'sudo mkdir -p /media/xfsmount ; sudo adduser --quiet --disabled-password -gecos "XFS test user,,," fsgqa || true',
+    'atargs' : {}, # this gets filled in later, it's a hack
+    'scratch' : True,
+    }
+}
+
+# Test Collections may be defined, and will run the list of autotest tests in them
+#
+testCollections = {
+    'default' : ['ecryptfs', 'qrt', 'stress'],
+    'benchmarks' : ['dbench', 'compilebench', 'bonnie'],
+}
+
+# ExpandTests
+#
+class ExpandTests():
+    """
+    """
+
+    # main
+    #
+    def main(self):
+        debug('Enter: main')
+        retval = 0
+        scratchNeeded = False
+        envVars = {}
+
+        # Which tests are we supposed to run?
+        tlist =  getenv('KERNEL_TEST_LIST')
+        if tlist:
+            print('%s: Tests requested: %s' % (argv[0], tlist))
+        else:
+            raise ValueError("Environment variable KERNEL_TEST_LIST not set!")
+
+        # Now expand this list to a unique list of autotest test names
+        autotestToRun = []
+        for tname in tlist.split():
+            # expand any test collection lists
+            if tname in testCollections:
+                print('%s: Expanding Test collection %s to the following Autotest Tests:' % (argv[0], tname))
+                for atst in testCollections[tname]:
+                    print('    %s' % atst)
+                    if atst not in autotestToRun:
+                        autotestToRun.append(atst)
+            else:
+                # Simply add the test to the list
+                print('%s: Adding Autotest Test %s' % (tname, argv[0]))
+                if tname not in autotestToRun:
+                    autotestToRun.append(tname)
+
+        # Find out which autotest tests are available, to use for sanity test
+        autotestExisting = listdir('autotest/client/tests')
+
+        # Make a sanity check against what's available, and set flag if we need scratch
+        badtests = []
+        for tname in autotestToRun:
+            if tname in testDependencies:
+                if 'scratch' in testDependencies[tname]:
+                    # Scratch device required
+                    scratchNeeded = True
+            if tname not in autotestExisting:
+                badtests.append(tname)
+        if len(badtests):
+            raise ValueError('Test(s) <%s> requested but not available in Autotest' % (",".join(badtests)))
+
+        if scratchNeeded:
+            # Find out whether there are unmounted scratch devices available
+            deviceList = check_output("sudo" + " fdisk -l 2>/dev/null | egrep '^/dev' | cut -f1 -d' '", shell=True).splitlines()
+            # get the base device for each by stripping numerics off the end
+            baseDeviceList = []
+            for dev in deviceList:
+                baseDeviceList.append(dev.rstrip('0123456789'))
+
+            mountedList =  check_output("cat" + " /proc/mounts | egrep '^/dev' | cut -f1 -d' '", shell=True).splitlines()
+            print("Mounted list:", mountedList)
+            baseMountedList = []
+            for dev in mountedList:
+                devpath = dev.rstrip('0123456789')
+                print("Found mounted Device %s" % devpath)
+                baseMountedList.append(devpath)
+
+            scratchPartitions = []
+            for dev in baseDeviceList:
+                if dev not in baseMountedList:
+                    print("%s: Found unmounted partition %s, adding to list of scratch devices" % (argv[0], dev))
+                    scratchPartitions.append(dev)
+
+            # If we don't have any available devices, that's an error
+            if not len(scratchPartitions):
+                raise ValueError('Tests require a scratch disk device, but none present')
+    
+            # we show a preference for the /dev/xxb device
+            for dev in scratchPartitions:
+                if dev[-1] == 'b':
+                    envVars['SCRATCH_DRIVE'] = dev
+            if 'SCRATCH_DRIVE' not in envVars:
+                # take the first one
+                envVars['SCRATCH_DRIVE'] = scratchPartitions[0]
+
+            # a hack for xfstests
+            testDependencies['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] =  envVars['SCRATCH_DRIVE'] + '1'
+            testDependencies['xfstests']['atargs']['UBUNTU_SCRATCH_PARTITION'] =  envVars['SCRATCH_DRIVE'] + '2'
+
+        # write the setup script
+        with open('./presetup', 'w') as f:
+            for atname in autotestToRun:
+                if atname in testDependencies:
+                    # handle package dependencies
+                    tdeps = testDependencies[atname]
+                    if 'packages' in tdeps:
+                        f.write('sudo apt-get install -y ')
+                        for pkg in tdeps['packages']:
+                            f.write('%s ' % pkg)
+                        f.write('\n')
+                    # Run any test-specific command lines
+                    if 'command' in tdeps:
+                        f.write('%s ' % tdeps['command'])
+                        f.write('\n')
+    
+            # Write out environment variables
+            for key, value in envVars.iteritems():
+                print("Writing environment variable %s = %s" % (key, value))
+                f.write('set %s=%s\n' % (key, value))
+
+            # Write out the scratch drive partitioning
+            if scratchNeeded:
+                f.write("# partition the second drive for use with xfstests\n")
+                f.write("#\n")
+                f.write("sudo parted $SCRATCH_DRIVE print\n")
+                f.write("sudo parted $SCRATCH_DRIVE rm -s 1\n")
+                f.write("sudo parted $SCRATCH_DRIVE rm -s 2\n")
+                f.write("sudo parted $SCRATCH_DRIVE mklabel -s gpt\n")
+                f.write("sudo parted $SCRATCH_DRIVE mkpart -s p1 ext4 1MiB 1000MiB\n")
+                f.write("sudo parted $SCRATCH_DRIVE mkpart -s p2 ext4 1001MiB 2000MiB\n")
+                f.write("sudo parted $SCRATCH_DRIVE print\n")
+
+        # We need the series name for this machine (running the test)
+        info = check_output("lsb_release" + " -a", shell=True).splitlines()
+        releaseName = None
+        for line in info:
+            parts = line.split(":")
+            if parts[0] == "Codename":
+                releaseName = parts[1].strip()
+                print("Release Name is %s" % releaseName)
+                break
+
+        #
+        # Figure out which control files to use for each test
+        # We look for control.ubuntu.<series>, then control.ubuntu, then control
+        ctrlFiles = {}
+        for testname in autotestToRun:
+            print("Determining correct control file for test: %s" % testname)
+            existingControlFiles = listdir('autotest/client/tests/%s/' % testname)
+            print("Selecting from these available control files:")
+            for fn in existingControlFiles:
+                print("  %s" % fn)
+            if ("control.ubuntu.%s" % releaseName) in existingControlFiles:
+                controlFile = "control.ubuntu.%s" % releaseName
+            elif "control.ubuntu" in existingControlFiles:
+                controlFile = "control.ubuntu"
+            else:
+                controlFile = "control"
+            print("Selected control file: %s" % controlFile)
+            ctrlFiles[testname] = controlFile
+        
+
+        # Now write out the test script
+        with open('./run-tests', 'w') as f:
+            f.write("""
+#!/bin/sh
+
+# run-tests
+#
+# This shell script runs the autotest testcase that is specified on the
+# command line. It gethers the autotest results and gets them back to
+# the jenkins server.
+#
+
+set +x
+
+if [ -z "$JENKINS_SERVER" ]; then
+    JENKINS_SERVER=kernel-jenkins
+fi
+CONTROL_FILE=control
+AUTOTEST_TEST=_bogus_
+
+echo ===============
+uname -a
+echo ===============
+set -x
+
+# Now run the tests
+
+""")
+            for testname in autotestToRun:
+                f.write('sudo autotest/client/bin/autotest')
+                try:
+                    args = testDependencies[testname]['atargs']
+                    print "args =", args
+                    f.write(' --args="')
+                    for key, value in args.iteritems():
+                        f.write('%s=%s ' % (key, value))
+                    f.write('"')
+
+                except KeyError:
+                    print('KeyError!!!!!')
+                    pass
+                f.write(' autotest/client/tests/%s/%s\n' % (testname, ctrlFiles[testname]))
+
+        debug('Leave: main')
+        exit(retval)
+
+if __name__ == '__main__':
+    if getenv('DEBUG'):
+        LOGLEVEL = DEBUG
+    else:
+        LOGLEVEL = WARNING
+    basicConfig(level=LOGLEVEL, format="%(levelname)s - %(message)s")
+    app = ExpandTests()
+    app.main()
+
+# vi:set ts=4 sw=4 expandtab:
+

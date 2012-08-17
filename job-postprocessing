@@ -1,27 +1,10 @@
 #!/bin/sh
 
-# job-autotest
+# job-postprocessing
 #
-# This shell script runs the autotest testcase that is specified on the
-# command line. It gethers the autotest results and gets them back to
+# This shell script does any benchmark processing, gathers the autotest results and gets them back to
 # the jenkins server.
 #
-
-set +x
-
-if [ -z "$JENKINS_SERVER" ]; then
-    JENKINS_SERVER=kernel-jenkins
-fi
-echo ===============
-uname -a
-echo ===============
-set -x
-
-CDIR="`dirname $0`"
-
-# Run the tests
-#
-. $CDIR/job-autotest-insert
 
 #
 # For benchmarks, process the results and send them for archiving
@@ -29,7 +12,7 @@ CDIR="`dirname $0`"
 if [ "$HAS_METRICS" = "true" ]; then
     pwd
     autotest/client/tools/process_metrics.py | sudo tee autotest/client/results/$BUILD_TAG-$BUILD_ID.json > /dev/null
-    scp autotest/client/results/$BUILD_TAG-$BUILD_ID.json $JENKINS_SERVER:$JENKINS_HOME/metrics/benchmarking/
+    scp autotest/client/results/$BUILD_TAG-$BUILD_ID.json $JENKINS_SERVER:$JENKINS_HOME/metrics/
 fi
 
 # If this test is being run as part of a larger set of tests where all the

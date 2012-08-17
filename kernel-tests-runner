@@ -8,22 +8,18 @@
 
 CDIR="`dirname $0`"
 
-# All the tests that use the standard "control" file.
-#
-if [ -z "$TESTS_CONTROL" ]; then
-    TESTS_CONTROL=" "
-    TESTS_CONTROL="$TESTS_CONTROL qrt"
-    TESTS_CONTROL="$TESTS_CONTROL ecryptfs"
-    TESTS_CONTROL="$TESTS_CONTROL stress"
-fi
+# Call python script - which does:
+#    Read test (and collections) names from env KERNEL_TEST_LIST
+#    Expand any test collections
+#    Make tests to see which control files should be run
+#    Create a batch file containing setup
+#    Create a batch file setting environment variables for tests to run
+./$CDIR/kernel-test-expander
 
-# All the tests that use the non-standard "control.ubuntu" file.
-#
-if [ -z "$TESTS_CONTROL_UBUNTU" ]; then
-    TESTS_CONTROL_UBUNTU=" "
-    TESTS_CONTROL_UBUNTU="$TESTS_CONTROL_UBUNTU xfstests"
-fi
+# run presetup, which was created by kernel-test-expander
+. ./presetup
 
+# WORKSPACE may be passed in from the top-level jenkins job
 if [ -z "$WORKSPACE" ]; then
     WORKSPACE=/tmp/workspace
     mkdir -p $WORKSPACE
@@ -39,7 +35,14 @@ for TEST in $TESTS_CONTROL; do
     TEST_NAME=$TEST AGGREGATE_RESULTS=true AGGREGATE_RESULTS_DIR=$WORKSPACE $CDIR/job-autotest -c control $TEST
 done
 
-for TEST in $TESTS_CONTROL_UBUNTU; do
+# run run-tests, which was created by kernel-test-expander
+. ./run-tests
+
+# process metrics, etc
+. $CDIR/job-postprocessing
+
+for TEST in $TEST_INFO; do
+    TESTNAME
     TEST_NAME=$TEST AGGREGATE_RESULTS=true AGGREGATE_RESULTS_DIR=$WORKSPACE $CDIR/job-autotest -c control.ubuntu $TEST
 done
 
