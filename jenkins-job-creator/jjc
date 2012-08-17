@@ -131,7 +131,6 @@ class SutJobsFactory():
         self.cfg = args
         server_url = self.cfg.jenkins_url
         self.jenkins = Jenkins(server_url)
-        print(args.hw)
 
     # load_template
     #
