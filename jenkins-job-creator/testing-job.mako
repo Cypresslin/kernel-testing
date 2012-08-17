@@ -34,7 +34,7 @@ rsync -arv -e "ssh -o StrictHostKeyChecking=no" ${data.hw['jenkins server']}:ker
 #
 export KERNEL_TEAM_JOB=&quot;true&quot;
 
-#export TESTS_CONTROL="stress"
+export TESTS_CONTROL=" "
 #export TESTS_CONTROL_UBUNTU=" "
 
 # Make sure we have all the packages installed that we are going to
