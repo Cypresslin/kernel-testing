@@ -41,11 +41,6 @@ done
 # process metrics, etc
 . $CDIR/job-postprocessing
 
-for TEST in $TEST_INFO; do
-    TESTNAME
-    TEST_NAME=$TEST AGGREGATE_RESULTS=true AGGREGATE_RESULTS_DIR=$WORKSPACE $CDIR/job-autotest -c control.ubuntu $TEST
-done
-
 # Stitch all the individual test results files together.
 #
 autotest/client/tools/glue_testsuites $WORKSPACE/*.xml > $WORKSPACE/kernel-results.xml
