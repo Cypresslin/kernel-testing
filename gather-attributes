@@ -11,8 +11,8 @@ import platform
 import re
 from  subprocess                        import Popen, PIPE
 from datetime                           import datetime
+from argparse                           import ArgumentParser
 
-from lib.cmdline                        import Cmdline, CmdlineError
 from lib.dbg                            import Dbg
 from lib.utils                          import dump, stdo, date_to_string
 
@@ -70,6 +70,16 @@ class Gather():
                 line = f.readline()
         return retval
 
+    def virt_host_kernel_version(self, vhost):
+        retval = ''
+        p = Popen(['ssh', vhost, 'uname', '-vr'], stdout=PIPE, stderr=PIPE, close_fds=True)
+        results = p.communicate()[0].strip().replace('\n', ' ')
+        if results is not None:
+            m = re.search('(\d+.\d+.\d+-\d+-).* #(\d+)-Ubuntu.*', results)
+            if m:
+                retval = '%s%s' % (m.group(1), m.group(2))
+        return retval
+
     # main
     #
     def main(self):
@@ -110,6 +120,12 @@ class Gather():
             data['platform']['hostname'] = platform.node()
 
             data['platform']['hardware'] = self.kind_of_hardware()
+            if data['platform']['hardware'] == 'virtual':
+                if self.cfg.vh_name != '':
+                    data['virt host'] = {
+                        'kernel version' : self.virt_host_kernel_version(self.cfg.vh_name),
+                        'name' : self.cfg.vh_name,
+                    }
 
             data['kernel'] = self.kernel_version()
             data['distro-release'] = self.distro_release()
@@ -132,15 +148,13 @@ if __name__ == '__main__':
     defaults = {}
     defaults['app_name'] = argv[0]
 
-    # The cmdline processing is done here partially so the debug options
-    # can be processed right away.
-    #
-    cmdline = Cmdline()
-    try:
-        app = Gather(cmdline.process(argv, defaults))
-        app.main()
-    except CmdlineError as e:
-        cmdline.error(e.msg, defaults)
+    parser = ArgumentParser()
+
+    parser.add_argument('--vh-name',      required=False, default='', help='If the SUT is a virtual client, a virtual host is needed. This is the name of that virtual host.')
+
+    args = parser.parse_args()
+    app = Gather(args)
+    app.main()
 
 # vi:set ts=4 sw=4 expandtab:
 
