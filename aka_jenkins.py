@@ -41,7 +41,7 @@ def load_cfg(file_name):
 #
 class Server():
     cfg = load_cfg('aka.cfg')
-    jenkins = Jenkins(cfg.server_url)
+    jenkins = Jenkins(cfg['server_url'])
 
     # info
     #
