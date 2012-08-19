@@ -30,7 +30,7 @@ if [ -z "$WORKSPACE" ]; then
 fi
 
 echo ">>>  test-attributes begin"
-./$CDIR/gather-attributes | tee test-attributes.json
+./$CDIR/gather-attributes $VIRTUAL_HOST_NAME | tee test-attributes.json
 echo ">>>  test-attributes end"
 
 set +e # We want _all_ the tests to run even if one of them errors out.
