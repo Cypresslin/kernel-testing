@@ -34,9 +34,6 @@ rsync -arv -e "ssh -o StrictHostKeyChecking=no" ${data.hw['jenkins server']}:ker
 #
 export KERNEL_TEAM_JOB=&quot;true&quot;
 
-export TESTS_CONTROL=" "
-#export TESTS_CONTROL_UBUNTU=" "
-
 # Make sure we have all the packages installed that we are going to
 # need for these tests.
 #
@@ -44,6 +41,9 @@ export TESTS_CONTROL=" "
 
 # Now run all the tests.
 #
+% if data.sut == 'virtual':
+export VIRTUAL_HOST_NAME=--vh-name=${data.vh_name}
+% endif
 /bin/sh kernel-testing/kernel-tests-runner
             </command>
         </hudson.tasks.Shell>
