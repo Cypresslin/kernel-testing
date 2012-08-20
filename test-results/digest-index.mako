@@ -69,13 +69,14 @@
                                                             <th width="100">Kernel</th>
                                                             <th align="left" width="100">&nbsp; Host &nbsp;</th>
                                                             <th align="left" width="40">&nbsp; Arch &nbsp;</th>
+                                                            <th align="center" width="40">&nbsp; HW &nbsp;</th>
                                                             <th align="center" width="150">Date</th>
 
-                                                            <th align="center" width="40">Ran</th>
-                                                            <th align="center" width="40">Passed</th>
-                                                            <th align="center" width="40">Failed</th>
+                                                            <th align="center" width="45">Ran</th>
+                                                            <th align="center" width="45">Passed</th>
+                                                            <th align="center" width="45">Failed</th>
 
-                                                            <th align="center"><!--Benchmarks--></th>
+                                                            <th align="left">Notes</th>
                                                         </tr>
                                                         % for kernel_version in data[ubuntu_series]:
                                                         <tr>
@@ -83,6 +84,7 @@
                                                         </tr>
                                                             % for record in data[ubuntu_series][kernel_version]:
                                                             <%
+                                                                notes = ''
                                                                 total = 0
                                                                 passed = 0
                                                                 failed = 0
@@ -92,10 +94,26 @@
                                                                     failed += suite['tests failed']
 
                                                                 link = "http://kernel.ubuntu.com/beta/testing/test-results/%s.%s/results-index.html" % (record['attributes']['environ']['NODE_NAME'], record['attributes']['environ']['BUILD_ID'])
+
+                                                                hardware = 'real'
+                                                                if 'hardware' in record['attributes']['platform']:
+                                                                    hardware = record['attributes']['platform']['hardware']
+                                                                    if hardware == 'virtual' and 'virt host' in record['attributes']:
+                                                                        notes += '(virt. host: %s)' % record['attributes']['virt host']['kernel version']
+
+                                                                # Trim the 'bits' off
+                                                                arch = record['attributes']['platform']['arch']['bits'].replace('bit', '')
                                                             %>
                                                             <tr>
                                                                 <td>&nbsp;</td>
-                                                                <td><a href="test-results/${ record['attributes']['environ']['NODE_NAME'] }.html">${ record['attributes']['environ']['NODE_NAME'] }</a></td><td>${ record['attributes']['platform']['arch']['bits'] } </td> <td align="center">${ record['attributes']['timestamp'] }</td> <td align="center"><a href="${ link }">${ total }</a></td> <td align="center"><a href="${ link }">${ passed }</a></td> <td align="center"><a href="${ link }">${ failed }</a></td><td></td>
+                                                                <td><a href="test-results/${ record['attributes']['environ']['NODE_NAME'] }.html">${ record['attributes']['environ']['NODE_NAME'] }</a></td>
+                                                                <td align="center">${ arch } </td>
+                                                                <td align="center">${hardware}</td>
+                                                                <td align="center">${ record['attributes']['timestamp'] }</td>
+                                                                <td align="center"><a href="${ link }">${ total }</a></td>
+                                                                <td align="center"><a href="${ link }">${ passed }</a></td>
+                                                                <td align="center"><a href="${ link }">${ failed }</a></td>
+                                                                <td>${ notes }</td>
                                                             </tr>
                                                             % endfor
                                                         % endfor
