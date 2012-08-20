@@ -55,24 +55,29 @@ set +e # Continue if the node doesn&apos;t exist
 # Fix .ssh config on slave so it can copy from kernel-jenkins
 #
 scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh $TARGET_HOST:
-            </command>
-        </hudson.tasks.Shell>
 
+# Enable the proposed pocket.
+#
+ssh -o StrictHostKeyChecking=no ${data.sut_name} 'echo deb http://us.archive.ubuntu.com/ubuntu/ ${data.sut_series}-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list'
+ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get update
+ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get --yes dist-upgrade
+
+# If we are testing the lts-hwe package, get it installed and then reboot.
+#
 % if data.sut_hwe:
-        <hudson.tasks.Shell>
-            <command>
 % if data.sut_hwe_series == 'quantal':
     scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing/jenkins-job-creator/lts-hwe-development-install ${data.sut_name}:
     ssh -o StrictHostKeyChecking=no ${data.sut_name} /bin/sh lts-hwe-development-install
 % else:
     ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get update
     ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get install --yes %{data.sut_hwe_package}
-    ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo reboot
 %endif
+% endif
+
+ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo reboot
 /var/lib/jenkins/kernel-testing/wait-for-system ${data.sut_name}
             </command>
         </hudson.tasks.Shell>
-% endif
 
 
 % if data.sut_series in ['lucid']:
