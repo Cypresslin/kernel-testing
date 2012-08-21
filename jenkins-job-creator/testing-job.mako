@@ -37,7 +37,7 @@ export KERNEL_TEAM_JOB=&quot;true&quot;
 # Make sure we have all the packages installed that we are going to
 # need for these tests.
 #
-/bin/sh kernel-testing/pre-testing-setup
+/bin/bash kernel-testing/pre-testing-setup
 
 # Now run all the tests.
 #

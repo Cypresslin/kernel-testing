@@ -34,7 +34,7 @@ rsync -arv -e "ssh -o StrictHostKeyChecking=no" ${data.hw['jenkins server']}:ker
 % if data.sut == 'virtual':
 export VIRTUAL_HOST_NAME=--vh-name=${data.vh_name}
 % endif
-/bin/sh kernel-testing/kernel-tests-runner
+/bin/bash kernel-testing/kernel-tests-runner
             </command>
         </hudson.tasks.Shell>
     </builders>
