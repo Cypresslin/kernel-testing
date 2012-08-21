@@ -56,7 +56,7 @@ class ExpandTests():
         if tlist:
             print('%s: Tests requested: %s' % (argv[0], tlist))
         else:
-            raise ValueError("Environment variable KERNEL_TEST_LIST not set!")
+            tlist = 'default'
 
         # Now expand this list to a unique list of autotest test names
         autotestToRun = []
