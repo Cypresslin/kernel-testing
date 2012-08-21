@@ -5,13 +5,13 @@
 # LauncPad bug id and the value is the source package of interest.
 #
 
-from sys                                import argv
+from sys                                import argv, modules
 from os                                 import environ, path
 import platform
 import re
 from  subprocess                        import Popen, PIPE
 from datetime                           import datetime
-from argparse                           import ArgumentParser
+from getopt                             import getopt, GetoptError
 
 from lib.dbg                            import Dbg
 from lib.utils                          import dump, stdo, date_to_string
@@ -148,13 +148,25 @@ if __name__ == '__main__':
     defaults = {}
     defaults['app_name'] = argv[0]
 
-    parser = ArgumentParser()
+    me = modules[__name__]
+    try:
+        optsShort = ''
+        optsLong  = ['help', 'vh-name=']
+        opts, args = getopt(argv[1:], optsShort, optsLong)
+        for opt, val in opts:
+            if (opt == '--help'):
+                print(" Usage: gather-attributes [--vh-name=<virtual-host-name>]\n")
+                raise Exit()
 
-    parser.add_argument('--vh-name',      required=False, default='', help='If the SUT is a virtual client, a virtual host is needed. This is the name of that virtual host.')
+            elif opt in ('--vh-name'):
+                setattr(me, 'vh_name', val)
 
-    args = parser.parse_args()
-    app = Gather(args)
-    app.main()
+        app = Gather(me)
+        app.main()
+
+    except Exit:
+        pass
+
 
 # vi:set ts=4 sw=4 expandtab:
 
