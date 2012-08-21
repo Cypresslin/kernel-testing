@@ -7,11 +7,6 @@
 from os                                 import getenv, listdir
 from sys                                import exit, argv
 from subprocess                         import check_output
-from logging                            import debug, error, basicConfig, DEBUG, WARNING
-from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
-#from lib.jenkins                        import JenkinsException
-
-#from aka_jenkins                        import Server, Nodes, Jobs
 
 # Test dependencies are organized by autotest test name. They include:
 #
@@ -22,18 +17,18 @@ from argparse                           import ArgumentParser, RawDescriptionHel
 # 'atargs' : Autotest arguments to be passed to the control file. Can include expansion of shell variables
 #
 testDependencies = {
-'qrt' : {
-    'packages' : ['build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev'],
-    },
-'ecryptfs' : {
-    'packages' : ['libglib2.0-dev', 'intltool', 'keyutils', 'libkeyutils-dev', 'libpam0g-dev', 'libnss3-dev', 'libtool', 'acl', 'xfsprogs', 'btrfs-tools'],
-    },
-'xfstests' : {
-    'packages' : ['uuid-dev', 'xfslibs-dev', 'xfsdump', 'autoconf', 'kpartx', 'libtool', 'python-xattr', 'libacl1-dev', 'libaio-dev', 'quota', 'bc', 'libdm0-dev', 'btrfs-tools', 'attr'],
-    'command' : 'sudo mkdir -p /media/xfsmount ; sudo adduser --quiet --disabled-password -gecos "XFS test user,,," fsgqa || true',
-    'atargs' : {}, # this gets filled in later, it's a hack
-    'scratch' : True,
-    }
+    'qrt' : {
+        'packages' : ['build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev'],
+        },
+    'ecryptfs' : {
+        'packages' : ['libglib2.0-dev', 'intltool', 'keyutils', 'libkeyutils-dev', 'libpam0g-dev', 'libnss3-dev', 'libtool', 'acl', 'xfsprogs', 'btrfs-tools'],
+        },
+    'xfstests' : {
+        'packages' : ['uuid-dev', 'xfslibs-dev', 'xfsdump', 'autoconf', 'kpartx', 'libtool', 'python-xattr', 'libacl1-dev', 'libaio-dev', 'quota', 'bc', 'libdm0-dev', 'btrfs-tools', 'attr'],
+        'command' : 'sudo mkdir -p /media/xfsmount ; sudo adduser --quiet --disabled-password -gecos "XFS test user,,," fsgqa || true',
+        'atargs' : {}, # this gets filled in later, it's a hack
+        'scratch' : True,
+        }
 }
 
 # Test Collections may be defined, and will run the list of autotest tests in them
@@ -52,7 +47,6 @@ class ExpandTests():
     # main
     #
     def main(self):
-        debug('Enter: main')
         retval = 0
         scratchNeeded = False
         envVars = {}
@@ -120,7 +114,7 @@ class ExpandTests():
             # If we don't have any available devices, that's an error
             if not len(scratchPartitions):
                 raise ValueError('Tests require a scratch disk device, but none present')
-    
+
             # we show a preference for the /dev/xxb device
             for dev in scratchPartitions:
                 if dev[-1] == 'b':
@@ -148,7 +142,7 @@ class ExpandTests():
                     if 'command' in tdeps:
                         f.write('%s ' % tdeps['command'])
                         f.write('\n')
-    
+
             # Write out environment variables
             for key, value in envVars.iteritems():
                 print("Writing environment variable %s = %s" % (key, value))
@@ -194,7 +188,6 @@ class ExpandTests():
                 controlFile = "control"
             print("Selected control file: %s" % controlFile)
             ctrlFiles[testname] = controlFile
-        
 
         # Now write out the test script
         with open('./run-tests', 'w') as f:
@@ -239,15 +232,9 @@ set -x
                     pass
                 f.write(' autotest/client/tests/%s/%s\n' % (testname, ctrlFiles[testname]))
 
-        debug('Leave: main')
         exit(retval)
 
 if __name__ == '__main__':
-    if getenv('DEBUG'):
-        LOGLEVEL = DEBUG
-    else:
-        LOGLEVEL = WARNING
-    basicConfig(level=LOGLEVEL, format="%(levelname)s - %(message)s")
     app = ExpandTests()
     app.main()
 
