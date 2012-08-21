@@ -15,8 +15,6 @@ from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
 from lib.jenkins                        import Jenkins, JenkinsException, LAUNCHER_SSH, LAUNCHER_COMMAND, LAUNCHER_WINDOWS_SERVICE
 
-from lib.ubuntu                         import Ubuntu
-
 # load_cfg
 #
 def load_cfg(file_name):
@@ -136,19 +134,35 @@ class SutJobsFactory():
     #
     def load_template(self, file_name):
         """
-        Load the indicated mako template file. Return a mako Template()
-        instance.
+        Load the template file.
         """
         retval = None
-        with open(file_name, 'r') as f:
-            retval = Template(f.read())
+
+        if file_name[0] == '/' or file_name[0] == '.':
+            # The full path is specified. Use the name as is.
+            #
+            fid = file_name
+        else:
+            # Find it ...
+            #
+            fid = file_name
+            if not path.exists(fid): # Current directory
+                fid = path.join(path.dirname(argv[0]), file_name)
+                if not path.exists(fid):
+                    fid = None
+
+        if fid is not None:
+            with open(fid, 'r') as f:
+                retval = f.read()
+        else:
+            print("Error: Failed to find the template file.")
 
         return retval
 
-    # create_test_job
+    # create_job
     #
     def create_job(self, job_name, template_name, cfg):
-        template = self.load_template(path.join(path.dirname(argv[0]), template_name))
+        template = self.load_template(template_name)
         job_xml = template.render(data=cfg)
 
         try:
@@ -305,6 +319,7 @@ if __name__ == '__main__':
     parser.add_argument('--jenkins-url',  required=False, default='http://kernel-jenkins:8080', help='URL to the jenkins host.')
     parser.add_argument('--no-autostart', required=False, action='store_true', default=False, help='Create the jenkins jobs but do not start them.')
     parser.add_argument('--no-test',      required=False, action='store_true', default=False, help='Don\'t create the test job. Sometimes you just want the job(s) that do the provisioning.')
+    parser.add_argument('--tt',           required=False, default='testing-job.mako', help='The name of the test-job template. (If you don\'t know what this is you shouldn\'t be specifying it.)')
 
     args = parser.parse_args()
 
