@@ -146,7 +146,7 @@ class ExpandTests():
             # Write out environment variables
             for key, value in envVars.iteritems():
                 print("Writing environment variable %s = %s" % (key, value))
-                f.write('set %s=%s\n' % (key, value))
+                f.write('export %s=%s\n' % (key, value))
 
             # Write out the scratch drive partitioning
             if scratchNeeded:
