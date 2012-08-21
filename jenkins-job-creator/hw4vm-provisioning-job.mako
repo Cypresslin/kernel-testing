@@ -58,30 +58,44 @@ set +e # Continue if the node doesn&apos;t exist
 # Fix .ssh config on slave so it can copy from kernel-jenkins
 #
 scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh $TARGET_HOST:
-            </command>
-        </hudson.tasks.Shell>
-        <hudson.tasks.Shell>
-            <command>
+
 # Build the follow on job(s) waiting for them to finish.
 #
 java -jar /run/jenkins/war/WEB-INF/jenkins-cli.jar -s ${data.jenkins_url} build -s ${data.vm_client_provisioning_job_name}
-            </command>
-        </hudson.tasks.Shell>
+
+# Enable the proposed pocket.
+#
+ssh -o StrictHostKeyChecking=no ${data.sut_name} 'echo deb http://us.archive.ubuntu.com/ubuntu/ ${data.sut_series}-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list'
+ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get update
+ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get --yes dist-upgrade
+
+# If we are testing the lts-hwe package, get it installed and then reboot.
+#
+% if data.sut_hwe:
+% if data.sut_hwe_series == 'quantal':
+    scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing/jenkins-job-creator/lts-hwe-development-install ${data.sut_name}:
+    ssh -o StrictHostKeyChecking=no ${data.sut_name} /bin/sh lts-hwe-development-install
+% else:
+    ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get update
+    ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get install --yes %{data.sut_hwe_package}
+%endif
+% endif
+
+ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo reboot
+/var/lib/jenkins/kernel-testing/wait-for-system ${data.sut_name}
+
+
 % if data.sut_series in ['lucid']:
-        <hudson.tasks.Shell>
-            <command>
+
 # On Lucid series installs we have to install the jdk ourselves. There is
 # no jenkins-slave package.
 #
 scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing/jenkins-job-creator/manual-slave-install ${data.sut_name}:
 ssh -o StrictHostKeyChecking=no ${data.sut_name} /bin/sh manual-slave-install
-            </command>
-        </hudson.tasks.Shell>
+
 % endif
 
 % if not data.no_test:
-        <hudson.tasks.Shell>
-            <command>
 set +e # No matter what, try to collect the results
 
 # Build the follow on job(s) waiting for them to finish.
@@ -91,9 +105,9 @@ java -jar /run/jenkins/war/WEB-INF/jenkins-cli.jar -s ${data.jenkins_url} build 
 # Process the results
 #
 /var/lib/jenkins/kernel-testing/test-results/ingest $HOME/jobs/${data.testing_job_name}/builds/1
+% endif
             </command>
         </hudson.tasks.Shell>
-% endif
 
     </builders>
     <publishers/>
