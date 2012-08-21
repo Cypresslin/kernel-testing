@@ -153,7 +153,7 @@ class SutJobsFactory():
 
         if fid is not None:
             with open(fid, 'r') as f:
-                retval = f.read()
+                retval = Template(f.read())
         else:
             print("Error: Failed to find the template file.")
 
@@ -190,7 +190,7 @@ class SutJobsFactory():
             cfg.sut_series = self.kmap['series'][cfg.sut_series]['hwe series']
 
         if not cfg.no_test:
-            self.create_job(cfg.testing_job_name,      'testing-job.mako',         cfg)
+            self.create_job(cfg.testing_job_name, cfg.tt, cfg)
         self.create_job(cfg.provisioning_job_name, 'hw-provisioning-job.mako', cfg)
 
         if not cfg.no_autostart:
@@ -231,7 +231,7 @@ class SutJobsFactory():
         setattr(cfg, 'sut_server_distro_decoration', self.kmap['series'][cfg.sut_series]['server distro decoration'])
 
         if not cfg.no_test:
-            self.create_job(cfg.testing_job_name, 'testing-job.mako', cfg)
+            self.create_job(cfg.testing_job_name, cfg.tt, cfg)
         self.create_job(cfg.vh_provisioning_job_name, 'hw4vm-provisioning-job.mako', cfg)
         self.create_job(cfg.vm_client_provisioning_job_name, 'vm-client-provisioning-job.mako', cfg)
 

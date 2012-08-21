@@ -27,17 +27,7 @@ sudo rm -rf *
 # Fetch the relevant test scripts from the jenkins server
 #
 rsync -arv -e "ssh -o StrictHostKeyChecking=no" ${data.hw['jenkins server']}:autotest/ ./autotest/
-rsync -arv -e "ssh -o StrictHostKeyChecking=no" ${data.hw['jenkins server']}:kernel-testing .
-
-# This variable is unique to the jobs that the kernel team runs on their
-# jenkins server.
-#
-export KERNEL_TEAM_JOB=&quot;true&quot;
-
-# Make sure we have all the packages installed that we are going to
-# need for these tests.
-#
-/bin/sh kernel-testing/pre-testing-setup
+rsync -arv -e "ssh -o StrictHostKeyChecking=no" ${data.hw['jenkins server']}:kernel-testing-steve/ ./kernel-testing/
 
 # Now run all the tests.
 #
