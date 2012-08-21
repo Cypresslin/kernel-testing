@@ -34,7 +34,7 @@ testDependencies = {
 # Test Collections may be defined, and will run the list of autotest tests in them
 #
 testCollections = {
-    'default' : ['ecryptfs', 'qrt', 'stress'],
+    'default' : ['ecryptfs', 'qrt', 'stress', 'xfstests'],
     'benchmarks' : ['dbench', 'compilebench', 'bonnie'],
 }
 
