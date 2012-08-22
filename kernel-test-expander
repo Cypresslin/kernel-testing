@@ -6,7 +6,7 @@
 
 from os                                 import getenv, listdir
 from sys                                import exit, argv
-from subprocess                         import check_output
+from lib.utils                          import run_command
 
 # Test dependencies are organized by autotest test name. They include:
 #
@@ -91,13 +91,13 @@ class ExpandTests():
 
         if scratchNeeded:
             # Find out whether there are unmounted scratch devices available
-            deviceList = check_output("sudo" + " fdisk -l 2>/dev/null | egrep '^/dev' | cut -f1 -d' '", shell=True).splitlines()
+            status, deviceList = run_command("sudo fdisk -l 2>/dev/null | egrep '^/dev' | cut -f1 -d' '")
             # get the base device for each by stripping numerics off the end
             baseDeviceList = []
             for dev in deviceList:
                 baseDeviceList.append(dev.rstrip('0123456789'))
 
-            mountedList =  check_output("cat" + " /proc/mounts | egrep '^/dev' | cut -f1 -d' '", shell=True).splitlines()
+            status, mountedList =  run_command("cat /proc/mounts | egrep '^/dev' | cut -f1 -d' '")
             print("Mounted list:", mountedList)
             baseMountedList = []
             for dev in mountedList:
@@ -161,7 +161,7 @@ class ExpandTests():
                 f.write("sudo parted $SCRATCH_DRIVE print\n")
 
         # We need the series name for this machine (running the test)
-        info = check_output("lsb_release" + " -a", shell=True).splitlines()
+        status, info = run_command("lsb_release -a")
         releaseName = None
         for line in info:
             parts = line.split(":")
