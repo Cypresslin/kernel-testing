@@ -2,11 +2,11 @@
 #
 
 from sys                                import stdout, stderr
+from commands                           import getstatusoutput
 from os                                 import path
 from datetime                           import datetime
-import json
-
 from dbg                                import Dbg
+import json
 
 # Exit
 #
@@ -16,6 +16,26 @@ class Exit():
     exception is raised.
     """
     pass
+
+# run_command
+#
+def run_command(cmd, dry_run=False):
+        """
+        Run a command in the shell, returning status and the output.
+        prints a message if there's an error, and raises an exception.
+        """
+        Dbg.enter("run_command")
+        status = ""
+        result = ""
+        if not dry_run:
+            status, result = getstatusoutput(cmd)
+            Dbg.progress("     cmd: '%s'" % cmd)
+            Dbg.progress("  status: '%d'" % status)
+            Dbg.progress("  result: '%s'" % result)
+        else:
+            Dbg.progress("run_command: '%s'" % cmd)
+
+        return status, result.split('\n')
 
 # FileDoesntExist
 #
