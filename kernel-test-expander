@@ -227,8 +227,8 @@ set -x
                         f.write('%s=%s ' % (key, value))
                     f.write('"')
 
-                except KeyError:
-                    print('KeyError!!!!!')
+                except KeyError as e:
+                    print('\n*** WARNING ***\n    The key "%s" was not found. (KeyError)\n' % (e.message))
                     pass
                 f.write(' autotest/client/tests/%s/%s\n' % (testname, ctrlFiles[testname]))
 
