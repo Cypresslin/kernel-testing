@@ -14,3 +14,19 @@
          first: Look for a <test>/control.<series>
         second: Look for a <test>/control.ubuntu   
        finally: Use the <test>/control
+
+x. Need to add "network connectivity" testing to the mix. I don't
+   think this is something we will want to roll out to QA but it
+   _is_ something we always want to run. So how do we handle a set
+   of tests that just _we_ run? (I think there is already provisions
+   for this in the latest code)
+
+x. The link in the test results page to "vm-*" are invalid. They
+   don't point to a real system.
+
+x. xfstests! There is a whole host of things to do with just this
+   set of tests.
+
+   a) Start testing filesystems other than ext4 again.
+   b) Start running down individual test failures to see if they
+      are real and need to be dealt with.
