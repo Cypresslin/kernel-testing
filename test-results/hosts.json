@@ -15,5 +15,23 @@
         "platform" : "Dell PowerEdge R310",
         "processors": "1 x Intel Xeon X3470; 4 cores; +hyper-threaded (8 effective processors)",
         "memory" : "8GB"
+    },
+
+    "vm-statler" : {
+        "platform" : "Virtual Machine running on <a href=\"statler.html\">statler</a>.",
+        "processors" : "1",
+        "memory" : "1GB"
+    },
+
+    "vm-waldorf" : {
+        "platform" : "Virtual Machine running on <a href=\"waldorf.html\">waldorf</a>.",
+        "processors" : "1",
+        "memory" : "1GB"
+    },
+
+    "vm-rizzo" : {
+        "platform" : "Virtual Machine running on <a href=\"rizzo.html\">rizzo</a>.",
+        "processors" : "1",
+        "memory" : "1GB"
     }
 }
