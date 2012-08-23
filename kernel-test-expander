@@ -36,6 +36,8 @@ testDependencies = {
 testCollections = {
     'default' : ['ecryptfs', 'qrt', 'stress', 'xfstests'],
     'benchmarks' : ['dbench', 'compilebench', 'bonnie'],
+    'kernel' : [''], # This is the set of tests that the kernel team runs. This should
+                     # be a superset of the 'default' tests that QA runs.
 }
 
 # ExpandTests
