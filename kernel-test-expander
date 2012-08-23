@@ -230,7 +230,7 @@ set -x
                     f.write('"')
 
                 except KeyError as e:
-                    print('\n*** WARNING ***\n    The key "%s" was not found. (KeyError)\n' % (e.message))
+                    print('\n*** INFO ***\n    No dependencies found for test "%s".\n' % (e.message))
                     pass
                 f.write(' autotest/client/tests/%s/%s\n' % (testname, ctrlFiles[testname]))
 
