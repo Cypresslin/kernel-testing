@@ -47,7 +47,7 @@ testCollections = {
     # This is the set of tests that the kernel team runs. This should
     # be a superset of the 'default' tests that QA runs.
     #
-    'kernel' : ['iperf'],
+    'kernel' : ['iperf', 'leap_seconds'],
 }
 
 # ExpandTests
