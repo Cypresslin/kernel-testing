@@ -24,6 +24,11 @@ x. Need to add "network connectivity" testing to the mix. I don't
 x. The link in the test results page to "vm-*" are invalid. They
    don't point to a real system.
 
+x. Package dependencies are likely to be series specific. At least
+   in some cases different packages will be required for a given
+   test when run on a particular series. We should have provisions
+   for that. (Maybe it can wait until we have a specific case)
+
 x. xfstests! There is a whole host of things to do with just this
    set of tests.
 
