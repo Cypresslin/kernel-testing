@@ -26,24 +26,22 @@ sudo rm -rf *
 
 # Fetch the relevant test scripts from the jenkins server
 #
-rsync -arv -e "ssh -o StrictHostKeyChecking=no" ${data.hw['jenkins server']}:autotest/ ./autotest/
-rsync -arv -e "ssh -o StrictHostKeyChecking=no" ${data.hw['jenkins server']}:kernel-testing .
+rsync -ar --exclude '.git' -e "ssh -o StrictHostKeyChecking=no" ${data.hw['jenkins server']}:autotest/ ./autotest/
+rsync -ar --exclude '.git' -e "ssh -o StrictHostKeyChecking=no" ${data.hw['jenkins server']}:kernel-testing/ ./kernel-testing/
 
 # This variable is unique to the jobs that the kernel team runs on their
 # jenkins server.
 #
 export KERNEL_TEAM_JOB=&quot;true&quot;
 
-# Make sure we have all the packages installed that we are going to
-# need for these tests.
-#
-/bin/bash kernel-testing/pre-testing-setup
-
 # Now run all the tests.
 #
 % if data.sut == 'virtual':
 export VIRTUAL_HOST_NAME=--vh-name=${data.vh_name}
 % endif
+
+export KERNEL_TEST_LIST="kernel default"
+
 /bin/sh kernel-testing/kernel-tests-runner
             </command>
         </hudson.tasks.Shell>
