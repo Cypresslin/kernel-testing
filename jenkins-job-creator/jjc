@@ -233,7 +233,7 @@ class SutJobsFactory():
         if not cfg.no_test:
             self.create_job(cfg.testing_job_name, cfg.tt, cfg)
         self.create_job(cfg.vh_provisioning_job_name, 'hw4vm-provisioning-job.mako', cfg)
-        self.create_job(cfg.vm_client_provisioning_job_name, 'vm-client-provisioning-job.mako', cfg)
+        self.create_job(cfg.vm_client_provisioning_job_name, cfg.vm_client_template, cfg)
 
         if not cfg.no_autostart:
             self.jenkins.build_job(cfg.vh_provisioning_job_name)
@@ -320,6 +320,7 @@ if __name__ == '__main__':
     parser.add_argument('--no-autostart', required=False, action='store_true', default=False, help='Create the jenkins jobs but do not start them.')
     parser.add_argument('--no-test',      required=False, action='store_true', default=False, help='Don\'t create the test job. Sometimes you just want the job(s) that do the provisioning.')
     parser.add_argument('--tt',           required=False, default='testing-job.mako', help='The name of the test-job template. (If you don\'t know what this is you shouldn\'t be specifying it.)')
+    parser.add_argument('--vm-client-template', required=False, default='vm-client-provisioning-job.mako', help='The name of the template to use for provisioning the virtual-client(s) on the virtual-host. (If you don\'t know what this is you shouldn\'t be specifying it.)')
 
     args = parser.parse_args()
 
