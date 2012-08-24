@@ -11,20 +11,13 @@
 #
 if [ "$HAS_METRICS" = "true" ]; then
     pwd
-    autotest/client/tools/process_metrics.py | sudo tee autotest/client/results/$BUILD_TAG-$BUILD_ID.json > /dev/null
-    scp autotest/client/results/$BUILD_TAG-$BUILD_ID.json $JENKINS_SERVER:$JENKINS_HOME/metrics/
+    autotest/client/tools/process_metrics.py | sudo tee autotest/client/results/$BUILD_TAG-$BUILD_ID-$TEST_NAME.json > /dev/null
+    scp autotest/client/results/$BUILD_TAG-$BUILD_ID-$TEST_NAME.json $JENKINS_SERVER:$JENKINS_HOME/metrics/
 fi
 
-# If this test is being run as part of a larger set of tests where all the
-# results are aggregated together. Do that here.
+# Process the results
 #
-if [ "$AGGREGATE_RESULTS" = "true" ]; then
-    sudo autotest/client/tools/results2junit.py autotest/client/results/default > $AGGREGATE_RESULTS_DIR/autotest-results.$TEST_NAME.xml
-else
-    # Process the results
-    #
-    sudo autotest/client/tools/results2junit.py autotest/client/results/default > $WORKSPACE/autotest-results.$TEST_NAME.xml
-fi
+sudo autotest/client/tools/results2junit.py autotest/client/results/default > $WORKSPACE/autotest-results.$TEST_NAME.xml
 
 # Gather up the files that will be helpful is any of the tests fail.
 #

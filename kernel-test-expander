@@ -230,6 +230,7 @@ set -x
 
 """)
             for testname in autotestToRun:
+                # Run the test
                 f.write('sudo autotest/client/bin/autotest')
                 try:
                     args = testDependencies[testname]['atargs']
@@ -243,7 +244,9 @@ set -x
                     print('\n*** INFO ***\n    No dependencies found for test "%s".\n' % (e.message))
                     pass
                 f.write(' autotest/client/tests/%s/%s\n' % (testname, ctrlFiles[testname]))
-
+                f.write('export TEST_NAME=%s\n' % testname)
+                # And postprocess the results
+                f.write('. $CDIR/job-postprocessing\n')
         exit(retval)
 
 if __name__ == '__main__':

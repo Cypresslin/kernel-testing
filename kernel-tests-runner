@@ -31,15 +31,8 @@ echo ">>>  test-attributes end"
 
 set +e # We want _all_ the tests to run even if one of them errors out.
 
-for TEST in $TESTS_CONTROL; do
-    TEST_NAME=$TEST AGGREGATE_RESULTS=true AGGREGATE_RESULTS_DIR=$WORKSPACE $CDIR/job-autotest -c control $TEST
-done
-
 # run run-tests, which was created by kernel-test-expander
 . ./run-tests
-
-# process metrics, etc
-. $CDIR/job-postprocessing
 
 # Stitch all the individual test results files together.
 #
