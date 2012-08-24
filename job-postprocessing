@@ -11,8 +11,8 @@
 #
 if [ "$HAS_METRICS" = "true" ]; then
     pwd
-    autotest/client/tools/process_metrics.py | sudo tee autotest/client/results/$BUILD_TAG-$BUILD_ID.json > /dev/null
-    scp autotest/client/results/$BUILD_TAG-$BUILD_ID.json $JENKINS_SERVER:$JENKINS_HOME/metrics/
+    autotest/client/tools/process_metrics.py | sudo tee autotest/client/results/$BUILD_TAG-$BUILD_ID-$TEST_NAME.json > /dev/null
+    scp autotest/client/results/$BUILD_TAG-$BUILD_ID-$TEST_NAME.json $JENKINS_SERVER:$JENKINS_HOME/metrics/
 fi
 
 # Process the results
