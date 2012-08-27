@@ -1,8 +1,30 @@
 ubuntu-kernel-tests (0.0.3-1) unstable; urgency=low
 
-  * 
+  * Add standard version and changelog
+  * remove .pyc files from git management
+  * kernel-test-runner: remove the xfstests until we straighten out the drive issue
+  * Merge branch 'master' of zinc.canonical.com:/srv/kernel.ubuntu.com/git/ubuntu/kernel-testing
+  * pre-testing-setup: additional package 'attr' needed for xfs testing
+  * Make metrics filenames more unique
+  * Add ability to pass in lists of tests
+  * remove parameters to process_metrics, no longer needed
+  * job-autotest: chown the results tree to $USER.$USER instead of jenkins.jenkins
+  * job-autotest: chown the results tree to $USER.$USER instead of jenkins.jenkins
+  * job-autotest: Put each jobs results/default in it's own directory tree on the jenkins server
+  * kernel-tests-runner: Added the stress test to the mix
+  * job-autotest: Added code back in to copy the results tree over to the artifacts directory on the jenkins server.
+  * job-autotest: Added check for KERNEL_TEAM_JOB
+  * Added a timestamp to the attributes and generate a 'test-attributes.json' file as well as print to stdout.
+  * kernel-tests-runner: enable the xfstests tests
+  * pre-testing-setup: create the xfstests user
+  * kernel-tests-runner: enable the correct tests
+  * Handle control.ubuntu tests and xfstests pre-testing requirements
+  * kernel-tests-runner: call out to gather the additional information we are interested in
+  * gather*: code to print out data about the host on which the test was run
+  * job-autotest: tar up the results directory tree so there is something to look at when the wheels come off
+  * A set of scripts for use with QA regression testing.
 
- -- Brad Figg <brad.figg@canonical.com>  Mon, 13 Aug 2012 08:15:42 -0700
+ -- Steve Conklin <sconklin@canonical.com>  Mon, 27 Aug 2012 09:52:12 -0600
 
 ubuntu-kernel-tests (0.0.2-1) unstable; urgency=low
 
