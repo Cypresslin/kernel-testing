@@ -1,39 +1,36 @@
-1. Need a way of getting a version of a "release" of these tests.
-    a) We should put a changelog in place and have a way of updating
-       it from the git history. It may be worth it to do this in a
-       "debian" directory so that if someday we produce a package of
-       these tests, that part will be in place.
 
-2. Need to be able to disable the xfstests for systems that only
-   have a single drive.
-    a) Should we first reimplement the kernel-tests-runner so that
-       it just works from a single list of autotest test to run and
-       that for each test we look in the client tests directory for
-       the right control file?
+Autotest
+--------
 
-         first: Look for a <test>/control.<series>
-        second: Look for a <test>/control.ubuntu   
-       finally: Use the <test>/control
+ * Rebase to a newer upstream autotest version.
 
-x. Need to add "network connectivity" testing to the mix. I don't
-   think this is something we will want to roll out to QA but it
-   _is_ something we always want to run. So how do we handle a set
-   of tests that just _we_ run? (I think there is already provisions
-   for this in the latest code)
+ * Update the snapshot of QRT.
 
-   a) sysstat - package dependency
+ * Update the snapshot of ecryptfs tests.
 
-x. Package dependencies are likely to be series specific. At least
-   in some cases different packages will be required for a given
-   test when run on a particular series. We should have provisions
-   for that. (Maybe it can wait until we have a specific case)
+ * xfstests
+     * Expand the xfstest to cover more than ext4. We were doing all
+       filesystems we cared about but were running into a lot of
+       failures.
 
-x. xfstests! There is a whole host of things to do with just this
-   set of tests.
+     * Look at the failures and see which of them are failures that
+       we need to be doing something about and start working them.
 
-   a) Start testing filesystems other than ext4 again.
-   b) Start running down individual test failures to see if they
-      are real and need to be dealt with.
+kernel-testing
+--------------
 
-x. Need a tool/process which prunes the metrics/test-results.
+  * Fix HWE kernel testing for non-quantal kernels.
+
+  * Fix virtual testing. Most of the necessary infrastructure is
+    in place, it just needs to be wrung out.
+
+  * Add support for CEPH testing. This is going to require some
+    custom provisioning but just builds on what we already have.
+
+  * Package dependencies are likely to be series specific. At least
+    in some cases different packages will be required for a given
+    test when run on a particular series. We should have provisions
+    for that. (Maybe it can wait until we have a specific case)
+
+  * Need a tool/process which prunes the metrics/test-results.
 
