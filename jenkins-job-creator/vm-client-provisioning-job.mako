@@ -25,6 +25,12 @@ scp -o StrictHostKeyChecking=no -r ${data.hw['jenkins server']}:kernel-testing .
 sudo apt-get install -y qemu-kvm koan virt-manager
 sudo sed -ie 's/^\(libvirtd.*\)/\1jenkins/' /etc/group
 
+# The file structure on an Ubuntu CD uses the string amd64 instead of x86_64. To
+# use koan to install x86_64 VMs it is necessary (at least with cobbler on Oneiric)
+# to modify one file.
+#
+sudo sed -i -e '/elif uri.count("installer-amd64"):/ i \ \ \ \ \ \ \ \ elif uri.count("x86_64"):\n\ \ \ \ \ \ \ \ \ \ \ \ self._treeArch = "amd64"' /usr/share/pyshared/virtinst/OSDistro.py
+
 echo &quot;\n\nauto br0\niface br0 inet dhcp\n        bridge_ports     eth0\n        bridge_stp         off\n        bridge_fd            0\n        bridge_maxwait 0\n&quot; | sudo tee -a /etc/network/interfaces
 sudo ifup br0
 
