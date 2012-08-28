@@ -95,7 +95,6 @@ ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo reboot
 /var/lib/jenkins/kernel-testing/wait-for-system ${data.sut_name}
 scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh ${data.sut_name}:
 
-
 % if data.sut_series in ['lucid']:
 
 # On Lucid series installs we have to install the jdk ourselves. There is
