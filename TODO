@@ -24,6 +24,8 @@ kernel-testing
   * Fix virtual testing. Most of the necessary infrastructure is
     in place, it just needs to be wrung out.
 
+  * Virtual clients need to be configured with a second drive.
+
   * Add support for CEPH testing. This is going to require some
     custom provisioning but just builds on what we already have.
 
