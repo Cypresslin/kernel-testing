@@ -32,5 +32,5 @@ echo "==============="
 # Eventually, trigger the rsync here
 #
 export RSYNC_PASSWORD=WcjfuZWpyI9R
-rsync -av /var/lib/jenkins/rsync/zinc.canonical.com/public-reports/ jenkins-kernel-sync@zinc.canonical.com::jenkins-kernel-reports
+rsync --delete -av /var/lib/jenkins/rsync/zinc.canonical.com/public-reports/ jenkins-kernel-sync@zinc.canonical.com::jenkins-kernel-reports
 scp -r /var/lib/jenkins/rsync/private-reports kernel@chinstrap.canonical.com:public_html/

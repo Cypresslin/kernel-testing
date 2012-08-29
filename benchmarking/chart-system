@@ -16,6 +16,20 @@ DATALOC=~/metrics/benchmarking
 PRIVATE_PUBLISH_DIR=~jenkins/rsync/private-reports
 PUBLIC_PUBLISH_DIR=~jenkins/rsync/zinc.canonical.com/public-reports
 
+# Reset them to test locations if in testing setup
+if [ -n $USER ]
+then
+  if [ $USER == "sconklin" ]
+  then
+      # Where are the data files from the benchmarks?
+      DATALOC=/src/kernel-testing/data
+
+      # where to publish?
+      PRIVATE_PUBLISH_DIR=/src/kernel-testing/pub-private
+      PUBLIC_PUBLISH_DIR=/src/kernel-testing/pub-public
+  fi
+fi
+
 # ===== End of global configuration =====
 
 if [ -n "${PRIVATE:+x}" ]; then
