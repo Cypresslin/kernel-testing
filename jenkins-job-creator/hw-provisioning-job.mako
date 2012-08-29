@@ -70,7 +70,7 @@ ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get --yes dist-upgrade
     ssh -o StrictHostKeyChecking=no ${data.sut_name} /bin/sh lts-hwe-development-install
 % else:
     ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get update
-    ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get install --yes %{data.sut_hwe_package}
+    ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get install --yes ${data.sut_hwe_package}
 %endif
 % endif
 
