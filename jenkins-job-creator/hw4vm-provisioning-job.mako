@@ -33,7 +33,7 @@ sudo cobbler profile add --name=${data.vh_name} --distro=${data.vh_series}${data
 sudo cobbler system add --name=${data.vh_name} --profile=${data.vh_name} --hostname=${data.vh_name} --mac=${data.hw['mac address']}
 
 sudo cobbler profile remove --name=${data.sut_name}
-sudo cobbler profile add --name=${data.sut_name} --distro=${data.sut_series}${data.sut_server_distro_decoration}-${data.sut_orchestra_arch} --kickstart=/var/lib/cobbler/kickstarts/kernel/kt-virt-${data.sut_preseed}.preseed --ksmeta=hostname=${data.sut_name} --virt-file-size=20 --virt-ram=1000
+sudo cobbler profile add --name=${data.sut_name} --distro=${data.sut_series}${data.sut_server_distro_decoration}-${data.sut_orchestra_arch} --kickstart=/var/lib/cobbler/kickstarts/kernel/kt-virt-${data.sut_preseed}.preseed --ksmeta=hostname=${data.sut_name} --virt-file-size=20,40 --virt-ram=1000 --virt-disk=raw,raw --virt-path=/opt/${data.sut_name}-a,/opt/${data.sut_name}-b
 
 % if data.hw['cdu']['ip'] != '':
 # Power cycle the system so it will netboot and install
