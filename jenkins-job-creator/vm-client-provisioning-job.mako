@@ -18,10 +18,7 @@
 cd /var/lib/jenkins
 rm -rf kernel-testing
 scp -o StrictHostKeyChecking=no -r ${data.hw['jenkins server']}:kernel-testing .
-            </command>
-        </hudson.tasks.Shell>
-        <hudson.tasks.Shell>
-            <command>
+
 sudo apt-get install -y qemu-kvm koan virt-manager
 sudo sed -ie 's/^\(libvirtd.*\)/\1jenkins/' /etc/group
 
@@ -35,10 +32,7 @@ echo &quot;\n\nauto br0\niface br0 inet dhcp\n        bridge_ports     eth0\n   
 sudo ifup br0
 
 sudo koan --virt --server=${data.hw['orchestra server']} --profile=${data.sut_name} --virt-name=${data.sut_name} --virt-bridge=br0 --vm-poll
-            </command>
-        </hudson.tasks.Shell>
-        <hudson.tasks.Shell>
-            <command>
+
 set +e
 
 export TARGET_HOST=${data.sut_name}
@@ -49,10 +43,19 @@ cd /var/lib/jenkins/kernel-testing
 ./wait-for-system $TARGET_HOST
 ./create-slave-node $TARGET_HOST $TARGET_HOST &quot;${data.sut_name}&quot;
 
-
 # Fix .ssh config on slave so it can copy from kernel-jenkins
 #
 scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh $TARGET_HOST:
+
+# Partition the second drive
+#
+ssh ${data.sut_name} sudo parted /dev/vdb print
+ssh ${data.sut_name} sudo parted /dev/vdb rm -s 1
+ssh ${data.sut_name} sudo parted /dev/vdb rm -s 2
+ssh ${data.sut_name} sudo parted /dev/vdb mklabel -s gpt
+ssh ${data.sut_name} sudo parted /dev/vdb mkpart -s p1 ext4 1MiB 1000MiB
+ssh ${data.sut_name} sudo parted /dev/vdb mkpart -s p2 ext4 1001MiB 2000MiB
+ssh ${data.sut_name} sudo parted /dev/vdb print
             </command>
         </hudson.tasks.Shell>
     </builders>
