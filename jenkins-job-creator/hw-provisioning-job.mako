@@ -32,12 +32,16 @@ sudo cobbler profile remove --name=${data.sut_name}
 sudo cobbler profile add --name=${data.sut_name} --distro=${data.sut_series}${data.sut_server_distro_decoration}-${data.sut_orchestra_arch} --kickstart=/var/lib/cobbler/kickstarts/kernel/kt-${data.sut_preseed}.preseed --repos=&quot;${data.sut_series}-${data.sut_orchestra_arch} ${data.sut_series}-${data.sut_orchestra_arch}-security&quot;
 sudo cobbler system add --name=${data.sut_name} --profile=${data.sut_name} --hostname=${data.sut_name} --mac=${data.hw['mac address']}
 
-% if data.hw['cdu']['ip'] != '':
 # Power cycle the system so it will netboot and install
 #
-fence_cdu -a ${data.hw['cdu']['ip']} -l ubuntu -p ubuntu -n ${data.hw['cdu']['port']} -o off
-fence_cdu -a ${data.hw['cdu']['ip']} -l ubuntu -p ubuntu -n ${data.hw['cdu']['port']} -o on
-% endif
+% for state in ['off', 'on']:
+    % for psu in data.hw['cdu']:
+        % if psu['ip'] != '':
+            fence_cdu -a ${psu['ip']} -l ubuntu -p ubuntu -n ${psu['port']} -o ${state}
+        % endif
+    % endfor
+% endfor
+
             </command>
         </org.jvnet.hudson.plugins.SSHBuilder>
         <hudson.tasks.Shell>
