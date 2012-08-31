@@ -52,6 +52,16 @@ ssh-keygen -f &quot;/var/lib/jenkins/.ssh/known_hosts&quot; -R $TARGET_HOST
 cd /var/lib/jenkins/kernel-testing
 ./wait-for-system $TARGET_HOST
 
+# Enable the proposed pocket on the vm host.
+#
+ssh -o StrictHostKeyChecking=no ${data.vh_name} 'echo deb http://us.archive.ubuntu.com/ubuntu/ ${data.sut_series}-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list'
+ssh -o StrictHostKeyChecking=no ${data.vh_name} sudo apt-get update
+ssh -o StrictHostKeyChecking=no ${data.vh_name} sudo apt-get --yes dist-upgrade
+
+ssh -o StrictHostKeyChecking=no ${data.vh_name} sudo reboot
+/var/lib/jenkins/kernel-testing/wait-for-system ${data.vh_name}
+
+
 set +e # Continue if the node doesn&apos;t exist
 ./create-slave-node ${data.vh_name} $TARGET_HOST &quot;${data.vh_name}&quot;
 
@@ -63,7 +73,7 @@ scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh $TARGET_HOST:
 #
 java -jar /run/jenkins/war/WEB-INF/jenkins-cli.jar -s ${data.jenkins_url} build -s ${data.vm_client_provisioning_job_name}
 
-# Enable the proposed pocket.
+# Enable the proposed pocket on the SUT (the vm).
 #
 ssh -o StrictHostKeyChecking=no ${data.sut_name} 'echo deb http://us.archive.ubuntu.com/ubuntu/ ${data.sut_series}-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list'
 ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get update
