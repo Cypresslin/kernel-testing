@@ -47,8 +47,6 @@ fence_cdu -a ${data.hw['cdu']['ip']} -l ubuntu -p ubuntu -n ${data.hw['cdu']['po
             <command>
 export TARGET_HOST=${data.vh_name}
 
-ssh-keygen -f &quot;/var/lib/jenkins/.ssh/known_hosts&quot; -R $TARGET_HOST
-
 cd /var/lib/jenkins/kernel-testing
 ./wait-for-system $TARGET_HOST
 
