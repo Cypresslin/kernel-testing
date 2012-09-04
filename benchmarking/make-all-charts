@@ -2,34 +2,38 @@
 
 set +e
 
+export PRIV_LOC=/var/lib/jenkins/rsync/private-reports
+export PUB_LOC=/var/lib/jenkins/rsync/zinc.canonical.com/public-reports
+
 #
 # Do public Charts
 #
-echo "==============="
 unset PRIVATE
-export SYSNAME="statler"
-export TITLENAME="Statler"
-./chart-system
-export SYSNAME="waldorf"
-export TITLENAME="Waldorf"
-./chart-system
+echo "==============="
+./create-result-set --outfile=$PUB_LOC/dbench-quantal.html --dataloc=/src/kernel-testing/benchmarking/data $PRIVATE --setname=dbench-quantal
+echo "---------------"
+#./create-result-set --outfile=$PUB_LOC/dbench-precise.html --dataloc=/src/kernel-testing/benchmarking/data $PRIVATE --setname=dbench-precise
+#echo "---------------"
+./create-result-set --outfile=$PUB_LOC/bonnie-quantal.html --dataloc=/src/kernel-testing/benchmarking/data $PRIVATE --setname=bonnie
+echo "---------------"
+./create-result-set --outfile=$PUB_LOC/power-consumption.html --dataloc=/src/kernel-testing/benchmarking/data $PRIVATE --setname=power
+echo "---------------"
 
 #
 # Do private Charts
 #
-
+export PRIVATE=--private
+./create-result-set --outfile=$PRIV_LOC/dbench-quantal.html --dataloc=/src/kernel-testing/benchmarking/data $PRIVATE --setname=dbench-quantal
+echo "---------------"
+#./create-result-set --outfile=$PRIV_LOC/dbench-precise.html --dataloc=/src/kernel-testing/benchmarking/data $PRIVATE --setname=dbench-precise
+#echo "---------------"
+./create-result-set --outfile=$PRIV_LOC/bonnie-quantal.html --dataloc=/src/kernel-testing/benchmarking/data $PRIVATE --setname=bonnie
+echo "---------------"
+./create-result-set --outfile=$PRIV_LOC/power-consumption.html --dataloc=/src/kernel-testing/benchmarking/data $PRIVATE --setname=power
 echo "==============="
-export PRIVATE=True
-export SYSNAME="statler"
-export TITLENAME="Statler"
-./chart-system
-export SYSNAME="waldorf"
-export TITLENAME="Waldorf"
-./chart-system
 
-echo "==============="
 #
-# Eventually, trigger the rsync here
+# make the rsync
 #
 export RSYNC_PASSWORD=WcjfuZWpyI9R
 rsync --delete -av /var/lib/jenkins/rsync/zinc.canonical.com/public-reports/ jenkins-kernel-sync@zinc.canonical.com::jenkins-kernel-reports

@@ -8,6 +8,7 @@ from datetime                           import datetime
 import json
 
 from lib.utils                          import stdo, error, json_load, file_load, Exit, FileDoesntExist, dump, o2ascii
+from lib.benchmarkdb                    import BenchCharts
 from lib.dbg                            import Dbg
 from lib.cfg                            import Cfg, CfgError
 
@@ -59,16 +60,26 @@ class Cmdline:
         Prints out the help text which explains the command line options.
         """
         stdo("    Usage:                                                                                   \n")
-        stdo("        %s [--verbose] [--debug=<dbg options>] [data_file data_file ...]                            \n" % defaults['app_name'])
+        stdo("        %s [--verbose] [--debug=<dbg options>]                                               \n" % defaults['app_name'])
         stdo("                                                                                             \n")
         stdo("    Options:                                                                                 \n")
         stdo("        --help           Prints this text.                                                   \n")
         stdo("                                                                                             \n")
+        stdo("        --dataloc=<path>                                                                     \n")
+        stdo("                         Required. Path to benchmark data files                              \n")
+        stdo("                                                                                             \n")
+        stdo("        --setname=<string>                                                                   \n")
+        stdo("                         Required. Generate this result set                                  \n")
+        stdo("                                                                                             \n")
+        stdo("        --outfile=<string>                                                                   \n")
+        stdo("                         Optional. defaults to index.html                                    \n")
+        stdo("                                                                                             \n")
+        stdo("        --list           Lists result sets with all information                              \n")
+        stdo("                                                                                             \n")
         stdo("        --verbose        Give some feedback of what is happening while the script is         \n")
         stdo("                         running.                                                            \n")
         stdo("                                                                                             \n")
-        stdo("        --onepage        Create one html page with multiple charts, one for each data file   \n")
-        stdo("                         running.                                                            \n")
+        stdo("        --private        Do not normalize the data                                           \n")
         stdo("                                                                                             \n")
         stdo("        --2up            Present charts smaller and two across                               \n")
         stdo("                                                                                             \n")
@@ -82,9 +93,6 @@ class Cmdline:
         stdo("                             verbose                                                         \n")
         stdo("                             cfg                                                             \n")
         stdo("                                                                                             \n")
-        stdo("        --title=<string>                                                                     \n")
-        stdo("                         Use the specified page title                                        \n")
-        stdo("                                                                                             \n")
         stdo("    Examples:                                                                                \n")
         stdo("        %s --debug=\"enter,leave,verbose\"                                                   \n" % defaults['app_name'])
 
@@ -95,13 +103,11 @@ class Cmdline:
         This method is responsible for calling the getopt function to process the command
         line. All parameters are processed into class variables for use by other methods.
         """
-        result = True
         try:
             cfg = defaults
-            cfg['title'] = 'Default Title'
             cfg['doing_2up'] = False
             optsShort = ''
-            optsLong  = ['help', 'verbose', 'onepage', '2up', 'debug=', 'title=']
+            optsLong  = ['help', 'verbose', 'list', 'private', '2up', 'debug=', 'setname=', 'dataloc=', 'outfile=']
             opts, args = getopt(argv[1:], optsShort, optsLong)
 
             for opt, val in opts:
@@ -113,14 +119,23 @@ class Cmdline:
                     if 'verbose' not in Dbg.levels:
                         Dbg.levels.append('verbose')
 
-                elif (opt == '--onepage'):
-                    cfg['onepage'] = True
+                elif (opt == '--private'):
+                    cfg['private'] = True
+
+                elif (opt == '--list'):
+                    cfg['list'] = True
 
                 elif (opt == '--2up'):
                     cfg['doing_2up'] = True
 
-                elif (opt == '--title'):
-                    cfg['title'] = val
+                elif (opt == '--setname'):
+                    cfg['setname'] = val
+
+                elif (opt == '--dataloc'):
+                    cfg['dataloc'] = val
+
+                elif (opt == '--outfile'):
+                    cfg['outfile'] = val
 
                 elif opt in ('--debug'):
                     cfg['debug'] = val.split(',')
@@ -128,13 +143,14 @@ class Cmdline:
                         if level not in Dbg.levels:
                             Dbg.levels.append(level)
 
-            if result: # No errors yet
-
-                if len(args) > 0:
-                    cfg['analyst-files'] = args
-                if len(args) > 1 and "onepage" not in cfg:
-                    print "WARNING: you specified more than one data file but not --onepage"
-
+            # check for required options
+            if 'list' not in cfg:
+                if 'dataloc' not in cfg:
+                    raise CmdlineError("You must specify the location of the data files using dataloc=")
+                if 'setname' not in cfg:
+                    raise CmdlineError("You must specify the Set Name using setname=")
+                if 'outfile' not in cfg:
+                    cfg['outfile'] = 'index.html'
 
         except GetoptError, error:
             raise CmdlineError(error)
@@ -142,9 +158,9 @@ class Cmdline:
         return cfg
 
 
-# BenchmarkReport
+# ResultSet
 #
-class BenchmarkReport():
+class ResultSet():
     """
     This class/script builds a number of reports based on the data in a "report
     configuration file" and the bug database.
@@ -153,9 +169,9 @@ class BenchmarkReport():
     # __init__
     #
     def __init__(self, cfg):
-        Dbg.enter("BenchmarkReport.__init__")
+        Dbg.enter("ResultSet.__init__")
         self.cfg    = cfg
-        Dbg.leave("BenchmarkReport.__init__")
+        Dbg.leave("ResultSet.__init__")
 
     # initialize
     #
@@ -164,7 +180,7 @@ class BenchmarkReport():
         A separate initialize that we can control when it gets called (not
         when the object is instantiated).
         """
-        Dbg.enter("BenchmarkReport.initialize")
+        Dbg.enter("ResultSet.initialize")
 
         try:
             # Process the command line arguments, and any configuration file options. Make sure
@@ -173,15 +189,15 @@ class BenchmarkReport():
             self.cfg = Cfg.merge_options(defaults, self.cfg)
 
         except KeyboardInterrupt:
-            Dbg.leave("BenchmarkReport.initialize")
+            Dbg.leave("ResultSet.initialize")
             raise Exit()
 
         except CfgError as e:
             error(e)
-            Dbg.leave("BenchmarkReport.initialize")
+            Dbg.leave("ResultSet.initialize")
             raise Exit()
 
-        Dbg.leave("BenchmarkReport.initialize")
+        Dbg.leave("ResultSet.initialize")
         return
 
     def setMaxMinY(value):
@@ -197,16 +213,17 @@ class BenchmarkReport():
 
     # report
     #
-    def report(self, data):
+    def report(self, data, pagetitle):
         # Get the main keys, so we can sort them (which ends up chronological) 
         #
                     
         # The primary key graph files.
         #
         try:
-            mako_template = Template(file_load('%sindex-chart.mako' % argv[0].replace('benchmark-report', '')))
-            with open('index.html', 'w') as f:
-                f.write(mako_template.render(template_data_list = data, report_title = self.cfg['title'], doing_2up = self.cfg['doing_2up']))
+            mako_template = Template(file_load('%sindex-chart.mako' % argv[0].replace('create-result-set', '')))
+            with open(self.cfg['outfile'], 'w') as f:
+                content = mako_template.render(template_data_list = data, report_title = pagetitle, doing_2up = self.cfg['doing_2up'])
+                f.write(content)
         except:
             print "==== EXCEPTION while rendering template ====="
             traceback = RichTraceback()
@@ -217,33 +234,41 @@ class BenchmarkReport():
     # main
     #
     def main(self):
-        Dbg.enter("BenchmarkReport.main")
+        Dbg.enter("ResultSet.main")
+
+        cdb = BenchCharts()
 
         try:
             self.initialize()
 
-            if 'onepage' in self.cfg:
-                data_list = []
-                for fid in self.cfg['analyst-files']:
-                    # Only one chart per report
-                    chartdata = json_load(fid)
-                    if len(chartdata) == 0:
-                        raise ValueError("There are no data records in the input file <%s>" % fid)
-                    data_list.append(chartdata)
-                self.report(data_list)
-                # Put all files into one page
-            else:
-                for fid in self.cfg['analyst-files']:
-                    # Only one chart per report
-                    # TODO generate multiple output file names somehow
-                    data_list = []
-                    chartdata = json_load(fid)
-                    if len(chartdata) == 0:
-                        raise ValueError("There are no data records in the input file <%s>" % fid)
-                    data_list.append(chartdata)
-                    self.report(data_list)
+            if 'list' in self.cfg:
+                cdb.dumpsets()
+                return
+            setname = self.cfg['setname']
+            if  setname not in cdb.result_sets:
+                print 'result set %s not found in database' % self.cfg.setname
+                return
+
+            name = cdb.result_sets[setname]['name']
+            setcharts = cdb.result_sets[setname]['charts']
+            print 'Preparing charts for result set: %s' % name
+            data_list = []
+            for chart in setcharts:
+                print 'Preparing Chart: %s' % chart
+                
+                if 'private' in self.cfg:
+                    normalize = False
+                else:
+                    normalize = True
+                data = cdb.filtered_data(chart, self.cfg['dataloc'], normalize)
+                data_list.append(data)
+                #print 'data to report:\n'
+                #print(json.dumps(data_list, sort_keys=True, indent=4))
+                #print '\n\n'
+                self.report(data_list, name)
 
         except FileDoesntExist as e:
+            # -spc- TODO do away with this
             e.print_std_error()
 
         # Handle the user presses <ctrl-C>.
@@ -254,9 +279,8 @@ class BenchmarkReport():
         except Exit:
             pass
 
-        Dbg.leave("BenchmarkReport.main")
+        Dbg.leave("ResultSet.main")
         return
-
 
 if __name__ == '__main__':
     defaults = {}
@@ -268,7 +292,8 @@ if __name__ == '__main__':
     #
     cmdline = Cmdline()
     try:
-        app = BenchmarkReport(cmdline.process(argv, defaults))
+        cfg = cmdline.process(argv, defaults)
+        app = ResultSet(cfg)
         app.main()
     except CmdlineError as e:
         cmdline.error(e.msg, defaults)

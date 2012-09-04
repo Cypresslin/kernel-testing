@@ -14,7 +14,6 @@ for template_data in template_data_list:
     maxY       = None
 
     sortedTests = sorted(template_data.iteritems(), key=operator.itemgetter(0), reverse=False)
-
     for k in sortedTests:
         testrecord = template_data[k[0]]
 	if 'kernel' in testrecord['meta']:
