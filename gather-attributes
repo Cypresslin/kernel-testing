@@ -58,6 +58,11 @@ class Gather():
         retval = p.communicate()[0].strip().replace('\n', ' ')
         return retval
 
+    def distro_release_name(self):
+        p = Popen(['lsb_release', '-c'], stdout=PIPE, stderr=PIPE, close_fds=True)
+        retval = p.communicate()[0].strip().split()[-1]
+        return retval
+
     def kind_of_hardware(self):
         retval = 'real'
         with open('/proc/cpuinfo', 'r') as f:
@@ -129,6 +134,7 @@ class Gather():
 
             data['kernel'] = self.kernel_version()
             data['distro-release'] = self.distro_release()
+            data['distro-release-name'] = self.distro_release_name()
 
             dump(data)
 
