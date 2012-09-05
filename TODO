@@ -4,10 +4,6 @@ Autotest
 
  * Rebase to a newer upstream autotest version.
 
- * Update the snapshot of QRT.
-
- * Update the snapshot of ecryptfs tests.
-
  * xfstests
      * Expand the xfstest to cover more than ext4. We were doing all
        filesystems we cared about but were running into a lot of
@@ -24,15 +20,8 @@ kernel-testing
   * Fix virtual testing. Most of the necessary infrastructure is
     in place, it just needs to be wrung out.
 
-  * Virtual clients need to be configured with a second drive.
-
   * Add support for CEPH testing. This is going to require some
     custom provisioning but just builds on what we already have.
-
-  * Package dependencies are likely to be series specific. At least
-    in some cases different packages will be required for a given
-    test when run on a particular series. We should have provisions
-    for that. (Maybe it can wait until we have a specific case)
 
   * Need a tool/process which prunes the metrics/test-results.
 
