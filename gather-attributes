@@ -159,6 +159,7 @@ if __name__ == '__main__':
         optsShort = ''
         optsLong  = ['help', 'vh-name=']
         opts, args = getopt(argv[1:], optsShort, optsLong)
+        setattr(me, 'vh_name', '')
         for opt, val in opts:
             if (opt == '--help'):
                 print(" Usage: gather-attributes [--vh-name=<virtual-host-name>]\n")
