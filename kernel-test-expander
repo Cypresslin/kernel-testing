@@ -18,7 +18,7 @@ from lib.utils                          import run_command
 #
 testDependencies = {
     'qrt' : {
-        'packages' : ['build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev'],
+        'packages' : ['build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev', 'python-pexpect'],
         },
     'ecryptfs' : {
         'packages' : ['libglib2.0-dev', 'intltool', 'keyutils', 'libkeyutils-dev', 'libpam0g-dev', 'libnss3-dev', 'libtool', 'acl', 'xfsprogs', 'btrfs-tools'],
