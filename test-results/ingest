@@ -186,6 +186,12 @@ class Ingest():
         except KeyboardInterrupt:
             pass
 
+        except JenkinsTestResultsTreeError as e:
+            error(e.msg)
+
+        except TestResultsRepositoryError as e:
+            error(e.msg)
+
         except Exit:
             pass
 
