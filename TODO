@@ -12,6 +12,22 @@ Autotest
      * Look at the failures and see which of them are failures that
        we need to be doing something about and start working them.
 
+ * We should probably be rebooting after each individual autotest test
+   is run. We may want to completely re-provision the system. This is
+   something that will be difficult to "just slip in" for QA.
+
+ * Thinking about pulling the qrt tests into separate tests by having
+   'qrt-apparmor', 'qrt-aslr', etc.
+
+ * Would be nice to be able to timeout an autotest test. There are some
+   of the tests that seem to 'hang'. I'd like to be able to kill/abort
+   that test and then pick up again with the next tests (possibly after
+   a reboot).
+
+ * I'm thinking it might be nice to run the xfstests per filesystem
+   than one test which exercises all filesystems. Kind of a 'xfstests-ext4',
+   'xfstests-xfs', etc.
+
 kernel-testing
 --------------
 
