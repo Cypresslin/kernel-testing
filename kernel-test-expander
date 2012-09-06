@@ -253,29 +253,29 @@ class ExpandTests():
             # Now write out the test script
             with open('./run-tests', 'w') as f:
                 f.write("""
-#!/bin/s    h
+#!/bin/sh
 
-# run-te    sts
+# run-tests
 #
-# This s    hell script runs the autotest testcase that is specified on the
-# comman    d line. It gethers the autotest results and gets them back to
-# the je    nkins server.
+# This shell script runs the autotest testcase that is specified on the
+# command line. It gethers the autotest results and gets them back to
+# the jenkins server.
 #
 
 set +x
 
-if [ -z     "$JENKINS_SERVER" ]; then
-    JENK    INS_SERVER=kernel-jenkins
+if [ -z "$JENKINS_SERVER" ]; then
+    JENKINS_SERVER=kernel-jenkins
 fi
-CONTROL_    FILE=control
-AUTOTEST    _TEST=_bogus_
+CONTROL_FILE=control
+AUTOTEST_TEST=_bogus_
 
-echo ===    ============
-uname -a    
-echo ===    ============
+echo ===============
+uname -a
+echo ===============
 set -x
 
-# Now ru    n the tests
+# Now run the tests
 
 """)
                 for testname in autotestToRun:
