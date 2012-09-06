@@ -6,6 +6,7 @@ test_results = data['results']
 test_attributes = data['attributes']
 
 title = "%s - %s - %s" % (test_attributes['environ']['JOB_NAME'], test_attributes['kernel'], test_attributes['timestamp'])
+test_failures = False
 
 %>
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
@@ -97,6 +98,9 @@ title = "%s - %s - %s" % (test_attributes['environ']['JOB_NAME'], test_attribute
                                                 duration = "%d min" % (minutes)
 
                                             failed = suite['tests failed']
+
+                                            if failed:
+                                                test_failures = True
                                         %>
                                         <tr>
                                             <td>&nbsp;</td><td><a href="${ name_link }">${ name }</a></td> <td>${ duration }</td> <td><a href="${ name_link }">${ suite['tests failed'] }</a></td> <td><a href="${ name_link }">${ suite['tests skipped'] }</a></td> <td><a href="${ name_link }">${ suite['tests run'] }</a></td>
@@ -105,7 +109,7 @@ title = "%s - %s - %s" % (test_attributes['environ']['JOB_NAME'], test_attribute
                                     </table>
                                 </td>
                             </tr>
-                            % if failed > 0:
+                            % if test_failures:
                             <tr>
                                 <td width="100%" valign="top">
                                     <table width="100%" style="font-size: 0.9em">
