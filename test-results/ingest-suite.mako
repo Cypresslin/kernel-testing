@@ -107,9 +107,13 @@ title = "%s - %s - %s" % (target_suite.replace('autotest.', ''), test_attributes
                                                 if 'errorDetails' in case:
                                                     status = "Failed"
                                                     status_color = 'red'
+
+                                                name = suite['name'].replace('autotest.','')
+                                                error_link = "%s" % name
+                                                error_link += "/default/%s.%s/debug/%s.%s.DEBUG" % (name, case['name'], name, case['name'])
                                             %>
                                             <tr>
-                                                <td>&nbsp;</td><td>${ case['name'] }</td> <td align="center">${ duration }</td><td style="color: ${ status_color }">${ status }</td>
+                                                <td>&nbsp;</td><td><a href="${ error_link }">${ case['name'] }</a></td> <td align="center">${ duration }</td><td style="color: ${ status_color }">${ status }</td>
                                             </tr>
                                         % endfor
                                     </table>

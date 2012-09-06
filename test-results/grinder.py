@@ -3,7 +3,7 @@
 
 from os                                 import path, makedirs, listdir
 from sys                                import argv
-from shutil                             import rmtree, copytree
+from shutil                             import rmtree, copytree, copyfile
 import json
 
 from lib.utils                          import json_load, file_load, FileDoesntExist
@@ -318,6 +318,12 @@ class TestResultsRepository():
         for n in listdir(jtr.archive):
             if path.isdir(path.join(jtr.archive, n)):
                 copytree(path.join(jtr.archive, n), path.join(dest, n))
+
+        if path.exists(path.join(jtr.root, 'log')):
+            # There should always be a 'log' file which is the console log
+            # of the job.
+            #
+            copyfile(path.join(jtr.root, 'log'), path.join(dest, 'console_output.txt'))
 
         self.store_results(data)
 
