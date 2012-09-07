@@ -49,6 +49,12 @@ sudo cobbler profile add --name=${data.sut_name} --distro=${data.sut_series}${da
         </org.jvnet.hudson.plugins.SSHBuilder>
         <hudson.tasks.Shell>
             <command>
+
+##################################################################
+#
+# V I R T U A L   H O S T
+#
+##################################################################
 export TARGET_HOST=${data.vh_name}
 
 cd /var/lib/jenkins/kernel-testing
@@ -56,13 +62,22 @@ cd /var/lib/jenkins/kernel-testing
 
 # Enable the proposed pocket on the vm host.
 #
-ssh -o StrictHostKeyChecking=no ${data.vh_name} 'echo deb http://us.archive.ubuntu.com/ubuntu/ ${data.sut_series}-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list'
+ssh -o StrictHostKeyChecking=no ${data.vh_name} 'echo deb http://us.archive.ubuntu.com/ubuntu/ ${data.vh_series}-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list'
 ssh -o StrictHostKeyChecking=no ${data.vh_name} sudo apt-get update
 ssh -o StrictHostKeyChecking=no ${data.vh_name} sudo apt-get --yes dist-upgrade
 
 ssh -o StrictHostKeyChecking=no ${data.vh_name} sudo reboot
 /var/lib/jenkins/kernel-testing/wait-for-system ${data.vh_name}
 
+% if data.vh_series in ['lucid']:
+
+# On Lucid series installs we have to install the jdk ourselves. There is
+# no jenkins-slave package.
+#
+scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing/jenkins-job-creator/manual-slave-install ${data.vh_name}:
+ssh -o StrictHostKeyChecking=no ${data.vh_name} /bin/sh manual-slave-install
+
+% endif
 
 set +e # Continue if the node doesn&apos;t exist
 ./create-slave-node ${data.vh_name} $TARGET_HOST &quot;${data.vh_name}&quot;
@@ -70,6 +85,12 @@ set +e # Continue if the node doesn&apos;t exist
 # Fix .ssh config on slave so it can copy from kernel-jenkins
 #
 scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh $TARGET_HOST:
+
+##################################################################
+#
+# V I R T U A L   C L I E N T
+#
+##################################################################
 
 # Build the follow on job(s) waiting for them to finish.
 #
