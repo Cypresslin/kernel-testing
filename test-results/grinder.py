@@ -386,6 +386,15 @@ class TestResultsRepository():
             #
             copyfile(path.join(jtr.root, 'log'), path.join(dest, 'console_output.txt'))
 
+            fid = path.join(dest, 'console_output.txt')
+            with open(fid, 'r') as f:
+                content = f.read().split('\n')
+
+            d = '%s.html' % fid
+            template = self.text_file_template.render(title = fid, content = content)
+            with open(d, 'w') as f:
+                f.write(template)
+
         self.store_results(data)
 
         Dbg.leave("TestResultsRepository.ingest")
