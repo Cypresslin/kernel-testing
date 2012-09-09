@@ -1,13 +1,51 @@
 #!/usr/bin/env python
 #
 
-from os                                 import path, makedirs, listdir
+from os                                 import path, makedirs, listdir, walk
 from sys                                import argv
 from shutil                             import rmtree, copytree, copyfile
+from decimal                            import Decimal
 import json
+
+from mako.template                      import Template
+from mako.exceptions                    import RichTraceback
 
 from lib.utils                          import json_load, file_load, FileDoesntExist
 from lib.dbg                            import Dbg
+
+# o2ascii
+#
+# Convert a unicode string or a decial.Decimal object to a str.
+#
+def o2ascii(obj):
+    retval = None
+    if type(obj) != str:
+        if type(obj) == unicode:
+            retval = obj.encode('ascii', 'ignore')
+        elif type(obj) == Decimal:
+            retval = str(obj)
+        elif type(obj) == int:
+            retval = str(obj)
+    else:
+            retval = obj
+    return retval
+
+# locate
+#
+def locate(file_name):
+    retval = None
+
+    # Find it ...
+    #
+    fid = file_name
+    if path.exists(fid): # Current directory
+        retval = fid
+    else:
+        fid = path.join(path.dirname(argv[0]), file_name)
+        if path.exists(fid):
+            retval = fid
+
+    return retval
 
 # load_template
 #
@@ -273,6 +311,8 @@ class TestResultsRepository():
 
             self.cfg = json_load(fid)
 
+            self.text_file_template = Template(filename=locate('text-file.mako'), default_filters=['decode.utf8'], input_encoding='utf-8', output_encoding='utf8')
+
         except FileDoesntExist as e:
             raise TestResultsRepositoryError('The file (%s) does not exist.\n' % e.file_name)
             Dbg.leave("TestResultsRepository.__init__")
@@ -318,6 +358,27 @@ class TestResultsRepository():
         for n in listdir(jtr.archive):
             if path.isdir(path.join(jtr.archive, n)):
                 copytree(path.join(jtr.archive, n), path.join(dest, n))
+
+        # Process "text" files to make them easier to read.
+        #
+        try:
+            for root, dirs, files in walk(dest):
+                for fid in files:
+                    if fid.endswith('.DEBUG'):
+                        with open(path.join(root, fid), 'r') as f:
+                            content = f.read().split('\n')
+
+                        d = path.join(root, '%s.html' % fid)
+                        template = self.text_file_template.render(title = fid, content = content)
+                        with open(d, 'w') as f:
+                            f.write(template)
+
+        except:
+            traceback = RichTraceback()
+            for (filename, lineno, function, line) in traceback.traceback:
+                print("File %s, line %s, in %s" % (filename, lineno, function))
+                print(line, "\n")
+            print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
 
         if path.exists(path.join(jtr.root, 'log')):
             # There should always be a 'log' file which is the console log

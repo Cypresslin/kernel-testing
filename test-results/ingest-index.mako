@@ -138,7 +138,7 @@ test_failures = False
                                                         duration = "%d sec" % (seconds)
 
                                                     error_link = "%s" % name
-                                                    error_link += "/default/%s.%s/debug/%s.%s.DEBUG" % (name, case['name'], name, case['name'])
+                                                    error_link += "/default/%s.%s/debug/%s.%s.DEBUG.html" % (name, case['name'], name, case['name'])
                                                 %>
                                                 <tr>
                                                     <td>&nbsp;</td><td><a href="${ error_link }">${ case['name'] }</a></td> <td align="right">${ duration }</td>
