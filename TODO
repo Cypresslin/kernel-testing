@@ -31,6 +31,18 @@ Autotest
 kernel-testing
 --------------
 
+  * Improve testing robustness:
+    * Far too often I am finding jenkins jobs "stuck" on a particular
+      test for hours at a time. We need some way of timing out these
+      tests and still producing results.
+
+    * Again, I am repeatedly finding tests have failed for some unknown
+      reason and what I find in the console log is a java call-stack
+      trace. We end up with *no* results after hours of testing and
+      we don't even know the test has failed except that I know to go
+      looking for the results of a job that I started by hand. If this
+      was automated, I wouldn't even know to go look.
+
   * Fix HWE kernel testing for non-quantal kernels.
 
   * Fix virtual testing. Most of the necessary infrastructure is
