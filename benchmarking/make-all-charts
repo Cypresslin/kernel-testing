@@ -2,6 +2,7 @@
 
 set +e
 
+export DATA_LOC=/var/lib/jenkins/metrics/benchmarking
 export PRIV_LOC=/var/lib/jenkins/rsync/private-reports
 export PUB_LOC=/var/lib/jenkins/rsync/zinc.canonical.com/public-reports
 
@@ -10,26 +11,26 @@ export PUB_LOC=/var/lib/jenkins/rsync/zinc.canonical.com/public-reports
 #
 unset PRIVATE
 echo "==============="
-./create-result-set --outfile=$PUB_LOC/dbench-quantal.html --dataloc=/src/kernel-testing/benchmarking/data $PRIVATE --setname=dbench-quantal
+./create-result-set --outfile=$PUB_LOC/dbench-quantal.html --dataloc=$DATA_LOC $PRIVATE --setname=dbench-quantal
 echo "---------------"
-#./create-result-set --outfile=$PUB_LOC/dbench-precise.html --dataloc=/src/kernel-testing/benchmarking/data $PRIVATE --setname=dbench-precise
+#./create-result-set --outfile=$PUB_LOC/dbench-precise.html --dataloc=$DATA_LOC $PRIVATE --setname=dbench-precise
 #echo "---------------"
-./create-result-set --outfile=$PUB_LOC/bonnie-quantal.html --dataloc=/src/kernel-testing/benchmarking/data $PRIVATE --setname=bonnie
+./create-result-set --outfile=$PUB_LOC/bonnie-quantal.html --dataloc=$DATA_LOC $PRIVATE --setname=bonnie
 echo "---------------"
-./create-result-set --outfile=$PUB_LOC/power-consumption.html --dataloc=/src/kernel-testing/benchmarking/data $PRIVATE --setname=power
+./create-result-set --outfile=$PUB_LOC/power-consumption.html --dataloc=$DATA_LOC $PRIVATE --setname=power
 echo "---------------"
 
 #
 # Do private Charts
 #
 export PRIVATE=--private
-./create-result-set --outfile=$PRIV_LOC/dbench-quantal.html --dataloc=/src/kernel-testing/benchmarking/data $PRIVATE --setname=dbench-quantal
+./create-result-set --outfile=$PRIV_LOC/dbench-quantal.html --dataloc=$DATA_LOC $PRIVATE --setname=dbench-quantal
 echo "---------------"
-#./create-result-set --outfile=$PRIV_LOC/dbench-precise.html --dataloc=/src/kernel-testing/benchmarking/data $PRIVATE --setname=dbench-precise
+#./create-result-set --outfile=$PRIV_LOC/dbench-precise.html --dataloc=$DATA_LOC $PRIVATE --setname=dbench-precise
 #echo "---------------"
-./create-result-set --outfile=$PRIV_LOC/bonnie-quantal.html --dataloc=/src/kernel-testing/benchmarking/data $PRIVATE --setname=bonnie
+./create-result-set --outfile=$PRIV_LOC/bonnie-quantal.html --dataloc=$DATA_LOC $PRIVATE --setname=bonnie
 echo "---------------"
-./create-result-set --outfile=$PRIV_LOC/power-consumption.html --dataloc=/src/kernel-testing/benchmarking/data $PRIVATE --setname=power
+./create-result-set --outfile=$PRIV_LOC/power-consumption.html --dataloc=$DATA_LOC $PRIVATE --setname=power
 echo "==============="
 
 #
