@@ -17,7 +17,9 @@ CDIR="`dirname $0`"
 ./$CDIR/kernel-test-expander
 
 # run presetup, which was created by kernel-test-expander
+set +x
 . ./presetup
+set -x
 
 # WORKSPACE may be passed in from the top-level jenkins job
 if [ -z "$WORKSPACE" ]; then
