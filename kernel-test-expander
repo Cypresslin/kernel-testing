@@ -84,7 +84,7 @@ testCollections = {
     # This is the set of tests that the kernel team runs. This should
     # be a superset of the 'default' tests that QA runs.
     #
-    'kernel' : ['iperf', 'leap_seconds', 'ltp', 'stress'],
+    'kernel' : ['iperf', 'leap_seconds', 'stress'],
 }
 
 # Exit
