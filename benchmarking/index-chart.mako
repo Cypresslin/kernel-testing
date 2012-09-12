@@ -111,7 +111,7 @@ for template_data in template_data_list:
                     </div> <!-- header -->
 
                     <div class="dash-section">
-                        <table width="100%">
+                        <table width="100%" border="2px" rules="all" cellpadding="3px">
                         % if doing_2up:
                             <% i = 0 %>
                             % for chartname in chart_series_map:
