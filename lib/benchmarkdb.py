@@ -53,6 +53,7 @@ class BenchCharts:
             'filter' : 'precise_statler_dbench',
             'baseline_file' : 'statler-dbench-baseline.json',
             'chart_title' : 'Precise dbench Results',
+            'y_label' : 'MB/S',
             'included_metrics' : 'all',
             'sort_by' : 'KERNEL_VERSION',
             },
@@ -60,6 +61,7 @@ class BenchCharts:
             'filter' : 'quantal_statler_dbench',
             'baseline_file' : 'quantal-dbench-baseline.json',
             'chart_title' : 'Quantal dbench Results',
+            'y_label' : 'MB/S',
             'included_metrics' : 'all',
             'sort_by' : 'KERNEL_VERSION',
             },
@@ -67,6 +69,7 @@ class BenchCharts:
             'filter' : 'quantal_statler_bonnie',
             'baseline_file' : 'statler-bonnie-baseline.json',
             'chart_title' : 'Quantal Bonnie Block I/O Results',
+            'y_label' : 'Operations per Second',
             'included_metrics' : 'seqin_perblk_ksec{perf},seqout_perblk_ksec{perf}',
             'sort_by' : 'KERNEL_VERSION',
             },
@@ -74,6 +77,7 @@ class BenchCharts:
             'filter' : 'quantal_statler_bonnie',
             'baseline_file' : 'statler-bonnie-baseline.json',
             'chart_title' : 'Quantal Bonnie Char I/O Results',
+            'y_label' : 'Operations per Second',
             'included_metrics' : 'seqin_perchr_ksec{perf},seqout_perchr_ksec{perf}',
             'sort_by' : 'KERNEL_VERSION',
             },
@@ -81,6 +85,7 @@ class BenchCharts:
             'filter' : 'quantal_statler_bonnie',
             'baseline_file' : 'statler-bonnie-baseline.json',
             'chart_title' : 'Quantal Bonnie I/O Results (All)',
+            'y_label' : 'Operations per Second',
             'included_metrics' : 'all',
             'muted_metrics' : 'size{perf}',
             'sort_by' : 'KERNEL_VERSION',
@@ -90,6 +95,7 @@ class BenchCharts:
             'filter' : 'power_filter',
             'baseline_file' : 'power-baseline.json',
             'chart_title' : 'Power Results: dd',
+            'y_label' : 'milliAmps',
             'included_metrics' : 'dd_copy_current_drawn_mA_average{perf},dd_copy_current_drawn_mA_maximum{perf},dd_copy_current_drawn_mA_minimum{perf},dd_copy_current_drawn_mA_stddev{perf}',
             'muted_metrics' : '',
             'sort_by' : 'KERNEL_VERSION',
@@ -98,6 +104,7 @@ class BenchCharts:
             'filter' : 'power_filter',
             'baseline_file' : 'power-baseline.json',
             'chart_title' : 'Power Results: idle',
+            'y_label' : 'milliAmps',
             'included_metrics' : 'idle_system_current_drawn_mA_average{perf},idle_system_current_drawn_mA_maximum{perf},idle_system_current_drawn_mA_minimum{perf},idle_system_current_drawn_mA_stddev{perf}',
             'muted_metrics' : '',
             'sort_by' : 'KERNEL_VERSION',
@@ -106,6 +113,7 @@ class BenchCharts:
             'filter' : 'power_filter',
             'baseline_file' : 'power-baseline.json',
             'chart_title' : 'Power Results: stress CPU',
+            'y_label' : 'milliAmps',
             'included_metrics' : 'stress_CPU_current_drawn_mA_average{perf},stress_CPU_current_drawn_mA_maximum{perf},stress_CPU_current_drawn_mA_minimum{perf},stress_CPU_current_drawn_mA_stddev{perf}',
             'muted_metrics' : '',
             'sort_by' : 'KERNEL_VERSION',
@@ -114,6 +122,7 @@ class BenchCharts:
             'filter' : 'power_filter',
             'baseline_file' : 'power-baseline.json',
             'chart_title' : 'Power Results: stress I/O sync',
+            'y_label' : 'milliAmps',
             'included_metrics' : 'stress_IO_Sync_current_drawn_mA_average{perf},stress_IO_Sync_current_drawn_mA_maximum{perf},stress_IO_Sync_current_drawn_mA_minimum{perf},stress_IO_Sync_current_drawn_mA_stddev{perf}',
             'muted_metrics' : '',
             'sort_by' : 'KERNEL_VERSION',
@@ -122,6 +131,7 @@ class BenchCharts:
             'filter' : 'power_filter',
             'baseline_file' : 'power-baseline.json',
             'chart_title' : 'Power Results: stress VM',
+            'y_label' : 'milliAmps',
             'included_metrics' : 'stress_VM_current_drawn_mA_average{perf},stress_VM_current_drawn_mA_maximum{perf},stress_VM_current_drawn_mA_minimum{perf},stress_VM_current_drawn_mA_stddev{perf}',
             'muted_metrics' : '',
             'sort_by' : 'KERNEL_VERSION',
@@ -130,6 +140,7 @@ class BenchCharts:
             'filter' : 'power_filter',
             'baseline_file' : 'power-baseline.json',
             'chart_title' : 'Power Results: stress all',
+            'y_label' : 'milliAmps',
             'included_metrics' : 'stress_all_current_drawn_mA_average{perf},stress_all_current_drawn_mA_maximum{perf},stress_all_current_drawn_mA_minimum{perf},stress_all_current_drawn_mA_stddev{perf}',
             'muted_metrics' : '',
             'sort_by' : 'KERNEL_VERSION',
@@ -304,6 +315,10 @@ class BenchCharts:
                     data['metrics'][metric] = '%s' % mval
 
             data['meta']['chart-title'] = chartdef['chart_title']
+            if normalize:
+                data['meta']['y-label'] = chartdef['y_label'] + ' (normalized)'
+            else:
+                data['meta']['y-label'] = chartdef['y_label']
 
             # Save this test, as the BUILD_ID string, which can be sorted chronologically
             #print data['meta']

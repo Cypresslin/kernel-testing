@@ -25,6 +25,7 @@ for template_data in template_data_list:
 
         # Chart_title needs to be one per chart
         ctitle = testrecord['meta']['chart-title']
+	ylabel = testrecord['meta']['y-label']
 
         # display the kernel version
         testlabels.append("%s" % (kvers.encode('ascii','ignore')))
@@ -158,7 +159,7 @@ for template_data in template_data_list:
                     },
                     yAxis: {
                        title: {
-                           text: 'Benchmark Result'
+                           text: '${ylabel}'
                        }
                     },
                     tooltip: {
