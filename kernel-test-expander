@@ -69,6 +69,12 @@ testDependencies = {
             'common' : ['flex'],
             },
         },
+
+    'power_consumption' : {
+        'packages' : {
+           'common' : ['stress'],
+            },
+        },
 }
 
 # Test Collections may be defined, and will run the list of autotest tests in them
@@ -85,6 +91,9 @@ testCollections = {
     # be a superset of the 'default' tests that QA runs.
     #
     'kernel' : ['iperf', 'leap_seconds', 'stress'],
+
+    # This is the set of tests for measuring power consumption.
+    'power' : ['power_consumption'],
 }
 
 # Exit
