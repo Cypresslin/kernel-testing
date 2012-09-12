@@ -62,7 +62,13 @@ testDependencies = {
         'packages' : {
             'common' : ['sysstat', 'gdb'],
             },
-        }
+        },
+
+    'ltp' : {
+        'packages' : {
+            'common' : ['flex'],
+            },
+        },
 }
 
 # Test Collections may be defined, and will run the list of autotest tests in them
@@ -73,12 +79,12 @@ testCollections = {
     # This is the set of tests that will run if no KERNEL_TEST_LIST variable is set.
     # (QA runs this set)
     #
-    'default' : ['ecryptfs', 'qrt', 'stress', 'xfstests'],
+    'default' : ['ecryptfs', 'qrt', 'xfstests'],
 
     # This is the set of tests that the kernel team runs. This should
     # be a superset of the 'default' tests that QA runs.
     #
-    'kernel' : ['iperf', 'leap_seconds'],
+    'kernel' : ['iperf', 'leap_seconds', 'ltp', 'stress'],
 }
 
 # Exit
