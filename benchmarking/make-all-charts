@@ -2,6 +2,7 @@
 
 set +e
 
+cd /var/lib/jenkins/kernel-testing/benchmarking
 export DATA_LOC=/var/lib/jenkins/metrics/benchmarking
 export PRIV_LOC=/var/lib/jenkins/rsync/private-reports
 export PUB_LOC=/var/lib/jenkins/rsync/zinc.canonical.com/public-reports
