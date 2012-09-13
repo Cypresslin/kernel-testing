@@ -40,6 +40,10 @@ export KERNEL_TEAM_JOB=&quot;true&quot;
 export VIRTUAL_HOST_NAME=--vh-name=${data.vh_name}
 % endif
 
+% if data.has_metrics:
+export HAS_METRICS=true
+% endif
+
 export KERNEL_TEST_LIST="${data.test}"
 
 /bin/sh kernel-testing/kernel-tests-runner

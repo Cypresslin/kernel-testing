@@ -325,6 +325,7 @@ if __name__ == '__main__':
     parser.add_argument('--no-test',      required=False, action='store_true', default=False, help='Don\'t create the test job. Sometimes you just want the job(s) that do the provisioning.')
     parser.add_argument('--tt',           required=False, default=default_testing_job_template, help='The name of the test-job template. (If you don\'t know what this is you shouldn\'t be specifying it.)')
     parser.add_argument('--vm-client-template', required=False, default=default_vm_client_template, help='The name of the template to use for provisioning the virtual-client(s) on the virtual-host. (If you don\'t know what this is you shouldn\'t be specifying it.)')
+    parser.add_argument('--has-metrics',  required=False, action='store_true', default=False, help='Use this when the job generates result metrics, in order to collect those.')
 
     args = parser.parse_args()
 
