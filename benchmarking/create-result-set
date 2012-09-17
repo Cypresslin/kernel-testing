@@ -246,7 +246,7 @@ class ResultSet():
                 return
             setname = self.cfg['setname']
             if  setname not in cdb.result_sets:
-                print 'result set %s not found in database' % self.cfg.setname
+                print 'result set %s not found in database' % setname
                 return
 
             name = cdb.result_sets[setname]['name']
