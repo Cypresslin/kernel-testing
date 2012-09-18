@@ -46,6 +46,14 @@ class BenchCharts:
             #'metrics_testname' : 'bonnie',
             #'distro-release-name' : 'quantal',
             },
+        'wakeup_events_filter' :
+            {
+            'environ.NODE_NAME' : 'master',
+            # This is a hack because the test data files were generated using an older version of the tools.
+            'environ.KERNEL_TEST_LIST' : 'wakeup_events',
+            #'metrics_testname' : 'bonnie',
+            #'distro-release-name' : 'quantal',
+            },
         }
     
     charts = {
@@ -145,6 +153,14 @@ class BenchCharts:
             'muted_metrics' : '',
             'sort_by' : 'KERNEL_VERSION',
             },
+        'wakeup_events' : {
+            'filter' : 'wakeup_events_filter',
+            'baseline_file' : 'wakeup-events-baseline.json',
+            'chart_title' : 'Idle System Wakeup Events: Total, Kernel and Userspace Events (average per second, 10 minute test)',
+            'included_metrics' : 'total_events{perf},kernel_events{perf},userspace_events{perf}',
+            'muted_metrics' : '',
+            'sort_by' : 'KERNEL_VERSION',
+            },
         }
 
     result_sets = {
@@ -167,6 +183,11 @@ class BenchCharts:
             {
             'name' : 'Power Consumption Results',
             'charts' : ['power_dd', 'power_idle', 'power_stress_cpu', 'power_stress_io', 'power_stress_vm', 'power_stress_all'],
+            },
+        'wakeup-events' :
+            {
+            'name' : 'Wakeup Events Results',
+            'charts' : ['wakeup_events'],
             },
         }
 

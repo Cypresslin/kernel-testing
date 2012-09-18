@@ -75,6 +75,12 @@ testDependencies = {
            'common' : ['stress'],
             },
         },
+
+    'wakeup_events' : {
+        'packages' : {
+            'common' : [],
+            },
+        },
 }
 
 # Test Collections may be defined, and will run the list of autotest tests in them
@@ -94,6 +100,9 @@ testCollections = {
 
     # This is the set of tests for measuring power consumption.
     'power' : ['power_consumption'],
+
+    # This is the set of tests for measuring power consumption.
+    'wakeup_events' : ['wakeup_events'],
 }
 
 # Exit
