@@ -20,6 +20,8 @@ echo "---------------"
 echo "---------------"
 ./create-result-set --outfile=$PUB_LOC/power-consumption.html --dataloc=$DATA_LOC $PRIVATE --setname=power
 echo "---------------"
+./create-result-set --outfile=$PUB_LOC/events.html --dataloc=$DATA_LOC $PRIVATE --setname=wakeup-events
+echo "---------------"
 
 #
 # Do private Charts
@@ -32,6 +34,8 @@ echo "---------------"
 ./create-result-set --outfile=$PRIV_LOC/bonnie-quantal.html --dataloc=$DATA_LOC $PRIVATE --setname=bonnie
 echo "---------------"
 ./create-result-set --outfile=$PRIV_LOC/power-consumption.html --dataloc=$DATA_LOC $PRIVATE --setname=power
+echo "==============="
+./create-result-set --outfile=$PRIV_LOC/events.html --dataloc=$DATA_LOC $PRIVATE --setname=wakeup-events
 echo "==============="
 
 #
