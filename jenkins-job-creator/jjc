@@ -175,6 +175,12 @@ class SutJobsFactory():
     # bare_metal_sut_jobs
     #
     def bare_metal_sut_jobs(self, cfg):
+        '''
+        Based on the options specified on the command line, use the appropriate mako
+        templates to create a bare-metal provisioning job and a testing job (that will
+        run on that newly provisioned system) on the jenkins server. The testing job
+        will be started by the provisioning job once the provisioned system comes up.
+        '''
         setattr(cfg, 'testing_job_name', '%s-%s-%s-test' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch))
         setattr(cfg, 'provisioning_job_name', '%s-hw-provisioning-%s-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch))
 
@@ -191,14 +197,25 @@ class SutJobsFactory():
 
         if not cfg.no_test:
             self.create_job(cfg.testing_job_name, cfg.tt, cfg)
-        self.create_job(cfg.provisioning_job_name, 'hw-provisioning-job.mako', cfg)
+
+        if not cfg.no_provisioning:
+            self.create_job(cfg.provisioning_job_name, 'hw-provisioning-job.mako', cfg)
 
         if not cfg.no_autostart:
-            self.jenkins.build_job(cfg.provisioning_job_name)
+            if not cfg.no_provisioning:
+                self.jenkins.build_job(cfg.provisioning_job_name)
+            else:
+                self.jenkins.build_job(cfg.testing_job_name)
 
     # virtual_sut_jobs
     #
     def virtual_sut_jobs(self, cfg):
+        '''
+        Very similar to the 'bare_metal_sut_jobs' method above, this creates 3
+        jenkins jobs. The first jenkins job provisions the bare-metal system,
+        the second provisions a kvm instance on that provisioned bare-metal
+        system and the third is the test job which runs on the provisioned kvm.
+        '''
         setattr(cfg, 'testing_job_name', '%s-%s-%s_on_%s-%s-test' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch))
         setattr(cfg, 'vh_provisioning_job_name', '%s-hw4vm-provisioning-%s-%s_%s-%s' % (cfg.vh_name, cfg.vh_series, cfg.vh_arch, cfg.sut_series, cfg.sut_arch))
         setattr(cfg, 'vm_client_provisioning_job_name', '%s-vm-client-provisioning-%s-%s_on_%s-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch))
@@ -232,11 +249,16 @@ class SutJobsFactory():
 
         if not cfg.no_test:
             self.create_job(cfg.testing_job_name, cfg.tt, cfg)
-        self.create_job(cfg.vh_provisioning_job_name, 'hw4vm-provisioning-job.mako', cfg)
-        self.create_job(cfg.vm_client_provisioning_job_name, cfg.vm_client_template, cfg)
+
+        if not cfg.no_provisioning:
+            self.create_job(cfg.vh_provisioning_job_name, 'hw4vm-provisioning-job.mako', cfg)
+            self.create_job(cfg.vm_client_provisioning_job_name, cfg.vm_client_template, cfg)
 
         if not cfg.no_autostart:
-            self.jenkins.build_job(cfg.vh_provisioning_job_name)
+            if not cfg.no_provisioning:
+                self.jenkins.build_job(cfg.vh_provisioning_job_name)
+            else:
+                self.jenkins.build_job(cfg.testing_job_name)
 
     # main
     #
@@ -325,17 +347,28 @@ if __name__ == '__main__':
     parser.add_argument('--no-test',      required=False, action='store_true', default=False, help='Don\'t create the test job. Sometimes you just want the job(s) that do the provisioning.')
     parser.add_argument('--tt',           required=False, default=default_testing_job_template, help='The name of the test-job template. (If you don\'t know what this is you shouldn\'t be specifying it.)')
     parser.add_argument('--vm-client-template', required=False, default=default_vm_client_template, help='The name of the template to use for provisioning the virtual-client(s) on the virtual-host. (If you don\'t know what this is you shouldn\'t be specifying it.)')
-    parser.add_argument('--has-metrics',  required=False, action='store_true', default=False, help='Use this when the job generates result metrics, in order to collect those.')
+    parser.add_argument('--has-metrics',        required=False, action='store_true', default=False, help='Use this when the job generates result metrics, in order to collect those.')
+    parser.add_argument('--no-provisioning',    required=False, action='store_true', default=False, help='Don\'t create the jobs which do provisioning.')
+
 
     args = parser.parse_args()
 
+    # If the sut-name was not specified on the command line, use the
+    # HW name.
+    #
     if args.sut_name == 'bogus':
         args.sut_name = args.hw
 
+    # If the --test argument is ceph, we use a different set of default
+    # templates. That is handled here.
+    #
     if args.test == 'ceph':
         if args.vm_client_template == default_vm_client_template:
             args.vm_client_template = 'ceph-cluster-provisioning-job.mako'
 
+    # Using the --hw key specified on the command line, expand the args.hw
+    # attribute to contain specifics about that hw system.
+    #
     args.hw = hw['hw pool'][args.hw]
     app = SutJobsFactory(args)
     result = app.main()
