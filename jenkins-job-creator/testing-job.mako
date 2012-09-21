@@ -45,6 +45,7 @@ export HAS_METRICS=true
 % endif
 
 export KERNEL_TEST_LIST="${data.test}"
+export KERNEL_TEST_OPTIONS="${data.test_options}"
 
 /bin/sh kernel-testing/kernel-tests-runner
             </command>

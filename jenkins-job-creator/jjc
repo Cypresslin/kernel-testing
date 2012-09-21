@@ -330,6 +330,8 @@ if __name__ == '__main__':
 
     parser.add_argument('--sut',          required=True,  choices=['real', 'virtual'], help='Kind of SUT to be created.')
     parser.add_argument('--test',         required=False, default='kernel default', help='List of tests that are to be run. This can be one or more tests or test-groups separated by a space.')
+    parser.add_argument('--test-options', required=False, default='', help='A string that is passed as is to the kernel-testing script. It can be used to pass environment variables when autotest client is invoked.')
+
     parser.add_argument('--sut-name',     required=False, default='bogus', help='Hostname of the SUT. This is the name jenkins will attempt to use to connect to the SUT.')
     parser.add_argument('--sut-series',   required=True,  help='The series that is to be installed on the SUT. lts-hwe-<series> denotes that a lts-hwe kernel is to be run on the appropriate lts series.')
     parser.add_argument('--sut-arch',     required=True,  choices=['amd64', 'i386'], help='The architecture (amd64 or i386) that is to be installed on the SUT.')
