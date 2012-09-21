@@ -7,6 +7,7 @@
 from os                                 import getenv, listdir, path
 from sys                                import exit, argv
 from lib.utils                          import run_command
+import json
 
 # Test dependencies are organized by autotest test name. They include:
 #
@@ -137,6 +138,27 @@ class ExpandTests():
                     break
         return self.__releaseName
 
+    # merge_test_options
+    #
+    def merge_test_options(self):
+        '''
+        The environment variable KERNEL_TEST_OPTIONS can be used to 'modify'
+        the information used for the various tests. It can be used to specify
+        arguments to be passed on the autotest command line on a per-test
+        basis.
+
+        For example, to pass extra arguments to the xfstests via the command
+        line you can set the variable to "{'xfstests':{'atargs':{'FILE_SYSTEMS':'xfs'}}}".
+
+        The KERNEL_TEST_OPTIONS string should be a valid json format string.
+        '''
+        kto = getenv('KERNEL_TEST_OPTIONS')
+        if kto:
+            mods = json.loads(kto)
+            for k in mods:
+                for m in mods[k]:
+                    testDependencies[k][m] = mods[k][m]
+
     # main
     #
     def main(self):
@@ -145,6 +167,8 @@ class ExpandTests():
         envVars = {}
 
         try:
+            self.merge_test_options()
+
             # Which tests are we supposed to run?
             tlist =  getenv('KERNEL_TEST_LIST')
             if tlist:
