@@ -329,7 +329,7 @@ if __name__ == '__main__':
     parser = ArgumentParser()
 
     parser.add_argument('--sut',          required=True,  choices=['real', 'virtual'], help='Kind of SUT to be created.')
-    parser.add_argument('--test',         required=False, default='kernel default', help='Kind of testing we are doing.')
+    parser.add_argument('--test',         required=False, default='kernel default', help='List of tests that are to be run. This can be one or more tests or test-groups separated by a space.')
     parser.add_argument('--sut-name',     required=False, default='bogus', help='Hostname of the SUT. This is the name jenkins will attempt to use to connect to the SUT.')
     parser.add_argument('--sut-series',   required=True,  help='The series that is to be installed on the SUT. lts-hwe-<series> denotes that a lts-hwe kernel is to be run on the appropriate lts series.')
     parser.add_argument('--sut-arch',     required=True,  choices=['amd64', 'i386'], help='The architecture (amd64 or i386) that is to be installed on the SUT.')
