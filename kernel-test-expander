@@ -125,6 +125,18 @@ class ExpandTests():
     def __init__(self):
         self.__releaseName = None
 
+    def kind_of_hardware(self):
+        retval = 'real'
+        with open('/proc/cpuinfo', 'r') as f:
+            line = f.readline()
+            while line:
+                if 'model name' in line:
+                    if 'QEMU Virtual CPU' in line:
+                        retval = 'virtual'
+                    break
+                line = f.readline()
+        return retval
+
     # releaseName
     #
     @property
@@ -214,41 +226,17 @@ class ExpandTests():
                 raise ValueError('Test(s) <%s> requested but not available in Autotest' % (",".join(badtests)))
 
             if scratchNeeded:
-                # Find out whether there are unmounted scratch devices available
-                status, deviceList = run_command("sudo fdisk -l 2>/dev/null | egrep '^/dev' | cut -f1 -d' '")
-                # get the base device for each by stripping numerics off the end
-                baseDeviceList = []
-                for dev in deviceList:
-                    baseDeviceList.append(dev.rstrip('0123456789'))
+                hw = self.kind_of_hardware()
 
-                status, mountedList =  run_command("cat /proc/mounts | egrep '^/dev' | cut -f1 -d' '")
-                print("Mounted list:", mountedList)
-                baseMountedList = []
-                for dev in mountedList:
-                    devpath = dev.rstrip('0123456789')
-                    print("Found mounted Device %s" % devpath)
-                    baseMountedList.append(devpath)
-
-                scratchPartitions = []
-                for dev in baseDeviceList:
-                    if dev not in baseMountedList:
-                        print("%s: Found unmounted partition %s, adding to list of scratch devices" % (argv[0], dev))
-                        scratchPartitions.append(dev)
-
-                # If we don't have any available devices, that's an error
-                if not len(scratchPartitions):
-                    raise ValueError('Tests require a scratch disk device, but none present')
-
-                # we show a preference for the /dev/xxb device
-                for dev in scratchPartitions:
-                    if dev[-1] == 'b':
-                        envVars['SCRATCH_DRIVE'] = dev
-                if 'SCRATCH_DRIVE' not in envVars:
-                    # take the first one
-                    envVars['SCRATCH_DRIVE'] = scratchPartitions[0]
-
-                # a hack for xfstests
-                testDependencies['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] =  envVars['SCRATCH_DRIVE']
+                # We require a spare drive for xfstesting. We make an assumption about what that
+                # spare drive is. If we are running on bare-metal, the spare drive is /dev/sdb.
+                # If it a virtual system, it is /dev/vdb. It doesn't make sense to have to partion
+                # the drive to discover it.
+                #
+                if hw == 'real':
+                    testDependencies['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] = '/dev/sdb'
+                else:
+                    testDependencies['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] = '/dev/vdb'
 
             # write the setup script
             with open('./presetup', 'w') as f:
