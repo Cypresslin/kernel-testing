@@ -1,3 +1,9 @@
+ubuntu-kernel-tests (0.0.6-1) unstable; urgency=low
+
+  * UBUNTU: Startnewrelease
+
+ -- Steve Conklin <sconklin@canonical.com>  Mon, 25 Sep 2012 14:26:28 -0600
+
 ubuntu-kernel-tests (0.0.5-1) unstable; urgency=low
 
   * Add meter network parameters to be passed to the power measurement test
