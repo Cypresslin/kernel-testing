@@ -47,15 +47,6 @@ cd /var/lib/jenkins/kernel-testing
 #
 scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh $TARGET_HOST:
 
-# Partition the second drive
-#
-ssh ${data.sut_name} sudo parted /dev/vdb print
-ssh ${data.sut_name} sudo parted /dev/vdb rm -s 1
-ssh ${data.sut_name} sudo parted /dev/vdb rm -s 2
-ssh ${data.sut_name} sudo parted /dev/vdb mklabel -s gpt
-ssh ${data.sut_name} sudo parted /dev/vdb mkpart -s p1 ext4 1MiB 1000MiB
-ssh ${data.sut_name} sudo parted /dev/vdb mkpart -s p2 ext4 1001MiB 2000MiB
-ssh ${data.sut_name} sudo parted /dev/vdb print
             </command>
         </hudson.tasks.Shell>
     </builders>
