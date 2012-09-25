@@ -248,8 +248,7 @@ class ExpandTests():
                     envVars['SCRATCH_DRIVE'] = scratchPartitions[0]
 
                 # a hack for xfstests
-                testDependencies['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] =  envVars['SCRATCH_DRIVE'] + '1'
-                testDependencies['xfstests']['atargs']['UBUNTU_SCRATCH_PARTITION'] =  envVars['SCRATCH_DRIVE'] + '2'
+                testDependencies['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] =  envVars['SCRATCH_DRIVE']
 
             # write the setup script
             with open('./presetup', 'w') as f:
@@ -276,18 +275,6 @@ class ExpandTests():
                 for key, value in envVars.iteritems():
                     print("Writing environment variable %s = %s" % (key, value))
                     f.write('export %s=%s\n' % (key, value))
-
-                # Write out the scratch drive partitioning
-                if scratchNeeded:
-                    f.write("# partition the second drive for use with xfstests\n")
-                    f.write("#\n")
-                    f.write("sudo parted $SCRATCH_DRIVE print\n")
-                    f.write("sudo parted $SCRATCH_DRIVE rm -s 1\n")
-                    f.write("sudo parted $SCRATCH_DRIVE rm -s 2\n")
-                    f.write("sudo parted $SCRATCH_DRIVE mklabel -s gpt\n")
-                    f.write("sudo parted $SCRATCH_DRIVE mkpart -s p1 ext4 1MiB 1000MiB\n")
-                    f.write("sudo parted $SCRATCH_DRIVE mkpart -s p2 ext4 1001MiB 2000MiB\n")
-                    f.write("sudo parted $SCRATCH_DRIVE print\n")
 
             #
             # Figure out which control files to use for each test
