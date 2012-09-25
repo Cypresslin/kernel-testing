@@ -1,8 +1,64 @@
-ubuntu-kernel-tests (0.0.4-1) unstable; urgency=low
+ubuntu-kernel-tests (0.0.5-1) unstable; urgency=low
 
-  * Start new release
+  * Add meter network parameters to be passed to the power measurement test
+  * kernel-test-expander: Merge test options from KERNEL_TEST_OPTIONS to testDependencies
+  * jjc: Adding --test-options to the command line for passing arguments on down to the kernel-test-expander
+  * jjc: Changed the 'help' for the --test argument
+  * create-matrix-job: we just don't use this any more
+  * Merge branch 'master-next' of zinc.canonical.com:/srv/kernel.ubuntu.com/git/ubuntu/kernel-testing into master-next
+  * jjc: Added --no-provisioning command line flag
+  * kernel-testing: Add the new wakeup-events test.
+  * create-result-set: print setname rather than self.cfg.setname
+  * Add support to jjc for tests which generate metrics
+  * kernel-test-expander: Add power consumption tests
+  * Add some spacing to make the charts prettier
+  * Add y axis labeling to chart configuration
+  * change to script directory before running them
+  * kernel-test-expander: It seems it's too early to be dropping LTP into our std mix
+  * kernel-test-expander: added ltp tests to the kernel mix
+  * Fix data source path for production
+  * Introduce new charting scripts for benchmarks
+  * kernel-tests-runner: add +x before presetup
+  * kernel-test-expander: python-apparmor is not available on lucid
+  * TODO: kernel testing robustness
+  * Off by one in the line number displayed on the text listing page.
+  * Add pretty-printing of the console log
+  * Pretty print the DEBUG files to make them easier to read in a browser.
+  * hw4vm-provisioning-job.mako: Properly handle setting up java on the host if it is a lucid host
+  * kernel-test-expander: add gdb package as dependency
+  * jjc: Enabling the use of other 'tests' and passing that along to the test-job template.
+  * TODO: Some ideas of things to do
+  * ingest: Make sure we are catching the exceptions in the correct place
+  * test-results/*: Added link to the console log and links from the indidual tests to their specific output
+  * ingest-index.mako: The detection of test failures was not correct, it was only working if the last test suite had errors not if *any* test suite had errors.
+  * kernel-test-expander: I really messed up the commit which added support for per-series dependency support.
+  * gather-attributes: needed to initialize vh_name
+  * TODO: Updated with the latest fixes
+  * kernel-test-expander: support per-series test dependencies
+  * kernel-test-expander: the full list of dependencies for apparmor
+  * Merge branch 'master-next' of zinc.canonical.com:/srv/kernel.ubuntu.com/git/ubuntu/kernel-testing into master-next
+  * Added python-pexpect for AppArmor QRT tests
+  * Add distro-release-name to gathered attributes
+  * add *~ to gitignore
+  * vm-client-provisioning-job.mako: partition the second, virtual drive
+  * Need to be able to handle systems with multiple power supplies that need to be cycled
+  * hw4vm-provisioning-job.mako: remove the ssh-keygen line which does us no good
+  * hw*.mako: Fix typo which affects HWE kernel testing
+  * hw4vm-provisioning-job.mako: specify multiple drives in the cobbler profile
+  * *.mako: Getting to a single shell job
+  * hw4vm-provisioning-job.mako: the vm-host needs to also be running the proposed kernel
+  * Add delete flags to rsync and allow test directory for chart data
+  * README: add a section of code that can be cut/pasted into a jenkins job
+  * TODO: Add vm client second drive item
+  * vm-client-provisioning-job.mako: The file structure on an Ubuntu CD uses the string amd64 instead of x86_64. To use koan to install x86_64 VMs it is necessary (at least with cobbler on Oneiric) to modify one file.
+  * jjc: fix the --test argument
+  * Merge branch 'master-next' of zinc.canonical.com:/srv/kernel.ubuntu.com/git/ubuntu/kernel-testing into master-next
+  * support for provisioning a ceph cluster
+  * Change location of benchmark data files
+  * TODO: Updated with the latest thoughts
+  * UBUNTU: Startnewrelease
 
- -- Steve Conklin <sconklin@canonical.com>  Mon, 27 Aug 2012 10:50:00 -0600
+ -- Steve Conklin <sconklin@canonical.com>  Mon, 25 Sep 2012 13:56:00 -0600
 
 ubuntu-kernel-tests (0.0.3-1) unstable; urgency=low
 
