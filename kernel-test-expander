@@ -75,6 +75,7 @@ testDependencies = {
         'packages' : {
            'common' : ['stress'],
             },
+        'atargs' : {'METER_ADDR':'10.97.8.2', 'METER_PORT':'3490', 'METER_TAGPORT':'9999'},
         },
 
     'wakeup_events' : {
