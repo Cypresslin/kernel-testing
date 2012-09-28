@@ -240,6 +240,7 @@ class ExpandTests():
 
             # write the setup script
             with open('./presetup', 'w') as f:
+                f.write("sudo apt-get update\n")
                 for atname in autotestToRun:
                     print("Dependencies: %s" % atname)
                     if atname in testDependencies:
