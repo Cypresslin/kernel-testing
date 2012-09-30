@@ -361,7 +361,7 @@ set -x
 """)
                 for testname in autotestToRun:
                     # Run the test
-                    f.write('sudo autotest/client/bin/autotest')
+                    f.write('sudo autotest/client/autotest')
                     try:
                         args = testDependencies[testname]['atargs']
                         print "args =", args
