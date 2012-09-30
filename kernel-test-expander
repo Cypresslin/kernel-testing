@@ -18,7 +18,47 @@ import json
 # 'atargs' : Autotest arguments to be passed to the control file. Can include expansion of shell variables
 #
 testDependencies = {
-    'qrt' : {
+    'ubuntu_qrt_kernel' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev', 'gdb',
+                ],
+            },
+        },
+
+    'ubuntu_qrt_kernel_aslr_collisions' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev', 'gdb',
+                ],
+            },
+        },
+
+    'ubuntu_qrt_kernel_hardening' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev', 'gdb',
+                ],
+            },
+        },
+
+    'ubuntu_qrt_kernel_panic' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev', 'gdb',
+                ],
+            },
+        },
+
+    'ubuntu_qrt_kernel_security' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev', 'gdb',
+                ],
+            },
+        },
+
+    'ubuntu_qrt_apparmor' : {
         'packages' : {
             'common' : [
                 'build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev', 'gdb',
@@ -40,11 +80,17 @@ testDependencies = {
             },
         },
 
-    'ecryptfs' : {
+    'ubuntu_ecryptfs' : {
         'packages' : {
             'common' : [
                 'libglib2.0-dev', 'intltool', 'keyutils', 'libkeyutils-dev', 'libpam0g-dev', 'libnss3-dev', 'libtool', 'acl', 'xfsprogs', 'btrfs-tools', 'gdb',
                 ],
+            },
+        },
+
+    'ubuntu_leap_seconds' : {
+        'packages' : {
+            'common' : [],
             },
         },
 
@@ -83,6 +129,7 @@ testDependencies = {
             'common' : [],
             },
         },
+
 }
 
 # Test Collections may be defined, and will run the list of autotest tests in them
@@ -93,12 +140,12 @@ testCollections = {
     # This is the set of tests that will run if no KERNEL_TEST_LIST variable is set.
     # (QA runs this set)
     #
-    'default' : ['ecryptfs', 'qrt', 'xfstests'],
+    'default' : ['ubuntu_ecryptfs', 'ubuntu_qrt_kernel_hardening', 'ubuntu_qrt_kernel_panic', 'ubuntu_qrt_kernel_security', 'ubuntu_qrt_kernel_aslr_collisions', 'ubuntu_qrt_apparmor', 'xfstests'],
 
     # This is the set of tests that the kernel team runs. This should
     # be a superset of the 'default' tests that QA runs.
     #
-    'kernel' : ['iperf', 'leap_seconds', 'stress'],
+    'kernel' : ['iperf', 'ubuntu_leap_seconds', 'stress'],
 
     # This is the set of tests for measuring power consumption.
     'power' : ['power_consumption'],
