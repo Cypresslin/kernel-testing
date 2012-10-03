@@ -26,6 +26,8 @@ Autotest
 kernel-testing
 --------------
 
+  * We need to be getting _some_ kind of results when tests fail.
+
   * Improve testing robustness:
     * Far too often I am finding jenkins jobs "stuck" on a particular
       test for hours at a time. We need some way of timing out these
