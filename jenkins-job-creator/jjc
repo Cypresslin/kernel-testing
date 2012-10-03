@@ -339,6 +339,8 @@ examples:
         ./jjc --hw=statler --sut=real --sut-series=quantal --sut-arch=amd64
         ./jjc --hw=rizzo --sut=real --sut-series=lucid --sut-arch=amd64
 
+        ./jjc --hw=statler --sut=real --sut-series=quantal --sut-arch=amd64 --tt=stress
+
     virtual client
     --------------
         ./jjc --hw=statler --vh-series=precise --vh-arch=amd64 --sut=virtual --sut-series=quantal --sut-arch=amd64
@@ -359,7 +361,7 @@ examples:
     parser.add_argument('--sut-arch',     required=True,  choices=['amd64', 'i386'], help='The architecture (amd64 or i386) that is to be installed on the SUT.')
     parser.add_argument('--sut-hwe',      required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
 
-    parser.add_argument('--vh-name',      required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the name of that virtual host.')
+    parser.add_argument('--vh-name',      required=False, default='bogus', help='If the SUT is a virtual client, a virtual host is needed. This is the name of that virtual host.')
     parser.add_argument('--vh-series',    required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the series of that virtual host.')
     parser.add_argument('--vh-arch',      required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the arch of that virtual host.')
     parser.add_argument('--vh-hwe',       required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
@@ -381,7 +383,14 @@ examples:
     # HW name.
     #
     if args.sut_name == 'bogus':
-        args.sut_name = args.hw
+        if args.sut == 'virtual':
+            if args.vh_name == 'bogus':
+                args.sut_name = 'vm-%s' % args.hw
+                args.vh_name = args.hw
+            else:
+                args.sut_name = 'vm-%s' % args.vh_name
+        else:
+            args.sut_name = args.hw
 
     # If the --test argument is ceph, we use a different set of default
     # templates. That is handled here.
