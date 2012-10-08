@@ -1,0 +1,72 @@
+#!/bin/bash
+#
+
+# This script is to be run on a "system under test". It will copy down the necessary
+# tests and data files and then run the desired tests.
+#
+
+#set -x
+
+usage()
+{
+    echo " "
+    echo "-h | --help"
+    echo "    Prints this help message and exits. "
+    echo " "
+    echo "--kernel-test-list"
+    echo "    A list of the tests to be run. The tests are separated by whitespace."
+    echo " "
+    echo "--kernel-test-options"
+    echo "    Options that are to be passed down to the tests as 'autotest arguments'."
+    echo " "
+    echo "test-repository-host"
+    echo "    Hostname or IP address of the system that has the test files."
+
+    exit 1
+}
+
+# This variable is unique to the jobs that the kernel team runs on their
+# jenkins server.
+#
+export KERNEL_TEAM_JOB="true"
+
+export KERNEL_TEST_LIST="status"
+export KERNEL_TEST_OPTIONS=""
+
+export TEST_REPOSITORY_HOST=kernel-jenkins
+
+while [ $# -gt 0 ]; do
+    case $1 in
+        -h|--help)
+            usage
+            ;;
+
+        --kernel-test-list=*)
+            export KERNEL_TEST_LIST=$(echo $1 | cut -d= -f2)
+            ;;
+
+        --kernel-test-options=*)
+            export KERNEL_TEST_OPTIONS=$(echo $1 | cut -d= -f2)
+            ;;
+
+        --test-repository-host=*)
+            export TEST_REPOSITORY_HOST=$(echo $1 | cut -d= -f2)
+            ;;
+    esac
+    shift
+done
+
+# Clean up anything left over from previous runs.
+#
+TEST_ROOT=ktr # ktr - (kernel tests root)
+sudo rm -rf $TEST_ROOT
+mkdir $TEST_ROOT
+cd $TEST_ROOT
+
+# Fetch the relevant test scripts from the jenkins server
+#
+rsync -ar --exclude '.git' -e "ssh -o StrictHostKeyChecking=no" $TEST_REPOSITORY_HOST:autotest/ ./autotest/
+rsync -ar --exclude '.git' -e "ssh -o StrictHostKeyChecking=no" $TEST_REPOSITORY_HOST:autotest-client-tests/ ./autotest/client/tests/
+rsync -ar --exclude '.git' -e "ssh -o StrictHostKeyChecking=no" $TEST_REPOSITORY_HOST:kernel-testing/ ./kernel-testing/
+
+#/bin/sh kernel-testing/kernel-tests-runner

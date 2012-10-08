@@ -15,6 +15,11 @@ from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
 from lib.jenkins                        import Jenkins, JenkinsException, LAUNCHER_SSH, LAUNCHER_COMMAND, LAUNCHER_WINDOWS_SERVICE
 
+# find_kt_home
+#
+def find_kt_home():
+    return path.dirname(path.dirname(path.abspath(argv[0])))
+
 # load_cfg
 #
 def load_cfg(file_name):
@@ -169,6 +174,7 @@ class SutJobsFactory():
             self.jenkins.delete_job(job_name)
         except:
             pass
+
         self.jenkins.create_job(job_name, job_xml)
         info('created jenkins job: %s' % job_name)
 
@@ -199,7 +205,7 @@ class SutJobsFactory():
             self.create_job(cfg.testing_job_name, cfg.tt, cfg)
 
         if not cfg.no_provisioning:
-            self.create_job(cfg.provisioning_job_name, 'hw-provisioning-job.mako', cfg)
+            self.create_job(cfg.provisioning_job_name, 'kernel-testing-job.mako', cfg)
 
         if not cfg.no_autostart:
             if not cfg.no_provisioning:
@@ -247,18 +253,22 @@ class SutJobsFactory():
         setattr(cfg, 'sut_preseed', self.kmap['series'][cfg.sut_series]['preseed'])
         setattr(cfg, 'sut_server_distro_decoration', self.kmap['series'][cfg.sut_series]['server distro decoration'])
 
-        if not cfg.no_test:
-            self.create_job(cfg.testing_job_name, cfg.tt, cfg)
+        #  if not cfg.no_test:
+        #      self.create_job(cfg.testing_job_name, cfg.tt, cfg)
 
-        if not cfg.no_provisioning:
-            self.create_job(cfg.vh_provisioning_job_name, 'hw4vm-provisioning-job.mako', cfg)
-            self.create_job(cfg.vm_client_provisioning_job_name, cfg.vm_client_template, cfg)
+        #  if not cfg.no_provisioning:
+        #      self.create_job(cfg.vh_provisioning_job_name, 'hw4vm-provisioning-job.mako', cfg)
+        #      self.create_job(cfg.vm_client_provisioning_job_name, cfg.vm_client_template, cfg)
 
-        if not cfg.no_autostart:
-            if not cfg.no_provisioning:
-                self.jenkins.build_job(cfg.vh_provisioning_job_name)
-            else:
-                self.jenkins.build_job(cfg.testing_job_name)
+        #  if not cfg.no_autostart:
+        #      if not cfg.no_provisioning:
+        #          self.jenkins.build_job(cfg.vh_provisioning_job_name)
+        #      else:
+        #          self.jenkins.build_job(cfg.testing_job_name)
+
+        #-------------------
+        setattr(cfg, 'master_job_name', '%s-virt__%s-%s_on_%s-%s' % (cfg.hw_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch))
+        self.create_job(cfg.master_job_name, 'master.mako', cfg)
 
     # main
     #
@@ -293,6 +303,7 @@ class SutJobsFactory():
 if __name__ == '__main__':
 
     result = 0
+
 
     if getenv('DEBUG'):
         LOGLEVEL = DEBUG
@@ -402,7 +413,10 @@ examples:
     # Using the --hw key specified on the command line, expand the args.hw
     # attribute to contain specifics about that hw system.
     #
+    setattr(args, 'hw_name', args.hw)  # This really doesn't make sense!
     args.hw = hw['hw pool'][args.hw]
+    setattr(args, 'kt_home', find_kt_home())
+
     app = SutJobsFactory(args)
     result = app.main()
 
