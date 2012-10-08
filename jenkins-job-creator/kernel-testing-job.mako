@@ -90,10 +90,6 @@ ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo /bin/bash testing-job --ke
 % if not data.no_test:
 set +e # No matter what, try to collect the results
 
-# Build the follow on job(s) waiting for them to finish.
-#
-java -jar /run/jenkins/war/WEB-INF/jenkins-cli.jar -s ${data.jenkins_url} build -s ${data.testing_job_name}
-
 # Publish the results
 #
 /var/lib/jenkins/kernel-testing/test-results/ingest $HOME/jobs/${data.testing_job_name}/builds/1

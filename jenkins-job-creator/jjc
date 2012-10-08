@@ -188,7 +188,7 @@ class SutJobsFactory():
         will be started by the provisioning job once the provisioned system comes up.
         '''
         setattr(cfg, 'testing_job_name', '%s-%s-%s-test' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch))
-        setattr(cfg, 'provisioning_job_name', '%s-hw-provisioning-%s-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch))
+        setattr(cfg, 'provisioning_job_name', 'kernel-tests-%s-%s-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch))
 
         setattr(cfg, 'sut_orchestra_arch', self.kmap['orchestra arch'][cfg.sut_arch])
         setattr(cfg, 'sut_preseed', self.kmap['series'][cfg.sut_series]['preseed'])
@@ -200,9 +200,6 @@ class SutJobsFactory():
             setattr(cfg, 'sut_hwe_series', cfg.sut_series)
             setattr(cfg, 'sut_hwe_package', self.kmap['series'][cfg.sut_series]['hwe package'])
             cfg.sut_series = self.kmap['series'][cfg.sut_series]['hwe series']
-
-        if not cfg.no_test:
-            self.create_job(cfg.testing_job_name, cfg.tt, cfg)
 
         if not cfg.no_provisioning:
             self.create_job(cfg.provisioning_job_name, 'kernel-testing-job.mako', cfg)
