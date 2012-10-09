@@ -84,8 +84,15 @@ scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh ${data.sut_name}:
 
 # Copy the test script to the SUT and run it.
 #
+rm -f jenkins-env.sh; touch jenkins-env.sh
+echo export BUILD_TAG=$BUILD_TAG >> jenkins-env.sh
+echo export BUILD_ID=$BUILD_ID >> jenkins-env.sh
+echo export JENKINS_HOME=$JENKINS_HOME >> jenkins-env.sh
+echo export WORKSPACE=$WORKSPACE >> jenkins-env.sh
+set # See what environment variables are set
 scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing-bjf/jenkins-job-creator/testing-job ${data.sut_name}:
-ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo /bin/bash testing-job --kernel-test-list=${data.test} --kernel-test-options="${data.test_options}" --test-repository-host=${data.hw['jenkins server']}
+scp -o StrictHostKeyChecking=no jenkins-env.sh ${data.sut_name}:
+ssh -o StrictHostKeyChecking=no ${data.sut_name} /bin/bash testing-job --kernel-test-list=${data.test} --kernel-test-options="${data.test_options}" --test-repository-host=${data.hw['jenkins server']}
 
 % if not data.no_test:
 set +e # No matter what, try to collect the results

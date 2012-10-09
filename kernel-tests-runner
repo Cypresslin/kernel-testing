@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -x
+
 # kernel-tests-runner
 #
 # The master, control script for running the tests the Ubuntu kernel

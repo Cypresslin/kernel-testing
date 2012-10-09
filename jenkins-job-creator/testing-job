@@ -69,4 +69,4 @@ rsync -ar --exclude '.git' -e "ssh -o StrictHostKeyChecking=no" $TEST_REPOSITORY
 rsync -ar --exclude '.git' -e "ssh -o StrictHostKeyChecking=no" $TEST_REPOSITORY_HOST:autotest-client-tests/ ./autotest/client/tests/
 rsync -ar --exclude '.git' -e "ssh -o StrictHostKeyChecking=no" $TEST_REPOSITORY_HOST:kernel-testing-bjf/ ./kernel-testing/
 
-#/bin/sh kernel-testing/kernel-tests-runner
+/bin/sh kernel-testing/kernel-tests-runner
