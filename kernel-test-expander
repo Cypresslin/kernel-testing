@@ -6,6 +6,7 @@
 
 from os                                 import getenv, listdir, path
 from sys                                import exit, argv
+from subprocess                         import Popen, PIPE
 from lib.utils                          import run_command
 import json
 
@@ -172,6 +173,18 @@ class ExpandTests():
     def __init__(self):
         self.__releaseName = None
 
+    def mounts(self):
+        p = Popen(['mount'], stdout=PIPE, stderr=PIPE, close_fds=True)
+        retval = p.communicate()[0].split('\n')
+        return retval
+
+    def root_dev(self):
+        retval='bogus'
+        for line in self.mounts():
+            if ' / ' in line:
+                retval = line.split()[0].replace('/dev/', '')[0:2]
+        return retval
+
     def kind_of_hardware(self):
         retval = 'real'
         with open('/proc/cpuinfo', 'r') as f:
@@ -276,14 +289,11 @@ class ExpandTests():
                 hw = self.kind_of_hardware()
 
                 # We require a spare drive for xfstesting. We make an assumption about what that
-                # spare drive is. If we are running on bare-metal, the spare drive is /dev/sdb.
-                # If it a virtual system, it is /dev/vdb. It doesn't make sense to have to partion
-                # the drive to discover it.
+                # spare drive is. Look at the device the root device is and assume that the scratch
+                # drive is the 'b' device with that same device root.
                 #
-                if hw == 'real':
-                    testDependencies['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] = '/dev/sdb'
-                else:
-                    testDependencies['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] = '/dev/vdb'
+                dev = self.drive_device_root()
+                testDependencies['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] = '/dev/%sb' % self.root_dev()
 
             # write the setup script
             with open('./presetup', 'w') as f:
