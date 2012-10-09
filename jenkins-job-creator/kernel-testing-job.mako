@@ -84,7 +84,7 @@ scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh ${data.sut_name}:
 
 # Copy the test script to the SUT and run it.
 #
-scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing/jenkins-job-creator/testing-job ${data.sut_name}:
+scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing-bjf/jenkins-job-creator/testing-job ${data.sut_name}:
 ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo /bin/bash testing-job --kernel-test-list=${data.test} --kernel-test-options="${data.test_options}" --test-repository-host=${data.hw['jenkins server']}
 
 % if not data.no_test:
