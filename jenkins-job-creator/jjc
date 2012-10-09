@@ -250,22 +250,18 @@ class SutJobsFactory():
         setattr(cfg, 'sut_preseed', self.kmap['series'][cfg.sut_series]['preseed'])
         setattr(cfg, 'sut_server_distro_decoration', self.kmap['series'][cfg.sut_series]['server distro decoration'])
 
-        #  if not cfg.no_test:
-        #      self.create_job(cfg.testing_job_name, cfg.tt, cfg)
+        if not cfg.no_test:
+            self.create_job(cfg.testing_job_name, cfg.tt, cfg)
 
-        #  if not cfg.no_provisioning:
-        #      self.create_job(cfg.vh_provisioning_job_name, 'hw4vm-provisioning-job.mako', cfg)
-        #      self.create_job(cfg.vm_client_provisioning_job_name, cfg.vm_client_template, cfg)
+        if not cfg.no_provisioning:
+            self.create_job(cfg.vh_provisioning_job_name, 'hw4vm-provisioning-job.mako', cfg)
+            self.create_job(cfg.vm_client_provisioning_job_name, cfg.vm_client_template, cfg)
 
-        #  if not cfg.no_autostart:
-        #      if not cfg.no_provisioning:
-        #          self.jenkins.build_job(cfg.vh_provisioning_job_name)
-        #      else:
-        #          self.jenkins.build_job(cfg.testing_job_name)
-
-        #-------------------
-        setattr(cfg, 'master_job_name', '%s-virt__%s-%s_on_%s-%s' % (cfg.hw_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch))
-        self.create_job(cfg.master_job_name, 'master.mako', cfg)
+        if not cfg.no_autostart:
+            if not cfg.no_provisioning:
+                self.jenkins.build_job(cfg.vh_provisioning_job_name)
+            else:
+                self.jenkins.build_job(cfg.testing_job_name)
 
     # main
     #
