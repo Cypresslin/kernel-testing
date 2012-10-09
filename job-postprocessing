@@ -1,5 +1,9 @@
 #!/bin/sh
 
+if [ -e "~/jenkins-env.sh" ]; then
+    . ~/jenkins-env.sh
+fi
+
 # job-postprocessing
 #
 # This shell script does any benchmark processing, gathers the autotest results and gets them back to
