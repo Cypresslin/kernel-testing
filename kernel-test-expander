@@ -292,7 +292,6 @@ class ExpandTests():
                 # spare drive is. Look at the device the root device is and assume that the scratch
                 # drive is the 'b' device with that same device root.
                 #
-                dev = self.drive_device_root()
                 testDependencies['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] = '/dev/%sb' % self.root_dev()
 
             # write the setup script
@@ -309,8 +308,12 @@ class ExpandTests():
                             for pkg in tdeps['packages']['common']:
                                 f.write('%s ' % pkg)
                             if self.releaseName in tdeps['packages']:
+                                print("    There are series (%s) specific dependencies for %s" % (self.releaseName, atname))
                                 for pkg in tdeps['packages'][self.releaseName]:
+                                    print("      %s" % pkg)
                                     f.write('%s ' % pkg)
+                            else:
+                                print("    There are no series (%s) specific dependencies for %s" % (self.releaseName, atname))
                             f.write('\n')
                         # Run any test-specific command lines
                         if 'command' in tdeps:
@@ -353,18 +356,13 @@ class ExpandTests():
 # the jenkins server.
 #
 
-set +x
+set -x
 
 if [ -z "$JENKINS_SERVER" ]; then
     JENKINS_SERVER=kernel-jenkins
 fi
 CONTROL_FILE=control
 AUTOTEST_TEST=_bogus_
-
-echo ===============
-uname -a
-echo ===============
-set -x
 
 # Now run the tests
 

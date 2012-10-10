@@ -29,11 +29,11 @@ usage()
 # jenkins server.
 #
 export KERNEL_TEAM_JOB="true"
-
 export KERNEL_TEST_LIST="status"
 export KERNEL_TEST_OPTIONS=""
 
 export TEST_REPOSITORY_HOST=kernel-jenkins
+export VIRTUAL_HOST_NAME=""
 
 while [ $# -gt 0 ]; do
     case $1 in
@@ -55,13 +55,6 @@ while [ $# -gt 0 ]; do
     esac
     shift
 done
-
-# Clean up anything left over from previous runs.
-#
-TEST_ROOT=ktr # ktr - (kernel tests root)
-sudo rm -rf $TEST_ROOT
-mkdir $TEST_ROOT
-cd $TEST_ROOT
 
 # Fetch the relevant test scripts from the jenkins server
 #

@@ -1,6 +1,12 @@
 #!/bin/sh
 
-set -x
+set -e # Stop on error
+set +x # Show me wht is going on
+
+JENKINS_ENV=~/jenkins-env.sh
+if [ -e $JENKINS_ENV ]; then
+    . $JENKINS_ENV
+fi
 
 # kernel-tests-runner
 #
@@ -19,9 +25,7 @@ CDIR="`dirname $0`"
 ./$CDIR/kernel-test-expander
 
 # run presetup, which was created by kernel-test-expander
-set +x
 . ./presetup
-set -x
 
 # WORKSPACE may be passed in from the top-level jenkins job
 if [ -z "$WORKSPACE" ]; then
@@ -33,13 +37,15 @@ echo ">>>  test-attributes begin"
 ./$CDIR/gather-attributes $VIRTUAL_HOST_NAME | tee test-attributes.json
 echo ">>>  test-attributes end"
 
-set +e # We want _all_ the tests to run even if one of them errors out.
 
 # run run-tests, which was created by kernel-test-expander
+set +e # We want _all_ the tests to run even if one of them errors out.
 . ./run-tests
+set -e
 
 # Stitch all the individual test results files together.
 #
-autotest/client/tools/glue_testsuites $WORKSPACE/*.xml > $WORKSPACE/kernel-results.xml
+autotest/client/tools/glue_testsuites *.xml > kernel-results.xml
+scp -r kernel-results.xml $JENKINS_SERVER:$JENKINS_HOME/jobs/$JOB_NAME/workspace/
 
 # vi:set ts=4 sw=4 expandtab:

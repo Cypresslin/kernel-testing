@@ -89,23 +89,30 @@ echo export BUILD_TAG=$BUILD_TAG >> jenkins-env.sh
 echo export BUILD_ID=$BUILD_ID >> jenkins-env.sh
 echo export JENKINS_HOME=$JENKINS_HOME >> jenkins-env.sh
 echo export WORKSPACE=$WORKSPACE >> jenkins-env.sh
+echo export JOB_NAME=$JOB_NAME >> jenkins-env.sh
 set # See what environment variables are set
-scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing-bjf/jenkins-job-creator/testing-job ${data.sut_name}:
+scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing-bjf/jenkins-job-creator/kernel-tester ${data.sut_name}:
 scp -o StrictHostKeyChecking=no jenkins-env.sh ${data.sut_name}:
-ssh -o StrictHostKeyChecking=no ${data.sut_name} /bin/bash testing-job --kernel-test-list=${data.test} --kernel-test-options="${data.test_options}" --test-repository-host=${data.hw['jenkins server']}
+ssh -o StrictHostKeyChecking=no ${data.sut_name} /bin/bash kernel-tester --kernel-test-list=${data.test} --kernel-test-options="${data.test_options}" --test-repository-host=${data.hw['jenkins server']}
 
 % if not data.no_test:
 set +e # No matter what, try to collect the results
 
 # Publish the results
 #
-/var/lib/jenkins/kernel-testing/test-results/ingest $HOME/jobs/${data.testing_job_name}/builds/1
+#/var/lib/jenkins/kernel-testing/test-results/ingest $HOME/jobs/$JOB_NAME/builds/$BUILD_ID
 % endif
             </command>
         </hudson.tasks.Shell>
 
     </builders>
-    <publishers/>
+    <publishers>
+        <hudson.tasks.junit.JUnitResultArchiver>
+            <testResults>kernel-results.xml</testResults>
+            <keepLongStdio>true</keepLongStdio>
+            <testDataPublishers/>
+        </hudson.tasks.junit.JUnitResultArchiver>
+    </publishers>
     <buildWrappers/>
 </project>
 <!-- vi:set ts=4 sw=4 expandtab: -->

@@ -1,9 +1,5 @@
 #!/bin/sh
 
-if [ -e "~/jenkins-env.sh" ]; then
-    . ~/jenkins-env.sh
-fi
-
 # job-postprocessing
 #
 # This shell script does any benchmark processing, gathers the autotest results and gets them back to
@@ -21,7 +17,7 @@ fi
 
 # Process the results
 #
-sudo autotest/client/tools/results2junit.py autotest/client/results/default > $WORKSPACE/autotest-results.$TEST_NAME.xml
+sudo autotest/client/tools/results2junit.py autotest/client/results/default > autotest-results.$TEST_NAME.xml
 
 # Gather up the files that will be helpful is any of the tests fail.
 #
