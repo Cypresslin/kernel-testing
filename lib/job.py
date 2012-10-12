@@ -3,6 +3,7 @@
 from sys                                import stdout
 from subprocess                         import Popen, STDOUT, PIPE
 from threading                          import Thread
+from logging                            import debug
 
 class Command(object):
     '''
@@ -31,7 +32,24 @@ class Command(object):
 
         return self.process.returncode, self.stdout, self.stderr
 
-def sh(cmd, timeout=None):
+def sh2(cmd, timeout=None, quiet=False, ignore_result=False):
     command = Command(cmd)
-    return command.run(timeout=timeout, shell=True, stderr=STDOUT, stdout=PIPE)
+    if not quiet:
+        debug('sh2: \'%s\'' % cmd)
+    status, std_out, std_err = command.run(timeout=timeout, shell=True, stderr=STDOUT, stdout=PIPE)
+    if not quiet:
+        debug('sh2 status: %d' % status)
+    return status, std_out
 
+def sh(cmd, timeout=None, quiet=False, ignore_result=False):
+    command = Command(cmd)
+    if not quiet:
+        debug('sh: \'%s\'' % cmd)
+    status = command.run(timeout=timeout, shell=True)[0]
+    if not quiet:
+        debug('sh status: %d' % status)
+    return status
+
+if __name__ == '__main__':
+    command = Command("for i in 1 2 3 4 5; do echo \"hello\"; sleep 10; done")
+    command.run(shell=True)
