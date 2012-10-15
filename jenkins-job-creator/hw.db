@@ -11,6 +11,39 @@
 	            }
             ]
 	    },
+	    "gonzo" : {
+	        "orchestra server" : "magners-orchestra",
+	        "jenkins server" : "kernel-jenkins",
+	        "mac address" : "08:9e:01:3c:c9:60",
+	        "cdu" : [
+                {
+	                "ip" : "10.97.0.12",
+                    "port" : "Gonzo"
+	            }
+            ]
+	    },
+	    "fozzie" : {
+	        "orchestra server" : "magners-orchestra",
+	        "jenkins server" : "kernel-jenkins",
+	        "mac address" : "90:b1:1c:10:6b:03",
+	        "cdu" : [
+                {
+	                "ip" : "10.97.0.12",
+                    "port" : "Fozzie_PS2"
+	            }
+            ]
+	    },
+	    "scooter" : {
+	        "orchestra server" : "magners-orchestra",
+	        "jenkins server" : "kernel-jenkins",
+	        "mac address" : "d4:ae:52:a3:6a:22",
+	        "cdu" : [
+                {
+	                "ip" : "10.97.0.12",
+                    "port" : "Scooter"
+	            }
+            ]
+	    },
 	    "rizzo" : {
 	        "orchestra server" : "magners-orchestra",
 	        "jenkins server" : "kernel-jenkins",
