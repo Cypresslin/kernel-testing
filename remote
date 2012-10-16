@@ -1,0 +1,67 @@
+#!/bin/bash
+#
+
+# Push the kernel-tester script to a remote system via scp and then
+# run the script.
+#
+
+#set -x
+
+usage()
+{
+    echo "usage: remote [option] sut"
+    echo " "
+    echo "-h | --help"
+    echo "    Prints this help message and exits. "
+    echo " "
+    echo "--kernel-test-list"
+    echo "    A list of the tests to be run. The tests are separated by whitespace."
+    echo " "
+    echo "--kernel-test-options"
+    echo "    Options that are to be passed down to the tests as 'autotest arguments'."
+    echo " "
+    echo "--test-repository-host"
+    echo "    Hostname or IP address of the system that has the test files."
+
+    exit 1
+}
+
+# This variable is unique to the jobs that the kernel team runs on their
+# jenkins server.
+#
+export KERNEL_TEST_LIST="status"
+export KERNEL_TEST_OPTIONS="{}"
+export TEST_REPOSITORY_HOST=kernel-jenkins
+
+while [ $# -gt 0 ]; do
+    case $1 in
+        -h|--help)
+            usage
+            ;;
+
+        --kernel-test-list=*)
+            export KERNEL_TEST_LIST=$(echo $1 | cut -d= -f2)
+            ;;
+
+        --kernel-test-options=*)
+            export KERNEL_TEST_OPTIONS=$(echo $1 | cut -d= -f2)
+            ;;
+
+        --test-repository-host=*)
+            export TEST_REPOSITORY_HOST=$(echo $1 | cut -d= -f2)
+            ;;
+
+        --*)
+            echo *** Error: The specified option $1 is not recognized
+            usage
+            ;;
+
+        *)
+            SUT=$1
+            ;;
+    esac
+    shift
+done
+
+scp kickoff $SUT:
+ssh $SUT /bin/bash kickoff --kernel-test-list=$KERNEL_TEST_LIST --kernel-test-options="$KERNEL_TEST_OPTIONS" --test-repository-host=$TEST_REPOSITORY_HOST
