@@ -187,28 +187,21 @@ class SutJobsFactory():
         run on that newly provisioned system) on the jenkins server. The testing job
         will be started by the provisioning job once the provisioned system comes up.
         '''
-        setattr(cfg, 'testing_job_name', '%s-%s-%s-test' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch))
-        setattr(cfg, 'provisioning_job_name', 'kernel-tests-%s-%s-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch))
+        setattr(cfg, 'job_name', 'kernel-tests-%s-%s-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch))
 
         setattr(cfg, 'sut_orchestra_arch', self.kmap['orchestra arch'][cfg.sut_arch])
         setattr(cfg, 'sut_preseed', self.kmap['series'][cfg.sut_series]['preseed'])
         setattr(cfg, 'sut_server_distro_decoration', self.kmap['series'][cfg.sut_series]['server distro decoration'])
 
         if cfg.sut_hwe:
-            cfg.testing_job_name = '%s-lts-%s-%s-test' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch)
-            cfg.provisioning_job_name = '%s-hw-provisioning-lts-%s-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch)
             setattr(cfg, 'sut_hwe_series', cfg.sut_series)
             setattr(cfg, 'sut_hwe_package', self.kmap['series'][cfg.sut_series]['hwe package'])
             cfg.sut_series = self.kmap['series'][cfg.sut_series]['hwe series']
 
-        if not cfg.no_provisioning:
-            self.create_job(cfg.provisioning_job_name, 'kernel-testing-job.mako', cfg)
+        self.create_job(cfg.job_name, 'kernel-testing-job.mako', cfg)
 
         if not cfg.no_autostart:
-            if not cfg.no_provisioning:
-                self.jenkins.build_job(cfg.provisioning_job_name)
-            else:
-                self.jenkins.build_job(cfg.testing_job_name)
+            self.jenkins.build_job(cfg.job_name)
 
     # virtual_sut_jobs
     #
@@ -250,18 +243,11 @@ class SutJobsFactory():
         setattr(cfg, 'sut_preseed', self.kmap['series'][cfg.sut_series]['preseed'])
         setattr(cfg, 'sut_server_distro_decoration', self.kmap['series'][cfg.sut_series]['server distro decoration'])
 
-        if not cfg.no_test:
-            self.create_job(cfg.testing_job_name, cfg.tt, cfg)
-
         if not cfg.no_provisioning:
             self.create_job(cfg.vh_provisioning_job_name, 'hw4vm-provisioning-job.mako', cfg)
             self.create_job(cfg.vm_client_provisioning_job_name, cfg.vm_client_template, cfg)
 
-        if not cfg.no_autostart:
-            if not cfg.no_provisioning:
-                self.jenkins.build_job(cfg.vh_provisioning_job_name)
-            else:
-                self.jenkins.build_job(cfg.testing_job_name)
+        self.jenkins.build_job(cfg.vh_provisioning_job_name)
 
     # main
     #
@@ -327,7 +313,7 @@ if __name__ == '__main__':
     #         machine that is being tested, it is the virtual-client that
     #         is the sut.
     #
-    default_vm_client_template   = 'vm-client-provisioning-job.mako'
+    default_vm_client_template   = 'virtual-kernel-testing-job-job.mako'
     default_testing_job_template = 'testing-job.mako'
 
     app_description = '''
