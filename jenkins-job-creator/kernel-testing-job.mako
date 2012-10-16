@@ -26,6 +26,7 @@
         <org.jvnet.hudson.plugins.SSHBuilder>
             <siteName>${data.hw['orchestra server']}</siteName>
             <command>
+% if not data.no_provisioning:
 # Get rid of any previous profile (and system) with the same name
 #
 sudo cobbler profile remove --name=${data.sut_name}
@@ -41,11 +42,13 @@ sudo cobbler system add --name=${data.sut_name} --profile=${data.sut_name} --hos
         % endif
     % endfor
 % endfor
+% endif
 
             </command>
         </org.jvnet.hudson.plugins.SSHBuilder>
         <hudson.tasks.Shell>
             <command>
+% if not data.no_provisioning:
 export TARGET_HOST=${data.sut_name}
 
 ssh-keygen -f &quot;/var/lib/jenkins/.ssh/known_hosts&quot; -R $TARGET_HOST
@@ -81,6 +84,7 @@ ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get --yes dist-upgrade
 ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo reboot
 /var/lib/jenkins/kernel-testing/wait-for-system ${data.sut_name}
 scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh ${data.sut_name}:
+% endif
 
 #----------------------------------------------------------
 # Copy the test script to the SUT and run it.
