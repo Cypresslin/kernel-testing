@@ -3,7 +3,7 @@
 set -e # Stop on error
 set +x # Show me wht is going on
 
-JENKINS_ENV=~/jenkins-env.sh
+JENKINS_ENV=~/test-env.sh
 if [ -e $JENKINS_ENV ]; then
     . $JENKINS_ENV
 fi
