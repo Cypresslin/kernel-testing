@@ -17,7 +17,7 @@
             <command>
 cd /var/lib/jenkins
 rm -rf kernel-testing
-scp -o StrictHostKeyChecking=no -r ${data.hw['jenkins server']}:kernel-testing .
+scp -r ${data.hw['jenkins server']}:kernel-testing .
 
 sudo apt-get install -y qemu-kvm koan virt-manager
 sudo sed -ie 's/^\(libvirtd.*\)/\1jenkins/' /etc/group
@@ -37,15 +37,15 @@ set +e
 
 export TARGET_HOST=${data.sut_name}
 
-ssh-keygen -f &quot;/var/lib/jenkins/.ssh/known_hosts&quot; -R $TARGET_HOST
+ssh-keygen -f &quot;/var/lib/jenkins/.ssh/known_hosts&quot; -R ${data.sut_name}
 
 cd /var/lib/jenkins/kernel-testing
-./wait-for-system $TARGET_HOST
-./create-slave-node $TARGET_HOST $TARGET_HOST &quot;${data.sut_name}&quot;
+./wait-for-system ${data.sut_name}
+./create-slave-node ${data.sut_name} ${data.sut_name} &quot;${data.sut_name}&quot;
 
 # Fix .ssh config on slave so it can copy from kernel-jenkins
 #
-scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh $TARGET_HOST:
+scp -r /var/lib/jenkins/.ssh ${data.sut_name}:
 
             </command>
         </hudson.tasks.Shell>

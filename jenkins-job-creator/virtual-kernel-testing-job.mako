@@ -62,11 +62,11 @@ cd /var/lib/jenkins/kernel-testing
 
 # Enable the proposed pocket on the vm host.
 #
-ssh -o StrictHostKeyChecking=no ${data.vh_name} 'echo deb http://us.archive.ubuntu.com/ubuntu/ ${data.vh_series}-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list'
-ssh -o StrictHostKeyChecking=no ${data.vh_name} sudo apt-get update
-ssh -o StrictHostKeyChecking=no ${data.vh_name} sudo apt-get --yes dist-upgrade
+ssh ${data.vh_name} 'echo deb http://us.archive.ubuntu.com/ubuntu/ ${data.vh_series}-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list'
+ssh ${data.vh_name} sudo apt-get update
+ssh ${data.vh_name} sudo apt-get --yes dist-upgrade
 
-ssh -o StrictHostKeyChecking=no ${data.vh_name} sudo reboot
+ssh ${data.vh_name} sudo reboot
 /var/lib/jenkins/kernel-testing/wait-for-system ${data.vh_name}
 
 % if data.vh_series in ['lucid']:
@@ -74,8 +74,8 @@ ssh -o StrictHostKeyChecking=no ${data.vh_name} sudo reboot
 # On Lucid series installs we have to install the jdk ourselves. There is
 # no jenkins-slave package.
 #
-scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing/jenkins-job-creator/manual-slave-install ${data.vh_name}:
-ssh -o StrictHostKeyChecking=no ${data.vh_name} /bin/sh manual-slave-install
+scp /var/lib/jenkins/kernel-testing/jenkins-job-creator/manual-slave-install ${data.vh_name}:
+ssh ${data.vh_name} /bin/sh manual-slave-install
 
 % endif
 
@@ -84,7 +84,7 @@ set +e # Continue if the node doesn&apos;t exist
 
 # Fix .ssh config on slave so it can copy from kernel-jenkins
 #
-scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh $TARGET_HOST:
+scp -r /var/lib/jenkins/.ssh $TARGET_HOST:
 
 ##################################################################
 #
@@ -92,39 +92,41 @@ scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh $TARGET_HOST:
 #
 ##################################################################
 
-# Build the follow on job(s) waiting for them to finish.
+# Copy the script over that will create the virtual SUT and execute
+# it.
 #
-java -jar /run/jenkins/war/WEB-INF/jenkins-cli.jar -s ${data.jenkins_url} build -s ${data.vm_client_provisioning_job_name}
+scp /var/lib/jenkins/kernel-testing-bjf/jenkins-job-creator/create-virtual-sut ${data.vh_name}:
+ssh ${data.vh_name} /bin/sh create-virtual-sut
 
 # Enable the proposed pocket on the SUT (the vm).
 #
-ssh -o StrictHostKeyChecking=no ${data.sut_name} 'echo deb http://us.archive.ubuntu.com/ubuntu/ ${data.sut_series}-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list'
-ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get update
-ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get --yes dist-upgrade
+ssh ${data.sut_name} 'echo deb http://us.archive.ubuntu.com/ubuntu/ ${data.sut_series}-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list'
+ssh ${data.sut_name} sudo apt-get update
+ssh ${data.sut_name} sudo apt-get --yes dist-upgrade
 
 # If we are testing the lts-hwe package, get it installed and then reboot.
 #
 % if data.sut_hwe:
 % if data.sut_hwe_series == 'quantal':
-    scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing/jenkins-job-creator/lts-hwe-development-install ${data.sut_name}:
-    ssh -o StrictHostKeyChecking=no ${data.sut_name} /bin/sh lts-hwe-development-install
+    scp /var/lib/jenkins/kernel-testing/jenkins-job-creator/lts-hwe-development-install ${data.sut_name}:
+    ssh ${data.sut_name} /bin/sh lts-hwe-development-install
 % else:
-    ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get update
-    ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo apt-get install --yes ${data.sut_hwe_package}
+    ssh ${data.sut_name} sudo apt-get update
+    ssh ${data.sut_name} sudo apt-get install --yes ${data.sut_hwe_package}
 %endif
 % endif
 
-ssh -o StrictHostKeyChecking=no ${data.sut_name} sudo reboot
+ssh ${data.sut_name} sudo reboot
 /var/lib/jenkins/kernel-testing/wait-for-system ${data.sut_name}
-scp -o StrictHostKeyChecking=no -r /var/lib/jenkins/.ssh ${data.sut_name}:
+scp -r /var/lib/jenkins/.ssh ${data.sut_name}:
 
 % if data.sut_series in ['lucid']:
 
 # On Lucid series installs we have to install the jdk ourselves. There is
 # no jenkins-slave package.
 #
-scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing/jenkins-job-creator/manual-slave-install ${data.sut_name}:
-ssh -o StrictHostKeyChecking=no ${data.sut_name} /bin/sh manual-slave-install
+scp /var/lib/jenkins/kernel-testing/jenkins-job-creator/manual-slave-install ${data.sut_name}:
+ssh ${data.sut_name} /bin/sh manual-slave-install
 
 % endif
 
@@ -141,9 +143,9 @@ echo export JENKINS_HOME=$JENKINS_HOME >> test-env.sh
 echo export WORKSPACE=$WORKSPACE >> test-env.sh
 echo export JOB_NAME=$JOB_NAME >> test-env.sh
 set # See what environment variables are set
-scp -o StrictHostKeyChecking=no /var/lib/jenkins/kernel-testing-bjf/jenkins-job-creator/kernel-tester ${data.sut_name}:
-scp -o StrictHostKeyChecking=no test-env.sh ${data.sut_name}:
-ssh -o StrictHostKeyChecking=no ${data.sut_name} /bin/bash kernel-tester --kernel-test-list=${data.test} --kernel-test-options="${data.test_options}" --test-repository-host=${data.hw['jenkins server']}
+scp /var/lib/jenkins/kernel-testing-bjf/jenkins-job-creator/kernel-tester ${data.sut_name}:
+scp test-env.sh ${data.sut_name}:
+ssh ${data.sut_name} /bin/bash kernel-tester --kernel-test-list=${data.test} --kernel-test-options="${data.test_options}" --test-repository-host=${data.hw['jenkins server']}
 
 
 # Process the results
