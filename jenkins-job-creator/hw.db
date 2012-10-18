@@ -1,5 +1,16 @@
 {
     "hw pool" : {
+        "quantal" : {
+	        "orchestra server" : "red",
+	        "jenkins server" : "red",
+	        "mac address" : "00:22:68:16:b6:e5",
+	        "cdu" : [
+                {
+	                "ip" : "",
+                    "port" : ""
+	            }
+            ]
+	    },
         "think" : {
 	        "orchestra server" : "red",
 	        "jenkins server" : "red",

@@ -108,12 +108,12 @@ class TestAttributes():
         data['platform']['hostname'] = platform.node()
 
         data['platform']['hardware'] = self.kind_of_hardware()
-        if data['platform']['hardware'] == 'virtual':
-            if self.cfg.vh_name != '':
-                data['virt host'] = {
-                    'kernel version' : self.virt_host_kernel_version(self.cfg.vh_name),
-                    'name' : self.cfg.vh_name,
-                }
+        #if data['platform']['hardware'] == 'virtual':
+        #    if self.cfg.vh_name != '':
+        #        data['virt host'] = {
+        #            'kernel version' : self.virt_host_kernel_version(self.cfg.vh_name),
+        #            'name' : self.cfg.vh_name,
+        #        }
 
         data['kernel'] = self.kernel_version()
         data['distro-release'] = self.distro_release()

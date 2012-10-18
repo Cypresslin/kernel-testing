@@ -1,15 +1,13 @@
 #!/bin/bash
 #
 
-# Push the kernel-tester script to a remote system via scp and then
-# run the script.
+# This script is to be run on a "system under test". It will copy down the necessary
+# tests and data files and then run the desired tests.
 #
 
-#set -x
 
 usage()
 {
-    echo "usage: remote [option] sut"
     echo " "
     echo "-h | --help"
     echo "    Prints this help message and exits. "
@@ -26,12 +24,14 @@ usage()
     exit 1
 }
 
+CDIR="`dirname $0`"
+
 # This variable is unique to the jobs that the kernel team runs on their
 # jenkins server.
 #
 export KERNEL_TEAM_JOB="true"
 export KERNEL_TEST_LIST="iperf"
-export KERNEL_TEST_OPTIONS="{}"
+export KERNEL_TEST_OPTIONS=""
 export TEST_REPOSITORY_HOST=kernel-jenkins
 export VIRTUAL_HOST_NAME=""
 
@@ -53,28 +53,20 @@ while [ $# -gt 0 ]; do
             export TEST_REPOSITORY_HOST=$(echo $1 | cut -d= -f2)
             ;;
 
-        --virtual-host-name=*)
-            export VIRTUAL_HOST_NAME=$(echo $1 | cut -d= -f2)
-            ;;
-
         --*)
             echo *** Error: The specified option $1 is not recognized
             usage
             ;;
 
-        *)
-            SUT=$1
-            ;;
     esac
     shift
 done
 
-# Push the tests and the kernel team infrastructure to the SUT.
+set -x
+# Fetch the relevant test scripts from the jenkins server
 #
-ssh $SUT sudo rm -rf autotest kernel-testing
+rsync -ar --exclude '.git' -e "ssh -o StrictHostKeyChecking=no" $TEST_REPOSITORY_HOST:autotest/ ./autotest/
+rsync -ar --exclude '.git' -e "ssh -o StrictHostKeyChecking=no" $TEST_REPOSITORY_HOST:autotest-client-tests/ ./autotest/client/tests/
+rsync -ar --exclude '.git' -e "ssh -o StrictHostKeyChecking=no" $TEST_REPOSITORY_HOST:kernel-testing-bjf/ ./kernel-testing/
 
-scp -r $HOME/autotest $SUT:autotest
-scp -r $HOME/autotest-client-tests/* $SUT:autotest/client/tests/
-scp -r $HOME/kernel-testing-bjf $SUT:./kernel-testing
-
-ssh $SUT python kernel-testing/runner $KERNEL_TEST_LIST
+python $CDIR/kernel-testing/runner $KERNEL_TEST_LIST

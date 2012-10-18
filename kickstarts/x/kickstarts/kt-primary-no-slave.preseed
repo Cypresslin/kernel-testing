@@ -41,7 +41,6 @@ d-i     partman/default_filesystem              string      ext4
 
 # Use generic kernel
 d-i     base-installer/kernel/image             string      linux-server
-#d-i     base-installer/kernel/image             string      linux-generic
 
 # User setup
 d-i     passwd/root-login                       boolean     false
@@ -49,9 +48,6 @@ d-i     passwd/make-user                        boolean     true
 d-i     passwd/user-fullname                    string      ubuntu
 d-i     passwd/username                         string      ubuntu
 d-i     passwd/user-password-crypted            password    $6$.1eHH0iY$ArGzKX2YeQ3G6U.mlOO3A.NaL22Ewgz8Fi4qqz.Ns7EMKjEJRIW2Pm/TikDptZpuu7I92frytmk5YeL.9fRY4.
-#d-i     passwd/user-fullname                    string      jenkins
-#d-i     passwd/username                         string      jenkins
-#d-i     passwd/user-password-crypted            password    $6$OR5rfBfN$ffTGCOIQusLBkKqjCCtdOdrEdd1Y0Onsx0XaAHK46DxMX6d44RdgPn51r3kckQ4qG9MHg8IoVEwQWwBNNiIT50
 d-i     passwd/user-uid                         string
 d-i     user-setup/allow-password-weak          boolean     false
 d-i     user-setup/encrypt-home boolean         false
@@ -81,20 +77,19 @@ d-i     debian-installer/exit/halt              boolean     false
 d-i     debian-installer/exit/poweroff          boolean     false
 
 # Packages
-#d-i     pkgsel/include                          string      openssh-server build-essential libcap2-bin gcc-multilib gdb gawk execstack exim4 jenkins-slave python-software-properties
-d-i     pkgsel/include                          string      openssh-server vim build-essential jenkins-slave htop
+d-i     pkgsel/include                          string      openssh-server vim build-essential htop
 
 # Post scripts. Executes late command and disables PXE
 #
 d-i     preseed/late_command                    string      true && \
-                                                            wget "http://$http_server:$http_port/cblr/svc/op/nopxe/system/$system_name" -O /dev/null && \
-							    in-target sh -c 'echo "jenkins ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers' && \
-							    in-target sh -c 'mkdir -p /var/lib/jenkins/.ssh' && \
-							    in-target sh -c 'touch /var/lib/jenkins/.ssh/authorized_keys' && \
-                                in-target sh -c 'echo ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDg0Kunu2uK+BV1xkaismqmJt04SP9KneJzbQkCiqnrtrIRwI7BoOycXtwB0M+lX/MInGu0l1TirhR8OtHbZCsQH8oyHSvhEoAJrfm+GwjVfbili+Hz7qFLgYQBWSlLvqTpNdMUVvHCqvN7K2zWcs9UjD+ntqrZkTWJt2h+CIcb55FH54G5uzJfOAwoyeee1ueEgiU30vCDZI214s3L/d2cSiAVsGSOnz8JhqOk5U6AAykoWPn1tThSsMxCz/x1LtUYM0Hu2wuFGDVt8oeoh9lwkBoBhoR/R1PNR9dlrAL/vQOYfKX8J/krXHqaB6GHwka/TuB+FHt3zaJqQEh+85ox jenkins@kernel-jenkins > /var/lib/jenkins/.ssh/authorized_keys' && \
-							    in-target sh -c 'chmod -R 755 /var/lib/jenkins/.ssh' && \
-							    in-target sh -c 'chmod 600 /var/lib/jenkins/.ssh/authorized_keys' && \
-							    in-target sh -c 'chown -R jenkins:jenkins /var/lib/jenkins/.ssh' && \
+                                $SNIPPET('orchestra_disable_pxe') && \
+							    in-target sh -c 'adduser --quiet --disabled-password -gecos "jenkins user,,," jenkins' && \
+							    in-target sh -c 'mkdir -p /home/jenkins/.ssh' && \
+							    in-target sh -c 'touch /home/jenkins/.ssh/authorized_keys' && \
+                                in-target sh -c 'echo ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDg0Kunu2uK+BV1xkaismqmJt04SP9KneJzbQkCiqnrtrIRwI7BoOycXtwB0M+lX/MInGu0l1TirhR8OtHbZCsQH8oyHSvhEoAJrfm+GwjVfbili+Hz7qFLgYQBWSlLvqTpNdMUVvHCqvN7K2zWcs9UjD+ntqrZkTWJt2h+CIcb55FH54G5uzJfOAwoyeee1ueEgiU30vCDZI214s3L/d2cSiAVsGSOnz8JhqOk5U6AAykoWPn1tThSsMxCz/x1LtUYM0Hu2wuFGDVt8oeoh9lwkBoBhoR/R1PNR9dlrAL/vQOYfKX8J/krXHqaB6GHwka/TuB+FHt3zaJqQEh+85ox jenkins@kernel-jenkins > /home/jenkins/.ssh/authorized_keys' && \
+							    in-target sh -c 'chmod -R 755 /home/jenkins/.ssh' && \
+							    in-target sh -c 'chmod 600 /home/jenkins/.ssh/authorized_keys' && \
+							    in-target sh -c 'chown -R jenkins:jenkins /home/jenkins/.ssh' && \
 							    in-target sh -c 'echo "jenkins ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers' && \
 							    in-target sh -c 'echo $hostname > /etc/hostname' && \
 							    true

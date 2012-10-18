@@ -1,0 +1,441 @@
+#!/usr/bin/env python
+#
+
+from os                                 import getenv, path
+from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import debug, error, info, basicConfig, INFO, DEBUG, WARNING, getLevelName
+from datetime                           import datetime
+from time                               import sleep
+
+from lib.infrastructure                 import Orchestra, HWE, LabHW
+from lib.shell                          import sh, ShellError, ShellTimeoutError
+
+dry_run = True
+
+# ssh
+#
+def ssh(target, cmd, quiet=False):
+    ssh_cmd = 'ssh %s %s' % (target, cmd)
+    result = 0
+    if dry_run:
+        debug('[dry-run] %s' % (ssh_cmd))
+    else:
+        result, output = sh(ssh_cmd, quiet=quiet)
+
+    if result != 0:
+        raise ShellError(ssh_cmd, result)
+
+    return result, output
+
+# Timeout
+#
+class Timeout(Exception):
+    """
+    A task took longer than the specified timeout.
+    """
+    pass
+
+# ErrorExit
+#
+class ErrorExit(Exception):
+    """
+    If an error message has already been displayed and we want to just exit the app, this
+    exception is raised.
+    """
+    pass
+
+# Provisioner
+#
+class Provisioner():
+
+    # __init__
+    #
+    def __init__(self, name, series, arch, hwe=False):
+        self.name   = name
+        self.series = series
+        self.arch   = arch
+        self.hwe    = hwe
+        self.quiet  = False
+        self.kickstarts_root = '/var/lib/cobbler/kickstarts/kernel'
+
+    # enable_proposed
+    #
+    def enable_proposed(self, target, series):
+        '''
+        On the target system, enable the -proposed archive pocket for the
+        specified series.
+        '''
+        if not self.quiet:
+            print('    enabling proposed')
+
+        ssh(target, '\'echo deb http://us.archive.ubuntu.com/ubuntu/ %s-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (series))
+
+
+    # dist_upgrade
+    #
+    def dist_upgrade(self, target):
+        '''
+        Perform a update and dist-upgrade on a remote system.
+        '''
+        ssh(target, 'sudo apt-get update')
+        ssh(target, 'sudo apt-get --yes dist-upgrade')
+
+    # wait_for_system
+    #
+    def wait_for_system(self, target, timeout=5):
+        global dry_run
+        if not dry_run:
+            if not self.quiet:
+                print('Waiting for \'%s\' to come up.' % (target))
+
+            start = datetime.utcnow()
+            while True:
+                result, output = sh('ssh -qf %s exit' % target, quiet=True, ignore_result=True)
+                if result == 0:
+                    break
+
+                now = datetime.utcnow()
+                delta = now - start
+                if delta.seconds > timeout * 60:
+                    error('The specified timeout (%d) was reached while waiting for the target system (%s) to come back up.' % (timeout, target))
+                    raise ErrorExit()
+
+                sleep(60)
+
+    # reboot
+    #
+    def reboot(self, target, wait=True):
+        '''
+        Reboot the target system and wait 5 minutes for it to come up.
+        '''
+        ssh(target, 'sudo reboot')
+        if wait:
+            self.wait_for_system(target, timeout=5)
+
+    # install_hwe_kernel
+    #
+    def install_hwe_kernel(self, target):
+        '''
+        On the SUT, configure it to use a HWE kernel and then install the HWE
+        kernel.
+        '''
+        if not self.quiet:
+            print('Updating to the HWE kernel.')
+
+        # We add the x-swat ppa so we can pick up the development HWE kernel
+        # if we want.
+        #
+        ssh(target, 'sudo apt-get install --yes python-software-properties')
+        ssh(target, 'sudo apt-add-repository ppa:ubuntu-x-swat/q-lts-backport')
+
+        hwe_package = HWE[self.hwe_series]['package']
+        ssh(target, 'sudo apt-get update')
+        ssh(target, 'sudo apt-get install --yes %s' % (hwe_package))
+
+    # configure_passwordless_access
+    #
+    def configure_passwordless_access(self, target):
+        result, out = sh('scp -r $HOME/.ssh %s:' % (target), ignore_result=True)
+        if result > 0:
+            error('****')
+            error('**** Failed to scp .ssh to %s' % target)
+            error(out)
+            error('****')
+
+# VirtualProvisioner
+#
+class VirtualProvisioner(Provisioner):
+
+    # __init__
+    #
+    def __init__(self, virt_host, name, series, arch, hwe=False):
+        Provisioner.__init__(self, name, series, arch, hwe)
+        self.virt_host = virt_host
+
+    # configure_orchestra
+    #
+    def configure_orchestra(self, target):
+        '''
+        Create the appropriate profiles and system configurations to the orchestra server
+        for the system we are going to provision.
+        '''
+        if not self.quiet:
+            print('Configure the Orchestra server')
+
+        o_series = Orchestra['series'][self.series]
+        o_arch   = Orchestra['arch'][self.arch]
+        distro = '%s%s-%s' % (self.series, o_series['server distro decoration'], o_arch)
+        kickstart = path.join(self.kickstarts_root, 'kt-virt-%s-no-slave.preseed' % (o_series['preseed']))
+
+        t = LabHW[target]
+        if not self.quiet:
+            print('    remove profile \'%s\'' % self.name)
+        ssh('%s@%s' % ('kernel', t['orchestra server']), 'sudo cobbler profile remove --name=%s' % (self.name))
+
+        if not self.quiet:
+            print('    adding profile \'%s\' with series: %s  arch: %s' % (self.name, self.series, self.arch))
+        ssh('%s@%s' % ('kernel', t['orchestra server']), 'sudo cobbler profile add --name=%s --distro=%s --kickstart=%s --ksmeta=hostname=%s --virt-file-size=20,100 --virt-ram=1000 --virt-disk=raw,raw --virt-path=/opt/%s-a,/opt/%s-b' % (self.name, distro, kickstart, self.name, self.name, self.name))
+
+    # configure_host_for_virtual_guests
+    #
+    def configure_host_for_virtual_guests(self, target):
+        '''
+        '''
+        ssh(target, r'sudo apt-get install -y qemu-kvm koan virt-manager')
+        ssh(target, r"sudo sed -ie 's/^\(libvirtd.*\)/\1jenkins/' /etc/group")
+
+        # The file structure on an Ubuntu CD uses the string amd64 instead of x86_64. To
+        # use koan to install x86_64 VMs it is necessary (at least with cobbler on Oneiric)
+        # to modify one file.
+        #
+        ssh(target, r'sudo sed -i -e \'/elif uri.count\(\"installer-amd64\"\):/ i \\ \\ \\ \\ \\ \\ \\ \\ elif uri.count\(\"x86_64\"\):\\n \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ self._treeArch = \"amd64\"\' /usr/share/pyshared/virtinst/OSDistro.py')
+        ssh(target, r'/bin/echo -e \'\\n\\nauto br0\\niface br0 inet dhcp\\n     \ \ \ bridge_ports     eth0\\n     \ \ \ bridge_stp         off\\n     \ \ \ bridge_fd            0\\n     \ \ \ bridge_maxwait 0\\n\' \| sudo tee -a /etc/network/interfaces')
+
+        ssh(target, r'sudo ifup br0')
+
+    # create_virtual_guest
+    #
+    def create_virtual_guest(self, target):
+        ssh(target, 'sudo koan --virt --server=%s --profile=%s --virt-name=%s --virt-bridge=br0 --vm-poll' % (LabHW[target]['orchestra server'], self.name, self.name))
+
+    # provision
+    #
+    def provision(self):
+        target = self.name
+
+        # If we are installing a HWE kernel, we want to install the correct series first.
+        #
+        if self.hwe:
+            self.hwe_series = self.series
+            self.series = HWE[self.series]['series']
+
+        # We network boot/install the bare-metal hw to get our desired configuration on it.
+        #
+        self.configure_orchestra(self.virt_host)
+
+        self.configure_host_for_virtual_guests(self.virt_host)
+        self.create_virtual_guest(self.virt_host)
+
+        # Once the initial installation has completed, we continue to install and update
+        # packages so that we are testing the latest kernel, which is what we want.
+        #
+        self.wait_for_system(target, timeout=30) # Allow 30 minutes for network installation
+        self.enable_proposed(target, self.series)
+        self.dist_upgrade(target)
+
+        if self.hwe:
+            self.install_hwe_kernel(target)
+
+        # We want to install to pick up any new kernel that we would have installed due
+        # to either the dist-upgrade that was performed, or the install of the hwe
+        # kernel.
+        #
+        self.reboot(target)
+
+        self.configure_passwordless_access(target)
+
+# MetalProvisioner
+#
+class MetalProvisioner(Provisioner):
+
+    # __init__
+    #
+    def __init__(self, name, series, arch, hwe=False):
+        Provisioner.__init__(self, name, series, arch, hwe)
+
+    # configure_orchestra
+    #
+    def configure_orchestra(self, target):
+        '''
+        Create the appropriate profiles and system configurations to the orchestra server
+        for the system we are going to provision.
+        '''
+        if not self.quiet:
+            print('Configure the Orchestra server')
+
+        o_series = Orchestra['series'][self.series]
+        o_arch   = Orchestra['arch'][self.arch]
+        distro = '%s%s-%s' % (self.series, o_series['server distro decoration'], o_arch)
+        kickstart = path.join(self.kickstarts_root, 'kt-%s-no-slave.preseed' % (o_series['preseed']))
+        repos = "'%s-%s %s-%s-security'" % (self.series, o_arch, self.series, o_arch)
+
+        t = LabHW[target]
+        if not self.quiet:
+            print('    remove profile \'%s\'' % self.name)
+        ssh('%s@%s' % ('kernel', t['orchestra server']), 'sudo cobbler profile remove --name=%s' % (self.name))
+
+        if not self.quiet:
+            print('    adding profile \'%s\' with series: %s  arch: %s' % (self.name, self.series, self.arch))
+        ssh('%s@%s' % ('kernel', t['orchestra server']), 'sudo cobbler profile add --name=%s --distro=%s --kickstart=%s --repos=%s' % (self.name, distro, kickstart, repos))
+
+        if not self.quiet:
+            print('    adding system \'%s\'' % (self.name))
+        ssh('%s@%s' % ('kernel', t['orchestra server']), 'sudo cobbler system add --name=%s --profile=%s --hostname=%s --mac=%s' % (self.name, self.name, self.name, t['mac address']))
+
+    # cycle_power
+    #
+    def cycle_power(self, target):
+        '''
+        Has the smarts on how to go about turning the power off to a server
+        remotely and then turning it back on. In some cases, multiple ports
+        must be power cycled.
+        '''
+        if not self.quiet:
+            print('Cycling the power on \'%s\'' % (target))
+
+        # Power cycle the system so it will netboot and install
+        #
+        for state in ['off', 'on']:
+            t = LabHW[target]
+            for psu in t['cdu']:
+                if psu['ip'] != '':
+                    ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l ubuntu -p ubuntu -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
+            sleep(10) # Some of the systems want a little delay
+                      # between being powered off and then back on.
+
+    # provision
+    #
+    def provision(self):
+        target = self.name
+
+        # If we are installing a HWE kernel, we want to install the correct series first.
+        #
+        if self.hwe:
+            self.hwe_series = self.series
+            self.series = HWE[self.series]['series']
+
+        # We network boot/install the bare-metal hw to get our desired configuration on it.
+        #
+        self.configure_orchestra(target)
+        self.cycle_power(target)
+
+        # Once the initial installation has completed, we continue to install and update
+        # packages so that we are testing the latest kernel, which is what we want.
+        #
+        self.wait_for_system(target, timeout=30) # Allow 30 minutes for network installation
+        self.enable_proposed(target, self.series)
+        self.dist_upgrade(target)
+
+        if self.hwe:
+            self.install_hwe_kernel(target)
+
+        self.configure_passwordless_access(target)
+
+        # We want to install to pick up any new kernel that we would have installed due
+        # to either the dist-upgrade that was performed, or the install of the hwe
+        # kernel.
+        #
+        self.reboot(target)
+
+# ProvApp
+#
+class ProvApp():
+    '''
+    Handle all the tasks for getting a test system fully up and installed and ready for
+    running the kernel tests.
+    '''
+
+    # __init__
+    #
+    def __init__(self, args):
+        self.args = args
+        self.__hwdb = None
+
+    # main
+    #
+    def main(self):
+        retval = 1
+        global dry_run
+        try:
+            dry_run = self.args.dry_run
+            target = self.args.target[0]
+
+            metal = None
+            if self.args.sut == 'real':
+                metal = MetalProvisioner(self.args.sut_name, self.args.sut_series, self.args.sut_arch, self.args.sut_hwe)
+                metal.provision()
+                retval = 0
+            else:
+                info("=========================================================================")
+                info("=")
+                info("=                   V I R T U A L   H O S T")
+                info("=")
+                info("=========================================================================")
+                metal = MetalProvisioner(self.args.vh_name, self.args.vh_series, self.args.vh_arch, self.args.vh_hwe)
+                metal.provision()
+
+                print("=========================================================================")
+                print("=")
+                print("=                   V I R T U A L   C L I E N T")
+                print("=")
+                print("=========================================================================")
+                virt = VirtualProvisioner(self.args.vh_name, self.args.sut_name, self.args.sut_series, self.args.sut_arch, self.args.sut_hwe)
+                virt.provision()
+
+                retval = 0
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            print("Aborting ...")
+
+        except ShellTimeoutError as e:
+            error('The command (%s) timed out. (%d)' % (e.cmd, e.timeout))
+
+        except ShellError as e:
+            error('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
+
+        except ErrorExit:
+            pass
+
+        if retval > 0:
+            error("")
+            error("Due to the above error(s), this script is unable to continue and is terminating.")
+            error("")
+
+        return retval
+
+if __name__ == '__main__':
+    if getenv('DEBUG'):
+        LOGLEVEL = DEBUG
+    else:
+        LOGLEVEL = INFO
+    basicConfig(level=LOGLEVEL, format="%(levelname)s - %(message)s")
+
+    app_description = '''
+    '''
+
+    app_epilog = '''
+    '''
+
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--dry-run',  action='store_true', default=False, help='Don\'t do anything, just print out what would be done.')
+    parser.add_argument('--quiet',  action='store_true', default=False, help='Do not print any progress information.')
+
+    parser.add_argument('--sut',          required=True,  choices=['real', 'virtual'], help='Kind of SUT to be created.')
+    parser.add_argument('--sut-series',   required=True,  help='The series that is to be installed on the SUT. lts-hwe-<series> denotes that a lts-hwe kernel is to be run on the appropriate lts series.')
+    parser.add_argument('--sut-arch',     required=True,  choices=['amd64', 'i386'], help='The architecture (amd64 or i386) that is to be installed on the SUT.')
+    parser.add_argument('--sut-hwe',      required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
+
+    parser.add_argument('--vh-series',    required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the series of that virtual host.')
+    parser.add_argument('--vh-arch',      required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the arch of that virtual host.')
+    parser.add_argument('--vh-hwe',       required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
+
+    parser.add_argument('target', metavar='TARGET', type=str, nargs=1, help='The name of the system to be provisioned.')
+
+    args = parser.parse_args()
+
+    # If the sut-name was not specified on the command line, use the
+    # HW name.
+    #
+    setattr(args, 'sut_name', args.target[0])
+    if args.sut == 'virtual':
+        args.sut_name = 'vm-%s' % args.target[0]
+        setattr(args, 'vh_name', args.target[0])
+    else:
+        args.sut_name = args.target[0]
+
+    app = ProvApp(args)
+    exit(app.main())
+
+# vi:set ts=4 sw=4 expandtab syntax=python:

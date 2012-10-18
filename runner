@@ -16,8 +16,8 @@ from argparse                           import ArgumentParser, RawDescriptionHel
 import json
 
 import testsprops
-from lib.job                            import sh, sh2
 from lib.test_attributes                import TestAttributes
+from lib.shell                          import sh, ShellError, ShellTimeoutError
 
 # ErrorExit
 #
@@ -44,7 +44,7 @@ class Runner():
         self.autotest_client_root = 'autotest/client'
         self.autotest_exe_path = path.join(self.autotest_client_root, 'autotest')
         self.autotest_tests_root = path.join(self.autotest_client_root, 'tests')
-        self.saved_results_root = 'results'
+        self.saved_results_root = 'kernel-test-results'
         self.autotest_results_root = path.join(self.autotest_client_root, 'results', 'default')
         self.per_test_logs_root = ''
         self.per_test_results_root = ''
@@ -105,8 +105,8 @@ class Runner():
     @property
     def release_name(self):
         if self.__release_name is None:
-            status, std_out = sh2("lsb_release -a")
-            for line in std_out.split('\n'):
+            status, std_out = sh("lsb_release -a")
+            for line in std_out:
                 parts = line.split(":")
                 if parts[0] == "Codename":
                     self.__release_name = parts[1].strip()
@@ -129,8 +129,7 @@ class Runner():
     # mounts
     #
     def mounts(self):
-        status, std_out = sh('mount')
-        retval = std_out.split('\n')
+        status, retval = sh('mount')
         return retval
 
     # root_device_prefix
@@ -207,10 +206,29 @@ class Runner():
     #
     def gather_test_results(self, test):
         user = getenv('USER')
-        result = sh('sudo chown -R %s.%s %s' % (user, user, self.autotest_results_root))
-        #result = sh('tar jcf %s-results.tbz2 %s' % (path.join(self.per_test_results_root, test), self.autotest_results_root))
+        result, output = sh('sudo chown -R %s.%s %s' % (user, user, self.autotest_results_root))
+        result, output = sh(r'sudo find %s -type d | xargs chmod +x' % (self.autotest_results_root))
 
         copytree(self.autotest_results_root, self.per_test_results_root)
+
+    # install_required_packages
+    #
+    def install_required_packages(self):
+        deps = []
+        for t in self.tests_list:
+            if 'packages' in testsprops.profiles[t]:
+                if 'common' in testsprops.profiles[t]['packages']:
+                    for pkg in testsprops.profiles[t]['packages']['common']:
+                        deps.append(pkg)
+                if self.release_name in testsprops.profiles[t]['packages']:
+                    for pkg in testsprops.profiles[t]['packages'][self.release_name]:
+                        deps.append(pkg)
+            else:
+                debug('No package dependencies for \'%s\'' % t)
+
+        for dep in deps:
+            debug('Installing: \'%s\'' % dep)
+            sh('sudo apt-get install -y %s' % dep)
 
     # autotest
     #
@@ -232,27 +250,27 @@ class Runner():
 
         # Run the command
         #
-        result = sh(cmd)
+        result, output = sh(cmd)
 
         # Run the test results munger so that they are in a format that
         # we like.
         #
-        result = sh('sudo %s %s > %s' % (path.join(self.autotest_client_root, 'tools', 'results2junit.py'), self.autotest_results_root, path.join(self.saved_results_root, 'autotest-results.%s.xml' % test)))
+        result, output = sh('sudo %s %s > %s' % (path.join(self.autotest_client_root, 'tools', 'results2junit.py'), self.autotest_results_root, path.join(self.saved_results_root, 'autotest-results.%s.xml' % test)))
 
         return result
 
     # gather_test_attributes
     #
     def gather_test_attributes(self):
-        attributes = TestAttributes(self.cfg)
+        attributes = TestAttributes(self.args)
         with open(path.join(self.saved_results_root, 'test-attributes.json'), 'w') as f:
-            f.write(json.dumps(attributes, sort_keys=True, indent=4))
+            f.write(json.dumps(attributes.gather(), sort_keys=True, indent=4))
 
     # main
     #
     def main(self):
         debug('Enter: main')
-        retval = 0
+        retval = 1
         try:
             self.release_name
             self.tests_list_expand()
@@ -266,6 +284,8 @@ class Runner():
                 testsprops.profiles['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] = '/dev/%sb' % self.root_device_prefix()
 
             self.test_list_determine_control_files()
+
+            self.install_required_packages()
 
             # Create the test-results directory where everything we care about will end
             # up.
@@ -293,6 +313,8 @@ class Runner():
                 # 4. Gather post-test log files
                 self.gather_posttest_information(t)
 
+            retval = 0
+
         # Handle the user presses <ctrl-C>.
         #
         except KeyboardInterrupt:
@@ -302,6 +324,13 @@ class Runner():
         #    import json
         #    print(json.dumps(testsprops.profiles, sort_keys=True, indent=4))
 
+        except ShellTimeoutError as e:
+            error('The command (%s) timed out. (%d)' % (e.cmd, e.timeout))
+            raise ErrorExit()
+
+        except ShellError as e:
+            error('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
+            raise ErrorExit()
 
         except ErrorExit:
             error("")
@@ -309,7 +338,7 @@ class Runner():
             error("")
 
         debug('Leave: main')
-        exit(retval)
+        return(retval)
 
 if __name__ == '__main__':
     if getenv('DEBUG'):
@@ -331,7 +360,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     app = Runner(args)
-    app.main()
+    exit(app.main())
 
 # vi:set ts=4 sw=4 expandtab syntax=python:
 

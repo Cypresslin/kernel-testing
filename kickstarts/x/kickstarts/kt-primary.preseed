@@ -82,12 +82,11 @@ d-i     debian-installer/exit/poweroff          boolean     false
 
 # Packages
 #d-i     pkgsel/include                          string      openssh-server build-essential libcap2-bin gcc-multilib gdb gawk execstack exim4 jenkins-slave python-software-properties
-d-i     pkgsel/include                          string      openssh-server vim build-essential jenkins-slave htop
+d-i     pkgsel/include                          string      openssh-server vim build-essential jenkins-slave htop biosdevname
 
 # Post scripts. Executes late command and disables PXE
 #
 d-i     preseed/late_command                    string      true && \
-                                                            wget "http://$http_server:$http_port/cblr/svc/op/nopxe/system/$system_name" -O /dev/null && \
 							    in-target sh -c 'echo "jenkins ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers' && \
 							    in-target sh -c 'mkdir -p /var/lib/jenkins/.ssh' && \
 							    in-target sh -c 'touch /var/lib/jenkins/.ssh/authorized_keys' && \
@@ -97,4 +96,5 @@ d-i     preseed/late_command                    string      true && \
 							    in-target sh -c 'chown -R jenkins:jenkins /var/lib/jenkins/.ssh' && \
 							    in-target sh -c 'echo "jenkins ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers' && \
 							    in-target sh -c 'echo $hostname > /etc/hostname' && \
+                                $SNIPPET('orchestra_disable_pxe') && \
 							    true
