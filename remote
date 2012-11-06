@@ -77,4 +77,4 @@ scp -r $HOME/autotest $SUT:autotest
 scp -r $HOME/autotest-client-tests/* $SUT:autotest/client/tests/
 scp -r $HOME/kernel-testing-bjf $SUT:./kernel-testing
 
-ssh $SUT python kernel-testing/runner $KERNEL_TEST_LIST
+ssh $SUT JOB_NAME=$JOB_NAME python kernel-testing/runner $KERNEL_TEST_LIST

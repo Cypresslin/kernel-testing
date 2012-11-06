@@ -10,7 +10,7 @@ import json
 from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
 
-from lib.utils                          import json_load, file_load, FileDoesntExist
+from lib.utils                          import json_load, file_load, FileDoesntExist, string_to_date
 from lib.dbg                            import Dbg
 
 # o2ascii
@@ -353,7 +353,8 @@ class TestResultsRepository():
 
         # Name of the directory where we will be storing the results
         #
-        tr_dest = "%s.%s" % (data['attributes']['environ']['NODE_NAME'], data['attributes']['environ']['BUILD_ID'])
+        ts = string_to_date(data['attributes']['timestamp']).strftime('%Y-%m-%d_%H-%M-%S')
+        tr_dest = "%s.%s" % (data['attributes']['platform']['hostname'], ts)
         dest = self.initialize_results_dir(tr_dest)
         for n in listdir(jtr.archive):
             if path.isdir(path.join(jtr.archive, n)):

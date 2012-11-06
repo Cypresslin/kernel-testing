@@ -1,20 +1,18 @@
+# A dictionary of specifics about each autotest test that the kernel team
+# cares about.
+#
+# - The key is the autotest test name
+#   - 'dependencies' is a sub-dictionary of lists of depended packages. The
+#     key is either an ubuntu series name or 'common'. 'common' indicates
+#     that those dependiencies apply to all ubuntu series.
+#
+#   - 'commands' is a list of commands that must be run prior to running the
+#     associated test.
+#
+#   - 'atargs' is a dictionary of name/value pairs which are passed to the
+#     autotest test via the autotest command line.
+#
 profiles = {
-    '''
-    A dictionary of specifics about each autotest test that the kernel team
-    cares about.
-
-    - The key is the autotest test name
-      - 'dependencies' is a sub-dictionary of lists of depended packages. The
-        key is either an ubuntu series name or 'common'. 'common' indicates
-        that those dependiencies apply to all ubuntu series.
-
-      - 'commands' is a list of commands that must be run prior to running the
-        associated test.
-
-      - 'atargs' is a dictionary of name/value pairs which are passed to the
-        autotest test via the autotest command line.
-
-    '''
     'ubuntu_qrt_kernel' : {
         'packages' : {
             'common' : [
@@ -143,12 +141,12 @@ collections = {
     # This is the set of tests that will run if no KERNEL_TEST_LIST variable is set.
     # (QA runs this set)
     #
-    'default' : ['ubuntu_ecryptfs', 'ubuntu_qrt_kernel_hardening', 'ubuntu_qrt_kernel_panic', 'ubuntu_qrt_kernel_security', 'ubuntu_qrt_kernel_aslr_collisions', 'ubuntu_qrt_apparmor', 'xfstests'],
+    'default' : ['ubuntu_ecryptfs', 'ubuntu_qrt_kernel_hardening', 'ubuntu_qrt_kernel_panic', 'ubuntu_qrt_kernel_security', 'ubuntu_qrt_kernel_aslr_collisions', 'ubuntu_qrt_apparmor'],
 
     # This is the set of tests that the kernel team runs. This should
     # be a superset of the 'default' tests that QA runs.
     #
-    'kernel' : ['iperf', 'ubuntu_leap_seconds', 'stress', 'ltp'],
+    'kernel' : ['iperf', 'ubuntu_leap_seconds', 'stress', 'ltp', 'xfstests'],
 
     # This is the set of tests for measuring power consumption.
     'power' : ['power_consumption'],

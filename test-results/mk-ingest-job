@@ -1,0 +1,135 @@
+#!/usr/bin/env python
+#
+# Called by one of the jenkins matix jobs for every cell of
+# the matix. This job creates the correct provision-job,
+# testing-job combination based on the environment variables
+# of the matrix job.
+#
+
+from sys                                import stdout, argv, exit
+from os                                 import getenv, path
+from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import debug, info, basicConfig, DEBUG, INFO
+from mako.template                      import Template
+from mako.exceptions                    import RichTraceback
+from lib.jenkins                        import Jenkins, JenkinsException, LAUNCHER_SSH, LAUNCHER_COMMAND, LAUNCHER_WINDOWS_SERVICE
+
+# Exit
+#
+class Exit():
+    """
+    If an error message has already been displayed and we want to just exit the app, this
+    exception is raised.
+    """
+    pass
+
+# IngestJobsFactory
+#
+class IngestJobsFactory():
+
+    # __init__
+    #
+    def __init__(self, args):
+        self.cfg = args
+        server_url = self.cfg.jenkins_url
+        self.jenkins = Jenkins(server_url)
+
+    # load_template
+    #
+    def load_template(self, file_name):
+        """
+        Load the template file.
+        """
+        retval = None
+
+        if file_name[0] == '/' or file_name[0] == '.':
+            # The full path is specified. Use the name as is.
+            #
+            fid = file_name
+        else:
+            # Find it ...
+            #
+            fid = file_name
+            if not path.exists(fid): # Current directory
+                fid = path.join(path.dirname(argv[0]), file_name)
+                if not path.exists(fid):
+                    fid = None
+
+        if fid is not None:
+            with open(fid, 'r') as f:
+                retval = Template(f.read())
+        else:
+            print("Error: Failed to find the template file.")
+
+        return retval
+
+    # create_job
+    #
+    def create_job(self, job_name, template_name, cfg):
+        template = self.load_template(template_name)
+        job_xml = template.render(data=cfg)
+
+        try:
+            self.jenkins.delete_job(job_name)
+        except:
+            pass
+
+        self.jenkins.create_job(job_name, job_xml)
+        info('created jenkins job: %s' % job_name)
+
+    # main
+    #
+    def main(self):
+        retval = 1
+        try:
+            # Now, actually do something.
+            #
+            try:
+                job_name = "%s__ingest-results" % self.cfg.job_name
+                self.create_job(job_name, 'ingest-job.mako', self.cfg)
+                self.jenkins.build_job(job_name)
+                retval = 0
+
+            except:
+                traceback = RichTraceback()
+                for (filename, lineno, function, line) in traceback.traceback:
+                    print("File %s, line %s, in %s" % (filename, lineno, function))
+                    for s in line:
+                        stdout.write(s)
+                print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            pass
+
+        return retval
+
+if __name__ == '__main__':
+
+    result = 0
+
+    if getenv('DEBUG'):
+        LOGLEVEL = DEBUG
+    else:
+        LOGLEVEL = INFO
+    basicConfig(level=LOGLEVEL, format="%(asctime)-15s-%(levelname)s - %(message)s")
+    info('Started')
+
+    app_description = '''
+    '''
+    app_epilog = '''
+    '''
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--job-name', required=True,  help='The name of the job that generated the test results that this job will ingest.')
+    parser.add_argument('--build-id', required=True,  help='The build id of the job that generated the test results.')
+    parser.add_argument('--jenkins-url',  required=False, default='http://kernel-jenkins:8080', help='URL to the jenkins host.')
+    args = parser.parse_args()
+
+    app = IngestJobsFactory(args)
+    result = app.main()
+
+    info('That\'s All Folks!')
+    exit(result)
+
+# vi:set ts=4 sw=4 expandtab:

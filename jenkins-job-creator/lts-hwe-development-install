@@ -1,4 +1,0 @@
-sudo apt-get install --yes python-software-properties
-sudo apt-add-repository ppa:ubuntu-x-swat/q-lts-backport
-sudo apt-get update
-sudo apt-get install --yes linux-generic-lts-quantal
