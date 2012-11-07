@@ -39,8 +39,9 @@ class ShellTimeoutError(Exception):
 class ShellError(Exception):
     """
     """
-    def __init__(self, cmd, returncode):
+    def __init__(self, cmd, returncode, output):
         self.__cmd = cmd
+        self.__output = output
         self.__returncode = returncode
 
     @property
@@ -56,6 +57,10 @@ class ShellError(Exception):
         The exit status value for the command that was executed.
         '''
         return self.__returncode
+
+    @property
+    def output(self):
+        return self.__output
 
 # enqueue_output
 #
@@ -83,29 +88,27 @@ def sh(cmd, timeout=None, ignore_result=False, quiet=False):
             p.terminate()
             raise ShellTimeoutError(cmd, timeout)
 
-    # ... do other things here
-
     while p.poll() is None:
         # read line without blocking
         try:
-            line = q.get_nowait() # or q.get(timeout=.1)
+            line = q.get_nowait()
         except Empty:
             pass
-            #print('no output yet')
         else: # got line
             out.append(line)
         sleep(1)
-    try:
-        line = q.get_nowait() # or q.get(timeout=.1)
-    except Empty:
-        pass
-        #print('no output yet')
-    else: # got line
-        out.append(line)
+
+    while True:
+        try:
+            line = q.get_nowait()
+        except Empty:
+            break
+        else: # got line
+            out.append(line)
 
     if not ignore_result:
         if p.returncode != 0:
-            raise ShellError(cmd, p.returncode)
+            raise ShellError(cmd, p.returncode, out)
 
     return p.returncode, out
 

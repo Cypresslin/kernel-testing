@@ -84,6 +84,7 @@
                                                         </tr>
                                                             % for record in data[ubuntu_series][kernel_version]:
                                                             <%
+                                                                from datetime import datetime
                                                                 notes = ''
                                                                 total = 0
                                                                 passed = 0
@@ -93,7 +94,9 @@
                                                                     passed += suite['tests run'] - suite['tests failed']
                                                                     failed += suite['tests failed']
 
-                                                                link = "http://kernel.ubuntu.com/beta/testing/test-results/%s.%s/results-index.html" % (record['attributes']['environ']['NODE_NAME'], record['attributes']['environ']['BUILD_ID'])
+                                                                dt = datetime.strptime(record['attributes']['timestamp'], '%Y-%m-%d %H:%M')
+                                                                ts = dt.strftime('%Y-%m-%d_%H-%M-%S')
+                                                                link = "http://kernel.ubuntu.com/beta/testing/test-results/%s.%s/results-index.html" % (record['attributes']['platform']['hostname'], ts)
 
                                                                 hardware = 'real'
                                                                 if 'hardware' in record['attributes']['platform']:
@@ -106,7 +109,7 @@
                                                             %>
                                                             <tr>
                                                                 <td>&nbsp;</td>
-                                                                <td><a href="test-results/${ record['attributes']['environ']['NODE_NAME'] }.html">${ record['attributes']['environ']['NODE_NAME'] }</a></td>
+                                                                <td><a href="test-results/${ record['attributes']['platform']['hostname'] }.html">${ record['attributes']['platform']['hostname'] }</a></td>
                                                                 <td align="center">${ arch } </td>
                                                                 <td align="center">${hardware}</td>
                                                                 <td align="center">${ record['attributes']['timestamp'] }</td>

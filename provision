@@ -2,7 +2,7 @@
 #
 
 from os                                 import getenv, path
-from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import debug, error, info, basicConfig, INFO, DEBUG, WARNING, getLevelName
 from datetime                           import datetime
 from time                               import sleep
@@ -125,8 +125,9 @@ class Provisioner():
         # We add the x-swat ppa so we can pick up the development HWE kernel
         # if we want.
         #
-        ssh(target, 'sudo apt-get install --yes python-software-properties')
-        ssh(target, 'sudo apt-add-repository ppa:ubuntu-x-swat/q-lts-backport')
+        if 'ppa' in HWE[self.hwe_series]:
+            ssh(target, 'sudo apt-get install --yes python-software-properties')
+            ssh(target, 'sudo apt-add-repository ppa:ubuntu-x-swat/q-lts-backport')
 
         hwe_package = HWE[self.hwe_series]['package']
         ssh(target, 'sudo apt-get update')

@@ -9,7 +9,7 @@
 from sys                                import stdout, argv, exit
 from os                                 import getenv, path
 import json
-from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import debug, info, basicConfig, DEBUG, INFO
 from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
@@ -151,7 +151,10 @@ class SutJobsFactory():
         run on that newly provisioned system) on the jenkins server. The testing job
         will be started by the provisioning job once the provisioned system comes up.
         '''
-        setattr(cfg, 'job_name', 'KV2-%s-%s-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch))
+        if cfg.sut_hwe:
+            setattr(cfg, 'job_name', 'KV2-%s-%s_hwe-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch))
+        else:
+            setattr(cfg, 'job_name', 'KV2-%s-%s-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch))
 
         self.create_job(cfg.job_name, 'kernel-testing-job.mako', cfg)
 
@@ -167,7 +170,13 @@ class SutJobsFactory():
         the second provisions a kvm instance on that provisioned bare-metal
         system and the third is the test job which runs on the provisioned kvm.
         '''
-        setattr(cfg, 'job_name', 'KV2-%s-%s-%s__on__%s-%s-test' % (cfg.vh_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch))
+        if cfg.sut_hwe:
+            if cfg.vh_hwe:
+                setattr(cfg, 'job_name', 'KV2-%s-%s_hwe-%s__on__%s_hwe-%s-test' % (cfg.vh_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch))
+            else:
+                setattr(cfg, 'job_name', 'KV2-%s-%s_hwe-%s__on__%s-%s-test' % (cfg.vh_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch))
+        else:
+            setattr(cfg, 'job_name', 'KV2-%s-%s-%s__on__%s-%s-test' % (cfg.vh_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch))
 
         self.create_job(cfg.job_name, 'kernel-testing-job.mako', cfg)
 
@@ -261,7 +270,8 @@ examples:
 
     lts-hwe
     -------
-        ./jjc --hw=statler --sut=real --sut-series=quantal --sut-arch=amd64 --sut-hwe
+        ./jjc --hw=rizzo --sut=real --sut-series=quantal --sut-arch=amd64 --sut-hwe
+        ./jjc --hw=fozzie --sut=real --sut-series=oneiric --sut-arch=amd64 --sut-hwe
     '''
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
 

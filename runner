@@ -12,7 +12,7 @@ from os                                 import getenv, path, makedirs
 from sys                                import exit
 from shutil                             import rmtree, copytree
 from logging                            import debug, error, basicConfig, DEBUG, WARNING
-from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 import json
 
 import testsprops
@@ -330,6 +330,8 @@ class Runner():
 
         except ShellError as e:
             error('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
+            for l in e.output:
+                error(l.strip())
             raise ErrorExit()
 
         except ErrorExit:

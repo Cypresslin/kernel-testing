@@ -7,7 +7,7 @@
 from os                                 import getenv
 from sys                                import exit
 from logging                            import debug, error, basicConfig, DEBUG, WARNING
-from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 from lib.jenkins                        import JenkinsException
 
 from aka_jenkins                        import Server, Nodes, Jobs

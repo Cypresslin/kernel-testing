@@ -8,7 +8,7 @@
 
 from sys                                import stdout, argv, exit
 from os                                 import getenv, path
-from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import debug, info, basicConfig, DEBUG, INFO
 from mako.template                      import Template
 from mako.exceptions                    import RichTraceback

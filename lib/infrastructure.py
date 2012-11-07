@@ -59,6 +59,7 @@ HWE = {
         'raring' : {
             'series' : 'precise',
             'package' : 'linux-generic-lts-raring',
+            'ppa' : True,
         },
 }
 
