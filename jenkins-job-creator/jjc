@@ -142,46 +142,43 @@ class SutJobsFactory():
         self.jenkins.create_job(job_name, job_xml)
         info('created jenkins job: %s' % job_name)
 
-    # bare_metal_sut_jobs
+    # job_name
     #
-    def bare_metal_sut_jobs(self, cfg):
-        '''
-        Based on the options specified on the command line, use the appropriate mako
-        templates to create a bare-metal provisioning job and a testing job (that will
-        run on that newly provisioned system) on the jenkins server. The testing job
-        will be started by the provisioning job once the provisioned system comes up.
-        '''
-        if cfg.sut_hwe:
-            setattr(cfg, 'job_name', 'KV2-%s-%s_hwe-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch))
+    def job_name(self, cfg):
+        retval = ""
+
+        # The job name starts with some form of the test name(s)
+        #
+        tests = cfg.test.split()
+        if len(tests) == 1:
+            retval += tests[0]
+            retval += '__'
         else:
-            setattr(cfg, 'job_name', 'KV2-%s-%s-%s' % (cfg.sut_name, cfg.sut_series, cfg.sut_arch))
+            retval += '-'.join(tests)
+            retval = retval.replace('ubuntu', 'u')
+            retval += '__'
 
-        self.create_job(cfg.job_name, 'kernel-testing-job.mako', cfg)
+        if self.cfg.sut == 'real':
+            retval += cfg.sut_series.title()[0]
+            if cfg.sut_hwe:
+                retval += '-hwe'
+            retval += '-%s__using_%s' % (cfg.sut_arch, cfg.sut_name)
+        else:
+            retval += cfg.sut_series.title()[0]
+            if cfg.sut_hwe:
+                retval += '-hwe'
+            retval += '-%s' % cfg.sut_arch
 
-        if not cfg.no_autostart:
-            self.jenkins.build_job(cfg.job_name)
+            retval += '__on__'
 
-    # virtual_sut_jobs
-    #
-    def virtual_sut_jobs(self, cfg):
-        '''
-        Very similar to the 'bare_metal_sut_jobs' method above, this creates 3
-        jenkins jobs. The first jenkins job provisions the bare-metal system,
-        the second provisions a kvm instance on that provisioned bare-metal
-        system and the third is the test job which runs on the provisioned kvm.
-        '''
-        if cfg.sut_hwe:
+            retval += cfg.vh_series.title()[0]
             if cfg.vh_hwe:
-                setattr(cfg, 'job_name', 'KV2-%s-%s_hwe-%s__on__%s_hwe-%s-test' % (cfg.vh_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch))
-            else:
-                setattr(cfg, 'job_name', 'KV2-%s-%s_hwe-%s__on__%s-%s-test' % (cfg.vh_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch))
-        else:
-            setattr(cfg, 'job_name', 'KV2-%s-%s-%s__on__%s-%s-test' % (cfg.vh_name, cfg.sut_series, cfg.sut_arch, cfg.vh_series, cfg.vh_arch))
+                retval += '-hwe'
+            retval += '-%s' % cfg.vh_arch
 
-        self.create_job(cfg.job_name, 'kernel-testing-job.mako', cfg)
+            retval += '__using_%s' % cfg.vh_name
 
-        if not cfg.no_autostart:
-            self.jenkins.build_job(cfg.job_name)
+        return retval
 
     # main
     #
@@ -191,10 +188,13 @@ class SutJobsFactory():
             # Now, actually do something.
             #
             try:
-                if self.cfg.sut == 'real':
-                    self.bare_metal_sut_jobs(self.cfg)
-                else:
-                    self.virtual_sut_jobs(self.cfg)
+                setattr(self.cfg, 'job_name', self.job_name(self.cfg))
+
+                self.create_job(self.cfg.job_name, 'kernel-testing-job.mako', self.cfg)
+
+                if not self.cfg.no_autostart:
+                    self.jenkins.build_job(self.cfg.job_name)
+
                 retval = 0
 
             except:
@@ -276,7 +276,7 @@ examples:
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
 
     parser.add_argument('--sut',          required=True,  choices=['real', 'virtual'], help='Kind of SUT to be created.')
-    parser.add_argument('--test',         required=False, default='kernel default', help='List of tests that are to be run. This can be one or more tests or test-groups separated by a space.')
+    parser.add_argument('--test',         required=False, default='default', help='List of tests that are to be run. This can be one or more tests or test-groups separated by a space.')
     parser.add_argument('--test-options', required=False, default='', help='A string that is passed as is to the kernel-testing script. It can be used to pass environment variables when autotest client is invoked.')
 
     parser.add_argument('--sut-series',   required=True,  help='The series that is to be installed on the SUT. lts-hwe-<series> denotes that a lts-hwe kernel is to be run on the appropriate lts series.')
