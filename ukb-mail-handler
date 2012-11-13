@@ -1,0 +1,236 @@
+#!/usr/bin/env python
+#
+
+from os                                 import getenv
+from sys                                import exit, stdin
+from logging                            import debug, error, basicConfig, DEBUG, WARNING
+from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
+from email                              import Parser as EmailParser
+from re                                 import search
+from lib.shell                          import sh, ShellError
+
+import smtplib
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEText import MIMEText
+
+# ErrorExit
+#
+class ErrorExit(Exception):
+    """
+    If an error message has already been displayed and we want to just exit the app, this
+    exception is raised.
+    """
+    pass
+
+# MailHandler
+#
+class MailHandler():
+    """
+    """
+
+    # __init__
+    #
+    def __init__(self, args):
+        self.args = args
+        self.jenkins_url_default = "http://10.97.9.20:8080"
+
+    # send_reply
+    #
+    def send_reply(self, to, subject, body):
+        guser = 'ubuntu.kernel.bot@gmail.com'
+        gpass = 'xxxxxxxxxxxx'
+
+        msg = MIMEMultipart()
+        msg['From'] = guser
+        msg['To']   = to
+        msg['Subject'] = subject
+
+        # Add a standard signature to each message
+        #
+        body += '\n--\nUbuntu Kernel Bot ubuntu.kernel.bot@gmail.com'
+        msg.attach(MIMEText(body))
+
+        gsrvr = smtplib.SMTP('smtp.gmail.com', 587)
+        gsrvr.ehlo()
+        gsrvr.starttls()
+        gsrvr.ehlo()
+        gsrvr.login(guser, gpass)
+        gsrvr.sendmail(guser, msg['To'], msg.as_string())
+        gsrvr.close()
+
+    # create_test_jobs
+    #
+    def create_test_jobs(self, series, url=None, user=None):
+        retval = []
+        for arch in ['amd64', 'i386']:
+            cmd = 'jenkins-job-creator/jjc --sut=real --hw=rizzo --sut-arch=%s --sut-series=%s --jenkins-url=%s --no-autostart' % (arch, series, self.jenkins_url_default)
+            if url is not None:
+                cmd += ' --debs=%s --user=%s' % (url, user)
+            (return_code, output) = sh(cmd, quiet=True)
+            for line in output:
+                line = line.strip()
+                if 'created jenkins job:' in line:
+                    (x, job) = line.split('job:', 1)
+                    retval.append(job.strip())
+
+        return retval
+
+    # handle_test_request
+    #
+    def handle_test_request(self, msg):
+        debug('    Enter: handle_test_request')
+
+        e_from = msg['From']
+        e_subject = msg['Subject']
+
+        # In a kernel test request email, there is a line that specifies the series
+        # that is to be tested and a url to the debs to be tested.
+        #
+        #    series: <series>
+        #    url: <url>
+        #
+        for part in msg.walk():
+            series = None
+            debs_url = None
+            for line in part.get_payload().split('\n'):
+                line = line.strip()
+                if search('series\S*:', line) is not None:
+                    (x, series) = line.split(':')
+                    series = series.strip()
+                elif search('url\S*:', line) is not None:
+                    (x, debs_url) = line.split(':', 1)
+                    debs_url = debs_url.strip()
+                elif search('arch\S*:', line) is not None:
+                    (x, arch) = line.split(':', 1)
+                    arch = arch.strip()
+                elif search('tests\S*:', line) is not None:
+                    (x, tests) = line.split(':', 1)
+                    tests = tests.strip()
+
+            break # Only want to do one part
+
+        body = ''
+        if (series is not None) and (debs_url is not None):
+            jobs = None
+            try:
+                user = 'bogus'
+                m = search('.*<(\S+)@.*', e_from)
+                if m is not None:
+                    user = m.group(1)
+                jobs = self.create_test_jobs(series, debs_url, user)
+
+                body  = 'The following job(s) were created on the kernel teams jenkins server\n'
+                body += 'in response to your request:\n\n'
+
+                if jobs is not None:
+                    for job in jobs:
+                        body += '      %s\n' % job
+
+            except ShellError as e: # This should probably be an exception specific to job creation.
+                body  = 'The following error occured while trying to create the test jobs that\n'
+                body += 'you requested:\n\n'
+
+                for line in e.output:
+                    body += '      ' + line
+
+            self.send_reply(e_from, 'Re: %s' % e_subject, body)
+
+        debug('    Leave: handle_test_request')
+
+    # handle_mainline_build
+    #
+    def handle_mainline_build(self, msg):
+        debug('    Enter: handle_mainline_build')
+
+        # In the standard email announcing a mainline build, the first URL
+        # is to the location of the debs.
+        #
+        debs_url = None
+        for part in msg.walk():
+            for line in part.get_payload().split('\n'):
+                line = line.strip()
+                if 'http://kernel.ubuntu.com' in line:
+                    debs_url = line
+                    break
+            break # Only want to do one part
+
+
+        if debs_url is not None:
+            # The URL contains the version which also contains the series
+            # name of the configuration that it was built with. Use that.
+            #
+            parts = debs_url.split('/')
+            version = parts[len(parts) - 2]
+            tmp = version.split('-')
+            series = tmp[len(tmp) - 1]
+            print('series: %s' % series)
+
+            self.create_test_jobs(series, debs_url)
+
+        debug('    Leave: handle_mainline_build')
+
+    # main
+    #
+    def main(self):
+        debug('Enter: main')
+        retval = 1
+        try:
+            raw_content = stdin.read()
+
+            ep = EmailParser.Parser()
+            msg = ep.parsestr(raw_content)
+
+            e_from = msg['From']
+            e_subject = msg['Subject']
+
+            while True:
+                # Mainline Build from the mainline builder
+                #
+                if ('Mainline Build' in e_subject) and ('Mainline Builds <kernel-team@lists.ubuntu.com>' in e_from):
+                    self.handle_mainline_build(msg)
+                    break
+
+                if ('kernel test request' in e_subject.lower()):
+                    self.handle_test_request(msg)
+                    break
+
+                debug('Unhandled email')
+                break
+
+            retval = 0
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            pass
+
+        except ErrorExit:
+            error("")
+            error("Due to the above error(s), this script is unable to continue and is terminating.")
+            error("")
+
+        debug('Leave: main')
+        return(retval)
+
+if __name__ == '__main__':
+    if getenv('DEBUG'):
+        LOGLEVEL = DEBUG
+    else:
+        LOGLEVEL = WARNING
+    LOGLEVEL = WARNING
+    #LOGLEVEL = DEBUG
+    basicConfig(level=LOGLEVEL, format="%(levelname)s - %(message)s")
+
+    app_description = '''
+    '''
+
+    app_epilog = '''
+    '''
+
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    args = parser.parse_args()
+
+    app = MailHandler(args)
+    exit(app.main())
+
+# vi:set ts=4 sw=4 expandtab syntax=python:
