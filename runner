@@ -15,7 +15,7 @@ from logging                            import debug, error, basicConfig, DEBUG,
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 import json
 
-import testsprops
+from lib.testsprops                     import TestProfiles, TestCollections
 from lib.test_attributes                import TestAttributes
 from lib.shell                          import sh, ShellError, ShellTimeoutError
 
@@ -62,8 +62,8 @@ class Runner():
             fully_expanded = True
             neo = []
             for t in self.tests_list:
-                if t in testsprops.collections:
-                    for c in testsprops.collections[t]:
+                if t in TestCollections:
+                    for c in TestCollections[t]:
                         if c not in neo:
                             neo.append(c)
                         fully_expanded = False
@@ -82,7 +82,7 @@ class Runner():
         # we know about.
         #
         for t in self.tests_list:
-            if t not in testsprops.profiles:
+            if t not in TestProfiles:
                 error('Test \'%s\' is not recognized.' % t)
                 errors = True
 
@@ -121,7 +121,7 @@ class Runner():
         if self.__scratch_needed is None:
             self.__scratch_needed = False
             for t in self.tests_list:
-                if 'scratch' in testsprops.profiles[t]:
+                if 'scratch' in TestProfiles[t]:
                     self.__scratch_needed = True
         debug('scratch needed: %s' % self.__scratch_needed)
         return self.__scratch_needed
@@ -152,7 +152,7 @@ class Runner():
             #
             fid = path.join(self.autotest_tests_root, t, 'control.ubuntu.%s' % self.release_name)
             if path.exists(fid):
-                testsprops.profiles[t]['control file'] = fid
+                TestProfiles[t]['control file'] = fid
                 debug("    using: %s" % fid)
                 continue
 
@@ -160,7 +160,7 @@ class Runner():
             #
             fid = path.join(self.autotest_tests_root, t, 'control.ubuntu')
             if path.exists(fid):
-                testsprops.profiles[t]['control file'] = fid
+                TestProfiles[t]['control file'] = fid
                 debug("    using: %s" % fid)
                 continue
 
@@ -168,7 +168,7 @@ class Runner():
             #
             fid = path.join(self.autotest_tests_root, t, 'control')
             if path.exists(fid):
-                testsprops.profiles[t]['control file'] = fid
+                TestProfiles[t]['control file'] = fid
                 debug("    using: %s" % fid)
                 continue
 
@@ -216,12 +216,12 @@ class Runner():
     def install_required_packages(self):
         deps = []
         for t in self.tests_list:
-            if 'packages' in testsprops.profiles[t]:
-                if 'common' in testsprops.profiles[t]['packages']:
-                    for pkg in testsprops.profiles[t]['packages']['common']:
+            if 'packages' in TestProfiles[t]:
+                if 'common' in TestProfiles[t]['packages']:
+                    for pkg in TestProfiles[t]['packages']['common']:
                         deps.append(pkg)
-                if self.release_name in testsprops.profiles[t]['packages']:
-                    for pkg in testsprops.profiles[t]['packages'][self.release_name]:
+                if self.release_name in TestProfiles[t]['packages']:
+                    for pkg in TestProfiles[t]['packages'][self.release_name]:
                         deps.append(pkg)
             else:
                 debug('No package dependencies for \'%s\'' % t)
@@ -239,14 +239,14 @@ class Runner():
         # Build up the shell command that we are going to run.
         #
         cmd = 'sudo %s' % (self.autotest_exe_path)
-        if 'atargs' in testsprops.profiles[test]:
+        if 'atargs' in TestProfiles[test]:
             cmd += ' --args="'
-            for key, value in testsprops.profiles[test]['atargs'].iteritems():
+            for key, value in TestProfiles[test]['atargs'].iteritems():
                 cmd += '%s=%s ' % (key, value)
             cmd = cmd.strip() # Remove that last space character
             cmd += '"'
 
-        cmd += ' %s' % testsprops.profiles[test]['control file']
+        cmd += ' %s' % TestProfiles[test]['control file']
 
         # Run the command
         #
@@ -281,7 +281,7 @@ class Runner():
                 # spare drive is. Look at the device the root device is and assume that the scratch
                 # drive is the 'b' device with that same device root.
                 #
-                testsprops.profiles['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] = '/dev/%sb' % self.root_device_prefix()
+                TestProfiles['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] = '/dev/%sb' % self.root_device_prefix()
 
             self.test_list_determine_control_files()
 

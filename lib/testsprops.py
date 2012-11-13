@@ -12,7 +12,7 @@
 #   - 'atargs' is a dictionary of name/value pairs which are passed to the
 #     autotest test via the autotest command line.
 #
-profiles = {
+TestProfiles = {
     'ubuntu_qrt_kernel' : {
         'packages' : {
             'common' : [
@@ -135,7 +135,7 @@ profiles = {
 
 # Test Collections may be defined, and will run the list of autotest tests in them
 #
-collections = {
+TestCollections = {
     'benchmarks' : ['dbench', 'compilebench', 'bonnie'],
 
     # This is the set of tests that will run if no KERNEL_TEST_LIST variable is set.
