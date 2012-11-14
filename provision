@@ -50,11 +50,12 @@ class Provisioner():
 
     # __init__
     #
-    def __init__(self, name, series, arch, hwe=False):
+    def __init__(self, name, series, arch, hwe=False, debs=None):
         self.name   = name
         self.series = series
         self.arch   = arch
         self.hwe    = hwe
+        self.debs   = debs
         self.quiet  = False
         self.kickstarts_root = '/var/lib/cobbler/kickstarts/kernel'
 
@@ -111,6 +112,27 @@ class Provisioner():
         ssh(target, 'sudo reboot')
         if wait:
             self.wait_for_system(target, timeout=5)
+
+    # install_custom_debs
+    #
+    def install_custom_debs(self, target):
+        '''
+        On the SUT, download and install custome kernel debs for testing.
+        '''
+        if not self.quiet:
+            print('Installing custom debs.')
+
+        # Pull them down
+        #
+        ssh(target, 'wget -r -A .deb -e robots=off --no-directories %s' % debs)
+
+        # Install the header packages
+        #
+        ssh(target, 'sudo dpkg -i linux-headers*_all.deb linux-headers*_%s.deb' % self.arch)
+
+        # Install the kernel packages
+        #
+        ssh(target, 'sudo dpkg -i linux-image-*_%s.deb' % self.arch)
 
     # install_hwe_kernel
     #
@@ -241,8 +263,8 @@ class MetalProvisioner(Provisioner):
 
     # __init__
     #
-    def __init__(self, name, series, arch, hwe=False):
-        Provisioner.__init__(self, name, series, arch, hwe)
+    def __init__(self, name, series, arch, hwe=False, debs=None):
+        Provisioner.__init__(self, name, series, arch, hwe, debs)
 
     # configure_orchestra
     #
@@ -320,9 +342,12 @@ class MetalProvisioner(Provisioner):
         if self.hwe:
             self.install_hwe_kernel(target)
 
+        if self.debs is not None:
+            self.install_custom_debs(target)
+
         self.configure_passwordless_access(target)
 
-        # We want to install to pick up any new kernel that we would have installed due
+        # We want to reboot to pick up any new kernel that we would have installed due
         # to either the dist-upgrade that was performed, or the install of the hwe
         # kernel.
         #
@@ -353,7 +378,7 @@ class ProvApp():
 
             metal = None
             if self.args.sut == 'real':
-                metal = MetalProvisioner(self.args.sut_name, self.args.sut_series, self.args.sut_arch, self.args.sut_hwe)
+                metal = MetalProvisioner(self.args.sut_name, self.args.sut_series, self.args.sut_arch, self.args.sut_hwe, self.args.sut_debs_url)
                 metal.provision()
                 retval = 0
             else:
@@ -417,6 +442,7 @@ if __name__ == '__main__':
     parser.add_argument('--sut-series',   required=True,  help='The series that is to be installed on the SUT. lts-hwe-<series> denotes that a lts-hwe kernel is to be run on the appropriate lts series.')
     parser.add_argument('--sut-arch',     required=True,  choices=['amd64', 'i386'], help='The architecture (amd64 or i386) that is to be installed on the SUT.')
     parser.add_argument('--sut-hwe',      required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
+    parser.add_argument('--sut-debs-url', required=False, default=None, help='A pointer to a set of kernel deb packages that are to be installed.')
 
     parser.add_argument('--vh-series',    required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the series of that virtual host.')
     parser.add_argument('--vh-arch',      required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the arch of that virtual host.')
