@@ -2,7 +2,7 @@
 #
 
 from sys                                import stdout
-from subprocess                         import Popen, PIPE
+from subprocess                         import Popen, PIPE, STDOUT
 from threading                          import Thread
 from time                               import sleep
 
@@ -76,7 +76,7 @@ def enqueue_output(out, queue, quiet=False):
 #
 def sh(cmd, timeout=None, ignore_result=False, quiet=False):
     out = []
-    p = Popen(cmd, stdout=PIPE, stderr=PIPE, bufsize=1, shell=True)
+    p = Popen(cmd, stdout=PIPE, stderr=STDOUT, bufsize=1, shell=True)
     q = Queue()
     t = Thread(target=enqueue_output, args=(p.stdout, q, quiet))
     t.daemon = True # thread dies with the program

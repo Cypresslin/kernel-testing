@@ -178,6 +178,11 @@ class SutJobsFactory():
 
             retval += '__using_%s' % cfg.vh_name
 
+        try:
+            retval += '__for_%s' % self.cfg.user
+        except AttributeError:
+            pass
+
         return retval
 
     # main
@@ -223,7 +228,6 @@ if __name__ == '__main__':
     else:
         LOGLEVEL = INFO
     basicConfig(level=LOGLEVEL, format="%(asctime)-15s-%(levelname)s - %(message)s")
-    info('Started')
 
     # The purpose is to produce all the individual jenkins jobs to make up
     # a single test. That single test will test a single kernel. There are
@@ -296,6 +300,8 @@ examples:
     parser.add_argument('--vm-client-template', required=False, default=default_vm_client_template, help='The name of the template to use for provisioning the virtual-client(s) on the virtual-host. (If you don\'t know what this is you shouldn\'t be specifying it.)')
     parser.add_argument('--has-metrics',        required=False, action='store_true', default=False, help='Use this when the job generates result metrics, in order to collect those.')
     parser.add_argument('--no-provisioning',    required=False, action='store_true', default=False, help='Don\'t create the jobs which do provisioning.')
+    parser.add_argument('--debs',               required=False, help='A url to the kernel debs that are to be installed after provisioning has completed.')
+    parser.add_argument('--user',               required=False, help='The name of the person the test is being run for.')
 
 
     args = parser.parse_args()
@@ -316,7 +322,6 @@ examples:
     app = SutJobsFactory(args)
     result = app.main()
 
-    info('That\'s All Folks!')
     exit(result)
 
 # vi:set ts=4 sw=4 expandtab:
