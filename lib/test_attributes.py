@@ -30,7 +30,7 @@ class TestAttributes():
         m = re.match('^(\d+\.\d+\.\d+-\d+)-.*$', platform.release())
         version = m.group(1)
 
-        m = re.match('^#(\d+.*)-Ubuntu .*$', platform.version())
+        m = re.match('^#(\d+.*?)(-Ubuntu)* .*$', platform.version())
         upload = m.group(1)
 
         retval = "%s.%s" % (version, upload)

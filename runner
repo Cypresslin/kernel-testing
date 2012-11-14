@@ -263,8 +263,10 @@ class Runner():
     #
     def gather_test_attributes(self):
         attributes = TestAttributes(self.args)
-        with open(path.join(self.saved_results_root, 'test-attributes.json'), 'w') as f:
+        attributes_path = path.join(self.saved_results_root, 'test-attributes.json')
+        with open(attributes_path, 'w') as f:
             f.write(json.dumps(attributes.gather(), sort_keys=True, indent=4))
+        sh('sudo cat %s' % attributes_path)
 
     # main
     #

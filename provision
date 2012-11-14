@@ -14,16 +14,16 @@ dry_run = True
 
 # ssh
 #
-def ssh(target, cmd, quiet=False):
+def ssh(target, cmd, quiet=False, ignore_result=False):
     ssh_cmd = 'ssh %s %s' % (target, cmd)
     result = 0
     if dry_run:
         debug('[dry-run] %s' % (ssh_cmd))
     else:
-        result, output = sh(ssh_cmd, quiet=quiet)
+        result, output = sh(ssh_cmd, quiet=quiet, ignore_result=ignore_result)
 
-    if result != 0:
-        raise ShellError(ssh_cmd, result)
+    if result != 0 and not ignore_result:
+        raise ShellError(ssh_cmd, result, output)
 
     return result, output
 
@@ -124,15 +124,15 @@ class Provisioner():
 
         # Pull them down
         #
-        ssh(target, 'wget -r -A .deb -e robots=off --no-directories %s' % debs)
+        ssh(target, 'wget -r -A .deb -e robots=off -nv -l1 --no-directories %s' % self.debs)
 
         # Install the header packages
         #
-        ssh(target, 'sudo dpkg -i linux-headers*_all.deb linux-headers*_%s.deb' % self.arch)
+        #ssh(target, 'sudo dpkg -i linux-headers*_all.deb linux-headers*_%s.deb' % self.arch, ignore_result=True) # best effort
 
         # Install the kernel packages
         #
-        ssh(target, 'sudo dpkg -i linux-image-*_%s.deb' % self.arch)
+        ssh(target, 'sudo dpkg -i linux-image-*-generic_*_%s.deb' % self.arch)
 
     # install_hwe_kernel
     #
@@ -410,6 +410,8 @@ class ProvApp():
 
         except ShellError as e:
             error('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
+            for line in e.output:
+                error(line.rstrip())
 
         except ErrorExit:
             pass
