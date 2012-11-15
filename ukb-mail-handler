@@ -60,10 +60,11 @@ class MailHandler():
 
     # create_test_jobs
     #
-    def create_test_jobs(self, series, url=None, user=None):
+    def create_test_jobs(self, series, url=None, user=None, arches=['amd64', 'i386'], tests='default', system='rizzo'):
         retval = []
-        for arch in ['amd64', 'i386']:
-            cmd = 'jenkins-job-creator/jjc --sut=real --hw=rizzo --sut-arch=%s --sut-series=%s --jenkins-url=%s --no-autostart' % (arch, series, self.jenkins_url_default)
+        for arch in arches:
+            cmd = '/home/work/kernel-testing/jenkins-job-creator/jjc --sut=real --hw=%s --sut-arch=%s --sut-series=%s --jenkins-url=%s --test=%s' % (system, arch, series, self.jenkins_url_default, tests)
+            print(cmd)
             if url is not None:
                 cmd += ' --debs=%s --user=%s' % (url, user)
             (return_code, output) = sh(cmd, quiet=True)
@@ -92,6 +93,9 @@ class MailHandler():
         for part in msg.walk():
             series = None
             debs_url = None
+            arch = ['amd64', 'i386']
+            tests = 'default'
+            system = 'rizzo'
             for line in part.get_payload().split('\n'):
                 line = line.strip()
                 if search('series\S*:', line) is not None:
@@ -102,10 +106,17 @@ class MailHandler():
                     debs_url = debs_url.strip()
                 elif search('arch\S*:', line) is not None:
                     (x, arch) = line.split(':', 1)
-                    arch = arch.strip()
+                    arches = []
+                    for a in arch.split(','):
+                        arches.append(a.strip())
                 elif search('tests\S*:', line) is not None:
                     (x, tests) = line.split(':', 1)
                     tests = tests.strip()
+                elif search('system\S*:', line) is not None:
+                    (x, system) = line.split(':', 1)
+                    system = system.strip()
+                elif 'help' == line:
+                    send_help = True
 
             break # Only want to do one part
 
@@ -117,7 +128,7 @@ class MailHandler():
                 m = search('.*<(\S+)@.*', e_from)
                 if m is not None:
                     user = m.group(1)
-                jobs = self.create_test_jobs(series, debs_url, user)
+                jobs = self.create_test_jobs(series, debs_url, user, arches, tests, system)
 
                 body  = 'The following job(s) were created on the kernel teams jenkins server\n'
                 body += 'in response to your request:\n\n'
@@ -134,6 +145,48 @@ class MailHandler():
                     body += '      ' + line
 
             self.send_reply(e_from, 'Re: %s' % e_subject, body)
+        else:
+            if send_help:
+                body = """
+The body of the email message should be a simple set of "name":"value" pairs,
+one per line. The following describe the recognized pairs:
+
+series: The ubuntu series that is initially installed onto the test system
+        prior to installing the custom kernel deps.
+
+        Ex.
+            series: precise
+
+  arch: The architecture of the kernel to be tested. This can be a comma separated
+        list of architectures or a single one. If not spcified, both amd64 and i386
+        architectures are tested.
+
+        Ex.
+            arch: amd64
+
+        Ex.
+            arch: amd64, i386
+
+ tests: The list of autotest tests that are to be run on the system. If none
+        are specified, then the 'default' is used.
+
+        Ex.
+            tests: ubuntu_qrt_apparmor
+
+   url: The URL to the directory containing the custom kernel debs to be installed
+        and tested on the system under test.
+
+        Ex.
+            url: http://kernel.ubuntu.com/~bradf/precise-lp111666
+
+system: The name of the lab system that is to be used for the testing. The
+        default is rizzo.
+
+        Ex.
+            system: gonzo
+
+"""
+                self.send_reply(e_from, 'Re: %s' % e_subject, body)
 
         debug('    Leave: handle_test_request')
 
