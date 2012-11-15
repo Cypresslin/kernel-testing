@@ -66,7 +66,9 @@ class MailHandler():
         for arch in arches:
             cmd = '/home/work/kernel-testing/jenkins-job-creator/jjc --sut=real --hw=%s --sut-arch=%s --sut-series=%s --jenkins-url=%s --test=%s' % (system, arch, series, self.jenkins_url_default, tests)
             if url is not None:
-                cmd += ' --debs=%s --user=%s' % (url, user)
+                cmd += ' --debs=%s' % (url)
+            if user is not None:
+                cmd += ' --user=%s' % (user)
             (return_code, output) = sh(cmd, quiet=True)
             for line in output:
                 line = line.strip()
