@@ -111,7 +111,7 @@ class Provisioner():
         '''
         ssh(target, 'sudo reboot')
         if wait:
-            self.wait_for_system(target, timeout=5)
+            self.wait_for_system(target, timeout=10)
 
     # install_custom_debs
     #
