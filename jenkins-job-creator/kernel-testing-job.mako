@@ -37,7 +37,7 @@ else:
     provision = '$KT/provision %s' % (data.sut_name)
     provision += ' --sut=real --sut-series=%s --sut-arch=%s' % (data.sut_series, data.sut_arch)
 
-if hasattr(data, 'debs'):
+if data.debs is not None:
     provision += ' --sut-debs-url=%s' % data.debs
 
 if data.sut_hwe:
