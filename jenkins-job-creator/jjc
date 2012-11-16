@@ -179,7 +179,8 @@ class SutJobsFactory():
             retval += '__using_%s' % cfg.vh_name
 
         try:
-            retval += '__for_%s' % self.cfg.user
+            if self.cfg.user is not None:
+                retval += '__for_%s' % self.cfg.user
         except AttributeError:
             pass
 
