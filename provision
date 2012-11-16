@@ -83,7 +83,7 @@ class Provisioner():
 
     # wait_for_system
     #
-    def wait_for_system(self, target, timeout=5):
+    def wait_for_system(self, target, timeout=10):
         global dry_run
         if not dry_run:
             if not self.quiet:
