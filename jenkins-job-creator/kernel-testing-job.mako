@@ -8,7 +8,11 @@
             <maxConcurrentPerNode>1</maxConcurrentPerNode>
             <maxConcurrentTotal>100</maxConcurrentTotal>
             <categories>
+% if data.sut == 'virtual':
+                <string>${data.vh_name}-hw-throttle</string>
+% else:
                 <string>${data.sut_name}-hw-throttle</string>
+% endif
             </categories>
             <throttleEnabled>true</throttleEnabled>
             <throttleOption>category</throttleOption>
