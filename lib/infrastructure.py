@@ -8,28 +8,24 @@ Orchestra = {
     },
     'series' : {
         'lucid' : {
-            'preseed' : 'secondary',
-            'server distro decoration' : '',
-        },
-        'natty' : {
-            'preseed' : 'natty',
+            'preseed' : 'secondary-no-slave',
             'server distro decoration' : '',
         },
         'oneiric' : {
-            'preseed' : 'primary',
+            'preseed' : 'primary-no-slave',
             'server distro decoration' : '-server',
         },
         'precise' : {
-            'preseed' : 'primary',
+            'preseed' : 'primary-no-slave',
             'server distro decoration' : '-server',
         },
         'quantal' : {
-            'preseed' : 'primary',
+            'preseed' : 'primary-no-slave',
             'server distro decoration' : '-server',
         },
         'raring' : {
-            'preseed' : 'primary',
-            'server distro decoration' : '-server',
+            'preseed' : 'primary-no-slave',
+            'server distro decoration' : '',
         },
     }
 }

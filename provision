@@ -188,7 +188,7 @@ class VirtualProvisioner(Provisioner):
         o_series = Orchestra['series'][self.series]
         o_arch   = Orchestra['arch'][self.arch]
         distro = '%s%s-%s' % (self.series, o_series['server distro decoration'], o_arch)
-        kickstart = path.join(self.kickstarts_root, 'kt-virt-%s-no-slave.preseed' % (o_series['preseed']))
+        kickstart = path.join(self.kickstarts_root, 'kt-virt-%s.preseed' % (o_series['preseed']))
 
         t = LabHW[target]
         if not self.quiet:
@@ -284,7 +284,7 @@ class MetalProvisioner(Provisioner):
         o_series = Orchestra['series'][self.series]
         o_arch   = Orchestra['arch'][self.arch]
         distro = '%s%s-%s' % (self.series, o_series['server distro decoration'], o_arch)
-        kickstart = path.join(self.kickstarts_root, 'kt-%s-no-slave.preseed' % (o_series['preseed']))
+        kickstart = path.join(self.kickstarts_root, 'kt-%s.preseed' % (o_series['preseed']))
         repos = "'%s-%s %s-%s-security'" % (self.series, o_arch, self.series, o_arch)
 
         t = LabHW[target]
