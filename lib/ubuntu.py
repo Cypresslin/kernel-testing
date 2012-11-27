@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 #
 
-from ktl.dbg                    import Dbg
-
 #
 # Warning - using the following dictionary to get the series name from the kernel version works for the linux package,
 # but not for some others (some ARM packages are known to be wrong). This is because the ARM kernels used for some
@@ -634,7 +632,6 @@ class Ubuntu:
         """
         Return the series name where that package-version is found
         """
-        Dbg.enter('series_name')
         retval = None
 
         if (package == 'linux' or
@@ -642,24 +639,19 @@ class Ubuntu:
             package == 'linux-ec2' or
             package == 'linux-armadaxp' or
             package == 'linux-lowlatency'):
-            Dbg.verbose('package condition 1\n')
             for entry in self.db.itervalues():
                 if version.startswith(entry['kernel']):
                     retval = entry['name']
 
         if package.startswith('linux-lts-'):
-            Dbg.verbose('package condition 2\n')
             for entry in self.db.itervalues():
                 if entry['name'] in version:
                     retval = entry['name']
 
         if package == 'linux-mvl-dove' or package == 'linux-fsl-imx51':
-            Dbg.verbose('package condition 3\n')
             version, release = version.split('-')
-            Dbg.verbose('version: %s   release: %s\n' % (version, release))
             if release:
                 abi, upload = release.split('.')
-                Dbg.verbose('abi: %s   upload: %s\n' % (abi, upload))
                 try:
                     abi_n = int(abi)
                 except ValueError:
@@ -676,7 +668,6 @@ class Ubuntu:
                         else:
                             retval = 'lucid'
 
-        Dbg.leave('series_name (%s)' % retval)
         return retval
 
 if __name__ == '__main__':
