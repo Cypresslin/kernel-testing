@@ -13,7 +13,7 @@ title = "%s - %s - %s" % (target_suite.replace('autotest.', ''), test_attributes
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <!-- <meta http-equiv="refresh" content="60" /> -->
         <title>${ title }</title>
-        <link rel="stylesheet" href="http://kernel.ubuntu.com/beta/media/kernel-style.css" type="text/css" media="screen" />
+        <link rel="stylesheet" href="http://kernel.ubuntu.com/media/kernel-style.css" type="text/css" media="screen" />
         <style>
             div.index-bottom-section {
                  border-radius: 0px;
@@ -53,7 +53,7 @@ title = "%s - %s - %s" % (target_suite.replace('autotest.', ''), test_attributes
 
                     <div id="dash-header">
                         <div id="dash-timestamp">
-                            <a href="http://ubuntu.com" title="Home" rel="home"><img src="http://kernel.ubuntu.com/beta/media/ubuntu-logo.png" alt="Home" /></a>
+                            <a href="http://ubuntu.com" title="Home" rel="home"><img src="http://kernel.ubuntu.com/media/ubuntu-logo.png" alt="Home" /></a>
                         </div>
                         <h1>Kernel Testing &amp; Benchmarks</h1>
                     </div> <!-- header -->
@@ -129,7 +129,7 @@ title = "%s - %s - %s" % (target_suite.replace('autotest.', ''), test_attributes
                                   <span style="font-size: 10px; color: #aea79f !important">(c) 2012 Canonical Ltd. Ubuntu and Canonical are registered trademarks of Canonical Ltd.</span>
                                 </td>
                                 <td align="right" valign="top">
-                                    <a href="http://ubuntu.com"><img src="http://kernel.ubuntu.com/beta/media/ubuntu-footer-logo.png"></a>
+                                    <a href="http://ubuntu.com"><img src="http://kernel.ubuntu.com/media/ubuntu-footer-logo.png"></a>
                                 </td>
                             </tr>
                         </table>

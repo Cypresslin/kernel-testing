@@ -4,7 +4,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <!-- <meta http-equiv="refresh" content="60" /> -->
         <title>Ubuntu - Kernel Team Server</title>
-        <link rel="stylesheet" href="http://kernel.ubuntu.com/beta/media/kernel-style.css" type="text/css" media="screen" />
+        <link rel="stylesheet" href="http://kernel.ubuntu.com/media/kernel-style.css" type="text/css" media="screen" />
         <style>
             div.index-bottom-section {
                  border-radius: 0px;
@@ -44,7 +44,7 @@
 
                     <div id="dash-header">
                         <div id="dash-timestamp">
-                            <a href="http://ubuntu.com" title="Home" rel="home"><img src="http://kernel.ubuntu.com/beta/media/ubuntu-logo.png" alt="Home" /></a>
+                            <a href="http://ubuntu.com" title="Home" rel="home"><img src="http://kernel.ubuntu.com/media/ubuntu-logo.png" alt="Home" /></a>
                         </div>
                         <h1>Kernel Testing &amp; Benchmarks</h1>
                     </div> <!-- header -->
@@ -96,7 +96,7 @@
 
                                                                 dt = datetime.strptime(record['attributes']['timestamp'], '%Y-%m-%d %H:%M')
                                                                 ts = dt.strftime('%Y-%m-%d_%H-%M-%S')
-                                                                link = "http://kernel.ubuntu.com/beta/testing/test-results/%s.%s/results-index.html" % (record['attributes']['platform']['hostname'], ts)
+                                                                link = "http://kernel.ubuntu.com/testing/test-results/%s.%s/results-index.html" % (record['attributes']['platform']['hostname'], ts)
 
                                                                 hardware = 'real'
                                                                 if 'hardware' in record['attributes']['platform']:
@@ -221,7 +221,7 @@
                                   <span style="font-size: 10px; color: #aea79f !important">(c) 2012 Canonical Ltd. Ubuntu and Canonical are registered trademarks of Canonical Ltd.</span>
                                 </td>
                                 <td align="right" valign="top">
-                                    <a href="http://ubuntu.com"><img src="http://kernel.ubuntu.com/beta/media/ubuntu-footer-logo.png"></a>
+                                    <a href="http://ubuntu.com"><img src="http://kernel.ubuntu.com/media/ubuntu-footer-logo.png"></a>
                                 </td>
                             </tr>
                         </table>
