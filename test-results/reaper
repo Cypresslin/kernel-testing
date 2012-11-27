@@ -1,0 +1,90 @@
+#!/usr/bin/env python
+#
+# Clean out the test-results directory tree. This is called from cron on the
+# kernel-jenkins.magners system every so often.
+#
+
+from sys                                import exit
+from os                                 import getenv, path
+from shutil                             import rmtree
+from datetime                           import datetime
+from logging                            import debug, info, basicConfig, DEBUG, INFO
+from grinder                            import Exit, TestResultsRepository, TestResultsRepositoryError
+from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
+from lib.utils                          import string_to_date
+import json
+
+# TestResultsReaper
+#
+class TestResultsReaper():
+
+    # __init__
+    #
+    def __init__(self, args):
+        self.cfg = args
+
+    # main
+    #
+    def main(self):
+        retval = 1
+        try:
+            # Now, actually do something.
+            #
+            try:
+                trr = TestResultsRepository()
+                for tr in trr.test_runs:
+                    termination = 30
+                    results = trr.results(tr)
+                    job = results['attributes']['environ']['JOB_NAME']
+                    ts = string_to_date(results['attributes']['timestamp'])
+                    results_dir = path.join(trr.cfg['repository_root'], tr)
+
+                    now = datetime.utcnow()
+                    delta = now - ts
+
+                    if '_for_' in job:
+                        # This is a "custom" or "mainline build" job and has a shorter
+                        # shelf life.
+                        #
+                        termination = 5
+
+                    if delta.days > termination:
+                        rmtree(results_dir)
+
+                retval = 0
+
+            except Exit:
+                pass
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            pass
+
+        return retval
+
+if __name__ == '__main__':
+
+    result = 0
+
+    if getenv('DEBUG'):
+        LOGLEVEL = DEBUG
+    else:
+        LOGLEVEL = INFO
+    basicConfig(level=LOGLEVEL, format="%(asctime)-15s-%(levelname)s - %(message)s")
+    info('Started')
+
+    app_description = '''
+    '''
+    app_epilog = '''
+    '''
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    args = parser.parse_args()
+
+    app = TestResultsReaper(args)
+    result = app.main()
+
+    info('That\'s All Folks!')
+    exit(result)
+
+# vi:set ts=4 sw=4 expandtab:
