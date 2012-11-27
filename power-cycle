@@ -1,0 +1,155 @@
+#!/usr/bin/env python
+#
+
+from os                                 import getenv, path
+from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import debug, error, info, basicConfig, INFO, DEBUG, WARNING, getLevelName
+from time                               import sleep
+
+from lib.infrastructure                 import Orchestra, HWE, LabHW
+from lib.shell                          import sh, ShellError, ShellTimeoutError
+
+dry_run = False
+
+# ssh
+#
+def ssh(target, cmd, quiet=False, ignore_result=False):
+    ssh_cmd = 'ssh %s %s' % (target, cmd)
+    result = 0
+    if dry_run:
+        debug('[dry-run] %s' % (ssh_cmd))
+    else:
+        result, output = sh(ssh_cmd, quiet=quiet, ignore_result=ignore_result)
+
+    if result != 0 and not ignore_result:
+        raise ShellError(ssh_cmd, result, output)
+
+    return result, output
+
+# Timeout
+#
+class Timeout(Exception):
+    """
+    A task took longer than the specified timeout.
+    """
+    pass
+
+# ErrorExit
+#
+class ErrorExit(Exception):
+    """
+    If an error message has already been displayed and we want to just exit the app, this
+    exception is raised.
+    """
+    pass
+
+# MetalProvisioner
+#
+class MetalProvisioner():
+
+    # __init__
+    #
+    def __init__(self):
+        self.quiet = False
+
+    # cycle_power
+    #
+    def cycle_power(self, target):
+        '''
+        Has the smarts on how to go about turning the power off to a server
+        remotely and then turning it back on. In some cases, multiple ports
+        must be power cycled.
+        '''
+        if not self.quiet:
+            print('Cycling the power on \'%s\'' % (target))
+
+        # Power cycle the system so it will netboot and install
+        #
+        for state in ['off', 'on']:
+            t = LabHW[target]
+            for psu in t['cdu']:
+                if psu['ip'] != '':
+                    try:
+                        ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l ubuntu -p ubuntu -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
+                    except ShellError as e:
+                        # Sometimes the call to the orchestra server will time-out (not sure why), just
+                        # wait a minute and try again.
+                        #
+                        sleep(60)
+                        if not self.quiet:
+                            print('    Initial power cycle attempt failed, trying a second time.')
+                        ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l ubuntu -p ubuntu -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
+
+            sleep(10) # Some of the systems want a little delay
+                      # between being powered off and then back on.
+
+# PowerCycle
+#
+class PowerCycle():
+    '''
+    '''
+
+    # __init__
+    #
+    def __init__(self, args):
+        self.args = args
+        self.__hwdb = None
+
+    # main
+    #
+    def main(self):
+        retval = 1
+        try:
+            target = self.args.target[0]
+
+            metal = None
+            metal = MetalProvisioner()
+            metal.cycle_power(target)
+
+            retval = 0
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            print("Aborting ...")
+
+        except ShellTimeoutError as e:
+            error('The command (%s) timed out. (%d)' % (e.cmd, e.timeout))
+
+        except ShellError as e:
+            error('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
+            for line in e.output:
+                error(line.rstrip())
+
+        except ErrorExit:
+            pass
+
+        if retval > 0:
+            error("")
+            error("Due to the above error(s), this script is unable to continue and is terminating.")
+            error("")
+
+        return retval
+
+if __name__ == '__main__':
+    if getenv('DEBUG'):
+        LOGLEVEL = DEBUG
+    else:
+        LOGLEVEL = INFO
+    basicConfig(level=LOGLEVEL, format="%(levelname)s - %(message)s")
+
+    app_description = '''
+    '''
+
+    app_epilog = '''
+    '''
+
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('target', metavar='TARGET', type=str, nargs=1, help='The name of the system to be provisioned.')
+
+    args = parser.parse_args()
+
+    app = PowerCycle(args)
+    exit(app.main())
+
+# vi:set ts=4 sw=4 expandtab syntax=python:
