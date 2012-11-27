@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 #
+
+from ktl.dbg                    import Dbg
+
 #
 # Warning - using the following dictionary to get the series name from the kernel version works for the linux package,
 # but not for some others (some ARM packages are known to be wrong). This is because the ARM kernels used for some
@@ -18,13 +21,121 @@ class UbuntuError(Exception):
 #
 class Ubuntu:
 
+    # db: dictionary of Ubuntu releases, with its kernel package, version
+    # and miscelaneous information used by scripts throughout the tree
+    #
+    # Format:
+    # db = {
+    #   <release number string> : {
+    #      'field 1' : <value 1>,
+    #      'field 2' : <value 2>,
+    #      ...
+    #      'field n' : <value n>
+    #   }
+    # }
+    #
+    # release number string is the number of the release, '10.10', '12.04', etc.
+    # For each release, we have a dictionary assigned to it which consists of a
+    # set of fields with values assigned, relevant to that release. The possible
+    # fields are:
+    # * development (bool) - indicates if this release
+    #   represents the current Ubuntu development release
+    # * series_verson (string) - same as release number string. XXX: remove this?
+    # * kernel (string) - the main kernel version used in this release (from
+    #   linux package), eg. '3.2.0'
+    # * name (string) - first name of this release, eg. 'precise'
+    # * supported (bool) - indicates if this is an stable supported
+    #   release (not a development release, and not EOL - end of life)
+    # * packages (list) - list of source package names supported in this
+    #   release.
+    # * dependent-packages (dictionary) - dictionary mapping a package
+    #   to its dependent packages. Format:
+    #   'dependent-packages' : {
+    #     <source package name> : {
+    #       'task name 1' : <source package name 1 linked to this task>,
+    #       'task name 2' : <source package name 2 linked to this task>,
+    #       ...
+    #       'task name n' : <source package name n linked to this task>
+    #     }
+    #   }
+    #   - source package name is the name of the source package uploaded.
+    #   - task name can be one of the following: 'meta', 'lbm', 'lrm',
+    #     'lum', 'ports-meta', 'signed'
+    #   The information on this dictionary is solely used as an way to
+    #   process and create tracking bugs. Using this information the
+    #   scripts can know which packages needs extra 'prepare-package-*'
+    #   tasks in tracking bugs, and which package name relates to its
+    #   respective 'prepare-package-*' task:
+    #   - For 'meta', 'lbm', 'lrm', 'lum', 'ports-meta' and 'signed',
+    #     they are used when opening a tracking bug to know if that
+    #     tracking bug needs respectively the tasks
+    #     'prepare-package-meta', 'prepare-package-lbm', etc.
+    #   - For 'meta', 'lbm', 'lrm', 'lum' and 'ports-meta', shank bot
+    #     (stable/sru-workflow-manager) uses the dictionary to know
+    #     what's the package name for that task, to check if the package
+    #     is built on the ppa with the needed ABI. For 'signed', it uses
+    #     the dictionary to know what's the package name for the
+    #     prepare-package-signed task, and to check if the package with
+    #     same ABI-VERSION is built on the ppa.
+    # * derivative-packages (dictionary) - dictionary solely used by
+    #   shank bot to know which tracking bugs it needs to open for
+    #   rebasable branches, when the master linux packages are built on
+    #   the ppa. Format:
+    #   'derivative-packages' : {
+    #     <source package name A> : [
+    #          <source package name 1>,
+    #          <source package name 2>,
+    #          ...
+    #          <source package name n>
+    #       ],
+    #     <source package name B> : [ ... ],
+    #     ...
+    #     <source package name n> : [ ... ]
+    #   }
+    #   Example:
+    #   'derivative-packages' : {
+    #     'linux' : [ 'linux-ti-omap4', 'linux-armadaxp' ]
+    #   }
+    #   This example means for shank bot that when 'linux' package is
+    #   built on the c-k-t PPA, open automatically tracking bugs for
+    #   'linux-ti-omap4' and 'linux-armadaxp' packages so they can be
+    #   rebased on top of linux master branch and worked on.
+    # * backport-packages (dictionary) - if the release is an LTS
+    #   (Long Term Support), this will provide a mapping of available
+    #   backport packages on it, so shank bot can properly open new
+    #   tracking bugs for them. It's different from derivative-packages
+    #   field, because the tracking bug is opened when a linux master
+    #   branch is built on another release, so this field serves as a
+    #   reverse map. But the purpose is the same, and also is solely
+    #   used to open new tracking bugs for backport packages.
+    #   Format:
+    #   'backport-packages' : {
+    #     <backport source package name 1> : [
+    #       <original source package name of backported package>,
+    #       <release number from where it's being backported>
+    #     ],
+    #     ...
+    #     <backport source package name N> : [ ... ]
+    #   }
+    #   Consider this backports-package entry for '10.04' (Lucid) for
+    #   example:
+    #   'backport-packages' : {
+    #     'linux-lts-backport-oneiric' : [ 'linux', '11.10' ],
+    #     'linux-lts-backport-natty' : [ 'linux', '11.04' ],
+    #     'linux-lts-backport-maverick' : [ 'linux', '10.10' ],
+    #    }
+    #   Above we have listed the three backports it can have. Taking
+    #   oneiric backport, the list means, we are backporting from
+    #   'linux' package present on '11.10'.
+    # * sha1 XXX: doesn't seem to be used anymore
+    # * md5 XXX: doesn't seem to be used anymore
     db = {
-        '12.10' :
+        '13.04' :
         {
             'development' : True,        # This is the version that is currently under development
-            'series_version' : '12.10',
-            'kernel'    : '3.5.0',
-            'name'      : 'quantal',
+            'series_version' : '13.04',
+            'kernel'    : '3.7.0',
+            'name'      : 'raring',
             'supported' : False,
             # adjust packages when this goes live
             'packages'  :
@@ -36,12 +147,49 @@ class Ubuntu:
             ],
             'dependent-packages' :
             {
-                'linux' : { 'meta' : 'linux-meta' },
+                'linux' : {
+                    'meta'   : 'linux-meta',
+                    'signed' : 'linux-signed'
+                },
                 'linux-ti-omap4' : { 'meta' : 'linux-meta-ti-omap4' }
             },
             'derivative-packages' :
             {
                 'linux' : [ 'linux-ti-omap4' ]
+            },
+            'sha1' : '',
+            'md5' : ''
+        },
+        '12.10' :
+        {
+            'series_version' : '12.10',
+            'kernel'    : '3.5.0',
+            'name'      : 'quantal',
+            'supported' : True,
+            # adjust packages when this goes live
+            'packages'  :
+            [
+                'linux',
+                'linux-meta',
+                'linux-ti-omap4',
+                'linux-meta-ti-omap4',
+                'linux-armadaxp',
+                'linux-meta-armadaxp'
+            ],
+            'dependent-packages' :
+            {
+                'linux' : { 
+                    'meta'   : 'linux-meta',
+                    'lbm'    : 'linux-backports-modules-3.5.0',
+                    'signed' : 'linux-signed'
+                },
+                'linux-ti-omap4' : { 'meta' : 'linux-meta-ti-omap4' },
+                'linux-armadaxp' : { 'meta' : 'linux-meta-armadaxp' },
+                'linux-lowlatency' : { 'meta' : 'linux-meta-lowlatency' }
+            },
+            'derivative-packages' :
+            {
+                'linux' : [ 'linux-ti-omap4', 'linux-armadaxp', 'linux-lowlatency' ]
             },
             'sha1' : '',
             'md5' : ''
@@ -57,9 +205,12 @@ class Ubuntu:
             [
                 'linux',
                 'linux-meta',
+                #'linux-lts-quantal',
+                #'linux-meta-lts-quantal',
                 'linux-ti-omap4',
                 'linux-meta-ti-omap4',
-                'linux-armadaxp'
+                'linux-armadaxp',
+                'linux-meta-armadaxp'
             ],
             'dependent-packages' :
             {
@@ -67,12 +218,18 @@ class Ubuntu:
                     'meta' : 'linux-meta',
                     'lbm'  : 'linux-backports-modules-3.2.0'
                 },
+                'linux-lts-quantal' : { 'meta' : 'linux-meta-lts-quantal' },
                 'linux-ti-omap4' : { 'meta' : 'linux-meta-ti-omap4' },
-                'linux-armadaxp' : { 'meta' : 'linux-meta-armadaxp' }
+                'linux-armadaxp' : { 'meta' : 'linux-meta-armadaxp' },
+                'linux-lowlatency' : { 'meta' : 'linux-meta-lowlatency' }
             },
             'derivative-packages' :
             {
-                'linux' : [ 'linux-ti-omap4', 'linux-armadaxp' ]
+                'linux' : [ 'linux-ti-omap4', 'linux-armadaxp', 'linux-lowlatency' ]
+            },
+            'backport-packages' :
+            {
+                'linux-lts-quantal' : [ 'linux', '12.10' ],
             },
             'sha1' : '',
             'md5' : ''
@@ -111,7 +268,7 @@ class Ubuntu:
             'series_version' : '11.04',
             'kernel'    : '2.6.38',
             'name'      : 'natty',
-            'supported' : True,
+            'supported' : False,
             'packages'  :
             [
                 'linux',
@@ -187,8 +344,8 @@ class Ubuntu:
                 'linux-meta-mvl-dove',
                 'linux-meta-fsl-imx51',
                 'linux-backports-modules-2.6.32',
-                #'linux-lts-backport-oneiric',
-                #'linux-meta-lts-backport-oneiric',
+                'linux-lts-backport-oneiric',
+                'linux-meta-lts-backport-oneiric',
                 'linux-lts-backport-natty',
                 'linux-meta-lts-backport-natty',
                 'linux-lts-backport-maverick',
@@ -323,6 +480,7 @@ class Ubuntu:
     }
 
     index_by_kernel_version = {
+        '3.7.0'    : db['13.04'],
         '3.5.0'    : db['12.10'],
         '3.2.0'    : db['12.04'],
         '3.0.0'    : db['11.10'],
@@ -339,6 +497,7 @@ class Ubuntu:
     }
 
     index_by_series_name = {
+        'raring'   : db['13.04'],
         'quantal'  : db['12.10'],
         'precise'  : db['12.04'],
         'oneiric'  : db['11.10'],
@@ -357,6 +516,7 @@ class Ubuntu:
     kernel_source_packages = [
         'linux',
         'linux-ti-omap4', # maverick, natty
+        'linux-armadaxp', # precise, quantal
         'linux-mvl-dove', # maverick, karmic, lucid
         'linux-fsl-imx51', # karmic, lucid
         'linux-ec2',
@@ -364,6 +524,7 @@ class Ubuntu:
         'linux-meta-ec2',
         'linux-meta-mvl-dove', # maverick, karmic, lucid
         'linux-meta-ti-omap4', # maverick, natty
+        'linux-meta-armadaxp', # precise, quantal
         'linux-meta-fsl-imx51', # karmic, lucid ?
         'linux-ports-meta',
         'linux-source-2.6.15',
@@ -375,6 +536,7 @@ class Ubuntu:
         'linux-backports-modules-2.6.35',
         'linux-backports-modules-2.6.38',
         'linux-backports-modules-3.0.0',
+        'linux-backports-modules-3.2.0',
 
         'linux-restricted-modules-2.6.15',
         'linux-restricted-modules-2.6.24',
@@ -383,10 +545,12 @@ class Ubuntu:
 
         'linux-lts-backport-maverick',
         'linux-lts-backport-natty',
-        #'linux-lts-backport-oneiric',
+        'linux-lts-backport-oneiric',
+        #'linux-lts-quantal',
         'linux-meta-lts-backport-maverick',
         'linux-meta-lts-backport-natty',
-        #'linux-meta-lts-backport-oneiric',
+        'linux-meta-lts-backport-oneiric',
+        #'linux-meta-lts-quantal',
     ]
 
     # lookup
@@ -470,24 +634,32 @@ class Ubuntu:
         """
         Return the series name where that package-version is found
         """
+        Dbg.enter('series_name')
         retval = None
 
         if (package == 'linux' or
             package == 'linux-ti-omap4' or
-            package == 'linux-ec2'):
+            package == 'linux-ec2' or
+            package == 'linux-armadaxp' or
+            package == 'linux-lowlatency'):
+            Dbg.verbose('package condition 1\n')
             for entry in self.db.itervalues():
                 if version.startswith(entry['kernel']):
                     retval = entry['name']
 
-        if package.startswith('linux-lts-backport'):
+        if package.startswith('linux-lts-'):
+            Dbg.verbose('package condition 2\n')
             for entry in self.db.itervalues():
                 if entry['name'] in version:
                     retval = entry['name']
 
-        if package == 'linux-mvl-dove' or package == 'linux-fsl-imx51' or package == 'linux-armadaxp':
+        if package == 'linux-mvl-dove' or package == 'linux-fsl-imx51':
+            Dbg.verbose('package condition 3\n')
             version, release = version.split('-')
+            Dbg.verbose('version: %s   release: %s\n' % (version, release))
             if release:
                 abi, upload = release.split('.')
+                Dbg.verbose('abi: %s   upload: %s\n' % (abi, upload))
                 try:
                     abi_n = int(abi)
                 except ValueError:
@@ -503,10 +675,8 @@ class Ubuntu:
                             retval = 'karmic'
                         else:
                             retval = 'lucid'
-                    elif package == 'linux-armadaxp':
-                        if abi_n > 1600:
-                            retval = 'precise'
 
+        Dbg.leave('series_name (%s)' % retval)
         return retval
 
 if __name__ == '__main__':
