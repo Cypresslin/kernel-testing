@@ -152,7 +152,11 @@ class Digest():
                             break
 
                     if retval == 'unknown':
-                        version = '%s.0' % (m.group(1)) # Only want major and minor for determining the series
+                        # What a hack ...
+                        if '2.6' == m.group(1):
+                            version = '2.6.32'
+                        else:
+                            version = '%s.0' % (m.group(1)) # Only want major and minor for determining the series
                         retval = self.ubuntu.lookup(version)['name']
                 else:
                     print(" ** WARNING: The kernel version string found in the results data did not match the regex.")
