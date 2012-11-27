@@ -46,7 +46,7 @@ class MailHandler():
 
         msg = MIMEMultipart()
         msg['From'] = guser
-        msg['To']   = to + "Brad Figg <brad.figg@canonical.com>"
+        msg['To']   = to + ", Brad Figg <brad.figg@canonical.com>"
         msg['Subject'] = subject
 
         # Add a standard signature to each message
