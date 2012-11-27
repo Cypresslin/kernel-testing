@@ -34,6 +34,8 @@ class MailHandler():
     def __init__(self, args):
         self.args = args
         self.jenkins_url_default = "http://10.97.9.20:8080"
+        self.default_systems=['rizzo', 'gonzo', 'fozzie', 'statler', 'waldorf']
+        self.default_arches=['amd64', 'i386']
 
     # send_reply
     #
@@ -43,7 +45,7 @@ class MailHandler():
 
         msg = MIMEMultipart()
         msg['From'] = guser
-        msg['To']   = to
+        msg['To']   = to + "Brad Figg <brad.figg@canonical.com>"
         msg['Subject'] = subject
 
         # Add a standard signature to each message
@@ -61,20 +63,21 @@ class MailHandler():
 
     # create_test_jobs
     #
-    def create_test_jobs(self, series, url=None, user=None, arches=['amd64', 'i386'], tests='default', system='rizzo'):
+    def create_test_jobs(self, series, arches, systems, url=None, user=None, tests='default'):
         retval = []
         for arch in arches:
-            cmd = '/home/work/kernel-testing/jenkins-job-creator/jjc --sut=real --hw=%s --sut-arch=%s --sut-series=%s --jenkins-url=%s --test=%s' % (system, arch, series, self.jenkins_url_default, tests)
-            if url is not None:
-                cmd += ' --debs=%s' % (url)
-            if user is not None:
-                cmd += ' --user=%s' % (user)
-            (return_code, output) = sh(cmd, quiet=True)
-            for line in output:
-                line = line.strip()
-                if 'created jenkins job:' in line:
-                    (x, job) = line.split('job:', 1)
-                    retval.append(job.strip())
+            for system in systems:
+                cmd = '/home/work/kernel-testing/jenkins-job-creator/jjc --sut=real --hw=%s --sut-arch=%s --sut-series=%s --jenkins-url=%s --test=%s' % (system, arch, series, self.jenkins_url_default, tests)
+                if url is not None:
+                    cmd += ' --debs=%s' % (url)
+                if user is not None:
+                    cmd += ' --user=%s' % (user)
+                (return_code, output) = sh(cmd, quiet=True)
+                for line in output:
+                    line = line.strip()
+                    if 'created jenkins job:' in line:
+                        (x, job) = line.split('job:', 1)
+                        retval.append(job.strip())
 
         return retval
 
@@ -95,9 +98,9 @@ class MailHandler():
         for part in msg.walk():
             series = None
             debs_url = None
-            arch = ['amd64', 'i386']
+            arches = self.default_arches
+            systems = self.default_systems
             tests = 'default'
-            system = 'rizzo'
             for line in part.get_payload().split('\n'):
                 line = line.strip()
                 if search('series\S*:', line) is not None:
@@ -117,6 +120,9 @@ class MailHandler():
                 elif search('system\S*:', line) is not None:
                     (x, system) = line.split(':', 1)
                     system = system.strip()
+                    systems = []
+                    for a in system.split(','):
+                        systems.append(a.strip())
                 elif 'help' == line or 'Help' == line:
                     send_help = True
 
@@ -130,7 +136,7 @@ class MailHandler():
                 m = search('.*<(\S+)@.*', e_from)
                 if m is not None:
                     user = m.group(1)
-                jobs = self.create_test_jobs(series, debs_url, user, arches, tests, system)
+                jobs = self.create_test_jobs(series, arches, systems, debs_url, user, tests)
 
                 body  = 'The following job(s) were created on the kernel teams jenkins server\n'
                 body += 'in response to your request:\n\n'
@@ -218,8 +224,10 @@ system: The name of the lab system that is to be used for the testing. The
             version = parts[len(parts) - 2]
             tmp = version.split('-')
             series = tmp[len(tmp) - 1]
+            arches = self.default_arches
+            systems = self.default_systems
 
-            self.create_test_jobs(series, debs_url)
+            self.create_test_jobs(series, arches, systems, debs_url)
 
         debug('    Leave: handle_mainline_build')
 
@@ -281,8 +289,8 @@ if __name__ == '__main__':
         LOGLEVEL = DEBUG
     else:
         LOGLEVEL = WARNING
-    LOGLEVEL = WARNING
-    #LOGLEVEL = DEBUG
+    #LOGLEVEL = WARNING
+    LOGLEVEL = DEBUG
     basicConfig(level=LOGLEVEL, format="%(levelname)s - %(message)s")
 
     app_description = '''
