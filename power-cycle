@@ -80,8 +80,9 @@ class MetalProvisioner():
                             print('    Initial power cycle attempt failed, trying a second time.')
                         ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l ubuntu -p ubuntu -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
 
-            sleep(10) # Some of the systems want a little delay
-                      # between being powered off and then back on.
+            if state == 'off':
+                sleep(10) # Some of the systems want a little delay
+                          # between being powered off and then back on.
 
 # PowerCycle
 #
