@@ -24,7 +24,7 @@
     },
 
     "gonzo" : {
-        "platform" : "Dell PowerEdge R415"
+        "platform" : "Dell PowerEdge R415",
         "processors": "1 x AMD Opteron Processor 4226; 6 cores",
         "memory" : "8GB"
     },
