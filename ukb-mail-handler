@@ -35,6 +35,7 @@ class MailHandler():
         self.args = args
         self.jenkins_url_default = "http://10.97.9.20:8080"
         self.default_systems=['rizzo', 'gonzo', 'fozzie', 'statler', 'waldorf']
+        self.default_systems=['gonzo', 'fozzie']
         self.default_arches=['amd64', 'i386']
 
     # send_reply
@@ -227,7 +228,7 @@ system: The name of the lab system that is to be used for the testing. The
             arches = self.default_arches
             systems = self.default_systems
 
-            self.create_test_jobs(series, arches, systems, debs_url)
+            self.create_test_jobs(series, arches, systems, debs_url, 'Mainline.Builder')
 
         debug('    Leave: handle_mainline_build')
 
