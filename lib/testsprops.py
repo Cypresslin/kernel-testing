@@ -60,6 +60,9 @@ TestProfiles = {
                 'python-pexpect', 'apparmor', 'apparmor-utils', 'netcat', 'sudo', 'build-essential', 'libapparmor-dev',
                 'ruby1.8', 'attr', 'apport', 'libpam-apparmor', 'libgtk2.0-dev', 'pyflakes', 'apparmor-profiles', 'quilt',
                 ],
+            'raring' : [
+                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev',
+                ],
             'quantal' : [
                 'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev',
                 ],
@@ -67,9 +70,6 @@ TestProfiles = {
                 'python-libapparmor', 'python3', 'python3-all-dev',
                 ],
             'oneiric' : [
-                'python-libapparmor', 'python3', 'python3-all-dev',
-                ],
-            'natty' : [
                 'python-libapparmor', 'python3', 'python3-all-dev',
                 ],
             },
