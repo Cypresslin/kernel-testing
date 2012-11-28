@@ -35,7 +35,7 @@ class MailHandler():
         self.args = args
         self.jenkins_url_default = "http://10.97.9.20:8080"
         self.default_systems=['rizzo', 'gonzo', 'fozzie', 'statler', 'waldorf']
-        self.default_systems=['gonzo', 'fozzie']
+        self.default_systems=['gonzo', 'fozzie', 'statler', 'waldorf']  # I'm keeping rizzo for my own testing for now
         self.default_arches=['amd64', 'i386']
 
     # send_reply
