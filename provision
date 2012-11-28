@@ -128,7 +128,7 @@ class Provisioner():
 
         # Install the header packages
         #
-        #ssh(target, 'sudo dpkg -i linux-headers*_all.deb linux-headers*_%s.deb' % self.arch, ignore_result=True) # best effort
+        ssh(target, 'sudo dpkg -i linux-headers*_all.deb linux-headers*_%s.deb' % self.arch, ignore_result=True) # best effort
 
         # Install the kernel packages
         #
@@ -317,7 +317,17 @@ class MetalProvisioner(Provisioner):
             t = LabHW[target]
             for psu in t['cdu']:
                 if psu['ip'] != '':
-                    ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l ubuntu -p ubuntu -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
+                    try:
+                        ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l ubuntu -p ubuntu -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
+                    except ShellError as e:
+                        # Sometimes the call to the orchestra server will time-out (not sure why), just
+                        # wait a minute and try again.
+                        #
+                        sleep(60)
+                        if not self.quiet:
+                            print('    Initial power cycle attempt failed, trying a second time.')
+                        ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l ubuntu -p ubuntu -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
+
             sleep(10) # Some of the systems want a little delay
                       # between being powered off and then back on.
 
