@@ -42,14 +42,26 @@ class TestResultsReaper():
                     now = datetime.utcnow()
                     delta = now - ts
 
-                    if '_for_' in job:
-                        # This is a "custom" or "mainline build" job and has a shorter
-                        # shelf life.
-                        #
-                        termination = 5
+                    if self.cfg.user is not None:
+                        if '_for_' in job:
+                            (junk, user) = job.split('_for_', 1)
+                            if user == self.cfg.user:
+                                if self.cfg.dry_run:
+                                    print('REAP: %s' % results_dir)
+                                else:
+                                    rmtree(results_dir)
+                    else:
+                        if '_for_' in job:
+                            # This is a "custom" or "mainline build" job and has a shorter
+                            # shelf life.
+                            #
+                            termination = 5
 
-                    if delta.days > termination:
-                        rmtree(results_dir)
+                        if delta.days > termination:
+                            if self.cfg.dry_run:
+                                print('REAP: %s' % results_dir)
+                            else:
+                                rmtree(results_dir)
 
                 retval = 0
 
@@ -79,6 +91,8 @@ if __name__ == '__main__':
     app_epilog = '''
     '''
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--user',     required=False, help='Delete all the testing results for custom test runs for a particular user.')
+    parser.add_argument('--dry-run',  action='store_true', default=False, help='Don\'t do anything, just print out what would be done.')
     args = parser.parse_args()
 
     app = TestResultsReaper(args)
