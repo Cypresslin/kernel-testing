@@ -96,7 +96,7 @@ class Provisioner():
         '''
         Mainline kernels look for their firmware in /lib/firmware and might miss other required firmware.
         '''
-        ssh(target, 'sudo ln -s /lib/firmware/$(uname -r)/* /lib/firmware/', ignore_result=True)
+        ssh(target, 'sudo ln -s /lib/firmware/\$\(uname -r\)/* /lib/firmware/', ignore_result=True)
 
     # wait_for_system
     #
