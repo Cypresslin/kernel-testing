@@ -136,17 +136,19 @@ TestProfiles = {
 # Test Collections may be defined, and will run the list of autotest tests in them
 #
 TestCollections = {
-    'benchmarks' : ['dbench', 'compilebench', 'bonnie'],
+    # The set of tests that Ubuntu Engineering QA run.
+    #
+    'qa' : ['ubuntu_ecryptfs', 'ubuntu_qrt_kernel_hardening', 'ubuntu_qrt_kernel_panic', 'ubuntu_qrt_kernel_security', 'ubuntu_qrt_kernel_aslr_collisions', 'ubuntu_qrt_apparmor'],
 
     # This is the set of tests that will run if no KERNEL_TEST_LIST variable is set.
     # (QA runs this set)
     #
-    'default' : ['ubuntu_ecryptfs', 'ubuntu_qrt_kernel_hardening', 'ubuntu_qrt_kernel_panic', 'ubuntu_qrt_kernel_security', 'ubuntu_qrt_kernel_aslr_collisions', 'ubuntu_qrt_apparmor'],
+    'default' : ['qa'],
 
     # This is the set of tests that the kernel team runs. This should
     # be a superset of the 'default' tests that QA runs.
     #
-    'kernel' : ['iperf', 'ubuntu_leap_seconds', 'stress', 'ltp', 'xfstests'],
+    'kernel' : ['qa', 'iperf', 'ubuntu_leap_seconds', 'stress', 'ltp', 'xfstests'],
 
     # This is the set of tests for measuring power consumption.
     'power' : ['power_consumption'],
