@@ -81,6 +81,23 @@ class Provisioner():
         ssh(target, 'sudo apt-get update')
         ssh(target, 'sudo apt-get --yes dist-upgrade')
 
+    # kernel_upgrade
+    #
+    def kernel_upgrade(self, target):
+        '''
+        Perform a update of the kernels on a remote system.
+        '''
+        ssh(target, 'sudo apt-get update')
+        ssh(target, 'sudo apt-get --yes install linux-image-generic linux-headers-generic')
+
+    # mainline_firmware_hack
+    #
+    def mainline_firmware_hack(self, target):
+        '''
+        Mainline kernels look for their firmware in /lib/firmware and might miss other required firmware.
+        '''
+        ssh(target, 'sudo ln -s /lib/firmware/$(uname -r)/* /lib/firmware/', ignore_result=True)
+
     # wait_for_system
     #
     def wait_for_system(self, target, timeout=10):
@@ -249,7 +266,8 @@ class VirtualProvisioner(Provisioner):
         #
         self.wait_for_system(target, timeout=30) # Allow 30 minutes for network installation
         self.enable_proposed(target, self.series)
-        self.dist_upgrade(target)
+        self.kernel_upgrade(target)
+        self.mainline_firmware_hack(target)
 
         if self.hwe:
             self.install_hwe_kernel(target)
@@ -352,7 +370,8 @@ class MetalProvisioner(Provisioner):
         #
         self.wait_for_system(target, timeout=30) # Allow 30 minutes for network installation
         self.enable_proposed(target, self.series)
-        self.dist_upgrade(target)
+        self.kernel_upgrade(target)
+        self.mainline_firmware_hack(target)
 
         if self.hwe:
             self.install_hwe_kernel(target)
