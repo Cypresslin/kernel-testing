@@ -14,6 +14,7 @@ VERBOSE=on
 
 :0 fw
 * ^Subject:.*Kernel Test Request.*
+* ^From:.*canonical.com.*
 {
     :0 hbW:
     | /home/work/kernel-testing/ukb-mail-handler >> /home/work/kernel-testing/ukb-mail-handler.log
