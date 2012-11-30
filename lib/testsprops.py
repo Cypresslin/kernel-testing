@@ -118,6 +118,12 @@ TestProfiles = {
             },
         },
 
+    'dbench' : {
+        'packages' : {
+            'common' : [],
+            },
+        },
+
     'power_consumption' : {
         'packages' : {
            'common' : ['stress'],
