@@ -102,6 +102,7 @@ class MailHandler():
             arches = self.default_arches
             systems = self.default_systems
             tests = 'default'
+            send_help = False
             for line in part.get_payload().split('\n'):
                 line = line.strip()
                 if search('series\S*:', line) is not None:
@@ -130,7 +131,7 @@ class MailHandler():
             break # Only want to do one part
 
         body = ''
-        if (series is not None) and (debs_url is not None):
+        if not send_help: #if (series is not None) and (debs_url is not None):
             jobs = None
             try:
                 user = 'bogus'
@@ -255,6 +256,8 @@ system: The name of the lab system that is to be used for the testing. The
                 raise ErrorExit()
 
             raw_content = stdin.read()
+            with open('/tmp/ukb.eml', 'w') as f:
+                f.write(raw_content)
 
             ep = EmailParser.Parser()
             msg = ep.parsestr(raw_content)
