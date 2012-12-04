@@ -162,6 +162,10 @@ class SutJobsFactory():
             retval += cfg.sut_series.title()[0]
             if cfg.sut_hwe:
                 retval += '-hwe'
+
+            if self.cfg.sut_series_decoration is not None:
+                retval += '_%s' % self.cfg.sut_series_decoration
+
             retval += '-%s__using_%s' % (cfg.sut_arch, cfg.sut_name)
         else:
             retval += cfg.sut_series.title()[0]
@@ -287,6 +291,7 @@ examples:
     parser.add_argument('--sut-series',   required=True,  help='The series that is to be installed on the SUT. lts-hwe-<series> denotes that a lts-hwe kernel is to be run on the appropriate lts series.')
     parser.add_argument('--sut-arch',     required=True,  choices=['amd64', 'i386'], help='The architecture (amd64 or i386) that is to be installed on the SUT.')
     parser.add_argument('--sut-hwe',      required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
+    parser.add_argument('--sut-series-decoration',   required=False,  help='Text that is added to the job name.')
 
     parser.add_argument('--vh-series',    required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the series of that virtual host.')
     parser.add_argument('--vh-arch',      required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the arch of that virtual host.')
