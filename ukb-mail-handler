@@ -64,11 +64,13 @@ class MailHandler():
 
     # create_test_jobs
     #
-    def create_test_jobs(self, series, arches, systems, url=None, user=None, tests='default'):
+    def create_test_jobs(self, series, arches, systems, url=None, user=None, tests='default', series_decoration=None):
         retval = []
         for arch in arches:
             for system in systems:
                 cmd = '/home/work/kernel-testing/jenkins-job-creator/jjc --sut=real --hw=%s --sut-arch=%s --sut-series=%s --jenkins-url=%s --test=%s' % (system, arch, series, self.jenkins_url_default, tests)
+                if series_decoration is not None:
+                    cmd += ' --sut-series-decoration=%s' % series_decoration
                 if url is not None:
                     cmd += ' --debs=%s' % (url)
                 if user is not None:
@@ -228,10 +230,11 @@ system: The name of the lab system that is to be used for the testing. The
             version = parts[len(parts) - 2]
             tmp = version.split('-')
             series = tmp[len(tmp) - 1]
+            series_decoration = '-'.join(tmp[:-1])
             arches = self.default_arches
             systems = self.default_systems
 
-            jobs = self.create_test_jobs(series, arches, systems, debs_url, 'mainline.builder')
+            jobs = self.create_test_jobs(series, arches, systems, debs_url, 'mainline.builder', series_decoration=series_decoration)
             if jobs is not None:
                 info('The following jenkins jobs were created for mainline.builder')
                 for job in jobs:
