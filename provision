@@ -42,7 +42,15 @@ class ErrorExit(Exception):
     If an error message has already been displayed and we want to just exit the app, this
     exception is raised.
     """
-    pass
+    def __init__(self, emsg):
+        self.__message = emsg
+
+    @property
+    def message(self):
+        '''
+        The shell command that was being executed when the timeout occured.
+        '''
+        return self.__message
 
 # Provisioner
 #
@@ -115,8 +123,7 @@ class Provisioner():
                 now = datetime.utcnow()
                 delta = now - start
                 if delta.seconds > timeout * 60:
-                    error('The specified timeout (%d) was reached while waiting for the target system (%s) to come back up.' % (timeout, target))
-                    raise ErrorExit()
+                    raise ErrorExit('The specified timeout (%d) was reached while waiting for the target system (%s) to come back up.' % (timeout, target))
 
                 sleep(60)
 
@@ -466,7 +473,15 @@ class ProvApp():
             for line in e.output:
                 error(line.rstrip())
 
-        except ErrorExit:
+            ws = getenv('WORKSPACE')
+            if ws is not None:
+                self.produce_error_results(ws, msg)
+
+        except ErrorExit as e:
+            error(e.message)
+            ws = getenv('WORKSPACE')
+            if ws is not None:
+                self.produce_error_results(ws, msg)
             pass
 
         if retval > 0:
