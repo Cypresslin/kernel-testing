@@ -166,19 +166,19 @@ class SutJobsFactory():
             if self.cfg.sut_series_decoration is not None:
                 retval += '_%s' % self.cfg.sut_series_decoration
 
-            retval += '-%s__using_%s' % (cfg.sut_arch, cfg.sut_name)
+            retval += '_%s__using_%s' % (cfg.sut_arch, cfg.sut_name)
         else:
             retval += cfg.sut_series.title()[0]
             if cfg.sut_hwe:
                 retval += '-hwe'
-            retval += '-%s' % cfg.sut_arch
+            retval += '_%s' % cfg.sut_arch
 
             retval += '__on__'
 
             retval += cfg.vh_series.title()[0]
             if cfg.vh_hwe:
                 retval += '-hwe'
-            retval += '-%s' % cfg.vh_arch
+            retval += '_%s' % cfg.vh_arch
 
             retval += '__using_%s' % cfg.vh_name
 
