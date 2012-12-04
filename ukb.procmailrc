@@ -6,6 +6,13 @@ VERBOSE=on
 
 
 :0 fw
+* ^Subject:.*linux .* uploaded.*
+{
+    :0 hbW:
+    | /home/work/kernel-testing/ukb-mail-handler >> /home/work/kernel-testing/ukb-mail-handler.log
+}
+
+:0 fw
 * $ ^From:.*Mainline Builds <kernel-team@lists.ubuntu.com.*
 {
     :0 hbW:
