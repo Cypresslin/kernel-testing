@@ -247,7 +247,16 @@ system: The name of the lab system that is to be used for the testing. The
     def handle_sru_kernel_uploaded(self, series, msg):
         debug('    Enter: handle_sru_kernel_uploaded')
 
-        jobs = self.create_test_jobs(series, self.default_arches, self.default_systems, series_decoration='SRU')
+        # We don't have the right hardware to test hardy so we just ignore that
+        #
+        if series != 'hardy':
+            # Lucid is only installable on two of the systems that we have (nic drivers).
+            #
+            systems = ['rizzo', 'fozzie']
+        else:
+            systems = self.default_systems
+
+        jobs = self.create_test_jobs(series, self.default_arches, systems, series_decoration='SRU')
         if jobs is not None:
             info('The following jenkins jobs were created')
             for job in jobs:
@@ -294,10 +303,7 @@ system: The name of the lab system that is to be used for the testing. The
 
                 m = search('\[(\S+)\] linux \d+\.\d+\.\d+.* uploaded', e_subject.lower())
                 if m is not None:
-                    # We don't test hardy.
-                    #
-                    if m.group(1) != 'hardy':
-                        self.handle_sru_kernel_uploaded(m.group(1), msg)
+                    self.handle_sru_kernel_uploaded(m.group(1), msg)
                     break
 
                 debug('Unhandled email')
