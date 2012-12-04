@@ -242,6 +242,19 @@ system: The name of the lab system that is to be used for the testing. The
 
         debug('    Leave: handle_mainline_build')
 
+    # handle_sru_kernel_uploaded
+    #
+    def handle_sru_kernel_uploaded(self, series, msg):
+        debug('    Enter: handle_sru_kernel_uploaded')
+
+        jobs = self.create_test_jobs(series, self.default_arches, self.default_systems, series_decoration='SRU')
+        if jobs is not None:
+            info('The following jenkins jobs were created')
+            for job in jobs:
+                info('    %s' % job)
+
+        debug('    Leave: handle_sru_kernel_uploaded')
+
     # main
     #
     def main(self):
@@ -275,8 +288,16 @@ system: The name of the lab system that is to be used for the testing. The
                     self.handle_mainline_build(msg)
                     break
 
-                if ('kernel test request' in e_subject.lower()):
+                if 'kernel test request' in e_subject.lower():
                     self.handle_test_request(msg)
+                    break
+
+                m = search('\[(\S+)\] linux \d+\.\d+\.\d+.* uploaded', e_subject.lower())
+                if m is not None:
+                    # We don't test hardy.
+                    #
+                    if m.group(1) != 'hardy':
+                        self.handle_sru_kernel_uploaded(m.group(1), msg)
                     break
 
                 debug('Unhandled email')
