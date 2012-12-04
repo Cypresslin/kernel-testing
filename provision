@@ -401,6 +401,16 @@ class ProvApp():
         self.args = args
         self.__hwdb = None
 
+    def produce_error_results(self, workspace):
+        with open(path.join(workspace, 'kernel-results.xml'), 'w') as f:
+            f.write('<testsuites>\n')
+            f.write('    <testsuite tests="1" errors="1" name="Provisioning" timestamp="2012-01-01" hostname="hostname" time="0" failures="0">\n')
+            f.write('    <properties/>\n')
+            f.write('    <testcase classname="Provisioning.Initial-Provisioning" name="provisioning" time="0.0">\n')
+            f.write('        <error message="Provisioning failed!" type="Logparse">\n')
+            f.write('        </error">\n')
+            f.write('    </testcase>\n')
+
     # main
     #
     def main(self):
@@ -424,11 +434,11 @@ class ProvApp():
                 metal = MetalProvisioner(self.args.vh_name, self.args.vh_series, self.args.vh_arch, self.args.vh_hwe)
                 metal.provision()
 
-                print("=========================================================================")
-                print("=")
-                print("=                   V I R T U A L   C L I E N T")
-                print("=")
-                print("=========================================================================")
+                info("=========================================================================")
+                info("=")
+                info("=                   V I R T U A L   C L I E N T")
+                info("=")
+                info("=========================================================================")
                 virt = VirtualProvisioner(self.args.vh_name, self.args.sut_name, self.args.sut_series, self.args.sut_arch, self.args.sut_hwe)
                 virt.provision()
 
@@ -440,9 +450,15 @@ class ProvApp():
             print("Aborting ...")
 
         except ShellTimeoutError as e:
-            error('The command (%s) timed out. (%d)' % (e.cmd, e.timeout))
+            msg = 'The command (%s) timed out. (%d)' % (e.cmd, e.timeout)
+            self.produce_error_results(msg)
+            error(msg)
 
         except ShellError as e:
+            msg = 'The command (%s) returned a non-zero exit status (%d).\n' % (e.cmd, e.returncode)
+            for line in e.output:
+                msg += line.rstrip() + '\n'
+
             error('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
             for line in e.output:
                 error(line.rstrip())
