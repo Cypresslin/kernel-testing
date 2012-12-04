@@ -412,12 +412,15 @@ class ProvApp():
         with open(path.join(workspace, 'kernel-results.xml'), 'w') as f:
             f.write('<testsuites>\n')
             f.write('    <testsuite tests="1" errors="1" name="Provisioning" timestamp="2012-01-01" hostname="hostname" time="0" failures="0">\n')
-            f.write('    <properties/>\n')
-            f.write('    <testcase classname="Provisioning.Initial-Provisioning" name="provisioning" time="0.0">\n')
-            f.write('        <error message="Provisioning failed!" type="Logparse">\n')
+            f.write('        <properties/>\n')
+            f.write('        <testcase classname="Provisioning.Initial-Provisioning" name="provisioning" time="0.0">\n')
+            f.write('            <error message="Provisioning failed!" type="Logparse">\n')
             f.write(msg)
-            f.write('        </error">\n')
-            f.write('    </testcase>\n')
+            f.write('\n')
+            f.write('            </error>\n')
+            f.write('        </testcase>\n')
+            f.write('    </testsuite>\n')
+            f.write('</testsuites>\n')
 
     # main
     #
@@ -481,7 +484,7 @@ class ProvApp():
             error(e.message)
             ws = getenv('WORKSPACE')
             if ws is not None:
-                self.produce_error_results(ws, msg)
+                self.produce_error_results(ws, e.message)
             pass
 
         if retval > 0:
