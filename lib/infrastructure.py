@@ -37,10 +37,6 @@ HWE = {
         'lucid' : {
             'series' : None,
         },
-        'natty' : {
-            'series' : 'lucid',
-            'package' : 'linux-image-generic-lts-backport-natty',
-        },
         'oneiric' : {
             'series' : 'lucid',
             'package' : 'linux-image-generic-lts-backport-oneiric',
