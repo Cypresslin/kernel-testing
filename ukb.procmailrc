@@ -13,7 +13,9 @@ VERBOSE=on
 }
 
 :0 fw
-* $ ^From:.*Mainline Builds <kernel-team@lists.ubuntu.com.*
+* ^Subject:.*Mainline Build.*
+* ^From:.*Mainline Builds <kernel-team@lists.ubuntu.com.*|\
+  ^From:.*Brad Figg <brad.figg@canonical.com.*
 {
     :0 hbW:
     | /home/work/kernel-testing/ukb-mail-handler >> /home/work/kernel-testing/ukb-mail-handler.log

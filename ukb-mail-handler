@@ -234,7 +234,7 @@ system: The name of the lab system that is to be used for the testing. The
             arches = self.default_arches
             systems = self.default_systems
 
-            jobs = self.create_test_jobs(series, arches, systems, debs_url, 'mainline.builder', series_decoration=series_decoration)
+            jobs = self.create_test_jobs(series, arches, systems, debs_url, 'mainline.builder', series_decoration=series_decoration, tests='mainline')
             if jobs is not None:
                 info('The following jenkins jobs were created for mainline.builder')
                 for job in jobs:
@@ -256,7 +256,7 @@ system: The name of the lab system that is to be used for the testing. The
         else:
             systems = self.default_systems
 
-        jobs = self.create_test_jobs(series, self.default_arches, systems, series_decoration='SRU')
+        jobs = self.create_test_jobs(series, self.default_arches, systems, series_decoration='SRU', tests='sru')
         if jobs is not None:
             info('The following jenkins jobs were created')
             for job in jobs:
@@ -291,9 +291,11 @@ system: The name of the lab system that is to be used for the testing. The
             e_subject = msg['Subject']
 
             while True:
+                info('[Processing] From: %s    Subject: %s' % (e_from, e_subject))
+
                 # Mainline Build from the mainline builder
                 #
-                if ('Mainline Build' in e_subject) and ('Mainline Builds <kernel-team@lists.ubuntu.com>' in e_from):
+                if 'Mainline Build' in e_subject:
                     self.handle_mainline_build(msg)
                     break
 
