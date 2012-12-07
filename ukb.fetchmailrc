@@ -12,4 +12,3 @@ ssl
 fetchall
 nokeep
 mda "/usr/bin/procmail -m /home/work/kernel-testing/ukb.procmailrc"
-
