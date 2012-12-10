@@ -14,6 +14,8 @@ from lib.exceptions                     import ErrorExit
 #
 class Provisioner():
 
+    _dry_run = False
+
     # __init__
     #
     def __init__(self, name, series, arch, hwe=False, debs=None, dry_run=False):
@@ -24,6 +26,7 @@ class Provisioner():
         self.debs   = debs
         self.quiet  = False
         self.dry_run= dry_run
+        Provisioner._dry_run = dry_run
         Shell._dry_run = dry_run
         self.kickstarts_root = '/var/lib/cobbler/kickstarts/kernel'
         self.ubuntu = Ubuntu()
@@ -71,7 +74,7 @@ class Provisioner():
     #
     @classmethod
     def wait_for_system(cls, target, timeout=10):
-        if not cls.dry_run:
+        if not cls._dry_run:
             if not cls.quiet:
                 print('Waiting for \'%s\' to come up.' % (target))
 
