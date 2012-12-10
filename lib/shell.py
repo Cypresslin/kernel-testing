@@ -5,6 +5,7 @@ from sys                                import stdout
 from subprocess                         import Popen, PIPE, STDOUT
 from threading                          import Thread
 from time                               import sleep
+from logging                            import debug, error, info, basicConfig, INFO, DEBUG, WARNING, getLevelName
 
 try:
     from Queue import Queue, Empty
@@ -111,5 +112,35 @@ def sh(cmd, timeout=None, ignore_result=False, quiet=False):
             raise ShellError(cmd, p.returncode, out)
 
     return p.returncode, out
+
+# ssh
+#
+def ssh(target, cmd, quiet=False, ignore_result=False):
+    result, output = Shell.ssh(target, cmd, quiet=False, ignore_result=False)
+    return result, output
+
+class Shell():
+    _dry_run = False
+
+    def __init__(self):
+        Shell._dry_run = False
+
+    # ssh
+    #
+    @classmethod
+    def ssh(cls, target, cmd, quiet=False, ignore_result=False):
+        ssh_cmd = 'ssh %s %s' % (target, cmd)
+        result = 0
+        if cls._dry_run:
+            debug('[dry-run] %s' % (ssh_cmd))
+        else:
+            if not quiet:
+                info(ssh_cmd)
+            result, output = sh(ssh_cmd, quiet=quiet, ignore_result=ignore_result)
+
+        if result != 0 and not ignore_result:
+            raise ShellError(ssh_cmd, result, output)
+
+        return result, output
 
 # vi:set ts=4 sw=4 expandtab syntax=python:
