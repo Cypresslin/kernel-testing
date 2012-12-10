@@ -62,6 +62,15 @@ class BootspeedTest():
     def configure_kernel_boot_parameters(self, target):
         ssh(target, r'sudo sed -i \'s/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="initcall_debug quiet printk.time=1"/\' /etc/default/grub')
 
+    # bootspeed
+    #
+    def bootspeed(self, target, index):
+        p = '/home/jenkins/results/%d' % index
+
+        ssh(target, 'mkdir -p %s' % p)
+        for fmt in ['png', 'svg']:
+            ssh(target, 'sudo bootchart --quiet --format=%(fmt)s --crop-after=gnome-panel,mutter,unity-panel-service --annotate=ureadahead,mountall,hostname,hwclock --annotate=Xorg  --annotate=gnome-session  --annotate-file=%(p)s/times --output=%(p)s/bootchart.%(fmt)s %(p)s/bootchart.tgz' % vars())
+
     # main
     #
     def main(self):
@@ -73,6 +82,8 @@ class BootspeedTest():
             self.configure_kernel_boot_parameters(target)
 
             Provisioner.reboot(target)
+
+            self.bootspeed(target, 1)
 
             retval = 0
 
