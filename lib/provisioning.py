@@ -15,6 +15,7 @@ from lib.exceptions                     import ErrorExit
 class Provisioner():
 
     _dry_run = False
+    _quiet = False
 
     # __init__
     #
@@ -25,6 +26,7 @@ class Provisioner():
         self.hwe    = hwe
         self.debs   = debs
         self.quiet  = False
+        Provisioner.quiet  = False
         self.dry_run= dry_run
         Provisioner._dry_run = dry_run
         Shell._dry_run = dry_run
@@ -75,7 +77,7 @@ class Provisioner():
     @classmethod
     def wait_for_system(cls, target, timeout=10):
         if not cls._dry_run:
-            if not cls.quiet:
+            if not cls._quiet:
                 print('Waiting for \'%s\' to come up.' % (target))
 
             start = datetime.utcnow()
