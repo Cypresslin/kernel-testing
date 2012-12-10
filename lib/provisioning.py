@@ -69,9 +69,10 @@ class Provisioner():
 
     # wait_for_system
     #
-    def wait_for_system(self, target, timeout=10):
-        if not self.dry_run:
-            if not self.quiet:
+    @classmethod
+    def wait_for_system(cls, target, timeout=10):
+        if not cls.dry_run:
+            if not cls.quiet:
                 print('Waiting for \'%s\' to come up.' % (target))
 
             start = datetime.utcnow()
@@ -89,13 +90,14 @@ class Provisioner():
 
     # reboot
     #
-    def reboot(self, target, wait=True):
+    @classmethod
+    def reboot(cls, target, wait=True):
         '''
         Reboot the target system and wait 5 minutes for it to come up.
         '''
         ssh(target, 'sudo reboot')
         if wait:
-            self.wait_for_system(target, timeout=10)
+            cls.wait_for_system(target, timeout=10)
 
     # install_custom_debs
     #

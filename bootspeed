@@ -5,9 +5,19 @@ from os                                 import getenv, path
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import error, info, basicConfig, INFO, DEBUG
 
-from lib.shell                          import ShellError, ShellTimeoutError, ssh
-from lib.provisioning                   import MetalProvisioner, VirtualProvisioner
+from lib.shell                          import ShellError, ShellTimeoutError, ssh, Shell
+from lib.provisioning                   import Provisioner
 from lib.exceptions                     import ErrorExit
+
+# RemoteHost
+#
+class RemoteHost():
+    def __init__(self, hostname):
+        self.__hostname = hostname
+
+    def ssh(self, cmd, quiet=False, ignore_result=False):
+        result, output = Shell.ssh(self.__hostname, cmd, quiet=False, ignore_result=False)
+        return result, output
 
 # BootspeedTest
 #
@@ -22,6 +32,7 @@ class BootspeedTest():
     def __init__(self, args):
         self.args = args
         self.__hwdb = None
+        self.sut = RemoteHost(self.args.target[0])
 
     def produce_error_results(self, workspace, msg):
         with open(path.join(workspace, 'kernel-results.xml'), 'w') as f:
@@ -60,6 +71,8 @@ class BootspeedTest():
 
             self.install_bootspeed_pkg(target)
             self.configure_kernel_boot_parameters(target)
+
+            Provisioner.reboot(target)
 
             retval = 0
 
