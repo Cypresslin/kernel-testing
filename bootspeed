@@ -59,6 +59,9 @@ class BootspeedTest():
             target = self.args.target[0]
 
             self.install_bootspeed_pkg(target)
+            self.configure_kernel_boot_parameters(target)
+
+            retval = 0
 
         # Handle the user presses <ctrl-C>.
         #
