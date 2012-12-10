@@ -116,7 +116,7 @@ def sh(cmd, timeout=None, ignore_result=False, quiet=False):
 # ssh
 #
 def ssh(target, cmd, quiet=False, ignore_result=False):
-    result, output = Shell.ssh(target, cmd, quiet=False, ignore_result=False)
+    result, output = Shell.ssh(target, cmd, quiet=quiet, ignore_result=ignore_result)
     return result, output
 
 class Shell():
