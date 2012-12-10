@@ -76,7 +76,6 @@ class BootspeedTest():
             ssh(target, 'sudo bootchart --quiet --format=%(fmt)s --crop-after=gnome-panel,mutter,unity-panel-service --annotate=ureadahead,mountall,hostname,hwclock --annotate=Xorg  --annotate=gnome-session  --annotate-file=%(p)s/times --output=%(p)s/bootchart.%(fmt)s %(fid)s' % vars())
 
         ssh(target, 'cp %(fid)s %(p)s' % vars())
-        ssh(target, 'sudo rm /var/log/bootspeed/*')
         ssh(target, 'sudo lspci -vvv > %s/lscpci' % p)
         ssh(target, 'sudo cp /var/log/dmesg %s' % p)
         ssh(target, 'sudo chmod +r %s/dmesg' % p)
@@ -94,9 +93,13 @@ class BootspeedTest():
             self.install_bootspeed_pkg(target)
             self.configure_kernel_boot_parameters(target)
 
-            Provisioner.reboot(target)
+            Provisioner.reboot(target) # package installed
+            Provisioner.reboot(target) # readahead should be settled down
 
-            self.process_bootspeed_results(target, 1)
+            # Collect bootspeed data for some number of runs
+            #
+            for i in range(1,10):
+                self.process_bootspeed_results(target, i)
 
             retval = 0
 
