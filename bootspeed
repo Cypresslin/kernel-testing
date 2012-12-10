@@ -1,0 +1,123 @@
+#!/usr/bin/env python
+#
+
+from os                                 import getenv, path
+from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import error, info, basicConfig, INFO, DEBUG
+
+from lib.shell                          import ShellError, ShellTimeoutError, ssh
+from lib.provisioning                   import MetalProvisioner, VirtualProvisioner
+from lib.exceptions                     import ErrorExit
+
+# BootspeedTest
+#
+class BootspeedTest():
+    '''
+    Handle all the tasks for getting a test system fully up and installed and ready for
+    running the kernel tests.
+    '''
+
+    # __init__
+    #
+    def __init__(self, args):
+        self.args = args
+        self.__hwdb = None
+
+    def produce_error_results(self, workspace, msg):
+        with open(path.join(workspace, 'kernel-results.xml'), 'w') as f:
+            f.write('<testsuites>\n')
+            f.write('    <testsuite tests="1" errors="1" name="Provisioning" timestamp="2012-01-01" hostname="hostname" time="0" failures="0">\n')
+            f.write('        <properties/>\n')
+            f.write('        <testcase classname="Provisioning.Initial-Provisioning" name="provisioning" time="0.0">\n')
+            f.write('            <error message="Provisioning failed!" type="Logparse">\n')
+            f.write(msg)
+            f.write('\n')
+            f.write('            </error>\n')
+            f.write('        </testcase>\n')
+            f.write('    </testsuite>\n')
+            f.write('</testsuites>\n')
+
+    # install_bootspeed_pkg
+    #
+    def install_bootspeed_pkg(self, target):
+        '''
+        Perform a update of the kernels on a remote system.
+        '''
+        ssh(target, 'sudo apt-get update')
+        ssh(target, 'sudo apt-get --yes --force-yes install bootchart dpkg-dev')
+
+    # configure_kernel_boot_parameters
+    #
+    def configure_kernel_boot_parameters(self, target):
+        ssh(target, r'sudo sed -i \'s/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="initcall_debug quiet printk.time=1"/\' /etc/default/grub')
+
+    # main
+    #
+    def main(self):
+        retval = 1
+        try:
+            target = self.args.target[0]
+
+            self.install_bootspeed_pkg(target)
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            print("Aborting ...")
+
+        except ShellTimeoutError as e:
+            msg = 'The command (%s) timed out. (%d)' % (e.cmd, e.timeout)
+            ws = getenv('WORKSPACE')
+            if ws is not None:
+                self.produce_error_results(ws, msg)
+            error(msg)
+
+        except ShellError as e:
+            msg = 'The command (%s) returned a non-zero exit status (%d).\n' % (e.cmd, e.returncode)
+            for line in e.output:
+                msg += line.rstrip() + '\n'
+
+            error('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
+            for line in e.output:
+                error(line.rstrip())
+
+            ws = getenv('WORKSPACE')
+            if ws is not None:
+                self.produce_error_results(ws, msg)
+
+        except ErrorExit as e:
+            error(e.message)
+            ws = getenv('WORKSPACE')
+            if ws is not None:
+                self.produce_error_results(ws, e.message)
+            pass
+
+        if retval > 0:
+            error("")
+            error("Due to the above error(s), this script is unable to continue and is terminating.")
+            error("")
+
+        return retval
+
+if __name__ == '__main__':
+    if getenv('DEBUG'):
+        LOGLEVEL = DEBUG
+    else:
+        LOGLEVEL = INFO
+    basicConfig(level=LOGLEVEL, format="%(levelname)s - %(message)s")
+
+    app_description = '''
+    '''
+
+    app_epilog = '''
+    '''
+
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('target', metavar='TARGET', type=str, nargs=1, help='The name of the system that has been provisioned and we want to run the bootspeed tests on.')
+
+    args = parser.parse_args()
+
+    app = BootspeedTest(args)
+    exit(app.main())
+
+# vi:set ts=4 sw=4 expandtab syntax=python:
