@@ -62,14 +62,25 @@ class BootspeedTest():
     def configure_kernel_boot_parameters(self, target):
         ssh(target, r'sudo sed -i \'s/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="initcall_debug quiet printk.time=1"/\' /etc/default/grub')
 
-    # bootspeed
+    # process_bootspeed_results
     #
-    def bootspeed(self, target, index):
+    def process_bootspeed_results(self, target, index):
         p = '/home/jenkins/results/%d' % index
 
+        output, result = ssh(target, 'ls /var/log/bootchart/*.tgz | sort -Vr | head -1')
+        fid = output[0]
         ssh(target, 'mkdir -p %s' % p)
         for fmt in ['png', 'svg']:
-            ssh(target, 'sudo bootchart --quiet --format=%(fmt)s --crop-after=gnome-panel,mutter,unity-panel-service --annotate=ureadahead,mountall,hostname,hwclock --annotate=Xorg  --annotate=gnome-session  --annotate-file=%(p)s/times --output=%(p)s/bootchart.%(fmt)s %(p)s/bootchart.tgz' % vars())
+            ssh(target, 'sudo bootchart --quiet --format=%(fmt)s --crop-after=gnome-panel,mutter,unity-panel-service --annotate=ureadahead,mountall,hostname,hwclock --annotate=Xorg  --annotate=gnome-session  --annotate-file=%(p)s/times --output=%(p)s/bootchart.%(fmt)s %(fid)s' % vars())
+
+        ssh(target, 'cp /var/log/bootspeed/*.tgz %(p)s' % vars())
+        ssh(target, 'sudo rm /var/log/bootspeed/*')
+        ssh(target, 'sudo lspci -vvv > $DIR/lscpci')
+        ssh(target, 'sudo cp /var/log/dmesg $DIR')
+        ssh(target, 'sudo chmod +r $DIR/dmesg')
+        ssh(target, 'sudo cp /var/log/syslog $DIR')
+        ssh(target, 'sudo chmod +r $DIR/syslog')
+        ssh(target, 'sudo tar czvf $DIR/installer.tgz /var/log/installer/')
 
     # main
     #
@@ -83,7 +94,7 @@ class BootspeedTest():
 
             Provisioner.reboot(target)
 
-            self.bootspeed(target, 1)
+            self.process_bootspeed_results(target, 1)
 
             retval = 0
 
