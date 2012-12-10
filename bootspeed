@@ -67,7 +67,7 @@ class BootspeedTest():
     def process_bootspeed_results(self, target, index):
         p = '/home/jenkins/results/%d' % index
 
-        output, result = ssh(target, 'ls /var/log/bootchart/*.tgz | sort -Vr | head -1')
+        result, output = ssh(target, 'ls /var/log/bootchart/*.tgz | sort -Vr | head -1')
         fid = output[0]
         ssh(target, 'mkdir -p %s' % p)
         for fmt in ['png', 'svg']:
