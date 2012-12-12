@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 
-from os                                 import getenv, path
+from os                                 import getenv, path, getcwd
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import error, info, basicConfig, INFO, DEBUG
 
@@ -65,7 +65,12 @@ class BootspeedTest():
     # process_bootspeed_results
     #
     def process_bootspeed_results(self, target, index):
-        p = '/home/jenkins/results/%d' % index
+        result, output = ssh(target, 'echo cwd: \\$\\(pwd\\)')
+        for line in output:
+            if 'cwd:' in line:
+                (junk, cwd) = line.split(':')
+                cwd = cwd.strip()
+        p = path.join(cwd, 'results', '%d' % index)
         ssh(target, 'mkdir -p %s' % p)
 
         result, output = ssh(target, 'ls /var/log/bootchart/*.tgz | sort -Vr | head -1')
@@ -90,15 +95,17 @@ class BootspeedTest():
         try:
             target = self.args.target[0]
 
-            self.install_bootspeed_pkg(target)
-            self.configure_kernel_boot_parameters(target)
+            #self.install_bootspeed_pkg(target)
+            #self.configure_kernel_boot_parameters(target)
 
-            Provisioner.reboot(target) # package installed
+            #Provisioner.reboot(target) # package installed
             Provisioner.reboot(target) # readahead should be settled down
 
             # Collect bootspeed data for some number of runs
             #
-            for i in range(1,10):
+            for i in range(1,11):
+                info('Bootspeed data collection run (%d)' % i)
+                Provisioner.reboot(target)
                 self.process_bootspeed_results(target, i)
 
             retval = 0
