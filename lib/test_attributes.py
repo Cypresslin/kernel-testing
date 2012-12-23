@@ -27,7 +27,7 @@ class TestAttributes():
         Dbg.leave("TestAttributes.__init__")
 
     def kernel_version(self):
-        m = re.match('^(\d+\.\d+\.\d+-\d+)-.*$', platform.release())
+        m = re.match('^(\d+\.\d+\.\d+-[\drc]+)-.*$', platform.release())
         version = m.group(1)
 
         m = re.match('^#(\d+.*?)(-Ubuntu)* .*$', platform.version())
