@@ -132,7 +132,7 @@ class Ubuntu:
         {
             'development' : True,        # This is the version that is currently under development
             'series_version' : '13.04',
-            'kernel'    : '3.7.0',
+            'kernel'    : '3.8.0',
             'name'      : 'raring',
             'supported' : False,
             # adjust packages when this goes live
