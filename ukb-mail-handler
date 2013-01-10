@@ -142,7 +142,7 @@ class MailHandler():
                     user = m.group(1)
                 jobs = self.create_test_jobs(series, arches, systems, debs_url, user, tests)
 
-                body  = 'The following job(s) were created on the kernel teams jenkins server\n'
+                body  = 'The following job(s) were created on the kernel team\'s jenkins server\n'
                 body += 'in response to your request:\n\n'
 
                 if jobs is not None:
