@@ -236,13 +236,17 @@ class Runner():
         '''
         '''
 
+        options = getenv('KERNEL_TEST_OPTIONS')
+
         # Build up the shell command that we are going to run.
         #
         cmd = 'sudo %s' % (self.autotest_exe_path)
-        if 'atargs' in TestProfiles[test]:
+        if ('atargs' in TestProfiles[test]) or (options is not None):
             cmd += ' --args="'
             for key, value in TestProfiles[test]['atargs'].iteritems():
                 cmd += '%s=%s ' % (key, value)
+            if options:
+                cmd += options
             cmd = cmd.strip() # Remove that last space character
             cmd += '"'
 
