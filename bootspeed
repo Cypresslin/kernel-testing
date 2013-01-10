@@ -12,11 +12,12 @@ from lib.exceptions                     import ErrorExit
 # RemoteHost
 #
 class RemoteHost():
-    def __init__(self, hostname):
-        self.__hostname = hostname
+    def __init__(s, hostname):
+        s.__hostname = hostname
+        s.__ssh_quiet = True
 
-    def ssh(self, cmd, quiet=False, ignore_result=False):
-        result, output = Shell.ssh(self.__hostname, cmd, quiet=False, ignore_result=False)
+    def ssh(s, cmd, quiet=False, ignore_result=False):
+        result, output = Shell.ssh(s.__hostname, cmd, quiet=quiet or s.__ssh_quiet, ignore_result=ignore_result)
         return result, output
 
 # BootspeedTest
@@ -29,12 +30,27 @@ class BootspeedTest():
 
     # __init__
     #
-    def __init__(self, args):
-        self.args = args
-        self.__hwdb = None
-        self.sut = RemoteHost(self.args.target[0])
+    def __init__(s, args):
+        s.args = args
+        s.__hwdb = None
+        s.target = s.args.target[0]
+        s.sut = RemoteHost(s.args.target[0])
+        s.__rcwd = None
 
-    def produce_error_results(self, workspace, msg):
+    @property
+    def rcwd(s):
+        if s.__rcwd is None:
+            result, output = s.sut.ssh('echo cwd: \\$\\(pwd\\)')
+            for line in output:
+                if 'cwd:' in line:
+                    (junk, cwd) = line.split(':')
+                    s.__rcwd = cwd.strip()
+        return s.__rcwd
+
+    def rdir(s, index):
+        return path.join(s.rcwd, 'results', '%d' % index)
+
+    def produce_error_results(s, workspace, msg):
         with open(path.join(workspace, 'kernel-results.xml'), 'w') as f:
             f.write('<testsuites>\n')
             f.write('    <testsuite tests="1" errors="1" name="Provisioning" timestamp="2012-01-01" hostname="hostname" time="0" failures="0">\n')
@@ -50,63 +66,56 @@ class BootspeedTest():
 
     # install_bootspeed_pkg
     #
-    def install_bootspeed_pkg(self, target):
+    def install_bootspeed_pkg(s):
         '''
         Perform a update of the kernels on a remote system.
         '''
-        ssh(target, 'sudo apt-get update')
-        ssh(target, 'sudo apt-get --yes --force-yes install bootchart dpkg-dev')
+        s.sut.ssh('sudo apt-get update', ignore_result=True)
+        s.sut.ssh('sudo apt-get --yes --force-yes install bootchart dpkg-dev')
 
     # configure_kernel_boot_parameters
     #
-    def configure_kernel_boot_parameters(self, target):
-        ssh(target, r'sudo sed -i \'s/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="initcall_debug quiet printk.time=1"/\' /etc/default/grub')
+    def configure_kernel_boot_parameters(s):
+        s.sut.ssh(r'sudo sed -i \'s/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="initcall_debug quiet printk.time=1"/\' /etc/default/grub')
 
     # process_bootspeed_results
     #
-    def process_bootspeed_results(self, target, index):
-        result, output = ssh(target, 'echo cwd: \\$\\(pwd\\)')
-        for line in output:
-            if 'cwd:' in line:
-                (junk, cwd) = line.split(':')
-                cwd = cwd.strip()
-        p = path.join(cwd, 'results', '%d' % index)
-        ssh(target, 'mkdir -p %s' % p)
+    def process_bootspeed_results(s, index):
+        p = s.rdir(index)
+        s.sut.ssh('mkdir -p %s' % p)
 
-        result, output = ssh(target, 'ls /var/log/bootchart/*.tgz | sort -Vr | head -1')
+        result, output = s.sut.ssh('ls /var/log/bootchart/*.tgz | sort -Vr | head -1')
         for line in output:
             if 'bootchart' in line:
                 fid = line.strip()
         for fmt in ['png', 'svg']:
-            ssh(target, 'sudo bootchart --quiet --format=%(fmt)s --crop-after=gnome-panel,mutter,unity-panel-service --annotate=ureadahead,mountall,hostname,hwclock --annotate=Xorg  --annotate=gnome-session  --annotate-file=%(p)s/times --output=%(p)s/bootchart.%(fmt)s %(fid)s' % vars())
+            s.sut.ssh('sudo bootchart --quiet --format=%(fmt)s --crop-after=gnome-panel,mutter,unity-panel-service --annotate=ureadahead,mountall,hostname,hwclock --annotate=Xorg  --annotate=gnome-session  --annotate-file=%(p)s/times --output=%(p)s/bootchart.%(fmt)s %(fid)s' % vars())
 
-        ssh(target, 'cp %(fid)s %(p)s' % vars())
-        ssh(target, 'sudo lspci -vvv \> %s/lscpci' % p)
-        ssh(target, 'sudo cp /var/log/dmesg %s' % p)
-        ssh(target, 'sudo chmod +r %s/dmesg' % p)
-        ssh(target, 'sudo cp /var/log/syslog %s' % p)
-        ssh(target, 'sudo chmod +r %s/syslog' % p)
-        ssh(target, 'sudo tar czvf %s/installer.tgz /var/log/installer/' % p)
+        s.sut.ssh('cp %(fid)s %(p)s' % vars())
+        s.sut.ssh('sudo lspci -vvv \> %s/lscpci' % p)
+        s.sut.ssh('sudo cp /var/log/dmesg %s' % p)
+        s.sut.ssh('sudo chmod +r %s/dmesg' % p)
+        s.sut.ssh('sudo cp /var/log/syslog %s' % p)
+        s.sut.ssh('sudo chmod +r %s/syslog' % p)
+        s.sut.ssh('sudo tar czvf %s/installer.tgz /var/log/installer/' % p)
 
     # main
     #
-    def main(self):
+    def main(s):
         retval = 1
         try:
-            target = self.args.target[0]
+            s.install_bootspeed_pkg()
+            s.configure_kernel_boot_parameters()
 
-            #self.install_bootspeed_pkg(target)
-            #self.configure_kernel_boot_parameters(target)
-
-            #Provisioner.reboot(target) # package installed
-            Provisioner.reboot(target) # readahead should be settled down
+            Provisioner.reboot(s.target) # package installed
+            #Provisioner.reboot(s.target) # readahead should be settled down
 
             # Collect bootspeed data for some number of runs
             #
             for i in range(1,11):
                 info('Bootspeed data collection run (%d)' % i)
-                Provisioner.reboot(target)
-                self.process_bootspeed_results(target, i)
+                #Provisioner.reboot(s.target)
+                s.process_bootspeed_results(i)
 
             retval = 0
 
@@ -119,7 +128,7 @@ class BootspeedTest():
             msg = 'The command (%s) timed out. (%d)' % (e.cmd, e.timeout)
             ws = getenv('WORKSPACE')
             if ws is not None:
-                self.produce_error_results(ws, msg)
+                s.produce_error_results(ws, msg)
             error(msg)
 
         except ShellError as e:
@@ -133,13 +142,13 @@ class BootspeedTest():
 
             ws = getenv('WORKSPACE')
             if ws is not None:
-                self.produce_error_results(ws, msg)
+                s.produce_error_results(ws, msg)
 
         except ErrorExit as e:
             error(e.message)
             ws = getenv('WORKSPACE')
             if ws is not None:
-                self.produce_error_results(ws, e.message)
+                s.produce_error_results(ws, e.message)
             pass
 
         if retval > 0:
