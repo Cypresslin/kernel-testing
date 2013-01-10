@@ -178,7 +178,12 @@ class Digest():
             #
             data = {}
             for tr in self.trr.test_runs:
-                results = self.trr.results(tr)
+                try:
+                    results = self.trr.results(tr)
+                except TestResultsRepositoryError as e:
+                    error(e.msg)
+                    continue
+
                 #dump(results['attributes'])
                 Dbg.verbose("%s\n" % (tr))
                 Dbg.verbose("    kernel: %s\n" % (results['attributes']['kernel']))
