@@ -96,7 +96,7 @@
 
                                                                 dt = datetime.strptime(record['attributes']['timestamp'], '%Y-%m-%d %H:%M')
                                                                 ts = dt.strftime('%Y-%m-%d_%H-%M-%S')
-                                                                link = "http://kernel.ubuntu.com/testing/test-results/%s.%s/results-index.html" % (record['attributes']['platform']['hostname'], ts)
+                                                                link = "http://kernel.ubuntu.com/testing/test-results/%s__%s__%s/results-index.html" % (record['attributes']['platform']['hostname'], record['attributes']['kernel'], ts)
 
                                                                 hardware = 'real'
                                                                 if 'hardware' in record['attributes']['platform']:
