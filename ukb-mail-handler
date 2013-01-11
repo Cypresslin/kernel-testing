@@ -64,7 +64,7 @@ class MailHandler():
 
     # create_test_jobs
     #
-    def create_test_jobs(self, series, arches, systems, url=None, user=None, tests='default', series_decoration=None):
+    def create_test_jobs(self, series, arches, systems, url=None, user=None, tests='default', series_decoration=None, hwe=False):
         retval = []
         for arch in arches:
             for system in systems:
@@ -75,6 +75,9 @@ class MailHandler():
                     cmd += ' --debs=%s' % (url)
                 if user is not None:
                     cmd += ' --user=%s' % (user)
+                if hwe:
+                    cmd += ' --sut-hwe'
+                debug('  ' + cmd)
                 (return_code, output) = sh(cmd, quiet=True)
                 for line in output:
                     line = line.strip()
@@ -264,6 +267,20 @@ system: The name of the lab system that is to be used for the testing. The
 
         debug('    Leave: handle_sru_kernel_uploaded')
 
+    # handle_hwe_kernel_uploaded
+    #
+    def handle_hwe_kernel_uploaded(self, series, msg):
+        debug('    Enter: handle_hwe_kernel_uploaded')
+
+        systems = self.default_systems
+        jobs = self.create_test_jobs(series, self.default_arches, systems, series_decoration='SRU', tests='sru', hwe=True)
+        if jobs is not None:
+            info('The following jenkins jobs were created')
+            for job in jobs:
+                info('    %s' % job)
+
+        debug('    Leave: handle_hwe_kernel_uploaded')
+
     # main
     #
     def main(self):
@@ -308,6 +325,12 @@ system: The name of the lab system that is to be used for the testing. The
                     self.handle_sru_kernel_uploaded(m.group(1), msg)
                     break
 
+                m = search('\[\S+\] linux-lts-(\S+) \d+\.\d+\.\d+.* uploaded', e_subject.lower())
+                if m is not None:
+                    self.handle_hwe_kernel_uploaded(m.group(1), msg)
+                    break
+
+                info('  - ignored')
                 debug('Unhandled email')
                 break
 
@@ -323,6 +346,10 @@ system: The name of the lab system that is to be used for the testing. The
             error("Due to the above error(s), this script is unable to continue and is terminating.")
             error("")
 
+        except:
+            error("An unhandled exception occurred.")
+            raise
+
         debug('Leave: main')
         return(retval)
 
@@ -334,6 +361,7 @@ if __name__ == '__main__':
     LOGLEVEL = INFO
     LOGFILE  = '/var/log/ukb/ukb-mail-handler.log'
     basicConfig(filename=LOGFILE, level=LOGLEVEL, format="%(asctime)s %(levelname)s - %(message)s")
+    info('ukb-mail-handler Invoked')
 
     app_description = '''
     '''
