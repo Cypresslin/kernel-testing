@@ -55,7 +55,7 @@ title = "%s - %s - %s" % (target_suite.replace('autotest.', ''), test_attributes
                         <div id="dash-timestamp">
                             <a href="http://ubuntu.com" title="Home" rel="home"><img src="http://kernel.ubuntu.com/media/ubuntu-logo.png" alt="Home" /></a>
                         </div>
-                        <h1>Kernel Testing &amp; Benchmarks</h1>
+                        <h1>Kernel Testing</h1>
                     </div> <!-- header -->
 
                     <br />

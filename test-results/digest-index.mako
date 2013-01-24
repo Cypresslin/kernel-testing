@@ -46,12 +46,11 @@
                         <div id="dash-timestamp">
                             <a href="http://ubuntu.com" title="Home" rel="home"><img src="http://kernel.ubuntu.com/media/ubuntu-logo.png" alt="Home" /></a>
                         </div>
-                        <h1>Kernel Testing &amp; Benchmarks</h1>
+                        <h1>Kernel Testing</h1>
                     </div> <!-- header -->
 
                     <br />
 
-                    <h1>Testing</h1>
                     <div class="dash-section">
                         <table width="100%"> <!-- The section is one big table -->
                             <tr>
