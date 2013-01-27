@@ -1,0 +1,257 @@
+#!/usr/bin/env python
+#
+
+from os                                 import getenv, path, listdir
+from math                               import sqrt
+from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import error, info, basicConfig, INFO, DEBUG
+
+from re                                 import search
+from lib.shell                          import ShellError, ShellTimeoutError, sh
+from lib.exceptions                     import ErrorExit
+import json
+
+# BootSpeedResults
+#
+class BootSpeedResults():
+    # __init__
+    #
+    def __init__(s, target):
+        s.data = {
+            'boot' : {
+                'title' : 'Total Boot Time',
+                'raw' : [],
+            },
+            'kernel' : {
+                'title' : 'Kernel',
+                'raw' : [],
+            },
+            'plumbing' : {
+                'title' : 'Plumbing',
+                'raw' : [],
+            },
+            'xorg' : {
+                'title' : 'X.org',
+                'raw' : [],
+            },
+            'desktop' : {
+                'title' : 'Desktop',
+                'raw' : [],
+            },
+            'kernelinit' : {
+                'title' : 'Kernel Init',
+                'raw' : [],
+            },
+        }
+        s.construct(target)
+
+        for k in s.data.keys():
+            s.data[k]['sum'] = sum(s.data[k]['raw'])
+            s.data[k]['max'] = max(s.data[k]['raw'])
+            s.data[k]['min'] = min(s.data[k]['raw'])
+            s.data[k]['mean'] = sum(s.data[k]['raw']) / len(s.data[k]['raw'])
+            s.data[k]['std'] = s.std(s.data[k]['raw'])
+
+    def construct(s, target):
+        s.tar_file = target
+        s.results_dir = path.basename(s.tar_file).replace('.tgz', '')
+
+        sh('tar zxf %s' % s.tar_file)
+
+        for run in listdir(s.results_dir):
+            s.collect_boot_stage_times('%s/%s' % (s.results_dir, run))
+
+        #s.fixup_boot_stage_times()
+
+    def collect_boot_stage_times(s, results_dir):
+        # Build up a list of times from the bootspeed times file and
+        # the kernel init time devined from the dmesg file.
+        #
+        fid = path.join(results_dir, 'times')
+        data = [0.0, 0.0, 0.0, 0.0]
+        if path.exists(fid):
+            with open(fid, 'r') as f:
+                fdata = f.read().split('\n')
+            for i in range(0, 4):
+                try:
+                    data[i] = float(fdata[i]) / 100
+                except ValueError:
+                    pass
+
+        kernel_init = s.get_kernel_init_time(results_dir)
+        data.append(kernel_init)
+
+        # Convert the times to the boot stage times that we are
+        # really interested in.
+        #
+
+        # boot
+        s.data['boot']['raw'].append(data[0])
+
+        # kernel
+        s.data['kernel']['raw'].append(data[1])
+
+        # plumbing
+        t = data[2] - data[1]
+        if t < 0: t *= -1.0
+        s.data['plumbing']['raw'].append(t)
+
+        # xorg
+        t = data[3] - data[2]
+        if t < 0: t *= -1.0
+        s.data['xorg']['raw'].append(t)
+
+        # desktop
+        t = data[0] - data[3]
+        if t < 0: t *= -1.0
+        s.data['desktop']['raw'].append(t)
+
+        # kernel init
+        s.data['kernelinit']['raw'].append(data[4])
+
+    def fixup_boot_stage_times(s):
+        m = max(s.data['boot']['raw'])
+        for i in range(0, len(s.data['boot']['raw'])):
+            if s.data['boot']['raw'][i] == 0.0:
+                s.data['boot']['raw'][i] = m
+                t = m - s.data['desktop']['raw'][i]
+                if t < 0: t *= -1.0
+                s.data['desktop']['raw'][i] = t
+
+    # collect_timings
+    #
+    def collect_timings(s, results_dir):
+        retval = []
+        for x in listdir(results_dir):
+            fid = '%s/%s/times' % (results_dir, x)
+            data = [0.0, 0.0, 0.0, 0.0]
+            if path.exists(fid):
+                with open(fid, 'r') as f:
+                    fdata = f.read().split('\n')
+                for i in range(0, 4):
+                    try:
+                        data[i] = float(fdata[i]) / 100
+                    except ValueError:
+                        pass
+
+            kernel_init = s.get_kernel_init_time(path.join(results_dir, x))
+            data.append(kernel_init)
+            retval.append(data)
+        return retval
+
+    # get_kernel_init_time
+    #
+    def get_kernel_init_time(s, results_dir):
+        retval = 0.0
+        fid = path.join(results_dir, 'dmesg')
+        if path.exists(fid):
+            with open(fid, 'r') as f:
+                for line in f.read().split('\n'):
+                    m = search('^\[\s*(\d+\.\d+)\] Write protecting the kernel', line)
+                    if m is not None:
+                        retval = float(m.group(1))
+                        break
+
+        return retval
+
+    # std
+    #
+    def std(s, vals):
+        mean = sum(vals) / len(vals)
+
+        sum_deviations = 0.0
+        for i in range(0, len(vals)):
+            deviation = vals[i] - mean
+            sq_deviation = deviation * deviation
+            sum_deviations += sq_deviation
+
+        return sqrt(sum_deviations / float(len(vals)))
+
+# ProcessBootspeedResults
+#
+class ProcessBootspeedResults():
+    '''
+    '''
+
+    # __init__
+    #
+    def __init__(s, args):
+        s.args = args
+
+    # main
+    #
+    def main(s):
+        retval = 1
+        try:
+            results = {}
+
+            bsr = BootSpeedResults(s.args.target[0])
+            results['data'] = bsr.data
+
+            results_dir = path.basename(s.args.target[0]).replace('.tgz', '')
+            with open(path.join(results_dir, 'properties.json'), 'r') as f:
+                results['properties'] = json.load(f)
+
+            results_file = path.join(results_dir, 'results.json')
+            with open(results_file, 'w') as f:
+                f.write(json.dumps(results, sort_keys=True, indent=4))
+
+            retval = 0
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            print("Aborting ...")
+
+        except ShellTimeoutError as e:
+            msg = 'The command (%s) timed out. (%d)' % (e.cmd, e.timeout)
+            ws = getenv('WORKSPACE')
+            if ws is not None:
+                s.produce_error_results(ws, msg)
+            error(msg)
+
+        except ShellError as e:
+            msg = 'The command (%s) returned a non-zero exit status (%d).\n' % (e.cmd, e.returncode)
+            for line in e.output:
+                msg += line.rstrip() + '\n'
+
+            error('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
+            for line in e.output:
+                error(line.rstrip())
+
+            ws = getenv('WORKSPACE')
+            if ws is not None:
+                s.produce_error_results(ws, msg)
+
+        except ErrorExit as e:
+            error(e.message)
+
+        if retval > 0:
+            error("")
+            error("Due to the above error(s), this script is unable to continue and is terminating.")
+            error("")
+
+        return retval
+
+if __name__ == '__main__':
+    if getenv('DEBUG'):
+        LOGLEVEL = DEBUG
+    else:
+        LOGLEVEL = INFO
+    basicConfig(level=LOGLEVEL, format="%(levelname)s - %(message)s")
+
+    app_description = '''
+    '''
+
+    app_epilog = '''
+    '''
+
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('target', metavar='TARGET', type=str, nargs=1, help='The name of the system that has been provisioned and we want to run the bootspeed tests on.')
+
+    args = parser.parse_args()
+
+    app = ProcessBootspeedResults(args)
+    exit(app.main())
+
+# vi:set ts=4 sw=4 expandtab syntax=python:

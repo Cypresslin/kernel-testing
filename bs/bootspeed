@@ -1,0 +1,294 @@
+#!/usr/bin/env python
+#
+
+from os                                 import path, getenv
+from tempfile                           import mkdtemp, mkstemp
+from time                               import sleep
+from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import error, info, basicConfig, INFO, DEBUG
+from datetime                           import datetime
+from re                                 import search
+import urllib2
+import json
+
+from lib.shell                          import ShellError, ShellTimeoutError, Shell, sh
+from lib.provisioning                   import Provisioner
+from lib.exceptions                     import ErrorExit
+from lib.poster.encode                  import multipart_encode
+from lib.poster.streaminghttp           import register_openers
+from lib.utils                          import date_to_string
+from lib.ubuntu                         import Ubuntu
+
+# RemoteHost
+#
+class RemoteHost():
+    def __init__(s, hostname):
+        s.__hostname = hostname
+        s.__ssh_quiet = True
+
+    def ssh(s, cmd, quiet=False, ignore_result=False):
+        result, output = Shell.ssh(s.__hostname, cmd, quiet=quiet or s.__ssh_quiet, ignore_result=ignore_result)
+        return result, output
+
+# BootspeedTest
+#
+class BootspeedTest():
+    '''
+    Handle all the tasks for getting a test system fully up and installed and ready for
+    running the kernel tests.
+    '''
+
+    # __init__
+    #
+    def __init__(s, args):
+        s.args = args
+        s.__hwdb = None
+        s.target = s.args.target[0]
+        s.sut = RemoteHost(s.args.target[0])
+        s.__rcwd = None
+        Provisioner._quiet = True
+        s.__results = 'results'
+        s.ubuntu = Ubuntu()
+
+    @property
+    def rcwd(s):
+        output = ''
+        if s.__rcwd is None:
+            result, output = s.sut.ssh('echo cwd: \\$\\(pwd\\)')
+            for line in output:
+                if 'cwd:' in line:
+                    (junk, cwd) = line.split(':')
+                    s.__rcwd = cwd.strip()
+
+        if s.__rcwd is None:
+            s.__rcwd = '/tmp'
+        return s.__rcwd
+
+    def rdir(s, index):
+        return path.join(s.rcwd, s.__results, '%d' % index)
+
+    def produce_error_results(s, workspace, msg):
+        with open(path.join(workspace, 'kernel-results.xml'), 'w') as f:
+            f.write('<testsuites>\n')
+            f.write('    <testsuite tests="1" errors="1" name="Provisioning" timestamp="2012-01-01" hostname="hostname" time="0" failures="0">\n')
+            f.write('        <properties/>\n')
+            f.write('        <testcase classname="Provisioning.Initial-Provisioning" name="provisioning" time="0.0">\n')
+            f.write('            <error message="Provisioning failed!" type="Logparse">\n')
+            f.write(msg)
+            f.write('\n')
+            f.write('            </error>\n')
+            f.write('        </testcase>\n')
+            f.write('    </testsuite>\n')
+            f.write('</testsuites>\n')
+
+    # install_bootspeed_pkg
+    #
+    def install_bootspeed_pkg(s):
+        '''
+        Perform a update of the kernels on a remote system.
+        '''
+        info('    installing the bootspeed package')
+        s.sut.ssh('sudo apt-get update', ignore_result=True)
+        s.sut.ssh('sudo apt-get --yes --force-yes install bootchart dpkg-dev')
+
+    # configure_kernel_boot_parameters
+    #
+    def configure_kernel_boot_parameters(s):
+        info('    configurating the boot parameters')
+        s.sut.ssh(r'sudo sed -i \'s/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT=\"initcall_debug quiet printk.time=1\"/\' /etc/default/grub')
+
+    # bootspeed_runs_prep
+    #
+    def bootspeed_runs_prep(s):
+        s.sut.ssh('rm -rf %s' % s.__results)
+        s.sut.ssh('sudo rm /var/log/bootspeed/*')
+
+    # process_bootspeed_results
+    #
+    def process_bootspeed_results(s, index):
+        p = s.rdir(index)
+        s.sut.ssh('mkdir -p %s' % p)
+
+        fid = None
+        result, output = s.sut.ssh('ls /var/log/bootchart/*.tgz | sort -Vr | head -1')
+        for line in output:
+            if 'bootchart' in line:
+                fid = line.strip()
+
+        if fid is not None:
+            for fmt in ['png', 'svg']:
+                s.sut.ssh('sudo bootchart --quiet --format=%(fmt)s --crop-after=gnome-panel,mutter,unity-panel-service --annotate=ureadahead,mountall,hostname,hwclock --annotate=Xorg  --annotate=gnome-session  --annotate-file=%(p)s/times --output=%(p)s/bootchart.%(fmt)s %(fid)s' % vars(), ignore_result=True)
+
+            s.sut.ssh('cp %(fid)s %(p)s' % vars())
+            s.sut.ssh('sudo lspci -vvv \> %s/lspci' % p)
+            s.sut.ssh('sudo cp /var/log/dmesg %s' % p)
+            s.sut.ssh('sudo chmod +r %s/dmesg' % p)
+            s.sut.ssh('sudo cp /var/log/syslog %s' % p)
+            s.sut.ssh('sudo chmod +r %s/syslog' % p)
+            s.sut.ssh('sudo tar czvf %s/installer.tgz /var/log/installer/' % p)
+
+    # collect_results
+    #
+    def collect_results(s):
+
+        props = s.collect_sut_properties()
+
+        # Use the MAC address as a unique, system identifier
+        #
+        results, output = s.sut.ssh("ifconfig -a | grep HWaddr | head -1 | tr -s ' ' | cut -d ' ' -f5 ")
+        mac = output[0].strip()
+        props['mac_address'] = mac
+        mac = mac.replace(':', '.')
+
+        results, output = sh('whoami', quiet=True)
+        whoami = output[0].strip()
+        props['whoami'] = whoami
+
+        ts = datetime.utcnow().strftime("%d.%m.%Y_%H.%M.%S")
+        props['timestamp'] = ts
+
+        xx = "%s__%s__%s" % (mac, ts, whoami)
+
+        local_copy = '/tmp/%s' % xx
+        sh('rsync -ar %s:%s/ %s/' % (s.args.target[0], s.__results, local_copy))
+        with open(path.join(local_copy, 'properties.json'), 'w') as f:
+            f.write(json.dumps(props, sort_keys=True, indent=4))
+
+        tar_file = local_copy + '.tgz'
+        sh('tar zcf %s --directory=/tmp %s > /dev/null 2>&1' % (tar_file, xx))
+
+        return tar_file, local_copy
+
+    # upload_results
+    #
+    def upload_results(s, results_file):
+        # Register the streaming http handlers with urllib2
+        register_openers()
+
+        # Start the multipart/form-data encoding of the file "DSC0001.jpg"
+        # "image1" is the name of the parameter, which is normally set
+        # via the "name" parameter of the HTML <input> tag.
+
+        # headers contains the necessary Content-Type and Content-Length
+        # datagen is a generator object that yields the encoded parameters
+        datagen, headers = multipart_encode({"uploadfile": open(results_file)})
+
+        # Create the Request object
+        request = urllib2.Request("http://10.97.9.20:3000/upload", datagen, headers)
+
+        # Actually do the request, and get the response
+        response = urllib2.urlopen(request).read()
+
+        info("Results successfully uploaded.")
+
+    # collect_sut_properties
+    #
+    def collect_sut_properties(s):
+        retval = {}
+        result, output = s.sut.ssh('uname -a')
+        uname = output[0].strip()
+        m = search('(\d+\.\d+\.\d+)(-[\drc]+)-.* #(\d+.*?)(-Ubuntu)* .*', uname)
+        if m is not None:
+            retval['uname'] = uname
+            retval['kernel_version'] = '%s%s.%s' % (m.group(1), m.group(2), m.group(3))
+
+            try:
+                record = s.ubuntu.lookup(m.group(1))
+                retval['series_version'] = record['series_version']
+                retval['series_name'] = record['name']
+            except KeyError:
+                retval['series_version'] = 'unknown'
+                retval['series_name'] = 'unknown'
+
+        return retval
+
+    # main
+    #
+    def main(s):
+        retval = 1
+        try:
+            info('Starting')
+
+            s.install_bootspeed_pkg()
+            s.configure_kernel_boot_parameters()
+
+            info('    reboot after installing the package')
+            Provisioner.reboot(s.target, quiet=True) # package installed
+            sleep(60)
+            info('    reboot to let readahead and what not settle down')
+            Provisioner.reboot(s.target, quiet=True) # readahead should be settled down
+
+            # Collect bootspeed data for some number of runs
+            #
+            for i in range(1,11):
+                info('    data collection run (%d)' % i)
+                sleep(60)
+                Provisioner.reboot(s.target, quiet=True)
+                s.process_bootspeed_results(i)
+
+            results, rsync_dir = s.collect_results()
+            s.upload_results(results)
+
+            retval = 0
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            print("Aborting ...")
+
+        except ShellTimeoutError as e:
+            msg = 'The command (%s) timed out. (%d)' % (e.cmd, e.timeout)
+            ws = getenv('WORKSPACE')
+            if ws is not None:
+                s.produce_error_results(ws, msg)
+            error(msg)
+
+        except ShellError as e:
+            msg = 'The command (%s) returned a non-zero exit status (%d).\n' % (e.cmd, e.returncode)
+            for line in e.output:
+                msg += line.rstrip() + '\n'
+
+            error('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
+            for line in e.output:
+                error(line.rstrip())
+
+            ws = getenv('WORKSPACE')
+            if ws is not None:
+                s.produce_error_results(ws, msg)
+
+        except ErrorExit as e:
+            error(e.message)
+            ws = getenv('WORKSPACE')
+            if ws is not None:
+                s.produce_error_results(ws, e.message)
+            pass
+
+        if retval > 0:
+            error("")
+            error("Due to the above error(s), this script is unable to continue and is terminating.")
+            error("")
+
+        return retval
+
+if __name__ == '__main__':
+    if getenv('DEBUG'):
+        LOGLEVEL = DEBUG
+    else:
+        LOGLEVEL = INFO
+    basicConfig(level=LOGLEVEL, format="%(levelname)s - %(message)s")
+
+    app_description = '''
+    '''
+
+    app_epilog = '''
+    '''
+
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('target', metavar='TARGET', type=str, nargs=1, help='The name of the system that has been provisioned and we want to run the bootspeed tests on.')
+
+    args = parser.parse_args()
+
+    app = BootspeedTest(args)
+    exit(app.main())
+
+# vi:set ts=4 sw=4 expandtab syntax=python:

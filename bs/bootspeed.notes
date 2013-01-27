@@ -1,0 +1,4 @@
+ 1. apt-get install openssh-server
+ 2. ssh <host> mkdir .ssh
+ 3. scp .ssh/authorized_keys <host>:.ssh/
+ 4. add "bradf   ALL=(ALL:ALL) NOPASSWD: ALL" to /etc/sudoers
