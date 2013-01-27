@@ -6,7 +6,7 @@ VERBOSE=on
 
 
 :0 fw
-* ^Subject:.*linux .* uploaded.*
+* ^Subject:.*linux.* .* uploaded.*
 {
     :0 hbW:
     | /home/work/kernel-testing/ukb-mail-handler >> /home/work/kernel-testing/ukb-mail-handler.log
