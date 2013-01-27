@@ -131,15 +131,28 @@ class Shell():
     def ssh(cls, target, cmd, quiet=False, ignore_result=False):
         ssh_cmd = 'ssh %s %s' % (target, cmd)
         result = 0
+        output = ''
+        #print("ssh: '%s'" % ssh_cmd)
         if cls._dry_run:
             debug('[dry-run] %s' % (ssh_cmd))
         else:
             if not quiet:
                 info(ssh_cmd)
-            result, output = sh(ssh_cmd, quiet=quiet, ignore_result=ignore_result)
 
-        if result != 0 and not ignore_result:
-            raise ShellError(ssh_cmd, result, output)
+            try:
+                result, output = sh(ssh_cmd, quiet=quiet, ignore_result=ignore_result)
+
+            except ShellError as e:
+                if result != 0 and not ignore_result:
+                    # Wait for just a few seconds and try it again.
+                    #
+                    #print(" **")
+                    #print(" ** retrying the last command")
+                    #print(" **")
+                    result, output = sh(ssh_cmd, quiet=quiet, ignore_result=ignore_result)
+                    if result != 0 and not ignore_result:
+                        sleep(15)
+                        raise ShellError(ssh_cmd, result, output)
 
         return result, output
 
