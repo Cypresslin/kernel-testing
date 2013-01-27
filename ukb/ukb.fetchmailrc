@@ -7,8 +7,8 @@ set no bouncemail
 poll "imap.gmail.com"
 protocol IMAP
 username "ubuntu.kernel.bot@gmail.com"
-password "I'mjustabot"
+password "xxxxxxxxxxx"
 ssl
 fetchall
 nokeep
-mda "/usr/bin/procmail -m /home/work/kernel-testing/ukb.procmailrc"
+mda "/usr/bin/procmail -m /home/work/kernel-testing/ukb/ukb.procmailrc"

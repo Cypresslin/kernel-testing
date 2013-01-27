@@ -1,6 +1,6 @@
-CORRECTHOME=/home/work/kernel-testing/Maildir
+CORRECTHOME=/home/work/kernel-testing/ukb/Maildir
 MAILDIR=$CORRECTHOME/
-PMDIR=/home/work/kernel-testing/procmail.log
+PMDIR=/home/work/kernel-testing/ukb/procmail.log
 LOGFILE=$PMDIR/log
 VERBOSE=on
 
@@ -9,7 +9,7 @@ VERBOSE=on
 * ^Subject:.*linux.* .* uploaded.*
 {
     :0 hbW:
-    | /home/work/kernel-testing/ukb-mail-handler >> /home/work/kernel-testing/ukb-mail-handler.log
+    | /home/work/kernel-testing/ukb/ukb-mail-handler >> /home/work/kernel-testing/ukb/ukb-mail-handler.log
 }
 
 :0 fw
@@ -18,7 +18,7 @@ VERBOSE=on
   ^From:.*Brad Figg <brad.figg@canonical.com.*
 {
     :0 hbW:
-    | /home/work/kernel-testing/ukb-mail-handler >> /home/work/kernel-testing/ukb-mail-handler.log
+    | /home/work/kernel-testing/ukb/ukb-mail-handler >> /home/work/kernel-testing/ukb/ukb-mail-handler.log
 }
 
 :0 fw
@@ -26,7 +26,7 @@ VERBOSE=on
 * ^From:.*canonical.com.*
 {
     :0 hbW:
-    | /home/work/kernel-testing/ukb-mail-handler >> /home/work/kernel-testing/ukb-mail-handler.log
+    | /home/work/kernel-testing/ukb/ukb-mail-handler >> /home/work/kernel-testing/ukb/ukb-mail-handler.log
 }
 
 #---------------------------------------------------------------
