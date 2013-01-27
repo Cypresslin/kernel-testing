@@ -82,9 +82,22 @@ class Provisioner():
 
             start = datetime.utcnow()
             while True:
-                result, output = sh('ssh -qf %s exit' % target, quiet=True, ignore_result=True)
-                if result == 0:
-                    break
+                try:
+                    result, output = sh('ssh -qf %s exit' % target, quiet=True, ignore_result=True)
+                    if result == 0:
+                        break
+
+                except ShellError as e:
+
+                    if 'port 22: Connection refused' in e.output:
+                        # Just ignore this, we know that we can connect to the remote host
+                        # otherwise we wouldn't have been able to reboot it.
+                        #
+                        print("** Encountered 'Connection refused'")
+                        pass
+                    else:
+                        print("Something else bad happened")
+                        raise
 
                 now = datetime.utcnow()
                 delta = now - start
@@ -96,11 +109,11 @@ class Provisioner():
     # reboot
     #
     @classmethod
-    def reboot(cls, target, wait=True):
+    def reboot(cls, target, wait=True, quiet=False):
         '''
         Reboot the target system and wait 5 minutes for it to come up.
         '''
-        ssh(target, 'sudo reboot')
+        ssh(target, 'sudo reboot', quiet=quiet)
         if wait:
             cls.wait_for_system(target, timeout=10)
 
