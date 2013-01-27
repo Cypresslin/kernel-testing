@@ -36,7 +36,7 @@ class DBInfo():
             datagen, headers = multipart_encode({"uploadfile": open(self.args.target[0])})
 
             # Create the Request object
-            request = urllib2.Request("http://192.168.1.6:3000/upload", datagen, headers)
+            request = urllib2.Request("http://10.97.9.20:3000/upload", datagen, headers)
             # Actually do the request, and get the response
             print urllib2.urlopen(request).read()
 
