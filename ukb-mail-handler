@@ -34,8 +34,7 @@ class MailHandler():
     def __init__(self, args):
         self.args = args
         self.jenkins_url_default = "http://10.97.9.20:8080"
-        self.default_systems=['rizzo', 'gonzo', 'fozzie', 'statler', 'waldorf']
-        self.default_systems=['gonzo', 'fozzie', 'statler', 'waldorf']  # I'm keeping rizzo for my own testing for now
+        self.default_systems=['rizzo', 'gonzo', 'fozzie', 'waldorf'] # statler is just too big a pain
         self.default_arches=['amd64', 'i386']
 
     # send_reply
@@ -259,7 +258,12 @@ system: The name of the lab system that is to be used for the testing. The
         else:
             systems = self.default_systems
 
-        jobs = self.create_test_jobs(series, self.default_arches, systems, series_decoration='SRU', tests='sru')
+        # If we want certain kernels to be run for certain series.
+        #
+        tests = 'sru'
+        if series == 'hardy':
+            tests = 'kernel'
+        jobs = self.create_test_jobs(series, self.default_arches, systems, series_decoration='SRU', tests=tests)
         if jobs is not None:
             info('The following jenkins jobs were created')
             for job in jobs:
