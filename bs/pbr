@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 
-from os                                 import getenv, path, listdir
+from os                                 import getenv, path, listdir, rename
 from math                               import sqrt
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import error, info, basicConfig, INFO, DEBUG
@@ -59,7 +59,24 @@ class BootSpeedResults():
         sh('tar zxf %s' % s.tar_file)
 
         for run in listdir(s.results_dir):
-            s.collect_boot_stage_times('%s/%s' % (s.results_dir, run))
+            rdir = '%s/%s' % (s.results_dir, run)
+            if path.isdir(rdir):
+                s.collect_boot_stage_times(rdir)
+                print run
+
+        # Fixups
+        #
+
+        # The bootchart.tgz file is actually named with the hostname in it. Rename
+        # it to be "bootchart.tgz".
+        #
+        for run in listdir(s.results_dir):
+            rdir = '%s/%s' % (s.results_dir, run)
+            if path.isdir(rdir):
+                for fid in listdir(rdir):
+                    if '.tgz' in fid:
+                        if not fid == 'installer.tgz':
+                            rename(path.join(rdir, fid), path.join(rdir, 'bootchart.tgz'))
 
         #s.fixup_boot_stage_times()
 
