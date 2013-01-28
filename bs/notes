@@ -1,0 +1,20 @@
+
+ 1. bootspeed
+           bootspeed script runs and uploads the results to a remote server.
+ 2. upload-catcher
+           the remote server accepts the results
+ x. pbr (process-boot-results)
+           takes the tar file that has been upload, un-tar it, go through all the
+           times files that were generated for every individual run. each of the
+           times for the different boot stages is calculated. the mean, max, min
+           and std. deviation are computed and all put together into a single
+           results.json file in the root of the results directory.
+ 3. gen-master-index
+           a script for generating the index that goes in the root of the bootspeed
+           results directory. this index is a set of sections, one for each system
+           that we have results for. each section is a table of the individual test
+           runs.
+ 4. gen-per-system-index
+           a script for generating a web page that has a chart for comparing all the
+           previous runs for a single system. there is also a table with the mean
+           times for each run.

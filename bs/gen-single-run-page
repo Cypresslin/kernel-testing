@@ -1,0 +1,92 @@
+#!/usr/bin/env python
+#
+
+from sys                                import stdout
+from os                                 import getenv, path, listdir
+from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import error, basicConfig, INFO, DEBUG
+from datetime                           import datetime
+
+from lib.exceptions                     import ErrorExit
+from lib.utils                          import date_to_string
+import json
+
+from mako.template                      import Template, exceptions
+
+# ProcessBootspeedResults
+#
+class ProcessBootspeedResults():
+    '''
+    '''
+
+    # __init__
+    #
+    def __init__(s, args):
+        s.args = args
+
+    # main
+    #
+    def main(s):
+        retval = 1
+        try:
+            results = {}
+
+            # Pull all the results files into a single dictionary
+            #
+            rfile = path.join(s.args.results, 'results.json')
+            if path.exists(rfile):
+                with open(rfile, 'r') as f:
+                    results = json.load(f)
+            else:
+                raise ErrorExit('The file (%s) does not exist.' % rfile)
+
+            #print(json.dumps(results, sort_keys=True, indent=4))
+
+            try:
+                mako_template = Template(filename=s.args.template, format_exceptions=True)
+                stdout.write(mako_template.render(template_data = results, timestamp = date_to_string(datetime.utcnow())))
+            except:
+                print exceptions.text_error_template().render()
+
+            retval = 0
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            print("Aborting ...")
+
+        except ErrorExit as e:
+            error(e.message)
+
+        if retval > 0:
+            error("")
+            error("Due to the above error(s), this script is unable to continue and is terminating.")
+            error("")
+
+        return retval
+
+if __name__ == '__main__':
+    if getenv('DEBUG'):
+        LOGLEVEL = DEBUG
+    else:
+        LOGLEVEL = INFO
+    basicConfig(level=LOGLEVEL, format="%(levelname)s - %(message)s")
+
+    app_description = '''
+    '''
+
+    app_epilog = '''
+    '''
+
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--title', required=True, type=str, help='The title that will be used on the generate html page.')
+    parser.add_argument('--template', required=True, type=str, help='The MAKO template file that is to be used.')
+    parser.add_argument('results', metavar='RESULTS_DIR', type=str, nargs=1, help='Root directory containing all the individual boot speed runs.')
+
+    args = parser.parse_args()
+    args.results = args.results[0] # There can be only one
+
+    app = ProcessBootspeedResults(args)
+    exit(app.main())
+
+# vi:set ts=4 sw=4 expandtab syntax=python:
