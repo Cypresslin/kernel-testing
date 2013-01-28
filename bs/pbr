@@ -62,7 +62,6 @@ class BootSpeedResults():
             rdir = '%s/%s' % (s.results_dir, run)
             if path.isdir(rdir):
                 s.collect_boot_stage_times(rdir)
-                print run
 
         # Fixups
         #
@@ -213,6 +212,7 @@ class ProcessBootspeedResults():
             with open(results_file, 'w') as f:
                 f.write(json.dumps(results, sort_keys=True, indent=4))
 
+            print(bsr.results_dir)
             retval = 0
 
         # Handle the user presses <ctrl-C>.

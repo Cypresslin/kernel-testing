@@ -37,6 +37,12 @@ class ProcessBootspeedResults():
             # Pull all the results files into a single dictionary
             #
             if path.exists(s.args.results):
+                systems = {}
+                sys_file = path.join(s.args.results, 'systems.json')
+                if path.exists(sys_file):
+                    with open(sys_file, 'r') as f:
+                        systems = json.load(f)
+
                 for d in listdir(s.args.results):
                     if not path.isdir(path.join(s.args.results, d)):
                         continue
@@ -63,15 +69,13 @@ class ProcessBootspeedResults():
 
 
             for mac in index['mac_address']:
-                print("%s" % mac)
                 for k in index['mac_address'][mac]:
-                    print("    %s" % k)
 
                     try:
                         mako_template = Template(filename=s.args.template, format_exceptions=True)
                         ofid = path.join(s.args.results, '%s.html' % mac.replace(':', '-'))
                         with open(ofid, "w") as f:
-                            f.write(mako_template.render(runs=index['mac_address'][mac], report_title = s.system_title(mac, results), template_data = results, timestamp = date_to_string(datetime.utcnow())))
+                            f.write(mako_template.render(runs=index['mac_address'][mac], systems=systems, report_title = s.system_title(mac, results), template_data = results, timestamp = date_to_string(datetime.utcnow())))
                     except:
                         print exceptions.text_error_template().render()
 

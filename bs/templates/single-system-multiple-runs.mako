@@ -1,4 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%
+mac = template_data[runs[0]]['properties']['mac_address']
+try:
+    chart_title = '%s  (%s)' % (systems[mac], template_data[runs[0]]['properties']['whoami'])
+except KeyError:
+    chart_title = mac
+%>
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -66,11 +73,6 @@
                             <tr>
                                 <td width="100%" valign="top">
                                     <table width="100%" style="font-size: 0.9em" border="0">
-                                        % for run in runs:
-                                        <tr>
-                                            <% link = '%s.html' % template_data[run]['properties']['mac_address'].replace(':', '-') %>
-                                            <td style="background: #e9e7e5;"><a href="${link}">${template_data[run]['properties']['mac_address']}</a></td>
-                                        </tr>
                                         <tr>
                                             <td width="100%">
                                                 <table width="100%" border="0">
@@ -80,7 +82,7 @@
                                                             <th align="center" colspan="6">Mean Times (sec.)</th>
                                                         </tr>
                                                         <tr>
-                                                            <th align="left" width="120">Timestamp</th>
+                                                            <th align="left" width="120">Bootspeed Run</th>
                                                             <th align="left" width="100">Series</th>
                                                             <th align="left" width="100">User</th>
 
@@ -99,9 +101,11 @@
                                                             <%
                                                                 props = template_data[k]['properties']
                                                                 data  = template_data[k]['data']
+                                                                mac = template_data[k]['properties']['mac_address']
+                                                                url   = "%s__%s__%s/index.html" % (mac.replace(':', '.'), props['timestamp'], props['whoami'])
                                                             %>
                                                             <tr>
-                                                                <td>${props['timestamp']}</td>
+                                                                <td><%t = props['timestamp'].replace('_', ' ')%><a href="${url}">${t}</a></td>
                                                                 <td>${props['series_name']}</td>
                                                                 <td>${props['whoami']}</td>
 
@@ -121,7 +125,6 @@
                                             </td>
                                         </tr>
                                         <tr> <td>&nbsp;</td> </tr>
-                                        % endfor
                                     </table>
                                 </td>
                             </tr>
@@ -165,8 +168,6 @@
                         data[stage] = []
                         data[stage].append(template_data[run]['data'][stage]['mean'])
 
-            print(data)
-
             chart_series = '                series: [\n                    {\n'
 
             i = 0 # Keeps track of the index into the list we are iterating through
@@ -188,7 +189,7 @@
                     defaultSeriesType: 'bar'
                 },
                 title: {
-                    text: '${report_title}'
+                    text: '${chart_title}'
                 },
                 legend: {
                     reversed: true
@@ -196,7 +197,7 @@
                 xAxis: {
                     categories: [${xaxis_categories}],
                     title: {
-                        text: 'Test Timestamp'
+                        text: null
                     }
                 },
                 yAxis: {

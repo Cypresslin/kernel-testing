@@ -58,8 +58,14 @@
                                     <table width="100%" style="font-size: 0.9em" border="0">
                                         % for mac in index['mac_address']:
                                         <tr>
-                                            <% link = '%s.html' % mac.replace(':', '-') %>
-                                            <td style="background: #e9e7e5;"><a href="${link}">${mac}</a></td>
+                                            <%
+                                                link = '%s.html' % mac.replace(':', '-')
+                                                try:
+                                                    section_heading = '%s &nbsp; (%s)' % (systems[mac], template_data[index['mac_address'][mac][0]]['properties']['whoami'])
+                                                except KeyError:
+                                                    section_heading = mac
+                                            %>
+                                            <td style="background: #e9e7e5;"><a href="${link}">${section_heading}</a></td>
                                         </tr>
                                         <tr>
                                             <td width="100%">
@@ -70,9 +76,9 @@
                                                             <th align="center" colspan="6">Mean Times (sec.)</th>
                                                         </tr>
                                                         <tr>
-                                                            <th align="left" width="120">Timestamp</th>
+                                                            <th align="left" width="120">Bootspeed Run</th>
+                                                            <th align="left" width="100">Kernel</th>
                                                             <th align="left" width="100">Series</th>
-                                                            <th align="left" width="100">User</th>
 
                                                             <th align="left">&nbsp;</th> <!-- Column Separator -->
 
@@ -89,11 +95,12 @@
                                                             <%
                                                                 props = template_data[k]['properties']
                                                                 data  = template_data[k]['data']
+                                                                url   = "%s__%s__%s/index.html" % (mac.replace(':', '.'), props['timestamp'], props['whoami'])
                                                             %>
                                                             <tr>
-                                                                <td>${props['timestamp']}</td>
+                                                                <td><%t = props['timestamp'].replace('_', ' ')%><a href="${url}">${t}</a></td>
+                                                                <td>${props['kernel_version']}</td>
                                                                 <td>${props['series_name']}</td>
-                                                                <td>${props['whoami']}</td>
 
                                                                 <td align="left">&nbsp;</td> <!-- Column Separator -->
 
