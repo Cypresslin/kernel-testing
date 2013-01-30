@@ -130,13 +130,9 @@ class Provisioner():
         #
         ssh(target, 'wget -r -A .deb -e robots=off -nv -l1 --no-directories %s' % self.debs)
 
-        # Install the header packages
+        # Install everything
         #
-        ssh(target, 'sudo dpkg -i linux-headers*_all.deb linux-headers*_%s.deb' % self.arch, ignore_result=True) # best effort
-
-        # Install the kernel packages
-        #
-        ssh(target, 'sudo dpkg -i linux-image-*-generic_*_%s.deb' % self.arch)
+        ssh(target, 'sudo dpkg -i *_all.deb *_%s.deb' % self.arch, ignore_result=True) # best effort
 
     # install_hwe_kernel
     #
