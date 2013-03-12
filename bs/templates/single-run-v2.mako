@@ -53,37 +53,10 @@
 
                     <br />
 
-                    <!-- System Information
-                    -->
-                    <div class="dash-section" align="center">
-                        <table width="100%" border="0" style="font-size: 1.0em">
-                            <tr>
-                                <td width="100" align="right">platform:</td>    <td width="2">&nbsp;</td> <td width="350" align="left">${systems[template_data['properties']['mac_address']]}</td>
-                                <td width="100" align="right">mac address:</td> <td width="2">&nbsp;</td> <td width="350" align="left">${template_data['properties']['mac_address']}</td>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td width="100" align="right">kernel:</td>      <td width="2">&nbsp;</td> <td width="350" align="left">${template_data['properties']['kernel_version']}</td>
-                                <td width="100" align="right">series:</td>      <td width="2">&nbsp;</td> <td width="350" align="left">${template_data['properties']['series_name']}</td>
-                                <td>&nbsp;</td>
-                            </tr>
-                        </table>
-                    </div>
-
                     <!-- Boot chart section
                     -->
                     <div class="dash-section" align="center">
-                        <table width="100%"> <!-- The section is one big table -->
-                            <tr>
-                                <td><div id="kernelinit" style="width: 300px; height: 300px;"></div></td>
-                                <td><div id="kernel" style="width: 300px; height: 300px;"></div></td>
-                                <td><div id="xorg" style="width: 300px; height: 300px;"></div></td>
-                            </tr>
-                            <tr>
-                                <td><div id="desktop" style="width: 300px; height: 300px;"></div></td>
-                                <td><div id="plumbing" style="width: 300px; height: 300px;"></div></td>
-                            </tr>
-                        </table>
+                        <td><div id="kernelinit" style="width: 900px; height: 500px;"></div></td>
                     </div> <!-- dash-section -->
 
                     <!-- Results table section
@@ -154,58 +127,66 @@
             </div>
         </div>
         <%
-            chart = {}
+            xaxis_categories = ['desktop', 'xorg', 'plumbing', 'kernel', 'kernelinit']
 
-            for stage in ['desktop', 'xorg', 'plumbing', 'kernel', 'kernelinit']:
-                chart[stage] = {}
-                runs = []
-                for run in range(0, len(template_data['data']['boot']['raw'])):
-                    runs.append('%d' % (run + 1))
-                chart[stage]['xaxis'] = ', '.join(["'%s'" % n for n in runs])
+            # Create the chart series section
+            #
+            data = {}
+            for run in range(0, len(template_data['data']['boot']['raw'])):
+                for stage in ['desktop', 'xorg', 'plumbing', 'kernel', 'kernelinit']:
+                    try:
+                        data[run].append(template_data['data'][stage]['raw'][run])
+                    except KeyError:
+                        data[run] = []
+                        data[run].append(template_data['data'][stage]['raw'][run])
 
-                chart[stage]['series'] = '                series: [\n                    {\n'
-                chart[stage]['series'] += '                        color: colors[5],\n'
-                chart[stage]['series'] += '                        name: \'run\',\n'
-                chart[stage]['series'] += '                        data: [%s]\n' % (', '.join(['%02.02f' % val for val in template_data['data'][stage]['raw']]))
-                chart[stage]['series'] += '                    }\n                ]\n'
+            chart_series = '                series: [\n                    {\n'
 
-            charts = "            var colors = Highcharts.getOptions().colors;"
-            for stage in ['desktop', 'xorg', 'plumbing', 'kernel', 'kernelinit']:
-                charts += "            kernelinit = new Highcharts.Chart({\n"
-                charts += "                chart: {\n"
-                charts += "                    renderTo: '%s',\n" % stage
-                charts += "                    defaultSeriesType: 'column'\n"
-                charts += "                },\n"
-                charts += "                title: {\n"
-                charts += "                    text: '%s'\n" % stage
-                charts += "                },\n"
-                charts += "                legend: {\n"
-                charts += "                    enabled: false,\n"
-                charts += "                    reversed: true\n"
-                charts += "                },\n"
-                charts += "                xAxis: {\n"
-                charts += "                    categories: [%s],\n" % chart[stage]['xaxis']
-                charts += "                    title: {\n"
-                charts += "                        text: null\n"
-                charts += "                    }\n"
-                charts += "                },\n"
-                charts += "                yAxis: {\n"
-                charts += "                    title: {\n"
-                charts += "                        text: 'Time (seconds)'\n"
-                charts += "                    },\n"
-                charts += "                    min: 0\n"
-                charts += "                },\n"
-                charts += "                tooltip: {\n"
-                charts += "                    formatter: function() {\n"
-                charts += "                        return '<b> pass #' + this.x + '</b> : ' + this.y + '(s)';\n"
-                charts += "                    }\n"
-                charts += "                },\n"
-                charts += "%s\n" % chart[stage]['series']
-                charts += "            });\n"
+            i = 0 # Keeps track of the index into the list we are iterating through
+            for run in range(0, len(template_data['data']['boot']['raw'])):
+                chart_series += '                        color: colors[5],\n'
+                chart_series += '                        name: \'%s\',\n' % stage
+                chart_series += '                        data: [%s]\n' % (', '.join(['%02f' % val for val in data[run]]))
+
+                i += 1
+                if i < len(template_data['data']['boot']['raw']):
+                    chart_series += '                    }, {\n'
+            chart_series += '                    }\n                ]\n'
         %>
         <script type="text/javascript">
         $(function () {
-${charts}
+            var colors = Highcharts.getOptions().colors;
+            chart = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'kernelinit',
+                    defaultSeriesType: 'column'
+                },
+                title: {
+                    text: null
+                },
+                legend: {
+                    enabled: false,
+                    reversed: true
+                },
+                xAxis: {
+                    categories: ['desktop', 'xorg', 'plumbing', 'kernel', 'kernelinit'],
+                    title: {
+                        text: null
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Time (seconds)'
+                    },
+                    min: 0
+                },
+                tooltip: {
+                    formatter: function() {
+                        return '<b>' + this.x + '</b> : ' + this.y + ' seconds';
+                    }
+                },
+${chart_series}
+            });
         });
         </script>
     </body>

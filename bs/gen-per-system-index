@@ -110,7 +110,6 @@ if __name__ == '__main__':
     '''
 
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
-    parser.add_argument('--title', required=True, type=str, help='The title that will be used on the generate html page.')
     parser.add_argument('--template', required=True, type=str, help='The MAKO template file that is to be used.')
     parser.add_argument('results', metavar='RESULTS_DIR', type=str, nargs=1, help='Root directory containing all the individual boot speed runs.')
 

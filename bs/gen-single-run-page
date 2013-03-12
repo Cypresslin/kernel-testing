@@ -31,6 +31,11 @@ class ProcessBootspeedResults():
         try:
             results = {}
 
+            systems = {}
+            if path.exists(s.args.sysdefs):
+                with open(s.args.sysdefs, 'r') as f:
+                    systems = json.load(f)
+
             # Pull all the results files into a single dictionary
             #
             rfile = path.join(s.args.results, 'results.json')
@@ -44,7 +49,7 @@ class ProcessBootspeedResults():
 
             try:
                 mako_template = Template(filename=s.args.template, format_exceptions=True)
-                stdout.write(mako_template.render(template_data = results, timestamp = date_to_string(datetime.utcnow())))
+                stdout.write(mako_template.render(template_data=results, systems=systems, timestamp=date_to_string(datetime.utcnow())))
             except:
                 print exceptions.text_error_template().render()
 
@@ -79,7 +84,7 @@ if __name__ == '__main__':
     '''
 
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
-    parser.add_argument('--title', required=True, type=str, help='The title that will be used on the generate html page.')
+    parser.add_argument('--sysdefs', required=True, type=str, help='A json file that contains mapings between mac addresses and more human friendly system information.')
     parser.add_argument('--template', required=True, type=str, help='The MAKO template file that is to be used.')
     parser.add_argument('results', metavar='RESULTS_DIR', type=str, nargs=1, help='Root directory containing all the individual boot speed runs.')
 

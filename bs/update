@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -e
+set -x
+rdir=`(cd results; ../pbr $1)`
+./gen-single-run-page --sysdefs=results/systems.json --template=templates/single-run.mako results/$rdir > results/$rdir/index.html
+./gen-per-system-index --template=templates/single-system-multiple-runs.mako results
+./gen-master-index  --template=templates/digest-index.mako results > results/index.html
