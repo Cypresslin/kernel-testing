@@ -35,6 +35,7 @@ class MailHandler():
         self.args = args
         self.jenkins_url_default = "http://10.97.9.20:8080"
         self.default_systems=['rizzo', 'gonzo', 'fozzie', 'waldorf'] # statler is just too big a pain
+        self.default_systems=['gonzo', 'fozzie', 'waldorf'] # statler is just too big a pain
         self.default_arches=['amd64', 'i386']
 
     # send_reply
@@ -327,6 +328,11 @@ system: The name of the lab system that is to be used for the testing. The
                 m = search('\[(\S+)\] linux \d+\.\d+\.\d+.* uploaded', e_subject.lower())
                 if m is not None:
                     self.handle_sru_kernel_uploaded(m.group(1), msg)
+                    break
+
+                m = search('\[\S+\] linux-lts-backport-(\S+) \d+\.\d+\.\d+.* uploaded', e_subject.lower())
+                if m is not None:
+                    self.handle_hwe_kernel_uploaded(m.group(1), msg)
                     break
 
                 m = search('\[\S+\] linux-lts-(\S+) \d+\.\d+\.\d+.* uploaded', e_subject.lower())
