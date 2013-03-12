@@ -168,7 +168,7 @@ TestCollections = {
 
     # The set of tests that SRU kernels run
     #
-    'sru' : ['qa', 'iperf', 'ubuntu_leap_seconds'],
+    'sru' : ['qa', 'iperf', 'ubuntu_leap_seconds', 'xfstests'],
 
 }
 
