@@ -34,7 +34,12 @@ class TestResultsReaper():
                 trr = TestResultsRepository()
                 for tr in trr.test_runs:
                     termination = 30
-                    results = trr.results(tr)
+                    try:
+                        results = trr.results(tr)
+                    except:
+                        results_dir = path.join(trr.cfg['repository_root'], tr)
+                        rmtree(results_dir)
+                        continue
                     job = results['attributes']['environ']['JOB_NAME']
                     ts = string_to_date(results['attributes']['timestamp'])
                     results_dir = path.join(trr.cfg['repository_root'], tr)
