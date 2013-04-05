@@ -148,27 +148,27 @@ LabHW = {
             }
         ]
     },
-    "zoot" : {
-        "orchestra server" : "magners-orchestra",
-        "jenkins server" : "kernel-jenkins",
-        "mac address" : "00:1e:67:65:89:f9",
-        "cdu" : [
-            {
-                "ip" : "10.97.0.20",
-                "port" : "zoot"
-            }
-        ]
-    },
-    "pops" : {
-        "orchestra server" : "magners-orchestra",
-        "jenkins server" : "kernel-jenkins",
-        "mac address" : "00:1e:67:65:86:aa",
-        "cdu" : [
-            {
-                "ip" : "10.97.0.20",
-                "port" : "pops"
-            }
-        ]
-    }
+    #"zoot" : {
+    #    "orchestra server" : "magners-orchestra",
+    #    "jenkins server" : "kernel-jenkins",
+    #    "mac address" : "00:1e:67:65:89:f9",
+    #    "cdu" : [
+    #        {
+    #            "ip" : "10.97.0.20",
+    #            "port" : "zoot"
+    #        }
+    #    ]
+    #},
+    #"pops" : {
+    #    "orchestra server" : "magners-orchestra",
+    #    "jenkins server" : "kernel-jenkins",
+    #    "mac address" : "00:1e:67:65:86:aa",
+    #    "cdu" : [
+    #        {
+    #            "ip" : "10.97.0.20",
+    #            "port" : "pops"
+    #        }
+    #    ]
+    #}
 }
 # vi:set ts=4 sw=4 expandtab:
