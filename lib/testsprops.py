@@ -13,6 +13,22 @@
 #     autotest test via the autotest command line.
 #
 TestProfiles = {
+
+    'ubuntu_WiFi_SimpleConnection' : {
+        'packages' : {
+            'common' : [
+                ],
+            },
+        },
+
+    'network_WiFiCaps' : {
+        'packages' : {
+            'common' : [
+                'iw', 'pkg-config', 'libnl-dev'
+                ],
+            },
+        },
+
     'ubuntu_qrt_kernel' : {
         'packages' : {
             'common' : [
