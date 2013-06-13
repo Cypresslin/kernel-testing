@@ -246,7 +246,7 @@ class Runner():
             cmd = cmd.strip() # Remove that last space character
             cmd += '"'
 
-        cmd += ' %s' % TestProfiles[test]['control file']
+        cmd += ' --verbose %s' % TestProfiles[test]['control file']
 
         # Run the command
         #
