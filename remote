@@ -73,8 +73,8 @@ done
 #
 ssh $SUT sudo rm -rf autotest kernel-testing
 
-scp -r $HOME/autotest $SUT:autotest
-scp -r $HOME/autotest-client-tests/* $SUT:autotest/client/tests/
-scp -r $HOME/kernel-testing-bjf $SUT:./kernel-testing
+rsync -ar --exclude=.git /home/work/autotest/ $SUT:autotest/
+rsync -ar --exclude=.git /home/work/autotest-client-tests/* $SUT:autotest/client/tests/
+rsync -ar --exclude=.git /home/work/kernel-testing/ $SUT:./kernel-testing/
 
 ssh $SUT JOB_NAME=$JOB_NAME KERNEL_TEST_OPTIONS=$KERNEL_TEST_OPTIONS python kernel-testing/runner $KERNEL_TEST_LIST
