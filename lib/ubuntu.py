@@ -128,20 +128,18 @@ class Ubuntu:
     # * sha1 XXX: doesn't seem to be used anymore
     # * md5 XXX: doesn't seem to be used anymore
     db = {
-        '13.04' :
+        '13.10' :
         {
             'development' : True,        # This is the version that is currently under development
-            'series_version' : '13.04',
-            'kernel'    : '3.8.0',
-            'name'      : 'raring',
+            'series_version' : '13.10',
+            'kernel'    : '3.9.0',
+            'name'      : 'saucy',
             'supported' : False,
             # adjust packages when this goes live
             'packages'  :
             [
                 'linux',
                 'linux-meta',
-                'linux-ti-omap4',
-                'linux-meta-ti-omap4'
             ],
             'dependent-packages' :
             {
@@ -149,11 +147,40 @@ class Ubuntu:
                     'meta'   : 'linux-meta',
                     'signed' : 'linux-signed'
                 },
-                'linux-ti-omap4' : { 'meta' : 'linux-meta-ti-omap4' }
             },
             'derivative-packages' :
             {
-                'linux' : [ 'linux-ti-omap4' ]
+                #'linux' : [ 'linux-ppc' ]
+            },
+            'sha1' : '',
+            'md5' : ''
+        },
+        '13.04' :
+        {
+            'development' : False,
+            'series_version' : '13.04',
+            'kernel'    : '3.8.0',
+            'name'      : 'raring',
+            'supported' : True,
+            # adjust packages when this goes live
+            'packages'  :
+            [
+                'linux',
+                'linux-meta',
+                'linux-meta-ti-omap4',
+            ],
+            'dependent-packages' :
+            {
+                'linux' : {
+                    'meta'   : 'linux-meta',
+                    'signed' : 'linux-signed'
+                },
+                'linux-lowlatency' : { 'meta' : 'linux-meta-lowlatency' },
+                'linux-ppc' : { 'meta' : 'linux-meta-ppc' }
+            },
+            'derivative-packages' :
+            {
+                'linux' : [ 'linux-lowlatency', 'linux-ppc' ]
             },
             'sha1' : '',
             'md5' : ''
@@ -203,8 +230,12 @@ class Ubuntu:
             [
                 'linux',
                 'linux-meta',
-                #'linux-lts-quantal',
-                #'linux-meta-lts-quantal',
+                'linux-lts-quantal',
+                'linux-meta-lts-quantal',
+                'linux-signed-lts-quantal',
+                'linux-lts-raring',
+                'linux-meta-lts-raring',
+                'linux-signed-lts-raring',
                 'linux-ti-omap4',
                 'linux-meta-ti-omap4',
                 'linux-armadaxp',
@@ -216,7 +247,14 @@ class Ubuntu:
                     'meta' : 'linux-meta',
                     'lbm'  : 'linux-backports-modules-3.2.0'
                 },
-                'linux-lts-quantal' : { 'meta' : 'linux-meta-lts-quantal' },
+                'linux-lts-quantal' : {
+                    'meta' : 'linux-meta-lts-quantal',
+                    'signed' : 'linux-signed-lts-quantal'
+                },
+                'linux-lts-raring' : {
+                    'meta' : 'linux-meta-lts-raring',
+                    'signed' : 'linux-signed-lts-raring'
+                },
                 'linux-ti-omap4' : { 'meta' : 'linux-meta-ti-omap4' },
                 'linux-armadaxp' : { 'meta' : 'linux-meta-armadaxp' },
                 'linux-lowlatency' : { 'meta' : 'linux-meta-lowlatency' }
@@ -228,6 +266,7 @@ class Ubuntu:
             'backport-packages' :
             {
                 'linux-lts-quantal' : [ 'linux', '12.10' ],
+                'linux-lts-raring' : [ 'linux', '13.04' ],
             },
             'sha1' : '',
             'md5' : ''
@@ -237,7 +276,7 @@ class Ubuntu:
             'series_version' : '11.10',
             'kernel'    : '3.0.0',
             'name'      : 'oneiric',
-            'supported' : True,
+            'supported' : False,
             # adjust packages when this goes live
             'packages'  :
             [
@@ -425,7 +464,7 @@ class Ubuntu:
             'series_version' : '8.04',
             'kernel' : '2.6.24',
             'name' : 'hardy',
-            'supported' : True,
+            'supported' : False,
             'packages' :
             [
                 'linux',
@@ -478,6 +517,7 @@ class Ubuntu:
     }
 
     index_by_kernel_version = {
+        '3.9.0'    : db['13.10'],
         '3.8.0'    : db['13.04'],
         '3.5.0'    : db['12.10'],
         '3.2.0'    : db['12.04'],
@@ -495,6 +535,7 @@ class Ubuntu:
     }
 
     index_by_series_name = {
+        'saucy'    : db['13.10'],
         'raring'   : db['13.04'],
         'quantal'  : db['12.10'],
         'precise'  : db['12.04'],
@@ -596,6 +637,24 @@ class Ubuntu:
 
         return retval
 
+    # development_series
+    #
+    @property
+    def development_series(self):
+        """
+        Assume there is one, and only one, development series.
+        """
+        retval = None
+        for series in self.db:
+            try:
+                if self.db[series]['development']:
+                    retval = self.db[series]['name']
+                    break
+            except KeyError:
+                    pass
+
+        return retval
+
     # supported_series
     #
     @property
@@ -632,42 +691,22 @@ class Ubuntu:
         """
         Return the series name where that package-version is found
         """
+        Dbg.enter('series_name')
         retval = None
 
-        if (package == 'linux' or
-            package == 'linux-ti-omap4' or
-            package == 'linux-ec2' or
-            package == 'linux-armadaxp' or
-            package == 'linux-lowlatency'):
-            for entry in self.db.itervalues():
-                if version.startswith(entry['kernel']):
-                    retval = entry['name']
-
         if package.startswith('linux-lts-'):
+            Dbg.verbose('package condition 2\n')
             for entry in self.db.itervalues():
                 if entry['name'] in version:
                     retval = entry['name']
 
-        if package == 'linux-mvl-dove' or package == 'linux-fsl-imx51':
-            version, release = version.split('-')
-            if release:
-                abi, upload = release.split('.')
-                try:
-                    abi_n = int(abi)
-                except ValueError:
-                    abi_n = 0
-                if abi_n:
-                    if package == 'linux-mvl-dove':
-                        if abi_n < 400:
-                            retval = 'lucid'
-                        else:
-                            retval = 'maverick'
-                    elif package == 'linux-fsl-imx51':
-                        if abi_n < 600:
-                            retval = 'karmic'
-                        else:
-                            retval = 'lucid'
+        else:
+            Dbg.verbose('package condition 1\n')
+            for entry in self.db.itervalues():
+                if version.startswith(entry['kernel']):
+                    retval = entry['name']
 
+        Dbg.leave('series_name (%s)' % retval)
         return retval
 
 if __name__ == '__main__':
