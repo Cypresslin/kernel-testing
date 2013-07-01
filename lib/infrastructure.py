@@ -60,7 +60,7 @@ HWE = {
 #
 LabHW = {
     "gonzo" : {
-        "orchestra server" : "magners-orchestra",
+        "orchestra server" : "jiufeng",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "08:9e:01:3c:c9:60",
         "cdu" : [
@@ -71,7 +71,7 @@ LabHW = {
         ]
     },
     "fozzie" : {
-        "orchestra server" : "magners-orchestra",
+        "orchestra server" : "jiufeng",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "90:b1:1c:10:6b:03",
         "cdu" : [
@@ -82,7 +82,7 @@ LabHW = {
         ]
     },
     "scooter" : {
-        "orchestra server" : "magners-orchestra",
+        "orchestra server" : "jiufeng",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "d4:ae:52:a3:6a:22",
         "cdu" : [
@@ -93,7 +93,7 @@ LabHW = {
         ]
     },
     "rizzo" : {
-        "orchestra server" : "magners-orchestra",
+        "orchestra server" : "jiufeng",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "d4:ae:52:a3:6a:22",
         "cdu" : [
@@ -104,7 +104,7 @@ LabHW = {
         ]
     },
     "waldorf" : {
-        "orchestra server" : "magners-orchestra",
+        "orchestra server" : "jiufeng",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "00:1e:67:34:b8:5c",
         "cdu" : [
@@ -115,7 +115,7 @@ LabHW = {
         ]
     },
     "statler" : {
-        "orchestra server" : "magners-orchestra",
+        "orchestra server" : "jiufeng",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "60:eb:69:21:2c:6d",
         "cdu" : [
@@ -126,7 +126,7 @@ LabHW = {
         ]
     },
     "zoot" : {
-        "orchestra server" : "magners-orchestra",
+        "orchestra server" : "jiufeng",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "60:eb:69:21:2c:6c",
         "cdu" : [
@@ -137,7 +137,7 @@ LabHW = {
         ]
     },
     "pops" : {
-        "orchestra server" : "magners-orchestra",
+        "orchestra server" : "jiufeng",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "a0:36:9f:0f:1c:cc",
         "cdu" : [
