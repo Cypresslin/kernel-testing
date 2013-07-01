@@ -65,7 +65,7 @@ LabHW = {
         "mac address" : "08:9e:01:3c:c9:60",
         "cdu" : [
             {
-                "ip" : "10.97.0.12",
+                "ip" : "10.98.0.41",
                 "port" : "Gonzo"
             }
         ]
@@ -76,12 +76,8 @@ LabHW = {
         "mac address" : "90:b1:1c:10:6b:03",
         "cdu" : [
             {
-                "ip" : "10.97.0.11",
+                "ip" : "10.98.0.41",
                 "port" : "Fozzie_PS1"
-            },
-            {
-                "ip" : "10.97.0.12",
-                "port" : "Fozzie_PS2"
             }
         ]
     },
@@ -91,7 +87,7 @@ LabHW = {
         "mac address" : "d4:ae:52:a3:6a:22",
         "cdu" : [
             {
-                "ip" : "10.97.0.12",
+                "ip" : "10.98.0.41",
                 "port" : "Scooter"
             }
         ]
@@ -102,12 +98,8 @@ LabHW = {
         "mac address" : "d4:ae:52:a3:6a:22",
         "cdu" : [
             {
-                "ip" : "10.97.0.11",
+                "ip" : "10.98.0.41",
                 "port" : "Rizzo_PS1"
-            },
-            {
-                "ip" : "10.97.0.12",
-                "port" : "Rizzo_PS2"
             }
         ]
     },
@@ -117,7 +109,7 @@ LabHW = {
         "mac address" : "00:1e:67:34:b8:5c",
         "cdu" : [
             {
-                "ip" : "10.97.0.11",
+                "ip" : "10.97.0.43",
                 "port" : "Waldorf"
             }
         ]
@@ -128,47 +120,32 @@ LabHW = {
         "mac address" : "60:eb:69:21:2c:6d",
         "cdu" : [
             {
-                "ip" : "10.97.0.11",
+                "ip" : "10.98.0.41",
                 "port" : "Statler_PS1"
-            },
-            {
-                "ip" : "10.97.0.12",
-                "port" : "Statler_PS2"
             }
         ]
     },
-    "animal" : {
+    "zoot" : {
         "orchestra server" : "magners-orchestra",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "00:1e:67:65:89:f9",
+        "mac address" : "60:eb:69:21:2c:6c",
         "cdu" : [
             {
-                "ip" : "10.97.0.20",
-                "port" : "animal"
+                "ip" : "10.98.0.41",
+                "port" : "zoot_PS1"
             }
         ]
     },
-    #"zoot" : {
-    #    "orchestra server" : "magners-orchestra",
-    #    "jenkins server" : "kernel-jenkins",
-    #    "mac address" : "00:1e:67:65:89:f9",
-    #    "cdu" : [
-    #        {
-    #            "ip" : "10.97.0.20",
-    #            "port" : "zoot"
-    #        }
-    #    ]
-    #},
-    #"pops" : {
-    #    "orchestra server" : "magners-orchestra",
-    #    "jenkins server" : "kernel-jenkins",
-    #    "mac address" : "00:1e:67:65:86:aa",
-    #    "cdu" : [
-    #        {
-    #            "ip" : "10.97.0.20",
-    #            "port" : "pops"
-    #        }
-    #    ]
-    #}
+    "pops" : {
+        "orchestra server" : "magners-orchestra",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "a0:36:9f:0f:1c:cc",
+        "cdu" : [
+            {
+                "ip" : "10.98.0.41",
+                "port" : "pops_PS1"
+            }
+        ]
+    }
 }
 # vi:set ts=4 sw=4 expandtab:
