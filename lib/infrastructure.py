@@ -132,7 +132,7 @@ LabHW = {
     "zoot" : {
         "orchestra server" : "jiufeng",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "60:eb:69:21:2c:6c",
+        "mac address" : "a0:36:9f:0e:ed:08",
         "cdu" : [
             {
                 "ip" : "10.98.0.41",
