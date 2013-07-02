@@ -132,7 +132,7 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.0.41",
-                "port" : "zoot_PS1"
+                "port" : "Zoot_PS1"
             }
         ]
     },
@@ -143,7 +143,7 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.0.41",
-                "port" : "pops_PS1"
+                "port" : "Pops_PS1"
             }
         ]
     }
