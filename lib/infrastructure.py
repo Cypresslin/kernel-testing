@@ -27,6 +27,10 @@ Orchestra = {
             'preseed' : 'primary-no-slave',
             'server distro decoration' : '',
         },
+        'saucy' : {
+            'preseed' : 'primary-no-slave',
+            'server distro decoration' : '',
+        }
     }
 }
 

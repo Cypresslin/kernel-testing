@@ -132,7 +132,7 @@ class Ubuntu:
         {
             'development' : True,        # This is the version that is currently under development
             'series_version' : '13.10',
-            'kernel'    : '3.9.0',
+            'kernel'    : '3.10.0',
             'name'      : 'saucy',
             'supported' : False,
             # adjust packages when this goes live
