@@ -80,8 +80,8 @@ LabHW = {
         "mac address" : "90:b1:1c:10:6b:03",
         "cdu" : [
             {
-                "ip" : "10.98.0.41",
-                "port" : "Fozzie_PS1"
+                "ip" : "10.98.0.43",
+                "port" : "Fozzie_PS2"
             }
         ]
     },
@@ -146,8 +146,8 @@ LabHW = {
         "mac address" : "a0:36:9f:0f:1c:cc",
         "cdu" : [
             {
-                "ip" : "10.98.0.41",
-                "port" : "Pops_PS1"
+                "ip" : "10.98.0.43",
+                "port" : "Pops_PS2"
             }
         ]
     }
