@@ -140,6 +140,28 @@ LabHW = {
             }
         ]
     },
+    "floyd" : {
+        "orchestra server" : "jiufeng",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "a0:36:9f:14:65:38",
+        "cdu" : [
+            {
+                "ip" : "10.98.0.41",
+                "port" : "Floyd_PS1"
+            }
+        ]
+    },
+    "janice" : {
+        "orchestra server" : "jiufeng",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "a0:36:9f:14:65:70",
+        "cdu" : [
+            {
+                "ip" : "10.98.0.30",
+                "port" : "Janice_PS1"
+            }
+        ]
+    },
     "pops" : {
         "orchestra server" : "jiufeng",
         "jenkins server" : "kernel-jenkins",
@@ -148,6 +170,17 @@ LabHW = {
             {
                 "ip" : "10.98.0.43",
                 "port" : "Pops_PS2"
+            }
+        ]
+    },
+    "beaker" : {
+        "orchestra server" : "jiufeng",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "00:00:1a:1a:c4:97",
+        "cdu" : [
+            {
+                "ip" : "10.98.0.43",
+                "port" : "Beaker_PS2"
             }
         ]
     }
