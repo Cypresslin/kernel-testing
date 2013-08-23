@@ -25,11 +25,11 @@ Orchestra = {
         },
         'raring' : {
             'preseed' : 'primary-no-slave',
-            'server distro decoration' : '',
+            'server distro decoration' : '-server',
         },
         'saucy' : {
             'preseed' : 'primary-no-slave',
-            'server distro decoration' : '',
+            'server distro decoration' : '-server',
         }
     }
 }
