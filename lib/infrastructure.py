@@ -135,8 +135,8 @@ LabHW = {
         "mac address" : "a0:36:9f:0e:ed:08",
         "cdu" : [
             {
-                "ip" : "10.98.0.41",
-                "port" : "Zoot_PS1"
+                "ip" : "10.98.0.43",
+                "port" : "Zoot_PS2"
             }
         ]
     },
@@ -146,8 +146,8 @@ LabHW = {
         "mac address" : "a0:36:9f:14:65:38",
         "cdu" : [
             {
-                "ip" : "10.98.0.41",
-                "port" : "Floyd_PS1"
+                "ip" : "10.98.0.43",
+                "port" : "Floyd_PS2"
             }
         ]
     },
