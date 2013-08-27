@@ -33,7 +33,7 @@ class TestResultsReaper():
             try:
                 trr = TestResultsRepository()
                 for tr in trr.test_runs:
-                    termination = 30
+                    termination = 20
                     try:
                         results = trr.results(tr)
                     except:
