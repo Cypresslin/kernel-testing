@@ -1,7 +1,63 @@
-ubuntu-kernel-tests (0.0.7-1) unstable; urgency=low
-  * More Experimentation
+ubuntu-kernel-tests (0.0.14-1) unstable; urgency=low
 
- -- Brad Figg <brad.figg@canonical.com>  Wed, 26 Sep 2012 10:28:02 -0700
+ * Start new release
+
+ -- Brad Figg <brad.figg@canonical.com>  Tue, 03 Sep 2013 12:40:11 -0700
+
+ubuntu-kernel-tests (0.0.13-1) unstable; urgency=low
+
+ * [kernel-test-expander] Add pkg dependencies for saucy
+ * Start new release
+
+ -- Brad Figg <brad.figg@canonical.com>  Fri, 17 May 2013 08:12:40 -0700
+
+ubuntu-kernel-tests (0.0.12-1) unstable; urgency=low
+
+ * [kernel-test-expander]: Add 'quilt' to the list of packages that apparmor depends on
+
+ -- Brad Figg <brad.figg@canonical.com>  Thu, 06 Dec 2012 09:51:45 -0800
+
+ubuntu-kernel-tests (0.0.11-1) unstable; urgency=low
+
+ * [kernel-test-expander]: Add apparmor dependencies for raring series
+ * [kernel-test-expander]: added chromium-browser to power test dependencies
+
+ -- Brad Figg <brad.figg@canonical.com>  Wed, 05 Dec 2012 13:50:09 -0800
+
+ubuntu-kernel-tests (0.0.10-1) unstable; urgency=low
+
+ * kernel-test-expander: remove the xfstests from the default group and add it to the kernel group
+ * Start new release
+
+ -- Brad Figg <brad.figg@canonical.com>  Wed, 07 Nov 2012 09:45:29 -0800
+
+ubuntu-kernel-tests (0.0.9-1) unstable; urgency=low
+
+ * kernel-test-expander: Remove call to non-existant method
+ * Start new release
+
+ -- Brad Figg <brad.figg@canonical.com>  Tue, 09 Oct 2012 15:42:19 -0700
+
+ubuntu-kernel-tests (0.0.8-1) unstable; urgency=low
+
+ * kernel-test-expander: Be a *little* smarter about determining the scratch device (based on the root device)
+ * Start new release
+
+ -- Brad Figg <brad.figg@canonical.com>  Tue, 09 Oct 2012 15:35:03 -0700
+
+ubuntu-kernel-tests (0.0.7-1) unstable; urgency=low
+
+ * Add tasks for improving the reporting of busted jobs
+ * kernel-test-expander: Add ltp to the list of 'kernel' tests
+ * kernel-test-expander: Adjust the path to the autotest executable due to the changes in the new autotest
+ * testing-job.mako: Use the new autotest-client-tests tree
+ * kernel-test-expander: several tests were renamed
+ * kernel-test-expander: more dependencies
+ * kernel-test-expander: Make sure the presetup does an apt-get update before trying to install packages.
+ * kernel-test-expander: python_libapparmor is necessary for quantal series
+ * Start new release
+
+ -- Steve Conklin <sconklin@canonical.com>  Fri, 05 Oct 2012 13:03:03 -0600
 
 ubuntu-kernel-tests (0.0.6-1) unstable; urgency=low
 
