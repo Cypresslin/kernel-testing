@@ -162,6 +162,7 @@ class MailHandler():
 
             self.send_reply(e_from, 'Re: %s' % e_subject, body)
         else:
+            info('Help sent to: %s' % e_from)
             if send_help:
                 body = """
 The body of the email message should be a simple set of "name":"value" pairs,
