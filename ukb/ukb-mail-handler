@@ -33,7 +33,7 @@ class MailHandler():
     #
     def __init__(self, args):
         self.args = args
-        self.jenkins_url_default = "http://10.97.9.20:8080"
+        self.jenkins_url_default = "http://10.98.2.10:8080"
         self.default_systems=['gonzo', 'fozzie', 'waldorf', 'rizzo'] # statler is just too big a pain
         self.default_arches=['amd64', 'i386']
 
