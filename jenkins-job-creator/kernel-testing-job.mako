@@ -29,7 +29,7 @@
     <builders>
         <hudson.tasks.Shell>
             <command>
-    KT=/var/lib/jenkins/kernel-testing-bjf
+    KT=/var/lib/jenkins/kernel-testing
 
 <%
 if data.sut == 'virtual':

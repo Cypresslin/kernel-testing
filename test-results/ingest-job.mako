@@ -16,7 +16,7 @@
     <builders>
         <hudson.tasks.Shell>
             <command>
-    KT=/var/lib/jenkins/kernel-testing-bjf
+    KT=/var/lib/jenkins/kernel-testing
 
     sleep 60
     $KT/test-results/ingest $JENKINS_HOME/jobs/${data.job_name}/builds/${data.build_id}

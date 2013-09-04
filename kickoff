@@ -67,6 +67,6 @@ set -x
 #
 rsync -ar --exclude '.git' -e "ssh -o StrictHostKeyChecking=no" $TEST_REPOSITORY_HOST:autotest/ ./autotest/
 rsync -ar --exclude '.git' -e "ssh -o StrictHostKeyChecking=no" $TEST_REPOSITORY_HOST:autotest-client-tests/ ./autotest/client/tests/
-rsync -ar --exclude '.git' -e "ssh -o StrictHostKeyChecking=no" $TEST_REPOSITORY_HOST:kernel-testing-bjf/ ./kernel-testing/
+rsync -ar --exclude '.git' -e "ssh -o StrictHostKeyChecking=no" $TEST_REPOSITORY_HOST:kernel-testing/ ./kernel-testing/
 
 python $CDIR/kernel-testing/runner $KERNEL_TEST_LIST
