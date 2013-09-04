@@ -317,9 +317,9 @@ system: The name of the lab system that is to be used for the testing. The
 
                 # Mainline Build from the mainline builder
                 #
-                if 'Mainline Build' in e_subject:
-                    self.handle_mainline_build(msg)
-                    break
+                #if 'Mainline Build' in e_subject:
+                #    self.handle_mainline_build(msg)
+                #    break
 
                 if 'kernel test request' in e_subject.lower():
                     self.handle_test_request(msg)
