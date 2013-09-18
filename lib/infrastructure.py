@@ -99,7 +99,7 @@ LabHW = {
     "rizzo" : {
         "orchestra server" : "jiufeng",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "d4:ae:52:a3:6a:22",
+        "mac address" : "d4:ae:52:7c:c6:2a",
         "cdu" : [
             {
                 "ip" : "10.98.0.41",
