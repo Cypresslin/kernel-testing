@@ -75,6 +75,7 @@ TestProfiles = {
                 'build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev', 'gdb',
                 'python-pexpect', 'apparmor', 'apparmor-utils', 'netcat', 'sudo', 'build-essential', 'libapparmor-dev',
                 'ruby1.8', 'attr', 'apport', 'libpam-apparmor', 'libgtk2.0-dev', 'pyflakes', 'apparmor-profiles', 'quilt',
+                'libdbus-1-dev'
                 ],
             'saucy' : [
                 'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev',
