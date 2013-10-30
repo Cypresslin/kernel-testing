@@ -107,7 +107,7 @@ LabHW = {
             },
             {
                 "ip" : "10.98.0.43",
-                "port" : "Rizzo_PS1"
+                "port" : "Rizzo_PS2"
             }
         ]
     },
