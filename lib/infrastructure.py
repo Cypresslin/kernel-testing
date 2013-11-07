@@ -30,7 +30,11 @@ Orchestra = {
         'saucy' : {
             'preseed' : 'primary-no-slave',
             'server distro decoration' : '-server',
-        }
+        },
+        'trusty' : {
+            'preseed' : 'primary-no-slave',
+            'server distro decoration' : '-server',
+        },
     }
 }
 
@@ -55,6 +59,11 @@ HWE = {
         'raring' : {
             'series' : 'precise',
             'package' : 'linux-generic-lts-raring',
+            'ppa' : True,
+        },
+        'saucy' : {
+            'series' : 'precise',
+            'package' : 'linux-generic-lts-saucy',
             'ppa' : True,
         },
 }
