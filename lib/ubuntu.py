@@ -128,18 +128,19 @@ class Ubuntu:
     # * sha1 XXX: doesn't seem to be used anymore
     # * md5 XXX: doesn't seem to be used anymore
     db = {
-        '13.10' :
+        '14.04' :
         {
             'development' : True,        # This is the version that is currently under development
-            'series_version' : '13.10',
-            'kernel'    : '3.11.0',
-            'name'      : 'saucy',
+            'series_version' : '14.04',
+            'kernel'    : '3.12.0',
+            'name'      : 'trusty',
             'supported' : False,
             # adjust packages when this goes live
             'packages'  :
             [
                 'linux',
                 'linux-meta',
+                'linux-exynos5',
             ],
             'dependent-packages' :
             {
@@ -147,10 +148,43 @@ class Ubuntu:
                     'meta'   : 'linux-meta',
                     'signed' : 'linux-signed'
                 },
+                'linux-exynos5' : { 'meta' : 'linux-meta-exynos5' },
             },
             'derivative-packages' :
             {
-                #'linux' : [ 'linux-ppc' ]
+                'linux' : [ 'linux-exynos5' ]
+            },
+            'sha1' : '',
+            'md5' : ''
+        },
+        '13.10' :
+        {
+            'development' : False,
+            'series_version' : '13.10',
+            'kernel'    : '3.11.0',
+            'name'      : 'saucy',
+            'supported' : True,
+            # adjust packages when this goes live
+            'packages'  :
+            [
+                'linux',
+                'linux-meta',
+                'linux-exynos5',
+            ],
+            'dependent-packages' :
+            {
+                'linux' : {
+                    'meta'   : 'linux-meta',
+                    'signed' : 'linux-signed'
+                },
+                'linux-exynos5' : { 'meta' : 'linux-meta-exynos5' },
+                'linux-lowlatency' : { 'meta' : 'linux-meta-lowlatency' },
+                'linux-ppc' : { 'meta' : 'linux-meta-ppc' }
+            },
+            'derivative-packages' :
+            {
+                'linux' : [ 'linux-exynos5' ],
+                'linux' : [ 'linux-lowlatency', 'linux-ppc' ]
             },
             'sha1' : '',
             'md5' : ''
@@ -236,6 +270,9 @@ class Ubuntu:
                 'linux-lts-raring',
                 'linux-meta-lts-raring',
                 'linux-signed-lts-raring',
+                'linux-lts-saucy',
+                'linux-meta-lts-saucy',
+                'linux-signed-lts-saucy',
                 'linux-ti-omap4',
                 'linux-meta-ti-omap4',
                 'linux-armadaxp',
@@ -255,6 +292,10 @@ class Ubuntu:
                     'meta' : 'linux-meta-lts-raring',
                     'signed' : 'linux-signed-lts-raring'
                 },
+                'linux-lts-saucy' : {
+                    'meta' : 'linux-meta-lts-saucy',
+                    'signed' : 'linux-signed-lts-saucy'
+                },
                 'linux-ti-omap4' : { 'meta' : 'linux-meta-ti-omap4' },
                 'linux-armadaxp' : { 'meta' : 'linux-meta-armadaxp' },
                 'linux-lowlatency' : { 'meta' : 'linux-meta-lowlatency' }
@@ -267,6 +308,7 @@ class Ubuntu:
             {
                 'linux-lts-quantal' : [ 'linux', '12.10' ],
                 'linux-lts-raring' : [ 'linux', '13.04' ],
+                'linux-lts-saucy' : [ 'linux', '13.10' ],
             },
             'sha1' : '',
             'md5' : ''
@@ -517,7 +559,8 @@ class Ubuntu:
     }
 
     index_by_kernel_version = {
-        '3.11.0'    : db['13.10'],
+        '3.12.0'   : db['14.04'],
+        '3.11.0'   : db['13.10'],
         '3.8.0'    : db['13.04'],
         '3.5.0'    : db['12.10'],
         '3.2.0'    : db['12.04'],
@@ -535,6 +578,7 @@ class Ubuntu:
     }
 
     index_by_series_name = {
+        'trusty'   : db['14.04'],
         'saucy'    : db['13.10'],
         'raring'   : db['13.04'],
         'quantal'  : db['12.10'],
@@ -556,6 +600,7 @@ class Ubuntu:
         'linux',
         'linux-ti-omap4', # maverick, natty
         'linux-armadaxp', # precise, quantal
+        'linux-exynos5', # raring
         'linux-mvl-dove', # maverick, karmic, lucid
         'linux-fsl-imx51', # karmic, lucid
         'linux-ec2',
