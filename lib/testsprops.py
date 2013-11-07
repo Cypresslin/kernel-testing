@@ -117,6 +117,17 @@ TestProfiles = {
         'scratch' : True,
         },
 
+    'iozone' : {
+        'packages' : {
+            'common' : [
+                'gnuplot', 'xfsdump', 'xfsprogs', 'btrfs-tools', 'gdb',
+                ],
+            },
+        'command' : 'sudo mkdir -p /media/iozonemount',
+        'atargs' : {}, # this gets filled in later, it's a hack
+        'scratch' : True,
+        },
+
     'iperf' : {
         'packages' : {
             'common' : ['sysstat', 'gdb'],
