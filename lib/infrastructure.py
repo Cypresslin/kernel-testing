@@ -73,127 +73,140 @@ HWE = {
 #
 LabHW = {
     "gonzo" : {
-        "orchestra server" : "jiufeng",
+        "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "08:9e:01:3c:c9:60",
         "cdu" : [
             {
-                "ip" : "10.98.0.41",
-                "port" : "Gonzo"
+                "ip" : "10.98.4.33",
+                "port" : "gonzo"
             }
         ]
     },
     "fozzie" : {
-        "orchestra server" : "jiufeng",
+        "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "90:b1:1c:10:6b:03",
         "cdu" : [
             {
-                "ip" : "10.98.0.43",
-                "port" : "Fozzie_PS2"
-            }
-        ]
-    },
-    "scooter" : {
-        "orchestra server" : "jiufeng",
-        "jenkins server" : "kernel-jenkins",
-        "mac address" : "d4:ae:52:a3:6a:22",
-        "cdu" : [
+                "ip" : "10.98.4.32",
+                "port" : "fozzie-ps1"
+            },
             {
-                "ip" : "10.98.0.41",
-                "port" : "Scooter"
+                "ip" : "10.98.4.33",
+                "port" : "fozzie-ps2"
             }
         ]
     },
     "rizzo" : {
-        "orchestra server" : "jiufeng",
+        "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "d4:ae:52:7c:c6:2a",
         "cdu" : [
             {
-                "ip" : "10.98.0.41",
-                "port" : "Rizzo_PS1"
+                "ip" : "10.98.4.32",
+                "port" : "rizzo-ps1"
             },
             {
-                "ip" : "10.98.0.43",
-                "port" : "Rizzo_PS2"
+                "ip" : "10.98.4.33",
+                "port" : "rizzo-ps2"
             }
         ]
     },
     "waldorf" : {
-        "orchestra server" : "jiufeng",
+        "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "00:1e:67:34:b8:5c",
         "cdu" : [
             {
-                "ip" : "10.98.0.43",
-                "port" : "Waldorf"
+                "ip" : "10.98.4.30",
+                "port" : "waldorf"
             }
         ]
     },
     "statler" : {
-        "orchestra server" : "jiufeng",
+        "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "60:eb:69:21:2c:6d",
         "cdu" : [
             {
-                "ip" : "10.98.0.41",
-                "port" : "Statler_PS1"
+                "ip" : "10.98.4.30",
+                "port" : "statler-ps1"
+            },
+            {
+                "ip" : "10.98.4.31",
+                "port" : "statler-ps2"
             }
         ]
     },
     "zoot" : {
-        "orchestra server" : "jiufeng",
+        "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "a0:36:9f:0e:ed:08",
         "cdu" : [
             {
-                "ip" : "10.98.0.43",
-                "port" : "Zoot_PS2"
+                "ip" : "10.98.4.30",
+                "port" : "zoot-ps1"
+            },
+            {
+                "ip" : "10.98.4.31",
+                "port" : "zoot-ps2"
             }
         ]
     },
     "floyd" : {
-        "orchestra server" : "jiufeng",
+        "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "a0:36:9f:14:65:38",
         "cdu" : [
             {
-                "ip" : "10.98.0.43",
-                "port" : "Floyd_PS2"
+                "ip" : "10.98.4.32",
+                "port" : "floyd-ps1"
+            },
+            {
+                "ip" : "10.98.4.33",
+                "port" : "floyd-ps2"
             }
         ]
     },
     "janice" : {
-        "orchestra server" : "jiufeng",
+        "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "a0:36:9f:14:65:70",
         "cdu" : [
             {
-                "ip" : "10.98.0.30",
-                "port" : "Janice_PS1"
+                "ip" : "10.98.4.32",
+                "port" : "janice-ps1"
+            },
+            {
+                "ip" : "10.98.4.33",
+                "port" : "janice-ps2"
             }
         ]
     },
     "pops" : {
-        "orchestra server" : "jiufeng",
+        "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "a0:36:9f:0f:1c:cc",
         "cdu" : [
             {
-                "ip" : "10.98.0.43",
-                "port" : "Pops_PS2"
+                "ip" : "10.98.4.30",
+                "port" : "pops-ps1"
+            },
+            {
+                "ip" : "10.98.4.31",
+                "port" : "pops-ps2"
             }
         ]
     },
     "beaker" : {
-        "orchestra server" : "jiufeng",
+        "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "00:00:1a:1a:c4:97",
         "cdu" : [
             {
-                "ip" : "10.98.0.43",
-                "port" : "Beaker_PS2"
+                "ip" : "10.98.4.30",
+                "port" : "beaker"
             }
         ]
     }
