@@ -182,28 +182,18 @@ class Ingest():
             cmdline += '--set4 '
             for pth in pathcoll['btrfs']:
                 cmdline += (pth + ' ')
-            #cmdline += '--multiset'
 
             cmdline += '--multiset'
 
-            print cmdline
             sh(cmdline)
+
+            # Now replace the text in the generated web page
     
-            #BPATH="./"
-
-            #BASELINE=$(find $BPATH/ext4 -name "raw_output_1" | sort)
-            #SET1=$(find $BPATH/ext3 -name "raw_output_1" | sort)
-            #SET2=$(find $BPATH/xfs -name "raw_output_1" | sort)
-            #SET3=$(find $BPATH/btrfs -name "raw_output_1" | sort)
-
-            # For multi-set
-            #../../iozone-results-comparator/src/iozone_results_comparator.py --baseline ${BASELINE} --set1 ${SET1} --set2 ${SET2} --set3 ${SET3} --multiset
-
-            #sed -i.bak s/baseline/ext4/g html_out/index.html
-            #sed -i.bak s/set1/ext3/g html_out/index.html
-            #sed -i.bak s/set2/xfs/g html_out/index.html
-            #sed -i.bak s/set3/btrfs/g html_out/index.html
-
+            sh('cd ' + html_dir + '  ; sed -i.bak s/baseline/ext4/g html_out/index.html')
+            sh('cd ' + html_dir + ' ; sed -i.bak s/set1/ext3/g html_out/index.html')
+            sh('cd ' + html_dir + ' ; sed -i.bak s/set2/ext2/g html_out/index.html')
+            sh('cd ' + html_dir + ' ; sed -i.bak s/set3/xfs/g html_out/index.html')
+            sh('cd ' + html_dir + ' ; sed -i.bak s/set4/btrfs/g html_out/index.html')
 
             # Generate the web pages for the test results.
             #

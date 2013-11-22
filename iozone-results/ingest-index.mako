@@ -66,6 +66,7 @@ test_failures = False
                             <tr> <td width="100" align="right">timestamp :</td> <td width="2">&nbsp;</td> <td align="left">${ test_attributes['timestamp'] }</td> </tr>
                             <tr> <td width="100" align="right">kernel :</td> <td width="2">&nbsp;</td> <td align="left">${ test_attributes['kernel'] }</td> </tr>
                             <tr> <td width="100" align="right">job :</td> <td width="2">&nbsp;</td> <td align="left">${ test_attributes['environ']['JOB_NAME'] }</td> </tr>
+                            <tr> <td width="100" align="right">results :</td> <td width="2">&nbsp;</td> <td align="left"><a href="iozone/html_out/index.html">charts</a></td> </tr>
                             <tr> <td width="100" align="right">console output :</td> <td width="2">&nbsp;</td> <td align="left"><a href="console_output.txt.html">log</a></td> </tr>
                         </table>
                     </div>
@@ -157,7 +158,7 @@ test_failures = False
                         <table width="100%">
                             <tr>
                                 <td align="left" valign="bottom" colspan="5">
-                                  <span style="font-size: 10px; color: #aea79f !important">(c) 2012 Canonical Ltd. Ubuntu and Canonical are registered trademarks of Canonical Ltd.</span>
+                                  <span style="font-size: 10px; color: #aea79f !important">(c) 2012 Canonical Ltd. Ubuntu and Canonical are registered trademarks of Canonical Ltd.  (template: ingest-index.mako)</span>
                                 </td>
                                 <td align="right" valign="top">
                                     <a href="http://ubuntu.com"><img src="http://kernel.ubuntu.com/media/ubuntu-footer-logo.png"></a>

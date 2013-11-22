@@ -82,7 +82,7 @@ title = "%s - %s - %s" % (target_suite.replace('autotest.', ''), test_attributes
                                             <td style="background: #e9e7e5;" colspan="6"><span style="font-weight: normal;font-size: 14px;">Tests</span></td>
                                         </tr>
                                         <tr>
-                                            <th width="10">&nbsp;</th><th>Name</th> <th width="100" align="center">Duration</th><th width="50">Status</th>
+                                            <th width="10">&nbsp;</th><th>Name</th> <th>Graphs</th> <th width="100" align="center">Duration</th><th width="50">Status</th>
                                         </tr>
                                         <%
                                             for suite in test_results['suites']:
@@ -110,10 +110,12 @@ title = "%s - %s - %s" % (target_suite.replace('autotest.', ''), test_attributes
 
                                                 name = suite['name'].replace('autotest.','')
                                                 error_link = "%s" % name
+                                                graphs_link = "%s" % name
                                                 error_link += "/results/%s.%s/debug/%s.%s.DEBUG.html" % (name, case['name'], name, case['name'])
+                                                graphs_link += "/results/%s.%s/results/analysis_1/index.html" % (name, case['name'])
                                             %>
                                             <tr>
-                                                <td>&nbsp;</td><td><a href="${ error_link }">${ case['name'] }</a></td> <td align="center">${ duration }</td><td style="color: ${ status_color }">${ status }</td>
+                                                <td>&nbsp;</td><td><a href="${ error_link }">${ case['name'] }</a></td><td><a href="${ graphs_link }">(graphs)</a></td> <td align="center">${ duration }</td><td style="color: ${ status_color }">${ status }</td>
                                             </tr>
                                         % endfor
                                     </table>
@@ -126,7 +128,7 @@ title = "%s - %s - %s" % (target_suite.replace('autotest.', ''), test_attributes
                         <table width="100%">
                             <tr>
                                 <td align="left" valign="bottom" colspan="5">
-                                  <span style="font-size: 10px; color: #aea79f !important">(c) 2012 Canonical Ltd. Ubuntu and Canonical are registered trademarks of Canonical Ltd.</span>
+                                  <span style="font-size: 10px; color: #aea79f !important">(c) 2012 Canonical Ltd. Ubuntu and Canonical are registered trademarks of Canonical Ltd.  (template: index-suite.mako)</span>
                                 </td>
                                 <td align="right" valign="top">
                                     <a href="http://ubuntu.com"><img src="http://kernel.ubuntu.com/media/ubuntu-footer-logo.png"></a>
