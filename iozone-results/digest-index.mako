@@ -46,7 +46,7 @@
                         <div id="dash-timestamp">
                             <a href="http://ubuntu.com" title="Home" rel="home"><img src="http://kernel.ubuntu.com/media/ubuntu-logo.png" alt="Home" /></a>
                         </div>
-                        <h1>Kernel Testing</h1>
+                        <h1>Kernel Benchmarks</h1>
                     </div> <!-- header -->
 
                     <br />
@@ -95,7 +95,7 @@
 
                                                                 dt = datetime.strptime(record['attributes']['timestamp'], '%Y-%m-%d %H:%M')
                                                                 ts = dt.strftime('%Y-%m-%d_%H-%M-%S')
-                                                                link = "http://kernel.ubuntu.com/testing/test-results/%s__%s__%s/results-index.html" % (record['attributes']['platform']['hostname'], record['attributes']['kernel'], ts)
+                                                                link = "http://kernel.ubuntu.com/benchmarks/%s__%s__%s/results-index.html" % (record['attributes']['platform']['hostname'], record['attributes']['kernel'], ts)
 
                                                                 hardware = 'real'
                                                                 if 'hardware' in record['attributes']['platform']:
@@ -108,7 +108,7 @@
                                                             %>
                                                             <tr>
                                                                 <td>&nbsp;</td>
-                                                                <td><a href="test-results/${ record['attributes']['platform']['hostname'] }.html">${ record['attributes']['platform']['hostname'] }</a></td>
+                                                                <td><a href="benchmarks/${ record['attributes']['platform']['hostname'] }.html">${ record['attributes']['platform']['hostname'] }</a></td>
                                                                 <td align="center">${ arch } </td>
                                                                 <td align="center">${hardware}</td>
                                                                 <td align="center">${ record['attributes']['timestamp'] }</td>
@@ -129,89 +129,6 @@
                             </tr>
                         </table>
                     </div> <!-- dash-section -->
-
-                    <!--
-                    <h1>Benchmarks</h1>
-                    <div class="dash-section">
-                        <table width="100%">
-                            <tr> <td style="background: #e9e7e5;">quantal</td> </tr>
-                            <tr>
-                                <td>
-                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                                        <td width="5">&nbsp;</td>
-                                        <td>
-                                            <table border="0" cellpadding="0" cellspacing="0">
-                                                <tr>
-                                                    <th width="100">&nbsp;</th>
-                                                    <th align="center" colspan="2" style="border-color: green; border-width: 0 0 1px 0; border-style: solid;"><a href="test-results/statler.html">statler</a></th>
-                                                    <th width="10">&nbsp;</th>
-                                                    <th align="center" colspan="2" style="border-color: green; border-width: 0 0 1px 0; border-style: solid;"><a href="test-results/waldorf.html">waldorf</a></th>
-                                                </tr>
-                                                <tr>
-                                                    <td>bonnie</td>
-                                                    <td align="center" width="100"><a href="benchmarks/statler-bonnie-3.4.0-all.html">all</a></td> <td align="center" width="100"><a href="benchmarks/statler-bonnie-3.4.0.html">block &amp; char i/o</a></td>
-                                                    <td>&nbsp;</td>
-                                                    <td align="center" width="100"><a href="benchmarks/waldorf-bonnie-3.4.0-all.html">all</a></td> <td align="center" width="100"><a href="benchmarks/waldorf-bonnie-3.4.0.html">block &amp; char i/o</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>compilebench</td>
-                                                    <td align="center" colspan="2"><a href="benchmarks/statler-compilebench-3.4.0.html">results</a>
-                                                    <td>&nbsp;</td>
-                                                    <td align="center" colspan="2"><a href="benchmarks/waldorf-compilebench-3.4.0.html">results</a>
-                                                </tr>
-                                                <tr>
-                                                    <td>dbench</td>
-                                                    <td align="center" colspan="2"><a href="benchmarks/statler-bonnie-3.4.0.html">results</a></td>
-                                                    <td>&nbsp;</td>
-                                                    <td align="center" colspan="2"><a href="benchmarks/waldorf-bonnie-3.4.0.html">results</a></td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </table>
-                                </td>
-                            </tr>
-
-                            <tr><td>&nbsp;</td></tr>
-
-                            <tr> <td style="background: #e9e7e5;">precise</td> </tr>
-                            <tr>
-                                <td>
-                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                                        <td width="5">&nbsp;</td>
-                                        <td>
-                                            <table border="0" cellpadding="0" cellspacing="0">
-                                                <tr>
-                                                    <th width="100">&nbsp;</th>
-                                                    <th align="center" colspan="2" style="border-color: green; border-width: 0 0 1px 0; border-style: solid;"><a href="test-results/statler.html">statler</a></th>
-                                                    <th width="10">&nbsp;</th>
-                                                    <th align="center" colspan="2" style="border-color: green; border-width: 0 0 1px 0; border-style: solid;"><a href="test-results/waldorf.html">waldorf</a></th>
-                                                </tr>
-                                                <tr>
-                                                    <td>bonnie</td>
-                                                    <td align="center" width="100"><a href="benchmarks/statler-bonnie-3.2.0-all.html">all</a></td> <td align="center" width="100"><a href="benchmarks/statler-bonnie-3.2.0.html">block &amp; char i/o</a></td>
-                                                    <td>&nbsp;</td>
-                                                    <td align="center" width="100"><a href="benchmarks/waldorf-bonnie-3.2.0-all.html">all</a></td> <td align="center" width="100"><a href="benchmarks/waldorf-bonnie-3.2.0.html">block &amp; char i/o</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>compilebench</td>
-                                                    <td align="center" colspan="2"><a href="benchmarks/statler-compilebench-3.2.0.html">results</a></td>
-                                                    <td>&nbsp;</td>
-                                                    <td align="center" colspan="2"><a href="benchmarks/waldorf-compilebench-3.2.0.html">results</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>dbench</td>
-                                                    <td align="center" colspan="2"><a href="benchmarks/statler-bonnie-3.2.0.html">results</a></td>
-                                                    <td>&nbsp;</td>
-                                                    <td align="center" colspan="2"><a href="benchmarks/waldorf-bonnie-3.2.0.html">results</a></td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    -->
 
                     <div class="index-bottom-section">
                         <table width="100%"> <!-- The section is one big table -->
