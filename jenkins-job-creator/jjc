@@ -299,7 +299,7 @@ examples:
 
     parser.add_argument('--hw',           required=True,  choices=LabHW.keys(), help='The hardware-name for the system in the hardware database that will be used for the bare metal installation portion of any of these jobs.')
 
-    parser.add_argument('--jenkins-url',  required=False, default='http://kernel-jenkins:8080', help='URL to the jenkins host.')
+    parser.add_argument('--jenkins-url',  required=False, default='http://kernel-jenkins.ubuntu-ci:8080', help='URL to the jenkins host.')
     parser.add_argument('--no-autostart', required=False, action='store_true', default=False, help='Create the jenkins jobs but do not start them.')
     parser.add_argument('--no-test',      required=False, action='store_true', default=False, help='Don\'t create the test job. Sometimes you just want the job(s) that do the provisioning.')
     parser.add_argument('--tt',           required=False, default=default_testing_job_template, help='The name of the test-job template. (If you don\'t know what this is you shouldn\'t be specifying it.)')
