@@ -43,7 +43,7 @@ class Cmdline:
         Prints out the help text which explains the command line options.
         """
         stdo("    Usage:                                                                                   \n")
-        stdo("        %s [<options>] <test-results-root>                                                   \n" % defaults['app_name'])
+        stdo("        %s [<options>] <benchmark-results-root>                                              \n" % defaults['app_name'])
         stdo("                                                                                             \n")
         stdo("    Options:                                                                                 \n")
         stdo("        --help           Prints this text.                                                   \n")
@@ -97,7 +97,7 @@ class Cmdline:
             # Required options:
             #
             if 'root' not in cfg:
-                raise CmdlineError("You must specify the root directory of the test results that you wish to incorporate into the test-results repository.")
+                raise CmdlineError("You must specify the root directory of the test results that you wish to incorporate into the benchmark-results repository.")
 
         except GetoptError, error:
             raise CmdlineError(error)
@@ -165,7 +165,7 @@ class Ingest():
             
             # build the command line to generate scripted results from the test run
             # the --html_dir argument is broken, so just cd to where we want it
-            expath = '/home/jenkins/iozone-results-comparator/src/iozone_results_comparator.py'
+            expath = '/var/lib/jenkins/iozone-results-comparator/src/iozone_results_comparator.py'
             cmdline = 'cd ' + html_dir + ';' + expath + ' --baseline '
             for pth in pathcoll['ext4']:
                 cmdline += (pth + ' ')
