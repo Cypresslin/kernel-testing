@@ -77,6 +77,9 @@ TestProfiles = {
                 'ruby1.8', 'attr', 'apport', 'libpam-apparmor', 'libgtk2.0-dev', 'pyflakes', 'apparmor-profiles', 'quilt',
                 'libdbus-1-dev'
                 ],
+            'trusty' : [
+                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev',
+                ],
             'saucy' : [
                 'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev',
                 ],
