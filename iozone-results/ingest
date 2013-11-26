@@ -165,8 +165,7 @@ class Ingest():
             
             # build the command line to generate scripted results from the test run
             # the --html_dir argument is broken, so just cd to where we want it
-            expath = '/src/iozone-results-comparator/src/iozone_results_comparator.py'
-            #expath = '/home/jenkins/iozone-results-comparator/src/iozone_results_comparator.py'
+            expath = '/home/jenkins/iozone-results-comparator/src/iozone_results_comparator.py'
             cmdline = 'cd ' + html_dir + ';' + expath + ' --baseline '
             for pth in pathcoll['ext4']:
                 cmdline += (pth + ' ')
