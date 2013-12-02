@@ -202,7 +202,7 @@ LabHW = {
     "beaker" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "00:00:1a:1a:c4:97",
+        "mac address" : "00:00:1a:1a:c4:98",
         "cdu" : [
             {
                 "ip" : "10.98.4.30",
