@@ -108,7 +108,7 @@
                                                             %>
                                                             <tr>
                                                                 <td>&nbsp;</td>
-                                                                <td><a href="${ record['attributes']['platform']['hostname'] }.html">${ record['attributes']['platform']['hostname'] }</a></td>
+                                                                <td><a href="benchmark-results/${ record['attributes']['platform']['hostname'] }.html">${ record['attributes']['platform']['hostname'] }</a></td>
                                                                 <td align="center">${ arch } </td>
                                                                 <td align="center">${hardware}</td>
                                                                 <td align="center">${ record['attributes']['timestamp'] }</td>
