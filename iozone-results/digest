@@ -7,7 +7,8 @@
 from sys                                import argv
 from getopt                             import getopt, GetoptError
 from datetime                           import datetime
-from os                                 import path
+from os                                 import path, walk, makedirs
+from shutil                             import rmtree, copytree
 
 from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
@@ -15,6 +16,7 @@ from mako.exceptions                    import RichTraceback
 from grinder                            import CmdlineError, Exit, TestResultsRepository, TestResultsRepositoryError, load_template
 from lib.dbg                            import Dbg
 from lib.utils                          import error, stdo, dump, string_to_date, json_load
+from lib.shell                          import sh
 
 from lib.ubuntu                         import Ubuntu
 from lib.debian                         import Debian
@@ -166,6 +168,62 @@ class Digest():
         Dbg.leave("Digest.series")
         return retval
 
+    #
+    #
+    def generateReleaseComparison(self, first, second, outputDir):
+        #
+        # In output directory, create a directory named to have
+        # both versions in it
+        #
+        # Under that, create a directory for each file system type
+        # In those directories, put the results for each file system type
+        #print '========================'
+        #print 'generateReleaseComparison comparing %s (%s) to %s (%s)' % (first['attributes']['distro-release-name'], first['attributes']['kernel'], second['attributes']['distro-release-name'], second['attributes']['kernel'])
+
+
+        firstPath = first['attributes']['resultspath']
+        secondPath = second['attributes']['resultspath']
+        outputDir = outputDir.encode('utf-8')
+        if path.isdir(outputDir):
+            # skip if already done for these versions
+            return
+        makedirs(outputDir)
+        # do each type of file system separately
+        for fstype in ['ext4', 'ext3', 'ext2', 'xfs', 'btrfs']:
+            print '    ', fstype
+            # Each fs type has results from multiple runs. We collect a list of these
+            # file paths, and the charting app will average them all
+            firstFsFiles = []
+            secondFsFiles = []
+            for root, dirs, files in walk(firstPath):
+                for file in files:
+                    if file == "raw_output_1":
+                        if 'iozone.%s_' % fstype in root:
+                            firstFsFiles.append(path.join(root, file).encode('utf-8'))
+            for root, dirs, files in walk(secondPath):
+                for file in files:
+                    if file == "raw_output_1":
+                        if 'iozone.%s_' % fstype in root:
+                            secondFsFiles.append(path.join(root, file).encode('utf-8'))
+
+            script = 'cd %s\n' % outputDir
+            script += '/var/lib/jenkins/iozone-results-comparator/src/iozone_results_comparator.py --baseline '
+            for filename in sorted(firstFsFiles):
+                script += filename + ' '
+            script += '--set1 '
+            for filename in sorted(secondFsFiles):
+                script += filename + ' '
+            script += '\n'
+
+
+            sh(script, 120)
+
+            # The script puts output in the html_out directory, copy all that to the correct filesystem subdir
+            srcPath = path.join(outputDir, 'html_out')
+            destPath = path.join(outputDir, fstype)
+            copytree(srcPath, destPath)
+            rmtree(srcPath)
+
     # main
     #
     def main(self):
@@ -191,6 +249,8 @@ class Digest():
                 series = self.series(results)
                 results['attributes']['series'] = series
                 Dbg.verbose("    series: %s\n" % (series))
+
+                results['attributes']['resultspath'] =  path.join(self.trr.cfg['repository_root'], tr, 'iozone/results')
 
                 # "Fixup" the timestamp to be what we want it to look like on the web page
                 #
@@ -221,11 +281,76 @@ class Digest():
 
             #dump(data)
 
+            #
+            #
+            # We generate comparisons between different individual results sets.
+            # This compares performance for each file system type between two releases.
+            # These two can be different series (i.e. Saucy against Trusty), or
+            # successive releases of the same series
+            #
 
+            # series to series comparisons, use newest of each
+            s2s = []
+            # version to version is for each sucessive pair within a series
+            v2v = {}
+            # Generate the comparisons between series
+            #
+            seriesList = sorted(data, reverse=True)
+            for series in seriesList:
+                versions = sorted(data[series], reverse=True)
+                s2s.append(versions[0])
+                versionlist = []
+                for version in versions:
+                    versionlist.append(version)
+                v2v[series] = versionlist
+
+            seriespairs = []
+            versionpairs = []
+            # create the pairs to be generated
+            for i in range(len(seriesList)):
+                # find series-to-series comparisons
+                # TODO we just take the first test in the list, not sure what else to do here
+                secondOne = data[seriesList[i]][v2v[seriesList[i]][0]][0]
+                if i+1 < len(seriesList):
+                    firstOne = data[seriesList[i+1]][v2v[seriesList[i+1]][0]][0]
+                    outDir = '%s_%s-to-%s_%s' % \
+                        (firstOne['attributes']['distro-release-name'], firstOne['attributes']['kernel'],
+                         secondOne['attributes']['distro-release-name'], secondOne['attributes']['kernel'])
+                    outPath = path.join(self.trr.cfg['repository_root'], outDir)
+                    #print 'Top: comparing %s (%s) to %s (%s)' % \
+                    #    (firstOne['attributes']['distro-release-name'], firstOne['attributes']['kernel'], secondOne['attributes']['distro-release-name'], secondOne['attributes']['kernel'])
+                    # save the data the template needs
+                    pairdata = {}
+                    pairdata['first'] = firstOne
+                    pairdata['second'] = secondOne
+                    pairdata['path'] = outDir
+                    seriespairs.append(pairdata)
+                    self.generateReleaseComparison(firstOne, secondOne, outPath)
+                # now find versions within series to compare each with the next
+                seriesVersions = v2v[seriesList[i]] #.encode('utf8')
+                for j in range(len(seriesVersions)):
+                    secondVersion = data[seriesList[i]][seriesVersions[j]][0]
+                    if j+1 < len(seriesVersions):
+                        firstVersion = data[seriesList[i]][seriesVersions[j+1]][0]
+                        outDir = '%s_%s-to-%s_%s' % \
+                            (firstVersion['attributes']['distro-release-name'], firstVersion['attributes']['kernel'],
+                             secondVersion['attributes']['distro-release-name'], secondVersion['attributes']['kernel'])
+                        outPath = path.join(self.trr.cfg['repository_root'], outDir)
+                        #print 'Bottom: comparing %s (%s) to %s (%s)' % \
+                        #    (firstVersion['attributes']['distro-release-name'], firstVersion['attributes']['kernel'], secondVersion['attributes']['distro-release-name'], secondVersion['attributes']['kernel'])
+                        # save the data the template needs
+                        pairdata = {}
+                        pairdata['first'] = firstVersion
+                        pairdata['second'] = secondVersion
+                        pairdata['path'] = outDir
+                        versionpairs.append(pairdata)
+                        self.generateReleaseComparison(firstVersion, secondVersion, outPath)
+
+            # Now that we've generated the results and each comparison is in its own directory, we need to include those in the results page
             # Generate the testing, index page.
             #
             try:
-                template = self.index_template.render(data = data, timestamp = datetime.utcnow())
+                template = self.index_template.render(data = data, timestamp = datetime.utcnow(), seriespairs = seriespairs, versionpairs = versionpairs)
                 dest = path.join(self.trr.cfg['repository_root'], 'index.html')
                 with open(dest, 'w') as f:
                     f.write(template)

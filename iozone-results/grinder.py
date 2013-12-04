@@ -407,7 +407,9 @@ class TestResultsRepository():
         for x in listdir(self.cfg['repository_root']):
             p = path.join(self.cfg['repository_root'], x)
             if path.isdir(p):
-                retval.append(x)
+                # This is a hack to prevent including the generated data for inter-release comparisons
+                if '-to-' not in p:
+                    retval.append(x)
         Dbg.leave("TestResultsRepository.test_runs")
         return retval
 
