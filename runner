@@ -327,12 +327,7 @@ class Runner():
             error('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
             for l in e.output:
                 error(l.strip())
-            raise ErrorExit()
-
-        except ErrorExit:
-            error("")
-            error("Due to the above error(s), this script is unable to continue and is terminating.")
-            error("")
+            raise ErrorExit
 
         debug('Leave: main')
         return(retval)
@@ -356,8 +351,15 @@ if __name__ == '__main__':
     parser.add_argument('tests', metavar='T', type=str, nargs='+', help='The tests that are to be run.')
     args = parser.parse_args()
 
-    app = Runner(args)
-    exit(app.main())
+    status = 1
+    try:
+        app = Runner(args)
+        status = app.main()
+    except ErrorExit:
+        error("")
+        error("Due to the above error(s), this script is unable to continue and is terminating.")
+        error("")
+    exit(status)
 
 # vi:set ts=4 sw=4 expandtab syntax=python:
 
