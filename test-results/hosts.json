@@ -63,5 +63,47 @@
         "platform" : "Virtual Machine running on <a href=\"fozzie.html\">fozzie</a>.",
         "processors" : "1",
         "memory" : "1GB"
+    },
+
+    "bifur" : {
+        "platform" : "Intel Grantley",
+        "processors" : "2 x Intel xx-xxxx; 14 cores each; +hyper-threaded (56 effective processors)",
+        "memory" : "32GB"
+    },
+
+    "bofur" : {
+        "platform" : "Intel Grantley",
+        "processors" : "2 x Intel xx-xxxx; 14 cores each; +hyper-threaded (56 effective processors)",
+        "memory" : "32GB"
+    },
+
+    "nori" : {
+        "platform" : "Intel Grantley",
+        "processors" : "2 x Intel xx-xxxx; 14 cores each; +hyper-threaded (56 effective processors)",
+        "memory" : "32GB"
+    },
+
+    "dori" : {
+        "platform" : "Intel Grantley",
+        "processors" : "2 x Intel xx-xxxx; 14 cores each; +hyper-threaded (56 effective processors)",
+        "memory" : "32GB"
+    },
+
+    "dwalin" : {
+        "platform" : "Intel Grantley",
+        "processors" : "2 x Intel xx-xxxx; 14 cores each; +hyper-threaded (56 effective processors)",
+        "memory" : "32GB"
+    },
+
+    "fili" : {
+        "platform" : "Intel Grantley",
+        "processors" : "2 x Intel xx-xxxx; 14 cores each; +hyper-threaded (56 effective processors)",
+        "memory" : "32GB"
+    },
+
+    "kili" : {
+        "platform" : "Intel Grantley",
+        "processors" : "2 x Intel xx-xxxx; 14 cores each; +hyper-threaded (56 effective processors)",
+        "memory" : "32GB"
     }
 }
