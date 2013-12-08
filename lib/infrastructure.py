@@ -209,6 +209,72 @@ LabHW = {
                 "port" : "beaker"
             }
         ]
-    }
+    },
+    "bifur" : {
+        "orchestra server" : "cobbler",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "00:1e:67:94:34:29",
+        "cdu" : [
+            {
+                "ip" : "10.98.4.30",
+                "port" : "bifur-ps1"  # a14
+            }
+        ]
+    },
+    "bofur" : {
+        "orchestra server" : "cobbler",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "00:1e:67:59:7f:e8",
+        "cdu" : [
+            {
+                "ip" : "10.98.4.30",
+                "port" : "bofur-ps1"  # a13
+            }
+        ]
+    },
+    "nori" : {
+        "orchestra server" : "cobbler",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "00:1e:67:94:36:bb",
+        "cdu" : [
+            {
+                "ip" : "10.98.4.32",
+                "port" : "nori-ps1"  # a14
+            }
+        ]
+    },
+    "dori" : {
+        "orchestra server" : "cobbler",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "00:1e:67:59:82:07",
+        "cdu" : [
+            {
+                "ip" : "10.98.4.30",
+                "port" : "dori-ps1"  # a13
+            }
+        ]
+    },
+    "fili" : {
+        "orchestra server" : "cobbler",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "00:1e:67:94:3b:d8",
+        "cdu" : [
+            {
+                "ip" : "10.98.4.32",
+                "port" : "fili-ps1"  # a9
+            }
+        ]
+    },
+    "dwalin" : {
+        "orchestra server" : "cobbler",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "00:1e:67:94:33:49",
+        "cdu" : [
+            {
+                "ip" : "10.98.4.32",
+                "port" : "dwalin-ps1"  # a11
+            }
+        ]
+    },
 }
 # vi:set ts=4 sw=4 expandtab:
