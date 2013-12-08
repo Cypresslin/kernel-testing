@@ -217,7 +217,11 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.4.30",
-                "port" : "bifur-ps1"  # a14
+                "port" : "bifur-ps1"
+            },
+            {
+                "ip" : "10.98.4.31",
+                "port" : "bifur-ps2"
             }
         ]
     },
@@ -228,7 +232,11 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.4.30",
-                "port" : "bofur-ps1"  # a13
+                "port" : "bofur-ps1"
+            },
+            {
+                "ip" : "10.98.4.31",
+                "port" : "bofur-ps2"
             }
         ]
     },
@@ -239,7 +247,11 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.4.32",
-                "port" : "nori-ps1"  # a14
+                "port" : "nori-ps1"
+            },
+            {
+                "ip" : "10.98.4.33",
+                "port" : "nori-ps2"
             }
         ]
     },
@@ -250,7 +262,11 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.4.30",
-                "port" : "dori-ps1"  # a13
+                "port" : "dori-ps1"
+            },
+            {
+                "ip" : "10.98.4.32",
+                "port" : "dori-ps2"
             }
         ]
     },
@@ -261,7 +277,11 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.4.32",
-                "port" : "fili-ps1"  # a9
+                "port" : "fili-ps1"
+            },
+            {
+                "ip" : "10.98.4.33",
+                "port" : "fili-ps2"
             }
         ]
     },
@@ -272,7 +292,11 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.4.32",
-                "port" : "dwalin-ps1"  # a11
+                "port" : "dwalin-ps1"
+            },
+            {
+                "ip" : "10.98.4.33",
+                "port" : "dwalin-ps2"
             }
         ]
     },
