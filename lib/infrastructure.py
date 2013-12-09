@@ -90,11 +90,11 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.4.32",
-                "port" : "fozzie-ps1"
+                "port" : "fozzie_ps1"
             },
             {
                 "ip" : "10.98.4.33",
-                "port" : "fozzie-ps2"
+                "port" : "fozzie_ps2"
             }
         ]
     },
@@ -105,11 +105,11 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.4.32",
-                "port" : "rizzo-ps1"
+                "port" : "rizzo_ps1"
             },
             {
                 "ip" : "10.98.4.33",
-                "port" : "rizzo-ps2"
+                "port" : "rizzo_ps2"
             }
         ]
     },
@@ -131,11 +131,11 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.4.30",
-                "port" : "statler-ps1"
+                "port" : "statler_ps1"
             },
             {
                 "ip" : "10.98.4.31",
-                "port" : "statler-ps2"
+                "port" : "statler_ps2"
             }
         ]
     },
@@ -146,11 +146,11 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.4.30",
-                "port" : "zoot-ps1"
+                "port" : "zoot_ps1"
             },
             {
                 "ip" : "10.98.4.31",
-                "port" : "zoot-ps2"
+                "port" : "zoot_ps2"
             }
         ]
     },
@@ -161,11 +161,11 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.4.32",
-                "port" : "floyd-ps1"
+                "port" : "floyd_ps1"
             },
             {
                 "ip" : "10.98.4.33",
-                "port" : "floyd-ps2"
+                "port" : "floyd_ps2"
             }
         ]
     },
@@ -176,11 +176,11 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.4.32",
-                "port" : "janice-ps1"
+                "port" : "janice_ps1"
             },
             {
                 "ip" : "10.98.4.33",
-                "port" : "janice-ps2"
+                "port" : "janice_ps2"
             }
         ]
     },
@@ -191,11 +191,11 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.4.30",
-                "port" : "pops-ps1"
+                "port" : "pops_ps1"
             },
             {
                 "ip" : "10.98.4.31",
-                "port" : "pops-ps2"
+                "port" : "pops_ps2"
             }
         ]
     },
@@ -217,26 +217,26 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.4.30",
-                "port" : "bifur-ps1"
+                "port" : "bifur_ps1"
             },
             {
                 "ip" : "10.98.4.31",
-                "port" : "bifur-ps2"
+                "port" : "bifur_ps2"
             }
         ]
     },
     "bofur" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "00:1e:67:59:7f:e8",
+        "mac address" : "00:1e:67:59:7f:e9",
         "cdu" : [
             {
                 "ip" : "10.98.4.30",
-                "port" : "bofur-ps1"
+                "port" : "bofur_ps1"
             },
             {
                 "ip" : "10.98.4.31",
-                "port" : "bofur-ps2"
+                "port" : "bofur_ps2"
             }
         ]
     },
@@ -247,26 +247,41 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.4.32",
-                "port" : "nori-ps1"
+                "port" : "nori_ps1"
             },
             {
                 "ip" : "10.98.4.33",
-                "port" : "nori-ps2"
+                "port" : "nori_ps2"
             }
         ]
     },
     "dori" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "00:1e:67:59:82:07",
+        "mac address" : "00:1e:67:59:82:08",
         "cdu" : [
             {
-                "ip" : "10.98.4.30",
-                "port" : "dori-ps1"
+                "ip" : "10.98.4.32",
+                "port" : "dori_ps1"
             },
             {
+                "ip" : "10.98.4.33",
+                "port" : "dori_ps2"
+            }
+        ]
+    },
+    "kili" : {
+        "orchestra server" : "cobbler",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "00:1e:67:94:3b:d8",
+        "cdu" : [
+            {
                 "ip" : "10.98.4.32",
-                "port" : "dori-ps2"
+                "port" : "kili_ps1"
+            },
+            {
+                "ip" : "10.98.4.33",
+                "port" : "kili_ps2"
             }
         ]
     },
@@ -277,11 +292,11 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.4.32",
-                "port" : "fili-ps1"
+                "port" : "fili_ps1"
             },
             {
                 "ip" : "10.98.4.33",
-                "port" : "fili-ps2"
+                "port" : "fili_ps2"
             }
         ]
     },
@@ -292,11 +307,11 @@ LabHW = {
         "cdu" : [
             {
                 "ip" : "10.98.4.32",
-                "port" : "dwalin-ps1"
+                "port" : "dwalin_ps1"
             },
             {
                 "ip" : "10.98.4.33",
-                "port" : "dwalin-ps2"
+                "port" : "dwalin_ps2"
             }
         ]
     },
