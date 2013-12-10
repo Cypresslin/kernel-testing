@@ -4,6 +4,7 @@ from os                                 import path
 from logging                            import error
 from datetime                           import datetime
 from time                               import sleep
+from logging                            import info
 
 from lib.infrastructure                 import Orchestra, HWE, LabHW
 from lib.shell                          import sh, ShellError, ssh, Shell
@@ -81,6 +82,7 @@ class Provisioner():
                 print('Waiting for \'%s\' to come up.' % (target))
 
             start = datetime.utcnow()
+            info('Starting waiting for \'%s\' at %s' % (target, start))
             while True:
                 try:
                     result, output = sh('ssh -qf %s exit' % target, quiet=True, ignore_result=True)
@@ -102,9 +104,11 @@ class Provisioner():
                 now = datetime.utcnow()
                 delta = now - start
                 if delta.seconds > timeout * 60:
+                    info('Timed out at: %s' % now)
                     raise ErrorExit('The specified timeout (%d) was reached while waiting for the target system (%s) to come back up.' % (timeout, target))
 
                 sleep(60)
+                info('Up at: %s' % datetime.utcnow())
 
     # reboot
     #
