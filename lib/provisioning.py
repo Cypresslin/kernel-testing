@@ -251,7 +251,7 @@ class VirtualProvisioner(Provisioner):
         # Once the initial installation has completed, we continue to install and update
         # packages so that we are testing the latest kernel, which is what we want.
         #
-        self.wait_for_system(target, timeout=30) # Allow 30 minutes for network installation
+        self.wait_for_system(target, timeout=60) # Allow 30 minutes for network installation
         self.enable_proposed(target, self.series)
         if self.ubuntu.is_development_series(self.series):
             self.kernel_upgrade(target)
@@ -358,7 +358,7 @@ class MetalProvisioner(Provisioner):
         # Once the initial installation has completed, we continue to install and update
         # packages so that we are testing the latest kernel, which is what we want.
         #
-        self.wait_for_system(target, timeout=30) # Allow 30 minutes for network installation
+        self.wait_for_system(target, timeout=60) # Allow 30 minutes for network installation
         self.enable_proposed(target, self.series)
         if self.ubuntu.is_development_series(self.series):
             self.kernel_upgrade(target)
