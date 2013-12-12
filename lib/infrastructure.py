@@ -273,7 +273,7 @@ LabHW = {
     "kili" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "00:1e:67:94:3b:d8",
+        "mac address" : "00:1e:67:94:36:fa",
         "cdu" : [
             {
                 "ip" : "10.98.4.32",
