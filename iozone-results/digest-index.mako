@@ -124,7 +124,7 @@
                                             </td>
                                         </tr>
                                         % endfor
-<!-- SERIES ------------------------------------------------------------ -->
+					<!-- SERIES ------------------------------------------------------------ -->
                                     <table width="100%" style="font-size: 0.9em"> <!-- inter-release results -->
                                       <tr>
                                         <td style="background: #e9e7e5;">Series To Series Comparisons</td>
@@ -171,7 +171,54 @@
                                             </td>
                                         </tr>
                                     </table>
-<!-- VERSIONS ------------------------------------------------------------ -->
+				    <!-- LTS ------------------------------------------------------------ -->
+                                    <table width="100%" style="font-size: 0.9em"> <!-- inter-release results -->
+                                      <tr>
+                                        <td style="background: #e9e7e5;">LTS to LTS Comparisons</td>
+                                      </tr>
+                                        <tr>
+                                            <td width="100%">
+                                                <table id="" width="100%" border="0">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th width="100">Baseline</th>
+                                                            <th align="left" width="100">&nbsp; Comparison &nbsp;</th>
+                                                            <th align="left" width="40">&nbsp; ext4 &nbsp;</th>
+                                                            <th align="left" width="40">&nbsp; ext3 &nbsp;</th>
+                                                            <th align="left" width="40">&nbsp; ext2 &nbsp;</th>
+                                                            <th align="left" width="40">&nbsp; xfs &nbsp;</th>
+                                                            <th align="left" width="40">&nbsp; btrfs &nbsp;</th>
+                                                        </tr>
+
+                                                        % for lcomp in ltspairs:
+                                                        <%
+							   from os import path
+							   baseline   = '%s (%s)' % (lcomp['first']['attributes']['distro-release-name'], lcomp['first']['attributes']['kernel'])
+							   comparison = '%s (%s)' % (lcomp['second']['attributes']['distro-release-name'], lcomp['second']['attributes']['kernel'])
+
+							   lbase =  "benchmark-results/"
+							   ext4link = path.join(lbase, path.basename(lcomp['path']), 'ext4/index.html')
+							   ext3link = path.join(lbase, path.basename(lcomp['path']), 'ext3/index.html')
+							   ext2link = path.join(lbase, path.basename(lcomp['path']), 'ext2/index.html')
+							   xfslink = path.join(lbase, path.basename(lcomp['path']), 'xfs/index.html')
+							   btrfslink = path.join(lbase, path.basename(lcomp['path']), 'btrfs/index.html')
+                                                         %>
+                                                        <tr>
+                                                          <td align="left">${ baseline }</td>
+                                                          <td align="left">${ comparison }</td>
+                                                          <td align="left"><a href="${ ext4link }">&nbsp; ext4 &nbsp;</a></td>
+                                                          <td align="left"><a href="${ ext3link }">&nbsp; ext3 &nbsp;</a></td>
+                                                          <td align="left"><a href="${ ext2link }">&nbsp; ext2 &nbsp;</a></td>
+                                                          <td align="left"><a href="${ xfslink }">&nbsp; xfs &nbsp;</a></td>
+                                                          <td align="left"><a href="${ btrfslink }">&nbsp; btrfs &nbsp;</a></td>
+                                                        </tr>
+                                                        % endfor
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+				    <!-- VERSIONS ------------------------------------------------------------ -->
                                     <table width="100%" style="font-size: 0.9em"> <!-- inter-release results -->
                                       <tr>
                                         <td style="background: #e9e7e5;">Version to Version Comparisons</td>

@@ -304,15 +304,55 @@ class Digest():
                     versionlist.append(version)
                 v2v[series] = versionlist
 
+            # Normally series to series comparisons are between successive releases, but we also need to
+            # compare LTS to LTS, so we do that manually
+            ltsnamepairs = [('lucid', 'precise'),('precise', 'trusty')]
+
             seriespairs = []
             versionpairs = []
-            # create the pairs to be generated
+            ltspairs = []
+
+            # Create the LTS comparisons
+            for ltsSet in ltsnamepairs :
+                if ltsSet[0] in data and ltsSet[1] in data:
+                    firstLts = data[ltsSet[0]][v2v[ltsSet[0]][0]][0]
+                    if firstLts['results']['suites'][0]['tests failed'] > 0:
+                        print 'Skipping LTS %s (%s) because of errors' % (firstLts['attributes']['distro-release-name'], firstLts['attributes']['kernel'])
+                        continue
+                    secondLts = data[ltsSet[1]][v2v[ltsSet[1]][0]][0]
+                    if secondLts['results']['suites'][0]['tests failed'] > 0:
+                        print 'Skipping LTS %s (%s) because of errors' % (secondLts['attributes']['distro-release-name'], secondLts['attributes']['kernel'])
+                        continue
+
+                    outDir = '%s_%s-to-%s_%s' % \
+                        (firstLts['attributes']['distro-release-name'], firstLts['attributes']['kernel'],
+                         secondLts['attributes']['distro-release-name'], secondLts['attributes']['kernel'])
+                    outPath = path.join(self.trr.cfg['repository_root'], outDir)
+                    #print 'Top: comparing %s (%s) to %s (%s)' % \
+                    #    (firstLts['attributes']['distro-release-name'], firstLts['attributes']['kernel'], secondLts['attributes']['distro-release-name'], secondLts['attributes']['kernel'])
+                    # save the data the template needs
+                    pairdata = {}
+                    pairdata['first'] = firstLts
+                    pairdata['second'] = secondLts
+                    pairdata['path'] = outDir
+                    ltspairs.append(pairdata)
+                    self.generateReleaseComparison(firstLts, secondLts, outPath)
+
+            # create the successive series and version pairs to be generated
             for i in range(len(seriesList)):
                 # find series-to-series comparisons
                 # TODO we just take the first test in the list, not sure what else to do here
                 secondOne = data[seriesList[i]][v2v[seriesList[i]][0]][0]
+                # If all tests did not pass, skip this one
+                if secondOne['results']['suites'][0]['tests failed'] > 0:
+                    print 'Skipping %s (%s) because of errors' % (secondOne['attributes']['distro-release-name'], secondOne['attributes']['kernel'])
+                    continue
                 if i+1 < len(seriesList):
                     firstOne = data[seriesList[i+1]][v2v[seriesList[i+1]][0]][0]
+                    # If all tests did not pass, skip this one
+                    if firstOne['results']['suites'][0]['tests failed'] > 0:
+                        print 'Skipping %s (%s) because of errors' % (firstOne['attributes']['distro-release-name'], firstOne['attributes']['kernel'])
+                        continue
                     outDir = '%s_%s-to-%s_%s' % \
                         (firstOne['attributes']['distro-release-name'], firstOne['attributes']['kernel'],
                          secondOne['attributes']['distro-release-name'], secondOne['attributes']['kernel'])
@@ -350,7 +390,7 @@ class Digest():
             # Generate the testing, index page.
             #
             try:
-                template = self.index_template.render(data = data, timestamp = datetime.utcnow(), seriespairs = seriespairs, versionpairs = versionpairs)
+                template = self.index_template.render(data = data, timestamp = datetime.utcnow(), seriespairs = seriespairs, versionpairs = versionpairs, ltspairs = ltspairs)
                 dest = path.join(self.trr.cfg['repository_root'], 'index.html')
                 with open(dest, 'w') as f:
                     f.write(template)
