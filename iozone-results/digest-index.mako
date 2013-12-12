@@ -149,8 +149,7 @@
 							   baseline   = '%s (%s)' % (scomp['first']['attributes']['distro-release-name'], scomp['first']['attributes']['kernel'])
 							   comparison = '%s (%s)' % (scomp['second']['attributes']['distro-release-name'], scomp['second']['attributes']['kernel'])
 
-							   lbase =  "http://kernel.ubuntu.com/benchmarking/benchmark-results/"
-							   lbase =  ""
+							   lbase =  "benchmark-results/"
 							   ext4link = path.join(lbase, path.basename(scomp['path']), 'ext4/index.html')
 							   ext3link = path.join(lbase, path.basename(scomp['path']), 'ext3/index.html')
 							   ext2link = path.join(lbase, path.basename(scomp['path']), 'ext2/index.html')
@@ -197,8 +196,7 @@
 							   baseline   = '%s (%s)' % (vcomp['first']['attributes']['distro-release-name'], vcomp['first']['attributes']['kernel'])
 							   comparison = '%s (%s)' % (vcomp['second']['attributes']['distro-release-name'], vcomp['second']['attributes']['kernel'])
 
-							   lbase =  "http://kernel.ubuntu.com/benchmarking/benchmark-results/"
-							   lbase =  ""
+							   lbase =  "benchmark-results/"
 							   ext4link = path.join(lbase, path.basename(vcomp['path']), 'ext4/index.html')
 							   ext3link = path.join(lbase, path.basename(vcomp['path']), 'ext3/index.html')
 							   ext2link = path.join(lbase, path.basename(vcomp['path']), 'ext2/index.html')
