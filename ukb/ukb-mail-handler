@@ -34,7 +34,7 @@ class MailHandler():
     def __init__(self, args):
         self.args = args
         self.jenkins_url_default = "http://10.98.2.20:8080"
-        self.default_systems=['waldorf'] # statler is just too big a pain
+        self.default_systems=['waldorf', 'beaker', 'rizzo'] # statler is just too big a pain
         self.default_arches=['amd64', 'i386']
 
     # send_reply
@@ -63,7 +63,7 @@ class MailHandler():
 
     # create_test_jobs
     #
-    def create_test_jobs(self, series, arches, systems, url=None, user=None, tests='default', series_decoration=None, hwe=False):
+    def create_test_jobs(self, series, arches, systems, url=None, user=None, tests='default', series_decoration=None, hwe=False, ppa=None):
         retval = []
         for arch in arches:
             for system in systems:
@@ -103,6 +103,7 @@ class MailHandler():
         for part in msg.walk():
             series = None
             debs_url = None
+            ppa = None
             arches = self.default_arches
             systems = self.default_systems
             tests = 'default'
@@ -129,6 +130,9 @@ class MailHandler():
                     systems = []
                     for a in system.split(','):
                         systems.append(a.strip())
+                elif search('ppa\S*:', line) is not None:
+                    (x, ppa) = line.split(':', 1)
+                    ppa = ppa.strip()
                 elif 'help' == line or 'Help' == line:
                     send_help = True
 
@@ -142,7 +146,7 @@ class MailHandler():
                 m = search('.*<(\S+)@.*', e_from)
                 if m is not None:
                     user = m.group(1)
-                jobs = self.create_test_jobs(series, arches, systems, debs_url, user, tests)
+                jobs = self.create_test_jobs(series, arches, systems, debs_url, user, tests, ppa=ppa)
 
                 body  = 'The following job(s) were created on the kernel team\'s jenkins server\n'
                 body += 'in response to your request:\n\n'
@@ -169,7 +173,8 @@ The body of the email message should be a simple set of "name":"value" pairs,
 one per line. The following describe the recognized pairs:
 
 series: The ubuntu series that is initially installed onto the test system
-        prior to installing the custom kernel deps.
+        prior to installing the custom kernel deps. This is the only option
+        that is required.
 
         Ex.
             series: precise
@@ -185,7 +190,10 @@ series: The ubuntu series that is initially installed onto the test system
             arch: amd64, i386
 
  tests: The list of autotest tests that are to be run on the system. If none
-        are specified, then the 'default' is used.
+        are specified, then the 'default' is used. At this time 'default' is:
+            ubuntu_ecryptfs, ubuntu_qrt_kernel_hardening, ubuntu_qrt_kernel_panic,
+            ubuntu_qrt_kernel_security, ubuntu_qrt_kernel_aslr_collisions,
+            ubuntu_qrt_apparmor
 
         Ex.
             tests: ubuntu_qrt_apparmor
@@ -197,11 +205,16 @@ series: The ubuntu series that is initially installed onto the test system
             url: http://kernel.ubuntu.com/~bradf/precise-lp111666
 
 system: The name of the lab system that is to be used for the testing. The
-        default is rizzo.
+        default is 'waldorf, beaker, rizzo'. In general, you shouldn't do
+        this unless you know what other test systems are being used for.
 
         Ex.
             system: gonzo
 
+   ppa: The ppa to get target .deb packages from
+
+       Ex.
+           ppa: canonical-kernel-team/ppa
 """
                 self.send_reply(e_from, 'Re: %s' % e_subject, body)
 
