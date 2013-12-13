@@ -76,6 +76,8 @@ class MailHandler():
                     cmd += ' --user=%s' % (user)
                 if hwe:
                     cmd += ' --sut-hwe'
+                if ppa:
+                    cmd += ' --ppa=%s' % (ppa)
                 debug('  ' + cmd)
                 (return_code, output) = sh(cmd, quiet=True)
                 for line in output:
