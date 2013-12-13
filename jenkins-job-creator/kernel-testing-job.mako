@@ -46,6 +46,9 @@ if data.debs is not None:
 
 if data.sut_hwe:
     provision += ' --sut-hwe'
+
+if data.ppa is not None:
+    provision += ' --ppa=%s' % data.ppa
 %>
     # Provision the hardware.
     #

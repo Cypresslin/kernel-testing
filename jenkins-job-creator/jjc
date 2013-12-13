@@ -308,6 +308,7 @@ examples:
     parser.add_argument('--no-provisioning',    required=False, action='store_true', default=False, help='Don\'t create the jobs which do provisioning.')
     parser.add_argument('--debs',               required=False, help='A url to the kernel debs that are to be installed after provisioning has completed.')
     parser.add_argument('--user',               required=False, help='The name of the person the test is being run for.')
+    parser.add_argument('--ppa',          required=False, help='The name of a ppa to be added to the sources list and from which to pull kernel .debs.')
 
 
     args = parser.parse_args()
