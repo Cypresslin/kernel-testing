@@ -95,7 +95,7 @@
 
                                                                 dt = datetime.strptime(record['attributes']['timestamp'], '%Y-%m-%d %H:%M')
                                                                 ts = dt.strftime('%Y-%m-%d_%H-%M-%S')
-                                                                link = "http://kernel.ubuntu.com/benchmarking/benchmark-results/%s__%s__%s/results-index.html" % (record['attributes']['platform']['hostname'], record['attributes']['kernel'], ts)
+                                                                link = "http://kernel.ubuntu.com/benchmarking/benchmark-results/iozone/%s__%s__%s/results-index.html" % (record['attributes']['platform']['hostname'], record['attributes']['kernel'], ts)
 
                                                                 hardware = 'real'
                                                                 if 'hardware' in record['attributes']['platform']:
@@ -108,7 +108,7 @@
                                                             %>
                                                             <tr>
                                                                 <td>&nbsp;</td>
-                                                                <td><a href="benchmark-results/${ record['attributes']['platform']['hostname'] }.html">${ record['attributes']['platform']['hostname'] }</a></td>
+                                                                <td><a href="${ record['attributes']['platform']['hostname'] }.html">${ record['attributes']['platform']['hostname'] }</a></td>
                                                                 <td align="center">${ arch } </td>
                                                                 <td align="center">${hardware}</td>
                                                                 <td align="center">${ record['attributes']['timestamp'] }</td>
@@ -149,7 +149,7 @@
 							   baseline   = '%s (%s)' % (scomp['first']['attributes']['distro-release-name'], scomp['first']['attributes']['kernel'])
 							   comparison = '%s (%s)' % (scomp['second']['attributes']['distro-release-name'], scomp['second']['attributes']['kernel'])
 
-							   lbase =  "benchmark-results/"
+							   lbase =  ""
 							   ext4link = path.join(lbase, path.basename(scomp['path']), 'ext4/index.html')
 							   ext3link = path.join(lbase, path.basename(scomp['path']), 'ext3/index.html')
 							   ext2link = path.join(lbase, path.basename(scomp['path']), 'ext2/index.html')
@@ -196,7 +196,7 @@
 							   baseline   = '%s (%s)' % (lcomp['first']['attributes']['distro-release-name'], lcomp['first']['attributes']['kernel'])
 							   comparison = '%s (%s)' % (lcomp['second']['attributes']['distro-release-name'], lcomp['second']['attributes']['kernel'])
 
-							   lbase =  "benchmark-results/"
+							   lbase =  ""
 							   ext4link = path.join(lbase, path.basename(lcomp['path']), 'ext4/index.html')
 							   ext3link = path.join(lbase, path.basename(lcomp['path']), 'ext3/index.html')
 							   ext2link = path.join(lbase, path.basename(lcomp['path']), 'ext2/index.html')
@@ -243,7 +243,7 @@
 							   baseline   = '%s (%s)' % (vcomp['first']['attributes']['distro-release-name'], vcomp['first']['attributes']['kernel'])
 							   comparison = '%s (%s)' % (vcomp['second']['attributes']['distro-release-name'], vcomp['second']['attributes']['kernel'])
 
-							   lbase =  "benchmark-results/"
+							   lbase =  ""
 							   ext4link = path.join(lbase, path.basename(vcomp['path']), 'ext4/index.html')
 							   ext3link = path.join(lbase, path.basename(vcomp['path']), 'ext3/index.html')
 							   ext2link = path.join(lbase, path.basename(vcomp['path']), 'ext2/index.html')
