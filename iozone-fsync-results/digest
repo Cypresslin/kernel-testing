@@ -250,7 +250,7 @@ class Digest():
                 results['attributes']['series'] = series
                 Dbg.verbose("    series: %s\n" % (series))
 
-                results['attributes']['resultspath'] =  path.join(self.trr.cfg['repository_root'], tr, 'iozone/results')
+                results['attributes']['resultspath'] =  path.join(self.trr.cfg['repository_root'], tr, 'iozone-fsync/results')
 
                 # "Fixup" the timestamp to be what we want it to look like on the web page
                 #

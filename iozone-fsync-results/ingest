@@ -157,11 +157,11 @@ class Ingest():
             setlocale(LC_ALL, '')
             pathcoll = {}
             for fstype in ['ext4', 'ext3', 'ext2', 'xfs', 'btrfs']:
-                paths = sorted(glob(self.trr.results_dir + '/iozone/results/iozone.' + fstype + '_*/results/raw_output_1'), cmp=strcoll)
+                paths = sorted(glob(self.trr.results_dir + '/iozone-fsync/results/iozone.' + fstype + '_*/results/raw_output_1'), cmp=strcoll)
                 pathcoll[fstype] = paths
     
             # Where do we want to put the output?
-            html_dir = self.trr.results_dir.encode('utf8') + '/iozone'
+            html_dir = self.trr.results_dir.encode('utf8') + '/iozone-fsync'
             
             # build the command line to generate scripted results from the test run
             # the --html_dir argument is broken, so just cd to where we want it
