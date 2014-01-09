@@ -5,6 +5,7 @@ from os                                 import getenv, path
 from sys                                import exit, stdin
 from logging                            import debug, info, error, basicConfig, DEBUG, WARNING, INFO
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
+from lib.infrastructure                 import LabHW
 from email                              import Parser as EmailParser
 from re                                 import search
 from lib.shell                          import sh, ShellError
@@ -31,17 +32,29 @@ class MailHandler():
 
     # __init__
     #
-    def __init__(self, args):
-        self.args = args
-        self.jenkins_url_default = "http://10.98.2.20:8080"
-        self.default_systems=['waldorf', 'beaker', 'rizzo'] # statler is just too big a pain
-        self.default_arches=['amd64', 'i386']
+    def __init__(s, args):
+        s.args = args
+        s.jenkins_url_default = "http://10.98.2.20:8080"
+        s.default_systems=['waldorf', 'beaker', 'rizzo'] # statler is just too big a pain
+        s.default_arches=['amd64', 'i386']
+
+        # Create a dictionary of the lab HW keyed by role.
+        #
+        s.sut_pool = {}
+        for sut in LabHW:
+            roles = LabHW[sut]['role']
+            for r in roles:
+                try:
+                    s.sut_pool[r].append(sut)
+                except:
+                    s.sut_pool[r] = []
+                    s.sut_pool[r].append(sut)
 
     # send_reply
     #
-    def send_reply(self, to, subject, body):
-        guser = self.cfg['email username']
-        gpass = self.cfg['email password']
+    def send_reply(s, to, subject, body):
+        guser = s.cfg['email username']
+        gpass = s.cfg['email password']
 
         msg = MIMEMultipart()
         msg['From'] = guser
@@ -63,11 +76,11 @@ class MailHandler():
 
     # create_test_jobs
     #
-    def create_test_jobs(self, series, arches, systems, url=None, user=None, tests='default', series_decoration=None, hwe=False, ppa=None):
+    def create_test_jobs(s, series, arches, systems, url=None, user=None, tests='default', series_decoration=None, hwe=False, ppa=None):
         retval = []
         for arch in arches:
             for system in systems:
-                cmd = '/home/work/kernel-testing/jenkins-job-creator/jjc --sut=real --hw=%s --sut-arch=%s --sut-series=%s --jenkins-url=%s --test=%s' % (system, arch, series, self.jenkins_url_default, tests)
+                cmd = '/home/work/kernel-testing/jenkins-job-creator/jjc --sut=real --hw=%s --sut-arch=%s --sut-series=%s --jenkins-url=%s --test=%s' % (system, arch, series, s.jenkins_url_default, tests)
                 if series_decoration is not None:
                     cmd += ' --sut-series-decoration=%s' % series_decoration
                 if url is not None:
@@ -90,7 +103,7 @@ class MailHandler():
 
     # handle_test_request
     #
-    def handle_test_request(self, msg):
+    def handle_test_request(s, msg):
         debug('    Enter: handle_test_request')
 
         e_from = msg['From']
@@ -106,8 +119,8 @@ class MailHandler():
             series = None
             debs_url = None
             ppa = None
-            arches = self.default_arches
-            systems = self.default_systems
+            arches = s.default_arches
+            systems = s.sut_pool['testing']
             tests = 'default'
             send_help = False
             for line in part.get_payload().split('\n'):
@@ -126,6 +139,8 @@ class MailHandler():
                 elif search('tests\S*:', line) is not None:
                     (x, tests) = line.split(':', 1)
                     tests = tests.strip()
+                    if 'benchmark' in tests:
+                        systems = s.sut_pool['benchmarks']
                 elif search('system\S*:', line) is not None:
                     (x, system) = line.split(':', 1)
                     system = system.strip()
@@ -148,7 +163,7 @@ class MailHandler():
                 m = search('.*<(\S+)@.*', e_from)
                 if m is not None:
                     user = m.group(1)
-                jobs = self.create_test_jobs(series, arches, systems, debs_url, user, tests, ppa=ppa)
+                jobs = s.create_test_jobs(series, arches, systems, debs_url, user, tests, ppa=ppa)
 
                 body  = 'The following job(s) were created on the kernel team\'s jenkins server\n'
                 body += 'in response to your request:\n\n'
@@ -166,7 +181,7 @@ class MailHandler():
                 for line in e.output:
                     body += '      ' + line
 
-            self.send_reply(e_from, 'Re: %s' % e_subject, body)
+            s.send_reply(e_from, 'Re: %s' % e_subject, body)
         else:
             info('Help sent to: %s' % e_from)
             if send_help:
@@ -218,13 +233,13 @@ system: The name of the lab system that is to be used for the testing. The
        Ex.
            ppa: canonical-kernel-team/ppa
 """
-                self.send_reply(e_from, 'Re: %s' % e_subject, body)
+                s.send_reply(e_from, 'Re: %s' % e_subject, body)
 
         debug('    Leave: handle_test_request')
 
     # handle_mainline_build
     #
-    def handle_mainline_build(self, msg):
+    def handle_mainline_build(s, msg):
         debug('    Enter: handle_mainline_build')
 
         # In the standard email announcing a mainline build, the first URL
@@ -249,10 +264,10 @@ system: The name of the lab system that is to be used for the testing. The
             tmp = version.split('-')
             series = tmp[len(tmp) - 1]
             series_decoration = '-'.join(tmp[:-1])
-            arches = self.default_arches
-            systems = self.default_systems
+            arches = s.default_arches
+            systems = s.default_systems
 
-            jobs = self.create_test_jobs(series, arches, systems, debs_url, 'mainline.builder', series_decoration=series_decoration, tests='mainline')
+            jobs = s.create_test_jobs(series, arches, systems, debs_url, 'mainline.builder', series_decoration=series_decoration, tests='mainline')
             if jobs is not None:
                 info('The following jenkins jobs were created for mainline.builder')
                 for job in jobs:
@@ -262,15 +277,15 @@ system: The name of the lab system that is to be used for the testing. The
 
     # handle_sru_kernel_uploaded
     #
-    def handle_sru_kernel_uploaded(self, series, msg):
+    def handle_sru_kernel_uploaded(s, series, msg):
         debug('    Enter: handle_sru_kernel_uploaded')
 
-        systems = self.default_systems
+        systems = s.default_systems
 
         # If we want certain kernels to be run for certain series.
         #
         tests = 'sru'
-        jobs = self.create_test_jobs(series, self.default_arches, systems, series_decoration='SRU', tests=tests)
+        jobs = s.create_test_jobs(series, s.default_arches, systems, series_decoration='SRU', tests=tests)
         if jobs is not None:
             info('The following jenkins jobs were created')
             for job in jobs:
@@ -280,11 +295,11 @@ system: The name of the lab system that is to be used for the testing. The
 
     # handle_hwe_kernel_uploaded
     #
-    def handle_hwe_kernel_uploaded(self, series, msg):
+    def handle_hwe_kernel_uploaded(s, series, msg):
         debug('    Enter: handle_hwe_kernel_uploaded')
 
-        systems = self.default_systems
-        jobs = self.create_test_jobs(series, self.default_arches, systems, series_decoration='SRU', tests='sru', hwe=True)
+        systems = s.default_systems
+        jobs = s.create_test_jobs(series, s.default_arches, systems, series_decoration='SRU', tests='sru', hwe=True)
         if jobs is not None:
             info('The following jenkins jobs were created')
             for job in jobs:
@@ -294,7 +309,7 @@ system: The name of the lab system that is to be used for the testing. The
 
     # main
     #
-    def main(self):
+    def main(s):
         debug('Enter: main')
         retval = 1
         try:
@@ -303,7 +318,7 @@ system: The name of the lab system that is to be used for the testing. The
             cfg_file = path.join(path.expanduser('~'), '.ukb.rc')
             if path.exists(cfg_file):
                 with open(cfg_file, 'r') as f:
-                    self.cfg = json.load(f)
+                    s.cfg = json.load(f)
             else:
                 error("The required configuration file (%s) was not found." % cfg_file)
                 raise ErrorExit()
@@ -324,26 +339,26 @@ system: The name of the lab system that is to be used for the testing. The
                 # Mainline Build from the mainline builder
                 #
                 #if 'Mainline Build' in e_subject:
-                #    self.handle_mainline_build(msg)
+                #    s.handle_mainline_build(msg)
                 #    break
 
                 if 'kernel test request' in e_subject.lower():
-                    self.handle_test_request(msg)
+                    s.handle_test_request(msg)
                     break
 
                 m = search('\[(\S+)\] linux \d+\.\d+\.\d+.* uploaded', e_subject.lower())
                 if m is not None:
-                    self.handle_sru_kernel_uploaded(m.group(1), msg)
+                    s.handle_sru_kernel_uploaded(m.group(1), msg)
                     break
 
                 m = search('\[\S+\] linux-lts-backport-(\S+) \d+\.\d+\.\d+.* uploaded', e_subject.lower())
                 if m is not None:
-                    self.handle_hwe_kernel_uploaded(m.group(1), msg)
+                    s.handle_hwe_kernel_uploaded(m.group(1), msg)
                     break
 
                 m = search('\[\S+\] linux-lts-(\S+) \d+\.\d+\.\d+.* uploaded', e_subject.lower())
                 if m is not None:
-                    self.handle_hwe_kernel_uploaded(m.group(1), msg)
+                    s.handle_hwe_kernel_uploaded(m.group(1), msg)
                     break
 
                 info('  - ignored')
