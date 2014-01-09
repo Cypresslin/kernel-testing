@@ -71,6 +71,16 @@ HWE = {
 # Information about the systems that the kernel team reprovisions and
 # performs testing on.
 #
+# Recognized roles:
+#   benchmarks  - Benchmarks are to be only run on these systems as the results
+#                 are to be compared over time and should be run on the same HW
+#                 each time.
+#
+#   testing     - Gerneral test pool. Any of the autotest tests can be run on
+#                 these systems.
+#
+#   openstack   - Part of a openstack cluster that is to be used for testing.
+#
 LabHW = {
     "gonzo" : {
         "orchestra server" : "cobbler",
@@ -81,7 +91,8 @@ LabHW = {
                 "ip" : "10.98.4.33",
                 "port" : "gonzo"
             }
-        ]
+        ],
+        "role" : ["benchmarks"]
     },
     "fozzie" : {
         "orchestra server" : "cobbler",
@@ -96,7 +107,8 @@ LabHW = {
                 "ip" : "10.98.4.33",
                 "port" : "fozzie_ps2"
             }
-        ]
+        ],
+        "role" : ["testing"]
     },
     "rizzo" : {
         "orchestra server" : "cobbler",
@@ -111,7 +123,8 @@ LabHW = {
                 "ip" : "10.98.4.33",
                 "port" : "rizzo_ps2"
             }
-        ]
+        ],
+        "role" : ["testing"]
     },
     "waldorf" : {
         "orchestra server" : "cobbler",
@@ -122,7 +135,8 @@ LabHW = {
                 "ip" : "10.98.4.30",
                 "port" : "waldorf"
             }
-        ]
+        ],
+        "role" : ["testing"]
     },
     "statler" : {
         "orchestra server" : "cobbler",
@@ -137,7 +151,8 @@ LabHW = {
                 "ip" : "10.98.4.31",
                 "port" : "statler_ps2"
             }
-        ]
+        ],
+        "role" : ["none"]  # This system has a raid controler that is a pita
     },
     "zoot" : {
         "orchestra server" : "cobbler",
@@ -152,7 +167,8 @@ LabHW = {
                 "ip" : "10.98.4.31",
                 "port" : "zoot_ps2"
             }
-        ]
+        ],
+        "role" : ["openstack"]
     },
     "floyd" : {
         "orchestra server" : "cobbler",
@@ -167,7 +183,8 @@ LabHW = {
                 "ip" : "10.98.4.33",
                 "port" : "floyd_ps2"
             }
-        ]
+        ],
+        "role" : ["openstack"]
     },
     "janice" : {
         "orchestra server" : "cobbler",
@@ -182,7 +199,8 @@ LabHW = {
                 "ip" : "10.98.4.33",
                 "port" : "janice_ps2"
             }
-        ]
+        ],
+        "role" : ["openstack"]
     },
     "pops" : {
         "orchestra server" : "cobbler",
@@ -197,7 +215,8 @@ LabHW = {
                 "ip" : "10.98.4.31",
                 "port" : "pops_ps2"
             }
-        ]
+        ],
+        "role" : ["openstack"]
     },
     "beaker" : {
         "orchestra server" : "cobbler",
@@ -208,7 +227,8 @@ LabHW = {
                 "ip" : "10.98.4.30",
                 "port" : "beaker"
             }
-        ]
+        ],
+        "role" : ["testing"]
     },
     "bifur" : {
         "orchestra server" : "cobbler",
@@ -223,7 +243,8 @@ LabHW = {
                 "ip" : "10.98.4.31",
                 "port" : "bifur_ps2"
             }
-        ]
+        ],
+        "role" : ["testing"]
     },
     "bofur" : {
         "orchestra server" : "cobbler",
@@ -238,7 +259,8 @@ LabHW = {
                 "ip" : "10.98.4.31",
                 "port" : "bofur_ps2"
             }
-        ]
+        ],
+        "role" : ["openstack"]
     },
     "nori" : {
         "orchestra server" : "cobbler",
@@ -253,7 +275,8 @@ LabHW = {
                 "ip" : "10.98.4.33",
                 "port" : "nori_ps2"
             }
-        ]
+        ],
+        "role" : ["openstack"]
     },
     "dori" : {
         "orchestra server" : "cobbler",
@@ -268,7 +291,8 @@ LabHW = {
                 "ip" : "10.98.4.33",
                 "port" : "dori_ps2"
             }
-        ]
+        ],
+        "role" : ["openstack"]
     },
     "kili" : {
         "orchestra server" : "cobbler",
@@ -283,7 +307,8 @@ LabHW = {
                 "ip" : "10.98.4.33",
                 "port" : "kili_ps2"
             }
-        ]
+        ],
+        "role" : ["testing"]
     },
     "fili" : {
         "orchestra server" : "cobbler",
@@ -298,7 +323,8 @@ LabHW = {
                 "ip" : "10.98.4.33",
                 "port" : "fili_ps2"
             }
-        ]
+        ],
+        "role" : ["openstack"]
     },
     "dwalin" : {
         "orchestra server" : "cobbler",
@@ -313,7 +339,8 @@ LabHW = {
                 "ip" : "10.98.4.33",
                 "port" : "dwalin_ps2"
             }
-        ]
+        ],
+        "role" : ["openstack"]
     },
 }
 # vi:set ts=4 sw=4 expandtab:
