@@ -284,12 +284,13 @@ system: The name of the lab system that is to be used for the testing. The
 
         # If we want certain kernels to be run for certain series.
         #
-        tests = 'sru'
-        jobs = s.create_test_jobs(series, s.default_arches, systems, series_decoration='SRU', tests=tests)
-        if jobs is not None:
-            info('The following jenkins jobs were created')
-            for job in jobs:
-                info('    %s' % job)
+        tests = ['sru', 'benchmark-iozone', 'benchmark-iozone-fsync']
+        for t in tests:
+            jobs = s.create_test_jobs(series, s.default_arches, systems, series_decoration='SRU', tests=t)
+            if jobs is not None:
+                info('The following jenkins jobs were created')
+                for job in jobs:
+                    info('    %s' % job)
 
         debug('    Leave: handle_sru_kernel_uploaded')
 
