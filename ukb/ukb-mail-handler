@@ -35,7 +35,6 @@ class MailHandler():
     def __init__(s, args):
         s.args = args
         s.jenkins_url_default = "http://10.98.2.20:8080"
-        s.default_systems=['waldorf', 'beaker', 'rizzo'] # statler is just too big a pain
         s.default_arches=['amd64', 'i386']
 
         # Create a dictionary of the lab HW keyed by role.
@@ -280,13 +279,14 @@ system: The name of the lab system that is to be used for the testing. The
     def handle_sru_kernel_uploaded(s, series, msg):
         debug('    Enter: handle_sru_kernel_uploaded')
 
-        systems = s.default_systems
-
         # If we want certain kernels to be run for certain series.
         #
         tests = ['sru', 'benchmark-iozone', 'benchmark-iozone-fsync']
         for t in tests:
-            jobs = s.create_test_jobs(series, s.default_arches, systems, series_decoration='SRU', tests=t)
+            if 'benchmark' in t:
+                jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t)
+            else:
+                jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['testing'], series_decoration='SRU', tests=t)
             if jobs is not None:
                 info('The following jenkins jobs were created')
                 for job in jobs:
@@ -299,12 +299,16 @@ system: The name of the lab system that is to be used for the testing. The
     def handle_hwe_kernel_uploaded(s, series, msg):
         debug('    Enter: handle_hwe_kernel_uploaded')
 
-        systems = s.default_systems
-        jobs = s.create_test_jobs(series, s.default_arches, systems, series_decoration='SRU', tests='sru', hwe=True)
-        if jobs is not None:
-            info('The following jenkins jobs were created')
-            for job in jobs:
-                info('    %s' % job)
+        tests = ['sru', 'benchmark-iozone', 'benchmark-iozone-fsync']
+        for t in tests:
+            if 'benchmark' in t:
+                jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t, hwe=True)
+            else:
+                jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['testing'], series_decoration='SRU', tests=t, hwe=True)
+            if jobs is not None:
+                info('The following jenkins jobs were created')
+                for job in jobs:
+                    info('    %s' % job)
 
         debug('    Leave: handle_hwe_kernel_uploaded')
 
