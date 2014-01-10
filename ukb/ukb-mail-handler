@@ -281,7 +281,7 @@ system: The name of the lab system that is to be used for the testing. The
 
         # If we want certain kernels to be run for certain series.
         #
-        tests = ['sru', 'benchmark-iozone', 'benchmark-iozone-fsync']
+        tests = ['sru', 'iozone', 'iozone-fsync']
         for t in tests:
             if 'benchmark' in t:
                 jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t)
@@ -299,7 +299,7 @@ system: The name of the lab system that is to be used for the testing. The
     def handle_hwe_kernel_uploaded(s, series, msg):
         debug('    Enter: handle_hwe_kernel_uploaded')
 
-        tests = ['sru', 'benchmark-iozone', 'benchmark-iozone-fsync']
+        tests = ['sru', 'iozone', 'iozone-fsync']
         for t in tests:
             if 'benchmark' in t:
                 jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t, hwe=True)
