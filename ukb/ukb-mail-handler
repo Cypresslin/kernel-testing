@@ -6,6 +6,7 @@ from sys                                import exit, stdin
 from logging                            import debug, info, error, basicConfig, DEBUG, WARNING, INFO
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 from lib.infrastructure                 import LabHW
+from lib.testsprops                     import SRU_TestsList
 from email                              import Parser as EmailParser
 from re                                 import search
 from lib.shell                          import sh, ShellError
@@ -91,6 +92,7 @@ class MailHandler():
                 if ppa:
                     cmd += ' --ppa=%s' % (ppa)
                 debug('  ' + cmd)
+                print(cmd)
                 (return_code, output) = sh(cmd, quiet=True)
                 for line in output:
                     line = line.strip()
@@ -281,7 +283,7 @@ system: The name of the lab system that is to be used for the testing. The
 
         # If we want certain kernels to be run for certain series.
         #
-        tests = ['sru', 'iozone', 'iozone-fsync']
+        tests = SRU_TestsList
         for t in tests:
             if 'benchmark' in t:
                 jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t)
@@ -294,12 +296,40 @@ system: The name of the lab system that is to be used for the testing. The
 
         debug('    Leave: handle_sru_kernel_uploaded')
 
+    # handle_kernel_uploaded_to_ppa
+    #
+    def handle_kernel_uploaded_to_ppa(s, msg):
+        debug('    Enter: handle_kernel_uploaded_to_ppa')
+
+        props = {}
+        for x in msg.get_payload().split('\n'):
+            x = x.strip()
+            if x == '': continue
+
+            (k, v) = x.split(':', 1)
+            props[k.strip()] = v.strip()
+
+        # If we want certain kernels to be run for certain series.
+        #
+        tests = SRU_TestsList
+        for t in tests:
+            if 'benchmark' in t:
+                jobs = s.create_test_jobs(props['Series'], s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t, ppa='ppa:canonical-kernel-team/ppa')
+            else:
+                jobs = s.create_test_jobs(props['Series'], s.default_arches, s.sut_pool['testing'], series_decoration='SRU', tests=t, ppa='ppa:canonical-kernel-team/ppa')
+            if jobs is not None:
+                info('The following jenkins jobs were created')
+                for job in jobs:
+                    info('    %s' % job)
+
+        debug('    Leave: handle_kernel_uploaded_to_ppa')
+
     # handle_hwe_kernel_uploaded
     #
     def handle_hwe_kernel_uploaded(s, series, msg):
         debug('    Enter: handle_hwe_kernel_uploaded')
 
-        tests = ['sru', 'iozone', 'iozone-fsync']
+        tests = SRU_TestsList
         for t in tests:
             if 'benchmark' in t:
                 jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t, hwe=True)
@@ -349,6 +379,12 @@ system: The name of the lab system that is to be used for the testing. The
 
                 if 'kernel test request' in e_subject.lower():
                     s.handle_test_request(msg)
+                    break
+
+                m = search('(.*) available in ppa', e_subject.lower())
+                if m is not None:
+                    info('  - New kernel in PPA')
+                    s.handle_kernel_uploaded_to_ppa(msg)
                     break
 
                 m = search('\[(\S+)\] linux \d+\.\d+\.\d+.* uploaded', e_subject.lower())

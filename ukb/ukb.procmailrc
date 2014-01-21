@@ -6,6 +6,13 @@ VERBOSE=on
 
 
 :0 fw
+* ^Subject:.*linux.* Available in PPA.*
+{
+    :0 hbW:
+    | /home/work/kernel-testing/ukb/ukb-mail-handler >> /home/work/kernel-testing/ukb/ukb-mail-handler.log
+}
+
+:0 fw
 * ^Subject:.*linux.* .* uploaded.*
 {
     :0 hbW:

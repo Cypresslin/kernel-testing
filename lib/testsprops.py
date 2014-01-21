@@ -214,4 +214,9 @@ TestCollections = {
 
 }
 
+# A list of the tests that is used to create test jobs when the mail handler
+# is processing SRU email.
+#
+SRU_TestsList = ['sru', 'iozone', 'iozone-fsync']
+
 # vi:set ts=4 sw=4 expandtab syntax=python:
