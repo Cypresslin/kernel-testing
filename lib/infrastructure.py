@@ -141,7 +141,7 @@ LabHW = {
     "statler" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "60:eb:69:21:2c:6d",
+        "mac address" : "60:eb:69:21:2c:6c",
         "cdu" : [
             {
                 "ip" : "10.98.4.30",
