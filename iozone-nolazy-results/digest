@@ -1,0 +1,443 @@
+#!/usr/bin/env python
+#
+# Take a tree of test results and process it, producing a set of html
+# reports.
+#
+
+from sys                                import argv
+from getopt                             import getopt, GetoptError
+from datetime                           import datetime
+from os                                 import path, walk, makedirs
+from shutil                             import rmtree, copytree
+
+from mako.template                      import Template
+from mako.exceptions                    import RichTraceback
+
+from grinder                            import CmdlineError, Exit, TestResultsRepository, TestResultsRepositoryError, load_template
+from lib.dbg                            import Dbg
+from lib.utils                          import error, stdo, dump, string_to_date, json_load
+from lib.shell                          import sh
+
+from lib.ubuntu                         import Ubuntu
+from lib.debian                         import Debian
+
+# Cmdline
+#
+class Cmdline:
+    """
+    Handle all the command line processing for the application.
+    """
+    # error
+    #
+    def error(self, e, defaults):
+        """
+        Simple helper which prints out an error message and then prints out the usage.
+        """
+        if e != '': error("%s\n" % e)
+        self.usage(defaults)
+
+    # usage
+    #
+    def usage(self, defaults):
+        """
+        Prints out the help text which explains the command line options.
+        """
+        stdo("    Usage:                                                                                   \n")
+        stdo("        %s [<options>]                                                                       \n" % defaults['app_name'])
+        stdo("                                                                                             \n")
+        stdo("    Options:                                                                                 \n")
+        stdo("        --help           Prints this text.                                                   \n")
+        stdo("                                                                                             \n")
+        stdo("        --debug=<debug options>                                                              \n")
+        stdo("                         Performs additional output related to the option enabled and        \n")
+        stdo("                         the application defined support for the option.                     \n")
+        stdo("                                                                                             \n")
+        stdo("                         Recognized debug options:                                           \n")
+        stdo("                             enter                                                           \n")
+        stdo("                             leave                                                           \n")
+        stdo("                             verbose                                                         \n")
+        stdo("                             cfg                                                             \n")
+        stdo("                                                                                             \n")
+        stdo("    Examples:                                                                                \n")
+        stdo("        %s --debug=\"enter,leave,verbose\"                                                   \n" % defaults['app_name'])
+
+    # process
+    #
+    def process(self, argv, defaults):
+        """
+        This method is responsible for calling the getopt function to process the command
+        line. All parameters are processed into class variables for use by other methods.
+        """
+        result = True
+        try:
+            cfg = defaults
+
+            optsShort = ''
+            optsLong  = ['help', 'debug=']
+            opts, args = getopt(argv[1:], optsShort, optsLong)
+
+            for opt, val in opts:
+                if (opt == '--help'):
+                    raise CmdlineError('')
+
+                elif opt in ('--debug'):
+                    cfg['debug'] = val.split(',')
+                    for level in cfg['debug']:
+                        if level not in Dbg.levels:
+                            Dbg.levels.append(level)
+
+        except GetoptError, error:
+            raise CmdlineError(error)
+
+        return cfg
+
+# Digest
+#
+class Digest():
+    """
+    """
+
+    # __init__
+    #
+    def __init__(self, cfg):
+        Dbg.enter("Digest.__init__")
+
+        self.cfg = cfg
+        self.cfg['template'] = 'digest-index.mako'
+
+        Dbg.leave("Digest.__init__")
+
+    # initialize
+    #
+    def initialize(self):
+        Dbg.enter("Digest.initialize")
+
+        try:
+            self.trr = TestResultsRepository()
+            self.ubuntu = Ubuntu()
+
+            self.index_template = Template(load_template(self.cfg['template']))
+            self.host_template = Template(load_template('host.mako'))
+
+            self.hosts_info = json_load(path.join(path.dirname(argv[0]), 'hosts.json'))
+
+        except TestResultsRepositoryError as e:
+            error(e.msg)
+            Dbg.leave("Digest.initialize")
+            raise Exit()
+
+        Dbg.leave("Digest.initialize")
+
+    # series
+    #
+    def series(self, results):
+        Dbg.enter("Digest.series")
+
+        retval = "unknown"
+        try:
+            # First see if the series is in the results. This might have been done by hand
+            # to add a series where this algorithm doesn't work.
+            #
+            retval = results['attributes']['series']
+        except KeyError:
+            kv = ''
+            try:
+                kv = results['attributes']['kernel']
+                m = Debian.version_rc.match(kv)
+                if m:
+                    for s in Ubuntu.index_by_series_name:
+                        if s in kv:
+                            # If the series is in the kernel version string, it is most likely
+                            # a "backport" kernel and we should use the series in the version
+                            #
+                            retval = s
+                            break
+
+                    if retval == 'unknown':
+                        # What a hack ...
+                        if '2.6' == m.group(1):
+                            version = '2.6.32'
+                        else:
+                            version = '%s.0' % (m.group(1)) # Only want major and minor for determining the series
+                        retval = self.ubuntu.lookup(version)['name']
+                else:
+                    print(" ** WARNING: The kernel version string found in the results data did not match the regex.")
+            except KeyError:
+                print(" ** WARNING: The kernel version (%s) did not match up with any Ubuntu series." % (results['attributes']['kernel']))
+
+        Dbg.leave("Digest.series")
+        return retval
+
+    #
+    #
+    def generateReleaseComparison(self, first, second, outputDir):
+        #
+        # In output directory, create a directory named to have
+        # both versions in it
+        #
+        # Under that, create a directory for each file system type
+        # In those directories, put the results for each file system type
+        #print '========================'
+        #print 'generateReleaseComparison comparing %s (%s) to %s (%s)' % (first['attributes']['distro-release-name'], first['attributes']['kernel'], second['attributes']['distro-release-name'], second['attributes']['kernel'])
+
+
+        firstPath = first['attributes']['resultspath']
+        secondPath = second['attributes']['resultspath']
+        outputDir = outputDir.encode('utf-8')
+        if path.isdir(outputDir):
+            # skip if already done for these versions
+            return
+        makedirs(outputDir)
+        # do each type of file system separately
+        for ttag in ['ext4', 'ext4-nolazy', 'ext3', 'ext2', 'xfs', 'btrfs']:
+            print '    ', ttag
+            # Each fs type has results from multiple runs. We collect a list of these
+            # file paths, and the charting app will average them all
+            firstFsFiles = []
+            secondFsFiles = []
+            for root, dirs, files in walk(firstPath):
+                for file in files:
+                    if file == "raw_output_1":
+                        if 'iozone.%s_' % ttag in root:
+                            firstFsFiles.append(path.join(root, file).encode('utf-8'))
+            for root, dirs, files in walk(secondPath):
+                for file in files:
+                    if file == "raw_output_1":
+                        if 'iozone.%s_' % ttag in root:
+                            secondFsFiles.append(path.join(root, file).encode('utf-8'))
+
+            script = 'cd %s\n' % outputDir
+            script += '/var/lib/jenkins/iozone-results-comparator/src/iozone_results_comparator.py --baseline '
+            for filename in sorted(firstFsFiles):
+                script += filename + ' '
+            script += '--set1 '
+            for filename in sorted(secondFsFiles):
+                script += filename + ' '
+            script += '\n'
+
+
+            sh(script, 120)
+
+            # The script puts output in the html_out directory, copy all that to the correct filesystem subdir
+            srcPath = path.join(outputDir, 'html_out')
+            destPath = path.join(outputDir, ttag)
+            copytree(srcPath, destPath)
+            rmtree(srcPath)
+
+    # main
+    #
+    def main(self):
+        Dbg.enter("Digest.main")
+
+        try:
+            self.initialize()
+
+            # Build the data dictionary that will be passed into the mako template renderer.
+            #
+            data = {}
+            for tr in self.trr.test_runs:
+                try:
+                    results = self.trr.results(tr)
+                except TestResultsRepositoryError as e:
+                    error(e.msg)
+                    continue
+
+                #dump(results['attributes'])
+                Dbg.verbose("%s\n" % (tr))
+                Dbg.verbose("    kernel: %s\n" % (results['attributes']['kernel']))
+
+                series = self.series(results)
+                results['attributes']['series'] = series
+                Dbg.verbose("    series: %s\n" % (series))
+
+                results['attributes']['resultspath'] =  path.join(self.trr.cfg['repository_root'], tr, 'iozone-nolazy/results')
+
+                # "Fixup" the timestamp to be what we want it to look like on the web page
+                #
+                ts = string_to_date(results['attributes']['timestamp'])
+                results['attributes']['timestamp'] = ts.strftime("%Y-%m-%d %H:%M")
+
+                # The primary key is the series.
+                #
+                if series not in data:
+                    data[series] = {}
+
+                # If the kernel used was a "custom" kernel, one that someone on the kernel
+                # team built themselves or a mainline build kernel, we want that information
+                #
+                job = results['attributes']['environ']['JOB_NAME']
+                who = None
+                if '_for_' in job:
+                    (junk, who) = job.split('_for_')
+
+                # The secondary key for 'data' is the kernel version.
+                #
+                k = results['attributes']['kernel']
+                if who is not None:
+                    k = k + '&nbsp;&nbsp;(%s)' % who
+                if k not in data[series]:
+                    data[series][k] = []
+                data[series][k].append(results)
+
+            #dump(data)
+
+            #
+            #
+            # We generate comparisons between different individual results sets.
+            # This compares performance for each file system type between two releases.
+            # These two can be different series (i.e. Saucy against Trusty), or
+            # successive releases of the same series
+            #
+
+            # series to series comparisons, use newest of each
+            s2s = []
+            # version to version is for each sucessive pair within a series
+            v2v = {}
+            # Generate the comparisons between series
+            #
+            seriesList = sorted(data, reverse=True)
+            for series in seriesList:
+                versions = sorted(data[series], reverse=True)
+                s2s.append(versions[0])
+                versionlist = []
+                for version in versions:
+                    versionlist.append(version)
+                v2v[series] = versionlist
+
+            # Normally series to series comparisons are between successive releases, but we also need to
+            # compare LTS to LTS, so we do that manually
+            ltsnamepairs = [('lucid', 'precise'),('precise', 'trusty')]
+
+            seriespairs = []
+            versionpairs = []
+            ltspairs = []
+
+            # Create the LTS comparisons
+            for ltsSet in ltsnamepairs :
+                if ltsSet[0] in data and ltsSet[1] in data:
+                    firstLts = data[ltsSet[0]][v2v[ltsSet[0]][0]][0]
+                    if firstLts['results']['suites'][0]['tests failed'] > 0:
+                        print 'Skipping LTS %s (%s) because of errors' % (firstLts['attributes']['distro-release-name'], firstLts['attributes']['kernel'])
+                        continue
+                    secondLts = data[ltsSet[1]][v2v[ltsSet[1]][0]][0]
+                    if secondLts['results']['suites'][0]['tests failed'] > 0:
+                        print 'Skipping LTS %s (%s) because of errors' % (secondLts['attributes']['distro-release-name'], secondLts['attributes']['kernel'])
+                        continue
+
+                    outDir = '%s_%s-to-%s_%s' % \
+                        (firstLts['attributes']['distro-release-name'], firstLts['attributes']['kernel'],
+                         secondLts['attributes']['distro-release-name'], secondLts['attributes']['kernel'])
+                    outPath = path.join(self.trr.cfg['repository_root'], outDir)
+                    #print 'Top: comparing %s (%s) to %s (%s)' % \
+                    #    (firstLts['attributes']['distro-release-name'], firstLts['attributes']['kernel'], secondLts['attributes']['distro-release-name'], secondLts['attributes']['kernel'])
+                    # save the data the template needs
+                    pairdata = {}
+                    pairdata['first'] = firstLts
+                    pairdata['second'] = secondLts
+                    pairdata['path'] = outDir
+                    ltspairs.append(pairdata)
+                    self.generateReleaseComparison(firstLts, secondLts, outPath)
+
+            # create the successive series and version pairs to be generated
+            for i in range(len(seriesList)):
+                # find series-to-series comparisons
+                # TODO we just take the first test in the list, not sure what else to do here
+                secondOne = data[seriesList[i]][v2v[seriesList[i]][0]][0]
+                # If all tests did not pass, skip this one
+                if secondOne['results']['suites'][0]['tests failed'] > 0:
+                    print 'Skipping %s (%s) because of errors' % (secondOne['attributes']['distro-release-name'], secondOne['attributes']['kernel'])
+                    continue
+                if i+1 < len(seriesList):
+                    firstOne = data[seriesList[i+1]][v2v[seriesList[i+1]][0]][0]
+                    # If all tests did not pass, skip this one
+                    if firstOne['results']['suites'][0]['tests failed'] > 0:
+                        print 'Skipping %s (%s) because of errors' % (firstOne['attributes']['distro-release-name'], firstOne['attributes']['kernel'])
+                        continue
+                    outDir = '%s_%s-to-%s_%s' % \
+                        (firstOne['attributes']['distro-release-name'], firstOne['attributes']['kernel'],
+                         secondOne['attributes']['distro-release-name'], secondOne['attributes']['kernel'])
+                    outPath = path.join(self.trr.cfg['repository_root'], outDir)
+                    #print 'Top: comparing %s (%s) to %s (%s)' % \
+                    #    (firstOne['attributes']['distro-release-name'], firstOne['attributes']['kernel'], secondOne['attributes']['distro-release-name'], secondOne['attributes']['kernel'])
+                    # save the data the template needs
+                    pairdata = {}
+                    pairdata['first'] = firstOne
+                    pairdata['second'] = secondOne
+                    pairdata['path'] = outDir
+                    seriespairs.append(pairdata)
+                    self.generateReleaseComparison(firstOne, secondOne, outPath)
+                # now find versions within series to compare each with the next
+                seriesVersions = v2v[seriesList[i]] #.encode('utf8')
+                for j in range(len(seriesVersions)):
+                    secondVersion = data[seriesList[i]][seriesVersions[j]][0]
+                    if j+1 < len(seriesVersions):
+                        firstVersion = data[seriesList[i]][seriesVersions[j+1]][0]
+                        outDir = '%s_%s-to-%s_%s' % \
+                            (firstVersion['attributes']['distro-release-name'], firstVersion['attributes']['kernel'],
+                             secondVersion['attributes']['distro-release-name'], secondVersion['attributes']['kernel'])
+                        outPath = path.join(self.trr.cfg['repository_root'], outDir)
+                        #print 'Bottom: comparing %s (%s) to %s (%s)' % \
+                        #    (firstVersion['attributes']['distro-release-name'], firstVersion['attributes']['kernel'], secondVersion['attributes']['distro-release-name'], secondVersion['attributes']['kernel'])
+                        # save the data the template needs
+                        pairdata = {}
+                        pairdata['first'] = firstVersion
+                        pairdata['second'] = secondVersion
+                        pairdata['path'] = outDir
+                        versionpairs.append(pairdata)
+                        self.generateReleaseComparison(firstVersion, secondVersion, outPath)
+
+            # Now that we've generated the results and each comparison is in its own directory, we need to include those in the results page
+            # Generate the testing, index page.
+            #
+            try:
+                template = self.index_template.render(data = data, timestamp = datetime.utcnow(), seriespairs = seriespairs, versionpairs = versionpairs, ltspairs = ltspairs)
+                dest = path.join(self.trr.cfg['repository_root'], 'index.html')
+                with open(dest, 'w') as f:
+                    f.write(template)
+
+                for host in self.hosts_info:
+                    template = self.host_template.render(data = self.hosts_info[host], title = host, timestamp = datetime.utcnow())
+                    dest = path.join(self.trr.cfg['repository_root'], '%s.html' % host)
+                    with open(dest, 'w') as f:
+                        f.write(template)
+
+            except:
+                traceback = RichTraceback()
+                for (filename, lineno, function, line) in traceback.traceback:
+                    print("File %s, line %s, in %s" % (filename, lineno, function))
+                    print(line, "\n")
+                print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
+
+        except TestResultsRepositoryError as e:
+            error(e.msg)
+            Dbg.leave("Digest.main")
+            raise Exit()
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            pass
+
+        except Exit:
+            pass
+
+        Dbg.leave("Digest.main")
+        return
+
+
+if __name__ == '__main__':
+    defaults = {}
+    defaults['app_name'] = argv[0]
+
+    # The cmdline processing is done here partially so the debug options
+    # can be processed right away.
+    #
+    cmdline = Cmdline()
+    try:
+        app = Digest(cmdline.process(argv, defaults))
+        app.main()
+    except CmdlineError as e:
+        cmdline.error(e.msg, defaults)
+
+# vi:set ts=4 sw=4 expandtab:
+
