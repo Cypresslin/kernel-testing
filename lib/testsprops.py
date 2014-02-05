@@ -14,6 +14,14 @@
 #
 TestProfiles = {
 
+    'ubuntu_lxc' : {
+        'packages' : {
+            'common' : [
+                'lxc-tests'
+                ],
+            },
+        },
+
     'ubuntu_WiFi_SimpleConnection' : {
         'packages' : {
             'common' : [
