@@ -108,7 +108,7 @@ LabHW = {
                 "port" : "fozzie_ps2"
             }
         ],
-        "role" : ["testing"]
+        "role" : ["openstack"]
     },
     "rizzo" : {
         "orchestra server" : "cobbler",
