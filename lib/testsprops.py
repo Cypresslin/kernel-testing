@@ -20,6 +20,9 @@ TestProfiles = {
                 'lxc-tests'
                 ],
             },
+        'series-blacklist' : [
+            'lucid', 'precise', 'quantal', 'saucy',
+            ],
         },
 
     'ubuntu_WiFi_SimpleConnection' : {
@@ -211,7 +214,7 @@ TestProfiles = {
         'packages' : {
            'common' : ['stress'],
             },
-        'atargs' : {'METER_ADDR':'10.97.8.2', 'METER_PORT':'3490', 'METER_TAGPORT':'9999'},
+        'atargs' : {'METER_ADDR':'10.97.4.49', 'METER_PORT':'3490', 'METER_TAGPORT':'9999'},
         },
 
     'wakeup_events' : {

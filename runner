@@ -79,6 +79,16 @@ class Runner():
                 error('Test \'%s\' is not recognized.' % t)
                 errors = True
 
+
+        # Verify that certain tests have not been blaclisted for the series
+        # that we are currently running.
+        #
+        for t in self.tests_list:
+            if 'series-blacklist' in TestProfiles[t]:
+                if self.release_name in TestProfiles[t]['series-blacklist']:
+                    error('Test \'%s\' has been blacklisted for this series' % t)
+                    self.tests_list.remove(t)
+
         # Verify that the tests are valid, autotest tests.
         #
         if not path.exists(self.autotest_tests_root):
