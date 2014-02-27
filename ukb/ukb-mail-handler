@@ -140,7 +140,7 @@ class MailHandler():
                 elif search('tests\S*:', line) is not None:
                     (x, tests) = line.split(':', 1)
                     tests = tests.strip()
-                    if 'benchmark' in tests:
+                    if 'iozone' in tests:
                         systems = s.sut_pool['benchmarks']
                 elif search('system\S*:', line) is not None:
                     (x, system) = line.split(':', 1)
@@ -285,7 +285,7 @@ system: The name of the lab system that is to be used for the testing. The
         #
         tests = SRU_TestsList
         for t in tests:
-            if 'benchmark' in t:
+            if 'iozone' in t:
                 jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t)
             else:
                 jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['testing'], series_decoration='SRU', tests=t)
@@ -303,20 +303,27 @@ system: The name of the lab system that is to be used for the testing. The
 
         props = {}
         for x in msg.get_payload().split('\n'):
-            x = x.strip()
-            if x == '': continue
+            try:
+                x = x.strip()
+                if x == '': continue
 
-            (k, v) = x.split(':', 1)
-            props[k.strip()] = v.strip()
+                (k, v) = x.split(':', 1)
+                props[k.strip()] = v.strip()
+            except:
+                # If the line doesn't match our simple parsing, just skip it.
+                #
+                pass
 
         # If we want certain kernels to be run for certain series.
         #
         tests = SRU_TestsList
         for t in tests:
-            if 'benchmark' in t:
-                jobs = s.create_test_jobs(props['Series'], s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t, ppa='ppa:canonical-kernel-team/ppa')
+            if 'iozone' in t:
+                #jobs = s.create_test_jobs(props['Series'], s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t, ppa='ppa:canonical-kernel-team/ppa')
+                jobs = s.create_test_jobs(props['Series'], s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t)
             else:
-                jobs = s.create_test_jobs(props['Series'], s.default_arches, s.sut_pool['testing'], series_decoration='SRU', tests=t, ppa='ppa:canonical-kernel-team/ppa')
+                #jobs = s.create_test_jobs(props['Series'], s.default_arches, s.sut_pool['testing'], series_decoration='SRU', tests=t, ppa='ppa:canonical-kernel-team/ppa')
+                jobs = s.create_test_jobs(props['Series'], s.default_arches, s.sut_pool['testing'], series_decoration='SRU', tests=t)
             if jobs is not None:
                 info('The following jenkins jobs were created')
                 for job in jobs:
@@ -331,7 +338,7 @@ system: The name of the lab system that is to be used for the testing. The
 
         tests = SRU_TestsList
         for t in tests:
-            if 'benchmark' in t:
+            if 'iozone' in t:
                 jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t, hwe=True)
             else:
                 jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['testing'], series_decoration='SRU', tests=t, hwe=True)
