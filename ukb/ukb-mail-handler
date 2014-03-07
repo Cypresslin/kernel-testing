@@ -7,6 +7,7 @@ from logging                            import debug, info, error, basicConfig, 
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 from lib.infrastructure                 import LabHW
 from lib.testsprops                     import SRU_TestsList
+from lib.ubuntu                         import Ubuntu
 from email                              import Parser as EmailParser
 from re                                 import search
 from lib.shell                          import sh, ShellError
@@ -281,18 +282,21 @@ system: The name of the lab system that is to be used for the testing. The
     def handle_sru_kernel_uploaded(s, series, msg):
         debug('    Enter: handle_sru_kernel_uploaded')
 
-        # If we want certain kernels to be run for certain series.
+        # Only development kernels are done this way now.
         #
-        tests = SRU_TestsList
-        for t in tests:
-            if 'iozone' in t:
-                jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t)
-            else:
-                jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['testing'], series_decoration='SRU', tests=t)
-            if jobs is not None:
-                info('The following jenkins jobs were created')
-                for job in jobs:
-                    info('    %s' % job)
+        if Ubuntu().is_development_series(series):
+            # If we want certain kernels to be run for certain series.
+            #
+            tests = SRU_TestsList
+            for t in tests:
+                if 'iozone' in t:
+                    jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t)
+                else:
+                    jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['testing'], series_decoration='SRU', tests=t)
+                if jobs is not None:
+                    info('The following jenkins jobs were created')
+                    for job in jobs:
+                        info('    %s' % job)
 
         debug('    Leave: handle_sru_kernel_uploaded')
 
