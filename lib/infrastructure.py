@@ -342,5 +342,83 @@ LabHW = {
         ],
         "role" : ["openstack"]
     },
+
+    "cavac" : {
+        "orchestra server" : "cobbler",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "ac:16:2d:aa:6c:e8",
+        "ipmi" : {
+            "ip" : "10.98.5.83",
+            "username" : "Administrator",
+            "passwd" : "insecure"
+        },
+        "role" : ["unknown"]
+    },
+    "etnyre" : {
+        "orchestra server" : "cobbler",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "e4:11:5b:de:01:12",
+        "ipmi" : {
+            "ip" : "10.98.5.84",
+            "username" : "Administrator",
+            "passwd" : "insecure"
+        },
+        "role" : ["unknown"]
+    },
+    "bantam" : {
+        "orchestra server" : "cobbler",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "80:c1:6e:62:22:30",
+        "ipmi" : {
+            "ip" : "10.98.5.89",
+            "username" : "Administrator",
+            "passwd" : "insecure"
+        },
+        "role" : ["unknown"]
+    },
+    "larsen" : {
+        "orchestra server" : "cobbler",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "ac:16:2d:b8:cb:f8",
+        "ipmi" : {
+            "ip" : "10.98.5.90",
+            "username" : "Administrator",
+            "passwd" : "insecure"
+        },
+        "role" : ["unknown"]
+    },
+    "rainier" : {
+        "orchestra server" : "cobbler",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "ac:16:2d:b9:25:f8",
+        "ipmi" : {
+            "ip" : "10.98.5.86",
+            "username" : "Administrator",
+            "passwd" : "insecure"
+        },
+        "role" : ["unknown"]
+    },
+    "fuller" : {
+        "orchestra server" : "cobbler",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "6c:3b:e5:a9:8b:08",
+        "ipmi" : {
+            "ip" : "10.98.5.87",
+            "username" : "Administrator",
+            "passwd" : "insecure"
+        },
+        "role" : ["unknown"]
+    },
+    "dogmar" : {
+        "orchestra server" : "cobbler",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "10:60:4b:a9:e8:b8",
+        "ipmi" : {
+            "ip" : "10.98.5.88",
+            "username" : "Administrator",
+            "passwd" : "insecure"
+        },
+        "role" : ["unknown"]
+    },
 }
 # vi:set ts=4 sw=4 expandtab:
