@@ -136,7 +136,7 @@ LabHW = {
                 "port" : "waldorf"
             }
         ],
-        "role" : ["testing"]
+        "role" : ["on loan"]
     },
     "statler" : {
         "orchestra server" : "cobbler",
@@ -152,7 +152,7 @@ LabHW = {
                 "port" : "statler_ps2"
             }
         ],
-        "role" : ["none"]  # This system has a raid controler that is a pita
+        "role" : ["on loan"]  # This system has a raid controler that is a pita
     },
     "zoot" : {
         "orchestra server" : "cobbler",
