@@ -392,7 +392,7 @@ LabHW = {
         "jenkins server" : "kernel-jenkins",
         "mac address" : "ac:16:2d:b9:25:fc",
         "ipmi" : {
-            "ip" : "10.98.5.86",
+            "ip" : "10.98.5.91",
             "username" : "Administrator",
             "passwd" : "insecure"
         },
