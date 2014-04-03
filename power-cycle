@@ -63,26 +63,37 @@ class MetalProvisioner():
         if not self.quiet:
             print('Cycling the power on \'%s\'' % (target))
 
-        # Power cycle the system so it will netboot and install
-        #
-        for state in ['off', 'on']:
-            t = LabHW[target]
-            for psu in t['cdu']:
-                if psu['ip'] != '':
-                    try:
-                        ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
-                    except ShellError as e:
-                        # Sometimes the call to the orchestra server will time-out (not sure why), just
-                        # wait a minute and try again.
-                        #
-                        sleep(60)
-                        if not self.quiet:
-                            print('    Initial power cycle attempt failed, trying a second time.')
-                        ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
+        t = LabHW[target]
 
-            if state == 'off':
-                sleep(10) # Some of the systems want a little delay
-                          # between being powered off and then back on.
+        if 'ipmi' in t:
+            for state in ['off', 'on']:
+                cmd = "ipmitool -H %s -I lanplus -U %s -P %s power %s" % (t['ipmi']['ip'], t['ipmi']['username'], t['ipmi']['passwd'], state)
+                print(cmd)
+                result, output = sh(cmd, ignore_result=False)
+
+                if state == 'off':
+                    sleep(20) # Some of the systems want a little delay
+                              # between being powered off and then back on.
+        else:
+            # Power cycle the system so it will netboot and install
+            #
+            for state in ['off', 'on']:
+                for psu in t['cdu']:
+                    if psu['ip'] != '':
+                        try:
+                            ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
+                        except ShellError as e:
+                            # Sometimes the call to the orchestra server will time-out (not sure why), just
+                            # wait a minute and try again.
+                            #
+                            sleep(60)
+                            if not self.quiet:
+                                print('    Initial power cycle attempt failed, trying a second time.')
+                            ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
+
+                if state == 'off':
+                    sleep(10) # Some of the systems want a little delay
+                              # between being powered off and then back on.
 
 # PowerCycle
 #
