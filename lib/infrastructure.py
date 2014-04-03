@@ -346,7 +346,7 @@ LabHW = {
     "cavac" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "ac:16:2d:aa:6c:e8",
+        "mac address" : "ac:16:2d:aa:6c:ec",
         "ipmi" : {
             "ip" : "10.98.5.83",
             "username" : "Administrator",
@@ -357,7 +357,7 @@ LabHW = {
     "etnyre" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "e4:11:5b:de:01:12",
+        "mac address" : "e4:11:5b:de:01:13",
         "ipmi" : {
             "ip" : "10.98.5.84",
             "username" : "Administrator",
@@ -368,7 +368,7 @@ LabHW = {
     "bantam" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "80:c1:6e:62:22:30",
+        "mac address" : "80:c1:6e:62:22:31",
         "ipmi" : {
             "ip" : "10.98.5.89",
             "username" : "Administrator",
@@ -379,7 +379,7 @@ LabHW = {
     "larsen" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "ac:16:2d:b8:cb:f8",
+        "mac address" : "ac:16:2d:b8:cb:fc",
         "ipmi" : {
             "ip" : "10.98.5.90",
             "username" : "Administrator",
@@ -390,7 +390,7 @@ LabHW = {
     "rainier" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "ac:16:2d:b9:25:f8",
+        "mac address" : "ac:16:2d:b9:25:fc",
         "ipmi" : {
             "ip" : "10.98.5.86",
             "username" : "Administrator",
@@ -401,7 +401,7 @@ LabHW = {
     "fuller" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "6c:3b:e5:a9:8b:08",
+        "mac address" : "6c:3b:e5:a9:8b:0c",
         "ipmi" : {
             "ip" : "10.98.5.87",
             "username" : "Administrator",
@@ -412,7 +412,7 @@ LabHW = {
     "dogmar" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "10:60:4b:a9:e8:b8",
+        "mac address" : "10:60:4b:a9:e8:bc",
         "ipmi" : {
             "ip" : "10.98.5.88",
             "username" : "Administrator",
