@@ -409,7 +409,7 @@ LabHW = {
         },
         "role" : ["unknown"]
     },
-    "dogmar" : {
+    "dagmar" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "10:60:4b:a9:e8:bc",
