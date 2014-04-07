@@ -85,23 +85,22 @@ TestProfiles = {
             'common' : [
                 'build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev', 'gdb',
                 'python-pexpect', 'apparmor', 'apparmor-utils', 'netcat', 'sudo', 'build-essential', 'libapparmor-dev',
-                'ruby1.8', 'attr', 'apport', 'libpam-apparmor', 'libgtk2.0-dev', 'pyflakes', 'apparmor-profiles', 'quilt',
-                'libdbus-1-dev'
+                'attr', 'apport', 'libpam-apparmor', 'libgtk2.0-dev', 'pyflakes', 'apparmor-profiles', 'quilt', 'libdbus-1-dev'
                 ],
             'trusty' : [
-                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev',
+                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby',
                 ],
             'saucy' : [
-                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev',
+                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby1.8',
                 ],
             'raring' : [
-                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev',
+                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby1.8',
                 ],
             'quantal' : [
-                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev',
+                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby1.8',
                 ],
             'precise' : [
-                'python-libapparmor', 'python3', 'python3-all-dev',
+                'python-libapparmor', 'python3', 'python3-all-dev', 'ruby1.8',
                 ],
             },
         },
