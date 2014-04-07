@@ -88,13 +88,13 @@ TestProfiles = {
                 'attr', 'apport', 'libpam-apparmor', 'libgtk2.0-dev', 'pyflakes', 'apparmor-profiles', 'quilt', 'libdbus-1-dev'
                 ],
             'trusty' : [
-                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby',
+                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby', 'apparmor-easyprof',
                 ],
             'saucy' : [
-                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby1.8',
+                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby1.8', 'apparmor-easyprof',
                 ],
             'raring' : [
-                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby1.8',
+                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby1.8', 'apparmor-easyprof',
                 ],
             'quantal' : [
                 'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby1.8',
