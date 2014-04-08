@@ -170,6 +170,22 @@ LabHW = {
         ],
         "role" : ["openstack"]
     },
+    "gloin" : {
+        "orchestra server" : "cobbler",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "a0:36:9f:21:d8:f8",
+        "cdu" : [
+            {
+                "ip" : "10.98.4.30",
+                "port" : "gloin_ps1"
+            },
+            {
+                "ip" : "10.98.4.31",
+                "port" : "gloin_ps2"
+            }
+        ],
+        "role" : ["none"]
+    },
     "floyd" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
