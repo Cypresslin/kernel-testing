@@ -66,6 +66,11 @@ HWE = {
             'package' : 'linux-generic-lts-saucy',
             'ppa' : True,
         },
+        'trusty' : {
+            'series' : 'precise',
+            'package' : 'linux-generic-lts-trusty',
+            'ppa' : True,
+        },
 }
 
 # Information about the systems that the kernel team reprovisions and
