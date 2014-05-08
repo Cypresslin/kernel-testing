@@ -35,7 +35,7 @@ class Runner():
         self.__scratch_needed = None
         self.test_list = None
         self.autotest_client_root = 'autotest/client'
-        self.autotest_exe_path = path.join(self.autotest_client_root, 'autotest')
+        self.autotest_exe_path = path.join(self.autotest_client_root, 'autotest-local')
         self.autotest_tests_root = path.join(self.autotest_client_root, 'tests')
         self.saved_results_root = 'kernel-test-results'
         self.autotest_results_root = path.join(self.autotest_client_root, 'results', 'default')
