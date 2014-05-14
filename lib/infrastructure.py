@@ -329,7 +329,7 @@ LabHW = {
                 "port" : "kili_ps2"
             }
         ],
-        "role" : ["testing"]
+        "role" : ["unknown"]
     },
     "fili" : {
         "orchestra server" : "cobbler",
@@ -373,7 +373,7 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["unknown"]
+        "role" : ["testing"]
     },
     "etnyre" : {
         "orchestra server" : "cobbler",
@@ -384,7 +384,7 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["unknown"]
+        "role" : ["testing"]
     },
     "bantam" : {
         "orchestra server" : "cobbler",
@@ -406,7 +406,7 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["unknown"]
+        "role" : ["testing"]
     },
     "rainier" : {
         "orchestra server" : "cobbler",
@@ -417,7 +417,7 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["unknown"]
+        "role" : ["testing"]
     },
     "fuller" : {
         "orchestra server" : "cobbler",
@@ -428,7 +428,7 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["unknown"]
+        "role" : ["testing"]
     },
     "dagmar" : {
         "orchestra server" : "cobbler",
@@ -439,7 +439,7 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["unknown"]
+        "role" : ["testing"]
     },
 }
 # vi:set ts=4 sw=4 expandtab:
