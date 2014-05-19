@@ -254,7 +254,7 @@ LabHW = {
     "bifur" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "00:1e:67:94:34:29",
+        "mac address" : "00:1e:67:94:7d:9b",
         "cdu" : [
             {
                 "ip" : "10.98.4.30",
@@ -286,7 +286,7 @@ LabHW = {
     "nori" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "00:1e:67:94:36:bb",
+        "mac address" : "00:1e:67:94:75:98",
         "cdu" : [
             {
                 "ip" : "10.98.4.32",
@@ -318,7 +318,7 @@ LabHW = {
     "kili" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "00:1e:67:94:36:fa",
+        "mac address" : "00:1e:67:94:77:43",
         "cdu" : [
             {
                 "ip" : "10.98.4.32",
@@ -334,7 +334,7 @@ LabHW = {
     "fili" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "00:1e:67:94:3b:d8",
+        "mac address" : "00:1e:67:94:89:42",
         "cdu" : [
             {
                 "ip" : "10.98.4.32",
@@ -350,7 +350,7 @@ LabHW = {
     "dwalin" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "00:1e:67:94:33:49",
+        "mac address" : "00:1e:67:94:70:ba",
         "cdu" : [
             {
                 "ip" : "10.98.4.32",
