@@ -32,7 +32,7 @@ Orchestra = {
             'server distro decoration' : '-server',
         },
         'trusty' : {
-            'preseed' : 'prime-btrfs',
+            'preseed' : 'primeary-no-slave',
             'server distro decoration' : '-server',
         },
     }
@@ -205,7 +205,7 @@ LabHW = {
                 "port" : "floyd_ps2"
             }
         ],
-        "role" : ["openstack"]
+        "role" : ["testing"]
     },
     "janice" : {
         "orchestra server" : "cobbler",
@@ -221,7 +221,7 @@ LabHW = {
                 "port" : "janice_ps2"
             }
         ],
-        "role" : ["openstack"]
+        "role" : ["testing"]
     },
     "pops" : {
         "orchestra server" : "cobbler",
@@ -255,16 +255,11 @@ LabHW = {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "00:1e:67:94:7d:9b",
-        "cdu" : [
-            {
-                "ip" : "10.98.4.30",
-                "port" : "bifur_ps1"
-            },
-            {
-                "ip" : "10.98.4.31",
-                "port" : "bifur_ps2"
-            }
-        ],
+        "ipmi" : {
+            "ip" : "10.98.5.73",
+            "username" : "root",
+            "passwd" : "insecure"
+        },
         "role" : ["testing"]
     },
     "bofur" : {
@@ -281,22 +276,17 @@ LabHW = {
                 "port" : "bofur_ps2"
             }
         ],
-        "role" : ["openstack"]
+        "role" : ["busted"]
     },
     "nori" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "00:1e:67:94:75:98",
-        "cdu" : [
-            {
-                "ip" : "10.98.4.32",
-                "port" : "nori_ps1"
-            },
-            {
-                "ip" : "10.98.4.33",
-                "port" : "nori_ps2"
-            }
-        ],
+        "ipmi" : {
+            "ip" : "10.98.5.77",
+            "username" : "root",
+            "passwd" : "insecure"
+        },
         "role" : ["openstack"]
     },
     "dori" : {
@@ -313,54 +303,39 @@ LabHW = {
                 "port" : "dori_ps2"
             }
         ],
-        "role" : ["openstack"]
+        "role" : ["busted"]
     },
     "kili" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "00:1e:67:94:77:43",
-        "cdu" : [
-            {
-                "ip" : "10.98.4.32",
-                "port" : "kili_ps1"
-            },
-            {
-                "ip" : "10.98.4.33",
-                "port" : "kili_ps2"
-            }
-        ],
-        "role" : ["unknown"]
+        "ipmi" : {
+            "ip" : "10.98.5.86",
+            "username" : "root",
+            "passwd" : "insecure"
+        },
+        "role" : ["openstack"]
     },
     "fili" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "00:1e:67:94:89:42",
-        "cdu" : [
-            {
-                "ip" : "10.98.4.32",
-                "port" : "fili_ps1"
-            },
-            {
-                "ip" : "10.98.4.33",
-                "port" : "fili_ps2"
-            }
-        ],
+        "ipmi" : {
+            "ip" : "10.98.5.85",
+            "username" : "root",
+            "passwd" : "insecure"
+        },
         "role" : ["openstack"]
     },
     "dwalin" : {
         "orchestra server" : "cobbler",
         "jenkins server" : "kernel-jenkins",
         "mac address" : "00:1e:67:94:70:ba",
-        "cdu" : [
-            {
-                "ip" : "10.98.4.32",
-                "port" : "dwalin_ps1"
-            },
-            {
-                "ip" : "10.98.4.33",
-                "port" : "dwalin_ps2"
-            }
-        ],
+        "ipmi" : {
+            "ip" : "10.98.5.92",
+            "username" : "root",
+            "passwd" : "insecure"
+        },
         "role" : ["openstack"]
     },
 
@@ -373,7 +348,7 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["testing"]
+        "role" : ["openstack"]
     },
     "etnyre" : {
         "orchestra server" : "cobbler",
@@ -384,7 +359,7 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["testing"]
+        "role" : ["smb"]
     },
     "bantam" : {
         "orchestra server" : "cobbler",
@@ -406,7 +381,7 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["testing"]
+        "role" : ["smb"]
     },
     "rainier" : {
         "orchestra server" : "cobbler",
@@ -417,7 +392,7 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["testing"]
+        "role" : ["openstack"]
     },
     "fuller" : {
         "orchestra server" : "cobbler",
@@ -428,7 +403,7 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["testing"]
+        "role" : ["openstack"]
     },
     "dagmar" : {
         "orchestra server" : "cobbler",
@@ -439,7 +414,7 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["testing"]
+        "role" : ["openstack"]
     },
 }
 # vi:set ts=4 sw=4 expandtab:
