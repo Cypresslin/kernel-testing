@@ -113,7 +113,7 @@ LabHW = {
                 "port" : "fozzie_ps2"
             }
         ],
-        "role" : ["openstack"]
+        "role" : ["testing"]
     },
     "rizzo" : {
         "orchestra server" : "cobbler",
@@ -205,7 +205,7 @@ LabHW = {
                 "port" : "floyd_ps2"
             }
         ],
-        "role" : ["testing"]
+        "role" : ["down"]
     },
     "janice" : {
         "orchestra server" : "cobbler",
@@ -221,7 +221,7 @@ LabHW = {
                 "port" : "janice_ps2"
             }
         ],
-        "role" : ["testing"]
+        "role" : ["down"]
     },
     "pops" : {
         "orchestra server" : "cobbler",
@@ -249,7 +249,7 @@ LabHW = {
                 "port" : "beaker"
             }
         ],
-        "role" : ["testing"]
+        "role" : ["down"]
     },
     "bifur" : {
         "orchestra server" : "cobbler",
@@ -260,7 +260,7 @@ LabHW = {
             "username" : "root",
             "passwd" : "insecure"
         },
-        "role" : ["testing"]
+        "role" : ["openstack"]
     },
     "bofur" : {
         "orchestra server" : "cobbler",
