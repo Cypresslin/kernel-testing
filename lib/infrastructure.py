@@ -129,7 +129,7 @@ LabHW = {
                 "port" : "rizzo_ps2"
             }
         ],
-        "role" : ["testing"]
+        "role" : ["mine"]
     },
     "waldorf" : {
         "orchestra server" : "cobbler",
@@ -187,6 +187,22 @@ LabHW = {
             {
                 "ip" : "10.98.4.31",
                 "port" : "gloin_ps2"
+            }
+        ],
+        "role" : ["none"]
+    },
+    "gimli" : {
+        "orchestra server" : "cobbler",
+        "jenkins server" : "kernel-jenkins",
+        "mac address" : "a0:36:9f:24:44:f8",
+        "cdu" : [
+            {
+                "ip" : "10.98.4.30",
+                "port" : "gimli_ps1"
+            },
+            {
+                "ip" : "10.98.4.31",
+                "port" : "gimli_ps2"
             }
         ],
         "role" : ["none"]
