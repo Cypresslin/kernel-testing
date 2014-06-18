@@ -32,7 +32,7 @@ Orchestra = {
             'server distro decoration' : '-server',
         },
         'trusty' : {
-            'preseed' : 'primeary-no-slave',
+            'preseed' : 'primary-no-slave',
             'server distro decoration' : '-server',
         },
     }
