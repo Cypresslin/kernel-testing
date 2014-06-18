@@ -343,7 +343,7 @@ class MetalProvisioner(Provisioner):
                 result, output = sh(cmd, ignore_result=False)
 
                 if state == 'off':
-                    sleep(20) # Some of the systems want a little delay
+                    sleep(120) # Some of the systems want a little delay
                               # between being powered off and then back on.
         else:
             # Power cycle the system so it will netboot and install
@@ -357,13 +357,13 @@ class MetalProvisioner(Provisioner):
                             # Sometimes the call to the orchestra server will time-out (not sure why), just
                             # wait a minute and try again.
                             #
-                            sleep(60)
+                            sleep(120)
                             if not self.quiet:
                                 print('    Initial power cycle attempt failed, trying a second time.')
                             ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
 
                 if state == 'off':
-                    sleep(10) # Some of the systems want a little delay
+                    sleep(120) # Some of the systems want a little delay
                               # between being powered off and then back on.
 
     # provision

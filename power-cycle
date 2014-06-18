@@ -72,7 +72,7 @@ class MetalProvisioner():
                 result, output = sh(cmd, ignore_result=False)
 
                 if state == 'off':
-                    sleep(20) # Some of the systems want a little delay
+                    sleep(60) # Some of the systems want a little delay
                               # between being powered off and then back on.
         else:
             # Power cycle the system so it will netboot and install
@@ -92,7 +92,7 @@ class MetalProvisioner():
                             ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
 
                 if state == 'off':
-                    sleep(10) # Some of the systems want a little delay
+                    sleep(60) # Some of the systems want a little delay
                               # between being powered off and then back on.
 
 # PowerCycle
