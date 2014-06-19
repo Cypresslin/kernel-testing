@@ -222,6 +222,12 @@ TestProfiles = {
             },
         },
 
+    'ubuntu_cts_kernel' : {
+        'packages' : {
+            'common' : ['coreutils', 'apparmor', 'linux-tools-`uname -r`', 'iproute2', 'openvswitch-switch'],
+            },
+        },
+
 }
 
 # Test Collections may be defined, and will run the list of autotest tests in them
@@ -254,6 +260,11 @@ TestCollections = {
     # The set of tests that SRU kernels run
     #
     'sru' : ['qa', 'iperf', 'ubuntu_leap_seconds', 'xfstests'],
+
+    # A set of test cases that came from CTS and are regression tests for things
+    # that have been fixed.
+    #
+    'cts' : ['ubuntu_cts_kernel'],
 
 }
 
