@@ -193,7 +193,7 @@ TestProfiles = {
 
     'ltp' : {
         'packages' : {
-            'common' : ['flex'],
+            'common' : ['gdb', 'flex'],
             },
         },
 
@@ -211,7 +211,7 @@ TestProfiles = {
 
     'power_consumption' : {
         'packages' : {
-           'common' : ['stress'],
+           'common' : ['gdb', 'stress'],
             },
         'atargs' : {'METER_ADDR':'10.97.4.49', 'METER_PORT':'3490', 'METER_TAGPORT':'9999'},
         },
@@ -224,7 +224,7 @@ TestProfiles = {
 
     'ubuntu_cts_kernel' : {
         'packages' : {
-            'common' : ['coreutils', 'apparmor', 'linux-tools-`uname -r`', 'iproute2', 'openvswitch-switch'],
+            'common' : ['gdb', 'coreutils', 'apparmor', 'linux-tools-`uname -r`', 'iproute2', 'openvswitch-switch'],
             },
         },
 
