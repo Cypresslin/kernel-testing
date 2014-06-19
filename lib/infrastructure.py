@@ -129,7 +129,7 @@ LabHW = {
                 "port" : "rizzo_ps2"
             }
         ],
-        "role" : ["mine"]
+        "role" : ["testing"]
     },
     "waldorf" : {
         "orchestra server" : "cobbler",
