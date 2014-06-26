@@ -97,7 +97,7 @@ LabHW = {
                 "port" : "gonzo"
             }
         ],
-        "role" : ["benchmarks"]
+        "role" : ["colin"]
     },
     "fozzie" : {
         "orchestra server" : "cobbler",
