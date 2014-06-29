@@ -128,19 +128,18 @@ class Ubuntu:
     # * sha1 XXX: doesn't seem to be used anymore
     # * md5 XXX: doesn't seem to be used anymore
     db = {
-        '14.04' :
+        '14.10' :
         {
             'development' : True,        # This is the version that is currently under development
-            'series_version' : '14.04',
-            'kernel'    : '3.12.0',
-            'name'      : 'trusty',
+            'series_version' : '14.10',
+            'kernel'    : '3.16.0',
+            'name'      : 'utopic',
             'supported' : False,
             # adjust packages when this goes live
             'packages'  :
             [
                 'linux',
                 'linux-meta',
-                'linux-exynos5',
             ],
             'dependent-packages' :
             {
@@ -148,11 +147,39 @@ class Ubuntu:
                     'meta'   : 'linux-meta',
                     'signed' : 'linux-signed'
                 },
-                'linux-exynos5' : { 'meta' : 'linux-meta-exynos5' },
             },
             'derivative-packages' :
             {
-                'linux' : [ 'linux-exynos5' ]
+                'linux' : []
+            },
+            'sha1' : '',
+            'md5' : ''
+        },
+        '14.04' :
+        {
+            'development' : False,        # This is the version that is currently under development
+            'series_version' : '14.04',
+            'kernel'    : '3.13.0',
+            'name'      : 'trusty',
+            'supported' : True,
+            # adjust packages when this goes live
+            'packages'  :
+            [
+                'linux',
+                'linux-meta',
+                'linux-exynos5',
+                'linux-keystone',
+            ],
+            'dependent-packages' :
+            {
+                'linux' : {
+                    'meta'   : 'linux-meta',
+                    'signed' : 'linux-signed'
+                },
+            },
+            'derivative-packages' :
+            {
+                'linux' : ['linux-keystone']
             },
             'sha1' : '',
             'md5' : ''
@@ -177,13 +204,11 @@ class Ubuntu:
                     'meta'   : 'linux-meta',
                     'signed' : 'linux-signed'
                 },
-                'linux-exynos5' : { 'meta' : 'linux-meta-exynos5' },
                 'linux-lowlatency' : { 'meta' : 'linux-meta-lowlatency' },
                 'linux-ppc' : { 'meta' : 'linux-meta-ppc' }
             },
             'derivative-packages' :
             {
-                'linux' : [ 'linux-exynos5' ],
                 'linux' : [ 'linux-lowlatency', 'linux-ppc' ]
             },
             'sha1' : '',
@@ -195,7 +220,7 @@ class Ubuntu:
             'series_version' : '13.04',
             'kernel'    : '3.8.0',
             'name'      : 'raring',
-            'supported' : True,
+            'supported' : False,
             # adjust packages when this goes live
             'packages'  :
             [
@@ -276,6 +301,9 @@ class Ubuntu:
                 'linux-ti-omap4',
                 'linux-meta-ti-omap4',
                 'linux-armadaxp',
+                'linux-lts-trusty',
+                'linux-meta-lts-trusty',
+                'linux-signed-lts-trusty',
                 'linux-meta-armadaxp'
             ],
             'dependent-packages' :
@@ -296,6 +324,10 @@ class Ubuntu:
                     'meta' : 'linux-meta-lts-saucy',
                     'signed' : 'linux-signed-lts-saucy'
                 },
+                'linux-lts-trusty' : {
+                    'meta' : 'linux-meta-lts-trusty',
+                    'signed' : 'linux-signed-lts-trusty'
+                },
                 'linux-ti-omap4' : { 'meta' : 'linux-meta-ti-omap4' },
                 'linux-armadaxp' : { 'meta' : 'linux-meta-armadaxp' },
                 'linux-lowlatency' : { 'meta' : 'linux-meta-lowlatency' }
@@ -309,6 +341,7 @@ class Ubuntu:
                 'linux-lts-quantal' : [ 'linux', '12.10' ],
                 'linux-lts-raring' : [ 'linux', '13.04' ],
                 'linux-lts-saucy' : [ 'linux', '13.10' ],
+                'linux-lts-trusty' : [ 'linux', '14.04' ],
             },
             'sha1' : '',
             'md5' : ''
@@ -559,8 +592,8 @@ class Ubuntu:
     }
 
     index_by_kernel_version = {
+        '3.16.0'   : db['14.10'],
         '3.13.0'   : db['14.04'],
-        '3.12.0'   : db['14.04'],
         '3.11.0'   : db['13.10'],
         '3.8.0'    : db['13.04'],
         '3.5.0'    : db['12.10'],
@@ -579,6 +612,7 @@ class Ubuntu:
     }
 
     index_by_series_name = {
+        'utopic'   : db['14.10'],
         'trusty'   : db['14.04'],
         'saucy'    : db['13.10'],
         'raring'   : db['13.04'],
@@ -601,7 +635,8 @@ class Ubuntu:
         'linux',
         'linux-ti-omap4', # maverick, natty
         'linux-armadaxp', # precise, quantal
-        'linux-exynos5', # raring
+        'linux-exynos5',
+        'linux-keystone',
         'linux-mvl-dove', # maverick, karmic, lucid
         'linux-fsl-imx51', # karmic, lucid
         'linux-ec2',

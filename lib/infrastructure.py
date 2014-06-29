@@ -35,6 +35,10 @@ Orchestra = {
             'preseed' : 'primary-no-slave',
             'server distro decoration' : '-server',
         },
+        'utopic' : {
+            'preseed' : 'primary-no-slave',
+            'server distro decoration' : '-server',
+        },
     }
 }
 
@@ -69,6 +73,11 @@ HWE = {
         'trusty' : {
             'series' : 'precise',
             'package' : 'linux-generic-lts-trusty',
+            'ppa' : True,
+        },
+        'utopic' : {
+            'series' : 'trusty',
+            'package' : 'linux-generic-lts-utopic',
             'ppa' : True,
         },
 }
