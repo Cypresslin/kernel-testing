@@ -1,0 +1,7 @@
+
+In order to easily support the infrastructure of different users of these
+tools the first order of business is to go into the lib directory and create
+a symlink from the appropriate infrastructure.* file to infrastructure.py.
+
+e.g.:
+    cd lib; ln -s infrastructure.kernel-team infrastructure.py
