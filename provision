@@ -5,7 +5,7 @@ from os                                 import getenv, path
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import error, info, basicConfig, INFO, DEBUG
 
-from lib.shell                          import ShellError, ShellTimeoutError
+from lib.shell                          import ShellError, ShellTimeoutError, sh, ssh, Shell
 from lib.provisioning                   import MetalProvisioner, VirtualProvisioner
 from lib.exceptions                     import ErrorExit
 
@@ -37,6 +37,28 @@ class ProvApp():
             f.write('    </testsuite>\n')
             f.write('</testsuites>\n')
 
+    # target_verified
+    #
+    def target_verified(self, target, series):
+        '''
+        Confirm that the target system has installed what was supposed to be installed. If we asked for
+        one series but another is on the system, fail.
+        '''
+        retval = False
+
+        result, codename = ssh(target, r'lsb_release --codename')
+        for line in codename:
+            line = line.strip()
+            if line.startswith('Codename:'):
+                if series not in line:
+                    info("")
+                    info("*** ERROR:")
+                    info("    Was expecting the target to be (%s) but found it to be (%s) instead." % (series, line.replace('Codename:\t','')))
+                    info("")
+                else:
+                    retval = True
+        return retval
+
     # main
     #
     def main(self):
@@ -49,7 +71,8 @@ class ProvApp():
             if self.args.sut == 'real':
                 metal = MetalProvisioner(self.args.sut_name, self.args.sut_series, self.args.sut_arch, self.args.sut_hwe, self.args.sut_debs_url, ppa=self.args.ppa, dry_run=dry_run)
                 metal.provision()
-                retval = 0
+                if self.target_verified(self.args.sut_name, self.args.sut_series):
+                    retval = 0
             else:
                 info("=========================================================================")
                 info("=")
@@ -58,16 +81,16 @@ class ProvApp():
                 info("=========================================================================")
                 metal = MetalProvisioner(self.args.vh_name, self.args.vh_series, self.args.vh_arch, self.args.vh_hwe, dry_run=dry_run)
                 metal.provision()
-
-                info("=========================================================================")
-                info("=")
-                info("=                   V I R T U A L   C L I E N T")
-                info("=")
-                info("=========================================================================")
-                virt = VirtualProvisioner(self.args.vh_name, self.args.sut_name, self.args.sut_series, self.args.sut_arch, self.args.sut_hwe, dry_run=dry_run)
-                virt.provision()
-
-                retval = 0
+                if self.target_verified(self.args.vh_name, self.args.vh_series):
+                    info("=========================================================================")
+                    info("=")
+                    info("=                   V I R T U A L   C L I E N T")
+                    info("=")
+                    info("=========================================================================")
+                    virt = VirtualProvisioner(self.args.vh_name, self.args.sut_name, self.args.sut_series, self.args.sut_arch, self.args.sut_hwe, dry_run=dry_run)
+                    virt.provision()
+                    if self.target_verified(self.args.sut_name, self.args.sut_series):
+                        retval = 0
 
         # Handle the user presses <ctrl-C>.
         #
