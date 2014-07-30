@@ -111,7 +111,7 @@ TestProfiles = {
     'ubuntu_ecryptfs' : {
         'packages' : {
             'common' : [
-                'libglib2.0-dev', 'intltool', 'keyutils', 'libkeyutils-dev', 'libpam0g-dev', 'libnss3-dev', 'libtool', 'acl', 'xfsprogs', 'btrfs-tools', 'gdb',
+                'libglib2.0-dev', 'intltool', 'keyutils', 'libkeyutils-dev', 'libpam0g-dev', 'libnss3-dev', 'libtool', 'acl', 'xfsprogs', 'btrfs-tools', 'gdb', 'libattr1-dev'
                 ],
             },
         },
