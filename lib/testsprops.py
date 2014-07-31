@@ -14,6 +14,16 @@
 #
 TestProfiles = {
 
+    'ubuntu_kvm_unit_tests' : {
+        'packages' : {
+            'common' : [
+                ],
+            },
+        'series-blacklist' : [
+            'lucid', 'precise', 'quantal', 'saucy',
+            ],
+        },
+
     'ubuntu_lxc' : {
         'packages' : {
             'common' : [
