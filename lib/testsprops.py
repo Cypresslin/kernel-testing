@@ -17,6 +17,7 @@ TestProfiles = {
     'ubuntu_kvm_unit_tests' : {
         'packages' : {
             'common' : [
+                'qemu-kvm'
                 ],
             },
         'series-blacklist' : [
