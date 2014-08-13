@@ -75,6 +75,7 @@ ssh $SUT sudo rm -rf autotest kernel-testing
 
 rsync -ar --exclude=.git $HOME/autotest/ $SUT:autotest/
 rsync -ar --exclude=.git $HOME/autotest-client-tests/* $SUT:autotest/client/tests/
+rsync -ar --exclude=.git $HOME/autotest-client-virt-tests/* $SUT:autotest/client/tests/virt/
 rsync -ar --exclude=.git $HOME/kernel-testing/ $SUT:./kernel-testing/
 
 ssh $SUT JOB_NAME=$JOB_NAME KERNEL_TEST_OPTIONS=$KERNEL_TEST_OPTIONS python kernel-testing/runner $KERNEL_TEST_LIST
