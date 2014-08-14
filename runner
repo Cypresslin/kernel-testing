@@ -242,7 +242,7 @@ class Runner():
 
         # Build up the shell command that we are going to run.
         #
-        cmd = 'sudo %s' % (self.autotest_exe_path)
+        cmd = 'AUTOTEST_PATH=%s sudo -E %s' % (path.join(path.expanduser('~'), 'autotest'), self.autotest_exe_path)
         if 'atargs' in TestProfiles[test]:
             cmd += ' --args="'
             for key, value in TestProfiles[test]['atargs'].iteritems():
