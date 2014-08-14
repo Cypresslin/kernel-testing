@@ -14,6 +14,17 @@
 #
 TestProfiles = {
 
+    'virt' : {
+        'packages' : {
+            'common' : [
+                'p7zip-full', 'tcpdump', 'iproute2', 'libvirt-bin', 'virtinst', 'fakeroot', 'attr', 'git', 'iputils-arping', 'gcc', 'python-support', 'python-dev', 'qemu-kvm', 'cpu-checker', 'policycoreutils', 'python-gst-1.0', 'python-imaging', 'nfs-kernel-server', 'openvswitch-switch', 'genisoimage', 'python-all-dev', 'gnuplot-nox', 'gdb'
+                ],
+            },
+        'series-blacklist': [
+            'lucid', 'precise', 'quantal', 'saucy',
+            ],
+        },
+
     'ubuntu_kvm_unit_tests' : {
         'packages' : {
             'common' : [
