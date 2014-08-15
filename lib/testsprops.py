@@ -270,7 +270,7 @@ TestCollections = {
     # This is the set of tests that the kernel team runs. This should
     # be a superset of the 'default' tests that QA runs.
     #
-    'kernel' : ['qa', 'iperf', 'ubuntu_leap_seconds', 'stress', 'ltp', 'xfstests'],
+    'kernel' : ['qa', 'iperf', 'ubuntu_leap_seconds', 'stress', 'ltp', 'ubuntu_cts_kernel', 'virt', 'ubuntu_kvm_unit_tests'],
 
     # This is the set of tests for measuring power consumption.
     'power' : ['power_consumption'],
