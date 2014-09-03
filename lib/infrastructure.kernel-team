@@ -97,7 +97,10 @@ HWE = {
 #
 LabHW = {
     "gonzo" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "08:9e:01:3c:c9:60",
         "cdu" : [
@@ -106,10 +109,14 @@ LabHW = {
                 "port" : "gonzo"
             }
         ],
-        "role" : ["colin"]
+        "role" : ["colin"],
+        "locked" : False,
     },
     "fozzie" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "90:b1:1c:10:6b:03",
         "cdu" : [
@@ -122,10 +129,14 @@ LabHW = {
                 "port" : "fozzie_ps2"
             }
         ],
-        "role" : ["testing"]
+        "role" : ["testing"],
+        "locked" : False,
     },
     "rizzo" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "d4:ae:52:7c:c6:2a",
         "cdu" : [
@@ -138,10 +149,14 @@ LabHW = {
                 "port" : "rizzo_ps2"
             }
         ],
-        "role" : ["testing"]
+        "role" : ["testing"],
+        "locked" : True,
     },
     "waldorf" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "00:1e:67:34:b8:5c",
         "cdu" : [
@@ -150,10 +165,14 @@ LabHW = {
                 "port" : "waldorf"
             }
         ],
-        "role" : ["on loan"]
+        "role" : ["unknown"],
+        "locked" : False,
     },
     "statler" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "60:eb:69:21:2c:6c",
         "cdu" : [
@@ -166,10 +185,14 @@ LabHW = {
                 "port" : "statler_ps2"
             }
         ],
-        "role" : ["on loan"]  # This system has a raid controler that is a pita
+        "role" : ["unknown"],  # This system has a raid controler that is a pita
+        "locked" : False,
     },
     "zoot" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "a0:36:9f:0e:ed:08",
         "cdu" : [
@@ -182,10 +205,14 @@ LabHW = {
                 "port" : "zoot_ps2"
             }
         ],
-        "role" : ["openstack"]
+        "role" : ["openstack"],
+        "locked" : False,
     },
     "gloin" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "a0:36:9f:21:d8:f8",
         "cdu" : [
@@ -198,10 +225,14 @@ LabHW = {
                 "port" : "gloin_ps2"
             }
         ],
-        "role" : ["none"]
+        "role" : ["none"],
+        "locked" : True,
     },
     "gimli" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "a0:36:9f:24:44:f8",
         "cdu" : [
@@ -214,10 +245,14 @@ LabHW = {
                 "port" : "gimli_ps2"
             }
         ],
-        "role" : ["none"]
+        "role" : ["none"],
+        "locked" : False,
     },
     "floyd" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "a0:36:9f:14:65:38",
         "cdu" : [
@@ -230,10 +265,14 @@ LabHW = {
                 "port" : "floyd_ps2"
             }
         ],
-        "role" : ["down"]
+        "role" : ["down"],
+        "locked" : False,
     },
     "janice" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "a0:36:9f:14:65:70",
         "cdu" : [
@@ -246,10 +285,14 @@ LabHW = {
                 "port" : "janice_ps2"
             }
         ],
-        "role" : ["down"]
+        "role" : ["down"],
+        "locked" : False,
     },
     "pops" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "a0:36:9f:0f:1c:cc",
         "cdu" : [
@@ -262,10 +305,14 @@ LabHW = {
                 "port" : "pops_ps2"
             }
         ],
-        "role" : ["openstack"]
+        "role" : ["openstack"],
+        "locked" : False,
     },
     "beaker" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "00:00:1a:1a:c4:98",
         "cdu" : [
@@ -274,10 +321,14 @@ LabHW = {
                 "port" : "beaker"
             }
         ],
-        "role" : ["down"]
+        "role" : ["down"],
+        "locked" : False,
     },
     "bifur" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "00:1e:67:94:7d:9b",
         "ipmi" : {
@@ -285,10 +336,14 @@ LabHW = {
             "username" : "root",
             "passwd" : "insecure"
         },
-        "role" : ["openstack"]
+        "role" : ["openstack"],
+        "locked" : False,
     },
     "bofur" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "00:1e:67:59:7f:e9",
         "cdu" : [
@@ -301,10 +356,14 @@ LabHW = {
                 "port" : "bofur_ps2"
             }
         ],
-        "role" : ["busted"]
+        "role" : ["busted"],
+        "locked" : False,
     },
     "nori" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "thorin.ubuntu-ci",
+            "type" : "maas",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "00:1e:67:94:75:98",
         "ipmi" : {
@@ -312,10 +371,14 @@ LabHW = {
             "username" : "root",
             "passwd" : "insecure"
         },
-        "role" : ["openstack"]
+        "role" : ["openstack"],
+        "locked" : False,
     },
     "dori" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "00:1e:67:59:82:08",
         "cdu" : [
@@ -328,10 +391,14 @@ LabHW = {
                 "port" : "dori_ps2"
             }
         ],
-        "role" : ["busted"]
+        "role" : ["busted"],
+        "locked" : False,
     },
     "kili" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "thorin.ubuntu-ci",
+            "type" : "maas",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "00:1e:67:94:77:43",
         "ipmi" : {
@@ -339,10 +406,14 @@ LabHW = {
             "username" : "root",
             "passwd" : "insecure"
         },
-        "role" : ["openstack"]
+        "role" : ["openstack"],
+        "locked" : False,
     },
     "fili" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "thorin.ubuntu-ci",
+            "type" : "maas",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "00:1e:67:94:89:42",
         "ipmi" : {
@@ -350,10 +421,14 @@ LabHW = {
             "username" : "root",
             "passwd" : "insecure"
         },
-        "role" : ["openstack"]
+        "role" : ["openstack"],
+        "locked" : False,
     },
     "dwalin" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "thorin.ubuntu-ci",
+            "type" : "maas",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "00:1e:67:94:70:ba",
         "ipmi" : {
@@ -361,11 +436,15 @@ LabHW = {
             "username" : "root",
             "passwd" : "insecure"
         },
-        "role" : ["openstack"]
+        "role" : ["openstack"],
+        "locked" : False,
     },
 
     "cavac" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "ac:16:2d:aa:6c:e8",
         "ipmi" : {
@@ -373,10 +452,14 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["openstack"]
+        "role" : ["openstack"],
+        "locked" : False,
     },
     "etnyre" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "e4:11:5b:de:01:12",
         "ipmi" : {
@@ -384,10 +467,14 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["smb"]
+        "role" : ["smb"],
+        "locked" : False,
     },
     "bantam" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "80:c1:6e:62:22:30",
         "ipmi" : {
@@ -395,10 +482,14 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["unknown"]
+        "role" : ["unknown"],
+        "locked" : False,
     },
     "larsen" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "ac:16:2d:b8:cb:f8",
         "ipmi" : {
@@ -406,10 +497,14 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["smb"]
+        "role" : ["smb"],
+        "locked" : False,
     },
     "rainier" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "ac:16:2d:b9:25:f8",
         "ipmi" : {
@@ -417,10 +512,14 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["openstack"]
+        "role" : ["openstack"],
+        "locked" : False,
     },
     "fuller" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "6c:3b:e5:a9:8b:08",
         "ipmi" : {
@@ -428,10 +527,14 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["openstack"]
+        "role" : ["openstack"],
+        "locked" : False,
     },
     "dagmar" : {
-        "orchestra server" : "cobbler",
+        "provisioning" : {
+            "server" : "cobbler",
+            "type" : "cobbler",
+        },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "10:60:4b:a9:e8:b8",
         "ipmi" : {
@@ -439,7 +542,8 @@ LabHW = {
             "username" : "Administrator",
             "passwd" : "insecure"
         },
-        "role" : ["openstack"]
+        "role" : ["openstack"],
+        "locked" : True,
     },
 }
 # vi:set ts=4 sw=4 expandtab:

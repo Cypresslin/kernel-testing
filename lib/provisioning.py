@@ -371,6 +371,12 @@ class MetalProvisioner(Provisioner):
     def provision(self):
         target = self.name
 
+        # Some systems we don't want to re-provision by accident.
+        #
+        if LabHW[target]['locked']:
+            error('   *** ERROR: The system (%s) is locked and will not be provisioned.' % target)
+            return False
+
         # If we are installing a HWE kernel, we want to install the correct series first.
         #
         if self.hwe:
@@ -408,5 +414,6 @@ class MetalProvisioner(Provisioner):
         # kernel.
         #
         self.reboot(target)
+        return True
 
 # vi:set ts=4 sw=4 expandtab syntax=python:
