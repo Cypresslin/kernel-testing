@@ -6,10 +6,11 @@ from datetime                           import datetime
 from time                               import sleep
 from logging                            import info
 
-from lib.infrastructure                 import Orchestra, HWE, LabHW
+from lib.infrastructure                 import Orchestra, HWE, LabHW, MAASConfig
 from lib.shell                          import sh, ShellError, ssh, Shell
 from lib.ubuntu                         import Ubuntu
 from lib.exceptions                     import ErrorExit
+from lib.maas                           import MAAS, MAASNode
 
 # Provisioner
 #
@@ -374,7 +375,7 @@ class MetalProvisioner(Provisioner):
         # Some systems we don't want to re-provision by accident.
         #
         if LabHW[target]['locked']:
-            error('   *** ERROR: The system (%s) is locked and will not be provisioned.' % target)
+            error('The system (%s) is locked and will not be provisioned.' % target)
             return False
 
         # If we are installing a HWE kernel, we want to install the correct series first.
@@ -385,8 +386,20 @@ class MetalProvisioner(Provisioner):
 
         # We network boot/install the bare-metal hw to get our desired configuration on it.
         #
-        self.configure_orchestra(target)
-        self.cycle_power(target)
+        method = LabHW[target]['provisioning']['type']
+        if method == 'cobbler':
+            self.configure_orchestra(target)
+            self.cycle_power(target)
+        elif method == 'maas':
+            maas = MAAS(MAASConfig['profile'], MAASConfig['server'], MAASConfig['creds'])
+            mt = maas.node(target)
+            mt.stop_and_release()
+            mt.series(self.series)
+            mt.arch(self.arch)
+            mt.acquire_and_start()
+        else:
+            error('Unrecognised provisioning method (%s)' % method)
+            return False
 
         # Once the initial installation has completed, we continue to install and update
         # packages so that we are testing the latest kernel, which is what we want.
@@ -407,7 +420,8 @@ class MetalProvisioner(Provisioner):
         if self.debs is not None:
             self.install_custom_debs(target)
 
-        self.configure_passwordless_access(target)
+        if method == "cobbler":
+            self.configure_passwordless_access(target)
 
         # We want to reboot to pick up any new kernel that we would have installed due
         # to either the dist-upgrade that was performed, or the install of the hwe

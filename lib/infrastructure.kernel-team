@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 #
 
+MAASConfig = {
+    "server"  : "thorin.ubuntu-ci",
+    "profile" : "maas",
+    "creds"   : "jg2XAHBWGK8yzUn84F:M47jVf8JFbDBad26HV:AA8xyn7paqXvZE9rPAdPFQnqfm9yYaME"
+}
+
 Orchestra = {
     'arch' : {
         'amd64' : 'x86_64',
