@@ -128,33 +128,35 @@ class MailHandler():
             hwe = False
             for line in part.get_payload().split('\n'):
                 line = line.strip()
-                if search('series\S*:', line) is not None:
+                print line
+                if search('series\s*:', line) is not None:
                     (x, series) = line.split(':')
                     series = series.strip()
-                elif search('url\S*:', line) is not None:
+                elif search('url\s*:', line) is not None:
                     (x, debs_url) = line.split(':', 1)
                     debs_url = debs_url.strip()
-                elif search('arch\S*:', line) is not None:
+                elif search('arch\s*:', line) is not None:
                     (x, arch) = line.split(':', 1)
                     arches = []
                     for a in arch.split(','):
                         arches.append(a.strip())
-                elif search('tests\S*:', line) is not None:
+                elif search('tests\s*:', line) is not None:
                     (x, tests) = line.split(':', 1)
                     tests = tests.strip()
                     if 'iozone' in tests:
                         systems = s.sut_pool['benchmarks']
-                elif search('system\S*:', line) is not None:
+                elif search('system\s*:', line) is not None:
                     (x, system) = line.split(':', 1)
                     system = system.strip()
                     systems = []
                     for a in system.split(','):
                         systems.append(a.strip())
-                elif search('ppa\S*:', line) is not None:
+                elif search('ppa\s*:', line) is not None:
                     (x, ppa) = line.split(':', 1)
                     ppa = ppa.strip()
-                elif search('hwe\S*:\S*[Tt]rue', line) is not None:
+                elif search('hwe\s*:\s*[Tt]rue', line) is not None:
                     hwe = True
+                    print("i spy hwe")
                 elif 'help' == line or 'Help' == line:
                     send_help = True
 
