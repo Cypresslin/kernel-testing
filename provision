@@ -58,6 +58,10 @@ class ProvApp():
                     info("")
                 else:
                     retval = True
+
+        # Verify we installed the arch we intended to install
+        #
+
         return retval
 
     # main
