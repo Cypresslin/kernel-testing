@@ -76,6 +76,8 @@ def enqueue_output(out, queue, quiet=False):
 # sh
 #
 def sh(cmd, timeout=None, ignore_result=False, quiet=False):
+    info(cmd)
+
     out = []
     p = Popen(cmd, stdout=PIPE, stderr=STDOUT, bufsize=1, shell=True)
     q = Queue()
