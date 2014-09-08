@@ -5,6 +5,7 @@ from logging                            import error
 from datetime                           import datetime
 from time                               import sleep
 from logging                            import info
+import re
 
 from lib.infrastructure                 import Orchestra, HWE, LabHW, MAASConfig
 from lib.shell                          import sh, ShellError, ssh, Shell
@@ -266,7 +267,8 @@ class VirtualProvisioner(Provisioner):
         # packages so that we are testing the latest kernel, which is what we want.
         #
         self.wait_for_system(target, timeout=60) # Allow 30 minutes for network installation
-        self.enable_proposed(target, self.series)
+        if not self.ubuntu.is_development_series(self.series):
+            self.enable_proposed(target, self.series)
         if self.ppa is not None:
             self.enable_ppa(target, self.series)
         if self.ubuntu.is_development_series(self.series):
@@ -367,6 +369,86 @@ class MetalProvisioner(Provisioner):
                     sleep(120) # Some of the systems want a little delay
                               # between being powered off and then back on.
 
+    # target_verified
+    #
+    def target_verified(self, target, series, arch):
+        '''
+        Confirm that the target system has installed what was supposed to be installed. If we asked for
+        one series but another is on the system, fail.
+        '''
+        retval = False
+
+        result, codename = ssh(target, r'lsb_release --codename')
+        for line in codename:
+            line = line.strip()
+            if line.startswith('Codename:'):
+                if series not in line:
+                    info("")
+                    info("*** ERROR:")
+                    info("    Was expecting the target to be (%s) but found it to be (%s) instead." % (series, line.replace('Codename:\t','')))
+                    info("")
+                else:
+                    retval = True
+
+        # Verify we installed the arch we intended to install
+        #
+        if retval:
+            retval = False
+            result, processor = ssh(target, r'uname -p')
+            for line in processor:
+                line = line.strip()
+
+                if 'Warning: Permanently aded' in line: continue
+                if line == '': continue
+
+                if line == 'x86_64':
+                    installed_arch = 'amd64'
+                elif line == 'i686':
+                    installed_arch = 'i386'
+                else:
+                    installed_arch = line
+
+            if arch == installed_arch:
+                retval = True
+            else:
+                info("")
+                info("*** ERROR:")
+                info("    Was expecting the target to be (%s) but found it to be (%s) instead." % (arch, installed_arch))
+                info("")
+
+        # Are we running the series correct kernel?
+        #
+        if retval:
+            retval = False
+            kv = None
+            result, kernel = ssh(target, r'uname -vr')
+            for line in kernel:
+                line = line.strip()
+
+                if 'Warning: Permanently aded' in line: continue
+                if line == '': continue
+
+                m = re.search('(\d+.\d+.\d+)-\d+-.* #(\d+)-Ubuntu.*', line)
+                if m:
+                    kv = m.group(1)
+
+            if kv is not None:
+                installed_series = self.ubuntu.lookup(kv)['name']
+
+                if installed_series == series:
+                    retval = True
+                else:
+                    info("")
+                    info("*** ERROR:")
+                    info("    Was expecting the target to be (%s) but found it to be (%s) instead." % (series, installed_series))
+                    info("")
+            else:
+                info("")
+                info("*** ERROR:")
+                info("    Unable to find the kernel version in any line.")
+
+        return retval
+
     # provision
     #
     def provision(self):
@@ -401,11 +483,16 @@ class MetalProvisioner(Provisioner):
             error('Unrecognised provisioning method (%s)' % method)
             return False
 
+        self.wait_for_system(target, timeout=60) # Allow 30 minutes for network installation
+
+        if not self.target_verified(target, self.series, self.arch):
+            return False
+
         # Once the initial installation has completed, we continue to install and update
         # packages so that we are testing the latest kernel, which is what we want.
         #
-        self.wait_for_system(target, timeout=60) # Allow 30 minutes for network installation
-        self.enable_proposed(target, self.series)
+        if not self.ubuntu.is_development_series(self.series):
+            self.enable_proposed(target, self.series)
         if self.ppa is not None:
             self.enable_ppa(target, self.series)
         if self.ubuntu.is_development_series(self.series):
