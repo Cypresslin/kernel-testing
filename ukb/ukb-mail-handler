@@ -125,6 +125,7 @@ class MailHandler():
             systems = s.sut_pool['testing']
             tests = 'default'
             send_help = False
+            hwe = False
             for line in part.get_payload().split('\n'):
                 line = line.strip()
                 if search('series\S*:', line) is not None:
@@ -152,6 +153,8 @@ class MailHandler():
                 elif search('ppa\S*:', line) is not None:
                     (x, ppa) = line.split(':', 1)
                     ppa = ppa.strip()
+                elif search('hwe\S*:\S*[Tt]rue', line) is not None:
+                    hwe = True
                 elif 'help' == line or 'Help' == line:
                     send_help = True
 
@@ -165,7 +168,7 @@ class MailHandler():
                 m = search('.*<(\S+)@.*', e_from)
                 if m is not None:
                     user = m.group(1)
-                jobs = s.create_test_jobs(series, arches, systems, debs_url, user, tests, ppa=ppa)
+                jobs = s.create_test_jobs(series, arches, systems, debs_url, user, tests, ppa=ppa, hwe=hwe)
 
                 body  = 'The following job(s) were created on the kernel team\'s jenkins server\n'
                 body += 'in response to your request:\n\n'
@@ -234,6 +237,11 @@ system: The name of the lab system that is to be used for the testing. The
 
        Ex.
            ppa: canonical-kernel-team/ppa
+
+   hwe: The test request is for a HWE kernel (lts-backport).
+
+       Ex.
+           hwe: True
 """
                 s.send_reply(e_from, 'Re: %s' % e_subject, body)
 
