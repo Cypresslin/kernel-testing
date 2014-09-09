@@ -24,12 +24,6 @@ class MAAS():
         s.server  = server
         s.creds   = creds
 
-        # Load the configuration.
-        #
-        cfg_path = path.join(path.expanduser('~'), 'maas')
-        with open(cfg_path, 'r') as f:
-            s.cfg = json.load(f)
-
         # Log into the maas server
         #
         # maas login maas http://thorin.ubuntu-ci/MAAS/api/1.0  jg2XAHBWGK8yzUn84F:M47jVf8JFbDBad26HV:AA8xyn7paqXvZE9rPAdPFQnqfm9yYaME
