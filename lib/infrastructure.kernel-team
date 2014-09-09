@@ -467,7 +467,7 @@ LabHW = {
             "type" : "cobbler",
         },
         "jenkins server" : "kernel-jenkins",
-        "mac address" : "e4:11:5b:de:01:12",
+        "mac address" : "e4:11:5b:de:01:13",
         "ipmi" : {
             "ip" : "10.98.5.84",
             "username" : "Administrator",
