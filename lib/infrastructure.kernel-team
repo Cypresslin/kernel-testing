@@ -523,8 +523,8 @@ LabHW = {
     },
     "fuller" : {
         "provisioning" : {
-            "server" : "cobbler",
-            "type" : "cobbler",
+            "server" : "thorin.ubuntu-ci",
+            "type" : "maas",
         },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "6c:3b:e5:a9:8b:08",

@@ -123,7 +123,7 @@ class Provisioner():
                     raise ErrorExit('The specified timeout (%d) was reached while waiting for the target system (%s) to come back up.' % (timeout, target))
 
                 sleep(60)
-                info('Up at: %s' % datetime.utcnow())
+                info('Checking at: %s' % datetime.utcnow())
 
     # reboot
     #
@@ -485,7 +485,18 @@ class MetalProvisioner(Provisioner):
 
         self.wait_for_system(target, timeout=60) # Allow 30 minutes for network installation
 
+        # If we are installing via maas we are likely using the fastpath installer. That does
+        # it's own reboot after installation. There is a window where we could think the system
+        # is up but it's not really. Wait for a bit and then check for the system to be up
+        # again.
+        #
+        if method == 'maas':
+            info("Giving it 5 more minutes")
+            sleep(60 * 5) # Give it 5 minutes
+            self.wait_for_system(target, timeout=60)
+
         if not self.target_verified(target, self.series, self.arch):
+            info("Target verification failed.")
             return False
 
         # Once the initial installation has completed, we continue to install and update
