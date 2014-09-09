@@ -79,6 +79,8 @@ class ProvApp():
 
                 if self.args.sut_hwe:
                     targeted_series = HWE[self.args.sut_series]['series']
+                else:
+                    targeted_series = self.args.sut_series
 
                 if self.target_verified(self.args.sut_name, targeted_series):
                     retval = 0
@@ -101,6 +103,8 @@ class ProvApp():
 
                     if self.args.sut_hwe:
                         targeted_series = HWE[self.args.sut_series]['series']
+                    else:
+                        targeted_series = self.args.sut_series
 
                     if self.target_verified(self.args.sut_name, targeted_series):
                         retval = 0
