@@ -9,7 +9,7 @@
 from os                                 import path
 from logging                            import debug
 import json
-from lib.shell                          import sh
+from lib.shell                          import sh, ssh
 
 # MAAS
 #
@@ -33,11 +33,20 @@ class MAAS():
         # Log into the maas server
         #
         # maas login maas http://thorin.ubuntu-ci/MAAS/api/1.0  jg2XAHBWGK8yzUn84F:M47jVf8JFbDBad26HV:AA8xyn7paqXvZE9rPAdPFQnqfm9yYaME
-        sh('maas login %s http://%s/MAAS/api/1.0 %s' % (s.profile, s.server, s.creds), quiet=True)
+        ssh(s.server, 'maas login %s http://%s/MAAS/api/1.0 %s' % (s.profile, s.server, s.creds), quiet=True)
 
         s.__nodes = None
         s.__nodes_by_name = None
         s.prefix = 'maas %s ' % s.profile
+
+    def node_cmd(s, hostname, cmd, properties=None):
+        if properties:
+            cmd = '%s node %s %s %s' % (s.prefix, cmd, s.nodes_by_name[hostname]['system_id'], properties)
+        else:
+            cmd = '%s node %s %s' % (s.prefix, cmd, s.nodes_by_name[hostname]['system_id'])
+        debug(cmd)
+        ssh(s.server, cmd, quiet=True)
+        s.__stale()
 
     @property
     def nodes(s):
@@ -46,7 +55,7 @@ class MAAS():
         '''
         if s.__nodes is None:
             s.__nodes_by_name = None
-            rc, ni = sh('maas %s nodes list' % s.profile, quiet=True)
+            rc, ni = ssh(s.server, 'maas %s nodes list' % s.profile, quiet=True)
             ni = ' '.join(ni)
             s.__nodes = json.loads(ni)
         return s.__nodes
@@ -71,28 +80,19 @@ class MAAS():
         '''
         Perform a "node stop".
         '''
-        cmd = '%s node stop %s' % (s.prefix, s.nodes_by_name[hostname]['system_id'])
-        debug(cmd)
-        sh(cmd, quiet=True)
-        s.__stale()
+        s.node_cmd(hostname, 'stop')
 
     def release(s, hostname):
         '''
         Perform a "node release".
         '''
-        cmd = '%s node release %s' % (s.prefix, s.nodes_by_name[hostname]['system_id'])
-        debug(cmd)
-        sh(cmd, quiet=True)
-        s.__stale()
+        s.node_cmd(hostname, 'release')
 
     def start(s, hostname):
         '''
         Perform a "node start".
         '''
-        cmd = '%s node start %s' % (s.prefix, s.nodes_by_name[hostname]['system_id'])
-        debug(cmd)
-        sh(cmd, quiet=True)
-        s.__stale()
+        s.node_cmd(hostname, 'start')
 
     def acquire(s, hostname):
         '''
@@ -100,7 +100,7 @@ class MAAS():
         '''
         cmd = '%s nodes acquire system_id=%s' % (s.prefix, s.nodes_by_name[hostname]['system_id'])
         debug(cmd)
-        sh(cmd, quiet=True)
+        ssh(s.server, cmd, quiet=True)
         s.__stale()
 
     def status(s, hostname):
@@ -113,18 +113,10 @@ class MAAS():
         return MAASNode(s, hostname)
 
     def update_series(s, hostname, series):
-        cmd = '%s node update %s osystem=ubuntu distro_series=ubuntu/%s' % (s.prefix, s.nodes_by_name[hostname]['system_id'], series)
-        debug(cmd)
-        sh(cmd, quiet=True)
-        s.__stale()
-        return None
+        s.node_cmd(hostname, 'update', 'osystem=ubuntu distro_series=ubuntu/%s' % series)
 
     def update_arch(s, hostname, arch):
-        cmd = '%s node update %s osystem=ubuntu architecture=%s/generic' % (s.prefix, s.nodes_by_name[hostname]['system_id'], arch)
-        debug(cmd)
-        sh(cmd, quiet=True)
-        s.__stale()
-        return None
+        s.node_cmd(hostname, 'update', 'osystem=ubuntu architecture=%s/generic' % arch)
 
     def __stale(s):
         s.__nodes = None
