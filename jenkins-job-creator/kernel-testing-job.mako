@@ -66,6 +66,10 @@ if data.ppa is not None:
     # Publish the results
     #
     $KT/test-results/mk-ingest-job --job-name=$JOB_NAME --build-id=$BUILD_ID
+
+    # Don't need the HW any longer, it can be powered off.
+    #
+    $KT/release ${data.sut_name}
 % endif
             </command>
         </hudson.tasks.Shell>
