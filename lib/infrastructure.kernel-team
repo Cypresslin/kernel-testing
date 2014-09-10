@@ -448,8 +448,8 @@ LabHW = {
 
     "cavac" : {
         "provisioning" : {
-            "server" : "cobbler",
-            "type" : "cobbler",
+            "server" : "thorin.ubuntu-ci",
+            "type" : "maas",
         },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "ac:16:2d:aa:6c:e8",
@@ -463,8 +463,8 @@ LabHW = {
     },
     "etnyre" : {
         "provisioning" : {
-            "server" : "cobbler",
-            "type" : "cobbler",
+            "server" : "thorin.ubuntu-ci",
+            "type" : "maas",
         },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "e4:11:5b:de:01:13",
@@ -478,8 +478,8 @@ LabHW = {
     },
     "bantam" : {
         "provisioning" : {
-            "server" : "cobbler",
-            "type" : "cobbler",
+            "server" : "thorin.ubuntu-ci",
+            "type" : "maas",
         },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "80:c1:6e:62:22:30",
@@ -493,8 +493,8 @@ LabHW = {
     },
     "larsen" : {
         "provisioning" : {
-            "server" : "cobbler",
-            "type" : "cobbler",
+            "server" : "thorin.ubuntu-ci",
+            "type" : "maas",
         },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "ac:16:2d:b8:cb:f8",
@@ -508,8 +508,8 @@ LabHW = {
     },
     "rainier" : {
         "provisioning" : {
-            "server" : "cobbler",
-            "type" : "cobbler",
+            "server" : "thorin.ubuntu-ci",
+            "type" : "maas",
         },
         "jenkins server" : "kernel-jenkins",
         "mac address" : "ac:16:2d:b9:25:f8",
