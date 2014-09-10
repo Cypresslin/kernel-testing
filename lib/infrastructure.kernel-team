@@ -156,7 +156,7 @@ LabHW = {
             }
         ],
         "role" : ["testing"],
-        "locked" : True,
+        "locked" : False,
     },
     "waldorf" : {
         "provisioning" : {
