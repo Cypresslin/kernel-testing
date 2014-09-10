@@ -3,8 +3,9 @@
 
 MAASConfig = {
     "server"  : "thorin.ubuntu-ci",
-    "profile" : "maas",
-    "creds"   : "jg2XAHBWGK8yzUn84F:M47jVf8JFbDBad26HV:AA8xyn7paqXvZE9rPAdPFQnqfm9yYaME"
+    "profile" : "jenkins",
+    "creds"   : "cvTDA3bvTZ2hvKwKgZ:jKNrDvejEBzmYspTZS:9kjNNPw2EBYzpGAA5CeqEYhBF5yPgEED",
+    "user"    : "jenkins"
 }
 
 Orchestra = {
