@@ -251,6 +251,9 @@ TestProfiles = {
         'packages' : {
             'common' : ['gdb', 'coreutils', 'apparmor', 'linux-tools-`uname -r`', 'iproute2', 'openvswitch-switch'],
             },
+        'series-blacklist': [
+            'lucid', 'precise', 'quantal', 'saucy',
+            ],
         },
 
 }
