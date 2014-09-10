@@ -193,6 +193,8 @@ class MailHandler():
             info('Help sent to: %s' % e_from)
             if send_help:
                 body = """
+The subject of the email message must be "Subject: Kernel Test Request".
+
 The body of the email message should be a simple set of "name":"value" pairs,
 one per line. The following describe the recognized pairs:
 
