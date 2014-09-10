@@ -210,13 +210,14 @@ class VirtualProvisioner(Provisioner):
         kickstart = path.join(self.kickstarts_root, 'kt-virt-%s.preseed' % (o_series['preseed']))
 
         t = LabHW[target]
+        server = t['provisioning']['server']
         if not self.quiet:
             print('    remove profile \'%s\'' % self.name)
-        ssh('%s@%s' % ('kernel', t['orchestra server']), 'sudo cobbler profile remove --name=%s' % (self.name))
+        ssh('%s@%s' % ('kernel', server), 'sudo cobbler profile remove --name=%s' % (self.name))
 
         if not self.quiet:
             print('    adding profile \'%s\' with series: %s  arch: %s' % (self.name, self.series, self.arch))
-        ssh('%s@%s' % ('kernel', t['orchestra server']), 'sudo cobbler profile add --name=%s --distro=%s --kickstart=%s --ksmeta=hostname=%s --virt-file-size=20,100 --virt-ram=1000 --virt-disk=raw,raw --virt-path=/opt/%s-a,/opt/%s-b' % (self.name, distro, kickstart, self.name, self.name, self.name))
+        ssh('%s@%s' % ('kernel', server), 'sudo cobbler profile add --name=%s --distro=%s --kickstart=%s --ksmeta=hostname=%s --virt-file-size=20,100 --virt-ram=1000 --virt-disk=raw,raw --virt-path=/opt/%s-a,/opt/%s-b' % (self.name, distro, kickstart, self.name, self.name, self.name))
 
     # configure_host_for_virtual_guests
     #
@@ -243,7 +244,7 @@ class VirtualProvisioner(Provisioner):
     # create_virtual_guest
     #
     def create_virtual_guest(self, target):
-        ssh(target, 'sudo koan --virt --server=%s --profile=%s --virt-name=%s --virt-bridge=br0 --vm-poll' % (LabHW[target]['orchestra server'], self.name, self.name))
+        ssh(target, 'sudo koan --virt --server=%s --profile=%s --virt-name=%s --virt-bridge=br0 --vm-poll' % (LabHW[target]['provisioning']['server'], self.name, self.name))
 
     # provision
     #
@@ -314,17 +315,18 @@ class MetalProvisioner(Provisioner):
         repos = "'%s-%s %s-%s-security'" % (self.series, o_arch, self.series, o_arch)
 
         t = LabHW[target]
+        server = t['provisioning']['server']
         if not self.quiet:
             print('    remove profile \'%s\'' % self.name)
-        ssh('%s@%s' % ('kernel', t['orchestra server']), 'sudo cobbler profile remove --name=%s' % (self.name))
+        ssh('%s@%s' % ('kernel', server), 'sudo cobbler profile remove --name=%s' % (self.name))
 
         if not self.quiet:
             print('    adding profile \'%s\' with series: %s  arch: %s' % (self.name, self.series, self.arch))
-        ssh('%s@%s' % ('kernel', t['orchestra server']), 'sudo cobbler profile add --name=%s --distro=%s --kickstart=%s --repos=%s' % (self.name, distro, kickstart, repos))
+        ssh('%s@%s' % ('kernel', server), 'sudo cobbler profile add --name=%s --distro=%s --kickstart=%s --repos=%s' % (self.name, distro, kickstart, repos))
 
         if not self.quiet:
             print('    adding system \'%s\'' % (self.name))
-        ssh('%s@%s' % ('kernel', t['orchestra server']), 'sudo cobbler system add --name=%s --profile=%s --hostname=%s --mac=%s' % (self.name, self.name, self.name, t['mac address']))
+        ssh('%s@%s' % ('kernel', server), 'sudo cobbler system add --name=%s --profile=%s --hostname=%s --mac=%s' % (self.name, self.name, self.name, t['mac address']))
 
     # cycle_power
     #
@@ -351,11 +353,12 @@ class MetalProvisioner(Provisioner):
         else:
             # Power cycle the system so it will netboot and install
             #
+            server = t['provisioning']['server']
             for state in ['off', 'on']:
                 for psu in t['cdu']:
                     if psu['ip'] != '':
                         try:
-                            ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
+                            ssh('%s@%s' % ('kernel', server), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
                         except ShellError as e:
                             # Sometimes the call to the orchestra server will time-out (not sure why), just
                             # wait a minute and try again.
@@ -363,7 +366,7 @@ class MetalProvisioner(Provisioner):
                             sleep(120)
                             if not self.quiet:
                                 print('    Initial power cycle attempt failed, trying a second time.')
-                            ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
+                            ssh('%s@%s' % ('kernel', server), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
 
                 if state == 'off':
                     sleep(120) # Some of the systems want a little delay
