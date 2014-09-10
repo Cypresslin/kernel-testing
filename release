@@ -1,0 +1,98 @@
+#!/usr/bin/env python
+#
+
+from os                                 import getenv
+from logging                            import debug, error, info, basicConfig, INFO, DEBUG, WARNING, getLevelName
+from time                               import sleep
+
+from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
+from lib.infrastructure                 import MAASConfig, LabHW
+from lib.shell                          import sh, ssh, ShellError, ShellTimeoutError
+from lib.maas                           import MAAS
+
+# Release
+#
+class Release():
+    '''
+    '''
+
+    # __init__
+    #
+    def __init__(self, args):
+        self.args = args
+
+    # main
+    #
+    def main(self):
+        retval = 1
+        try:
+            provisionor = LabHW[target]['provisioning']['type']
+            if provisionor == 'maas':
+                maas = MAAS(MAASConfig['profile'], MAASConfig['server'], MAASConfig['creds'])
+                mt = maas.node(target)
+                mt.stop_and_release()
+            else:
+                t = LabHW[target]
+                if 'ipmi' in t:
+                    cmd = "ipmitool -H %s -I lanplus -U %s -P %s power off" % (t['ipmi']['ip'], t['ipmi']['username'], t['ipmi']['passwd'])
+                    print(cmd)
+                    result, output = sh(cmd, ignore_result=False)
+                else:
+                    for psu in t['cdu']:
+                        if psu['ip'] != '':
+                            try:
+                                ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
+                            except ShellError as e:
+                                # Sometimes the call to the orchestra server will time-out (not sure why), just
+                                # wait a minute and try again.
+                                #
+                                sleep(60)
+                                if not self.quiet:
+                                    print('    Initial power cycle attempt failed, trying a second time.')
+                                ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
+
+            retval = 0
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            print("Aborting ...")
+
+        except ShellTimeoutError as e:
+            error('The command (%s) timed out. (%d)' % (e.cmd, e.timeout))
+
+        except ShellError as e:
+            error('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
+            for line in e.output:
+                error(line.rstrip())
+
+        if retval > 0:
+            error("")
+            error("Due to the above error(s), this script is unable to continue and is terminating.")
+            error("")
+
+        return retval
+
+if __name__ == '__main__':
+    if getenv('DEBUG'):
+        LOGLEVEL = DEBUG
+    else:
+        LOGLEVEL = INFO
+    basicConfig(level=LOGLEVEL, format="%(levelname)s - %(message)s")
+
+    app_description = '''
+    '''
+
+    app_epilog = '''
+    '''
+
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('target', metavar='TARGET', type=str, nargs=1, help='The name of the system to be provisioned.')
+
+    args = parser.parse_args()
+    target = args.target[0]
+
+    app = Release(args)
+    exit(app.main())
+
+# vi:set ts=4 sw=4 expandtab syntax=python:
