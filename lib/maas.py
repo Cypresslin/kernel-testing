@@ -92,7 +92,7 @@ class MAAS():
         '''
         Perform a "nodes acquire".
         '''
-        cmd = '%s nodes acquire system_id=%s' % (s.prefix, s.nodes_by_name[hostname]['system_id'])
+        cmd = '%s nodes acquire name=%s' % (s.prefix, s.nodes_by_name[hostname]['hostname'])
         debug(cmd)
         ssh(s.server, cmd, quiet=True)
         s.__stale()
