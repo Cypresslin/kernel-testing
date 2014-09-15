@@ -1,38 +1,29 @@
 
-Autotest
---------
-
- * We should probably be rebooting after each individual autotest test
-   is run. We may want to completely re-provision the system. This is
-   something that will be difficult to "just slip in" for QA.
-
- * I'm thinking it might be nice to run the xfstests per filesystem
-   than one test which exercises all filesystems. Kind of a 'xfstests-ext4',
-   'xfstests-xfs', etc.
-
 kernel-testing
 --------------
 
-  * We need to be getting _some_ kind of results when tests fail.
+  * More configurability
 
-  * Improve testing robustness:
-    * Far too often I am finding jenkins jobs "stuck" on a particular
-      test for hours at a time. We need some way of timing out these
-      tests and still producing results.
+    * Issues:
+        1. I'm asking that the QA/CI folks use this code but is it really flexible
+           enough for them?
+        2. I've started using this for testing at home. I'm running into the same
+           issues that someone else would have running on different HW, different
+           jenkins & maas servers, etc.
 
-    * Again, I am repeatedly finding tests have failed for some unknown
-      reason and what I find in the console log is a java call-stack
-      trace. We end up with *no* results after hours of testing and
-      we don't even know the test has failed except that I know to go
-      looking for the results of a job that I started by hand. If this
-      was automated, I wouldn't even know to go look.
+    * Refactor the lib/infrastructure.py code so that it clear and easy how to
+      change it for other configurations.
 
-  * Fix HWE kernel testing for non-quantal kernels.
+    * Make sure that we have configurations for:
+        1. Servers; MAAS and Jenkins and anything else.
+        2. The servers need ssh usernames to be used.
+        3. The ssh command line options need to be configurable and flexible enough
+           so we don't need individual .ssh/config rules for every test host.
+
+    * Make sure the templates are using these configuration options.
 
   * Fix virtual testing. Most of the necessary infrastructure is
     in place, it just needs to be wrung out.
-
-  * Need a tool/process which prunes the metrics/test-results.
 
 Re-work?
 --------
@@ -50,4 +41,15 @@ Re-work?
     version of xfstests wanted additional, ubuntu specific
     patches we could keep those out-of-tree as well and copy
     them in-tree when we are on a lucid system.
+
+Autotest
+--------
+
+ * We should probably be rebooting after each individual autotest test
+   is run. We may want to completely re-provision the system. This is
+   something that will be difficult to "just slip in" for QA.
+
+ * I'm thinking it might be nice to run the xfstests per filesystem
+   than one test which exercises all filesystems. Kind of a 'xfstests-ext4',
+   'xfstests-xfs', etc.
 
