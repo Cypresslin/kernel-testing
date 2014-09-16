@@ -9,38 +9,18 @@ from sys                                import exit, argv
 from logging                            import debug, error, basicConfig, DEBUG, WARNING
 from lib.jenkins                        import Jenkins, JenkinsException, LAUNCHER_SSH, LAUNCHER_COMMAND, LAUNCHER_WINDOWS_SERVICE
 import json
-
-# load_cfg
-#
-def load_cfg(file_name):
-    """
-    Load the configuration file, returning the same as a python object.
-    """
-    retval = None
-
-    # Find it ...
-    #
-    fid = file_name
-    if not path.exists(fid): # Current directory
-        fid = path.join(path.expanduser('~'), file_name)
-        if not path.exists(fid): # Users home directory
-            fid = path.join(path.dirname(argv[0]), file_name)
-            if not path.exists(fid):
-                fid = None
-
-    if fid is not None:
-        with open(fid, 'r') as f:
-            retval = json.load(f)
-    else:
-        print("Error: Failed to find the configuration file.")
-
-    return retval
+from lib.kt_cfg                         import KTConfig
 
 # Server
 #
 class Server():
-    cfg = load_cfg('kernel-testing.cfg')
-    jenkins = Jenkins(cfg['server_url'])
+    try:
+        jenkins = Jenkins(KTConfig['jenkins']['server_url'])
+    except:
+        print('')
+        print('Error: The configuration file doesn\'t contain a jenkins server url. See the example config file')
+        print('       in the kernel-testing source directory.')
+        print('')
 
     # info
     #
