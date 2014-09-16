@@ -39,7 +39,7 @@ def load_cfg(file_name):
 # Server
 #
 class Server():
-    cfg = load_cfg('aka.cfg')
+    cfg = load_cfg('kernel-testing.cfg')
     jenkins = Jenkins(cfg['server_url'])
 
     # info
