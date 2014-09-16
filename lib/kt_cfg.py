@@ -6,9 +6,9 @@ from os                                 import path
 from logging                            import debug
 import json
 
-# config
+# __config
 #
-def config(theClass):
+def __config():
     """
     Load the configuration file, returning the same as a python object.
     """
@@ -35,7 +35,6 @@ def config(theClass):
         with open(fid, 'r') as f:
             cfg = json.load(f)
 
-        theClass.update(cfg)
     else:
         print('')
         print("Error: Failed to find the configuration file.")
@@ -43,7 +42,4 @@ def config(theClass):
 
     return cfg
 
-
-@config
-class KTConfig(dict):
-    pass
+KTConfig = __config()
