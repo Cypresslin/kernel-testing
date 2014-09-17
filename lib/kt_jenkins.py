@@ -9,13 +9,13 @@ from sys                                import exit, argv
 from logging                            import debug, error, basicConfig, DEBUG, WARNING
 from lib.jenkins                        import Jenkins, JenkinsException, LAUNCHER_SSH, LAUNCHER_COMMAND, LAUNCHER_WINDOWS_SERVICE
 import json
-from lib.kt_cfg                         import KTConfig
+from lib.configuration                  import Configuration
 
 # Server
 #
 class Server():
     try:
-        jenkins = Jenkins(KTConfig['jenkins']['server_url'])
+        jenkins = Jenkins(Configuration['jenkins']['server_url'])
     except:
         print('')
         print('Error: The configuration file doesn\'t contain a jenkins server url. See the example config file')
