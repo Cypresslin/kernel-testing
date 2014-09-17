@@ -6,7 +6,7 @@ Configuration = {
     # The Jenkins server section. My Jenkins server is named 'jenkins'.
     #
     "jenkins" : {
-        "server_url" : "http://10.98.2.20:8080"
+        "server_url" : "http://jenkins:8080"
     },
 
     # I only have one MAAS server and it's named 'maas'.
@@ -26,7 +26,58 @@ Configuration = {
     "cobbler" : {
         "server"  : "cobbler",
         "type"    : "cobbler"
+    },
+
+    # Test systems section. This is a dictionary of all the test systems that are available
+    # to me.
+    #
+    "systems" : {
+        "nuc1" : {
+            "provisioner" : "maas",
+            "jenkins server" : "jenkins",
+            "mac address" : "ec:a8:6b:fa:91:64",
+            "power" : {
+                "maas" : {
+                }
+            },
+            "role" : "testing",
+            "locked" : False
+        },
+        "nuc2" : {
+            "provisioner" : "maas",
+            "jenkins server" : "jenkins",
+            "mac address" : "ec:a8:6b:fa:6f:be",
+            "power" : {
+                "maas" : {
+                }
+            },
+            "role" : "testing",
+            "locked" : False
+        },
+        "oin" : {
+            "provisioner" : "maas",
+            "jenkins server" : "jenkins",
+            "mac address" : "74:27:ea:d5:8b:c9",
+            "power" : {
+                "maas" : {
+                }
+            },
+            "role" : "testing",
+            "locked" : False
+        },
+        "gloin" : {
+            "provisioner" : "maas",
+            "jenkins server" : "jenkins",
+            "mac address" : "74:27:ea:d5:8b:63",
+            "power" : {
+                "maas" : {
+                }
+            },
+            "role" : "testing",
+            "locked" : False
+        }
     }
+
 }
 
 # vi:set ts=4 sw=4 expandtab syntax=python:
