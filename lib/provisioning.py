@@ -7,11 +7,13 @@ from time                               import sleep
 from logging                            import info
 import re
 
-from lib.infrastructure                 import Orchestra, HWE, LabHW, MAASConfig
+from lib.infrastructure                 import Orchestra, LabHW, MAASConfig
+from lib.hwe                            import HWE
 from lib.shell                          import sh, ShellError, ssh, Shell
 from lib.ubuntu                         import Ubuntu
 from lib.exceptions                     import ErrorExit
 from lib.maas                           import MAAS, MAASNode
+from configuration                      import Configuration
 
 # Provisioner
 #
@@ -471,19 +473,19 @@ class MetalProvisioner(Provisioner):
 
         # We network boot/install the bare-metal hw to get our desired configuration on it.
         #
-        method = LabHW[target]['provisioning']['type']
-        if method == 'cobbler':
+        provisioner = Configuration[Configuration['systems'][target]['provisioner']]
+        if provisioner['type'] == 'cobbler':
             self.configure_orchestra(target)
             self.cycle_power(target)
-        elif method == 'maas':
-            maas = MAAS(MAASConfig['profile'], MAASConfig['server'], MAASConfig['creds'])
+        elif provisioner['type'] == 'maas':
+            maas = MAAS(provisioner['profile'], provisioner['server'], provisioner['creds'])
             mt = maas.node(target)
             mt.stop_and_release()
             mt.series(self.series)
             mt.arch(self.arch)
             mt.acquire_and_start()
         else:
-            error('Unrecognised provisioning method (%s)' % method)
+            error('Unrecognised provisioning type (%s)' % provisioner['type'])
             return False
 
         self.wait_for_system(target, timeout=60) # Allow 30 minutes for network installation
@@ -493,7 +495,7 @@ class MetalProvisioner(Provisioner):
         # is up but it's not really. Wait for a bit and then check for the system to be up
         # again.
         #
-        if method == 'maas':
+        if provisioner['type'] == 'maas':
             info("Giving it 5 more minutes")
             sleep(60 * 5) # Give it 5 minutes
             self.wait_for_system(target, timeout=60)
@@ -521,7 +523,7 @@ class MetalProvisioner(Provisioner):
         if self.debs is not None:
             self.install_custom_debs(target)
 
-        if method == "cobbler":
+        if provisioner['type'] == "cobbler":
             self.configure_passwordless_access(target)
 
         # We want to reboot to pick up any new kernel that we would have installed due
