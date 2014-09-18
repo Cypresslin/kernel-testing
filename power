@@ -137,8 +137,6 @@ class Power():
 
     # status
     #
-    # AMT_PASSWORD='1Pa**word' amttool 10.10.10.100 info
-    #
     def status(s, target):
         cdebug("    Enter: Power::main")
         for p in Configuration['systems'][target]['power']:
@@ -153,6 +151,18 @@ class Power():
             if p['type'] == 'dli':
                 switch = PowerSwitch(hostname=p['address'], userid=p['user'], password=p['password'])
                 state = switch[p['outlet']].state
+
+            if p['type'] == 'ipmi':
+                cmd = "ipmitool -H %s -I lanplus -U %s -P %s power status" % (p['address'], p['user'], p['password'])
+                result, output = sh(cmd, ignore_result=False, quiet=True)
+                for l in output:
+                    cdebug("        Line: \'%s\'" % l.strip())
+
+            if p['type'] == 'cdu':
+                cmd('fence_cdu -a %s -l %s -p %s -n %s -o %s' % (p['address'], p['user'], p['password'], p['port'], state))
+                result, output = sh(cmd, ignore_result=False, quiet=True)
+                for l in output:
+                    cdebug("        Line: \'%s\'" % l.strip())
 
             print(state)
         cdebug("    Leave: Power::main")
