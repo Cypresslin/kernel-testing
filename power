@@ -1,30 +1,14 @@
 #!/usr/bin/env python
 #
 
-from os                                 import getenv, path
+from os                                 import environ
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
-from logging                            import debug, error, info, basicConfig, INFO, DEBUG, WARNING, getLevelName
+from logging                            import basicConfig, DEBUG, WARNING
 from time                               import sleep
 
-from lib.infrastructure                 import Orchestra, HWE, LabHW
 from lib.shell                          import sh, ShellError, ShellTimeoutError
-from lib.log                            import cdebug, Clog
+from lib.log                            import cdebug, Clog, cerror
 from lib.configuration                  import Configuration
-
-dry_run = False
-
-# ssh
-#
-def ssh(target, cmd, quiet=False, ignore_result=False):
-    ssh_cmd = 'ssh %s %s' % (target, cmd)
-    result = 0
-    cdebug('CMD: \'%s\'' % (ssh_cmd))
-    result, output = sh(ssh_cmd, quiet=quiet, ignore_result=ignore_result)
-
-    if result != 0 and not ignore_result:
-        raise ShellError(ssh_cmd, result, output)
-
-    return result, output
 
 # Timeout
 #
@@ -49,18 +33,18 @@ class MetalProvisioner():
 
     # __init__
     #
-    def __init__(self):
-        self.quiet = False
+    def __init__(s):
+        s.quiet = False
 
     # cycle_power
     #
-    def cycle_power(self, target):
+    def cycle_power(s, target):
         '''
         Has the smarts on how to go about turning the power off to a server
         remotely and then turning it back on. In some cases, multiple ports
         must be power cycled.
         '''
-        if not self.quiet:
+        if not s.quiet:
             print('Cycling the power on \'%s\'' % (target))
 
         t = LabHW[target]
@@ -87,7 +71,7 @@ class MetalProvisioner():
                             # wait a minute and try again.
                             #
                             sleep(60)
-                            if not self.quiet:
+                            if not s.quiet:
                                 print('    Initial power cycle attempt failed, trying a second time.')
                             ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
 
@@ -103,38 +87,82 @@ class Power():
 
     # __init__
     #
-    def __init__(self, args):
-        self.args = args
-        self.__hwdb = None
+    def __init__(s, args):
+        s.args = args
 
     # on
     #
-    def on(target):
+    def on(s, target):
         pass
 
     # off
     #
-    def off(target):
+    def off(s, target):
         pass
 
     # cycle
     #
-    def cycle(target):
+    def cycle(s, target):
         pass
+
+    def amt(s, target, password, cmd):
+        cdebug("        Enter: Power::amt")
+
+        output = None
+        environ['AMT_PASSWORD'] = password
+        cmd = 'amttool %s %s' % (target, cmd)
+        cdebug('        CMD: \'%s\'' % cmd)
+
+        # I've seen the amttool command fail to connect some times, just sleep a little and try again.
+        # Try 3 times before giving up.
+        #
+        count = 1
+        while True:
+            try:
+                result, output = sh(cmd, ignore_result=False, quiet=True)
+                for l in output:
+                    cdebug("        Line: \'%s\'" % l.strip())
+                break
+            except ShellError as e:
+                if count == 3:
+                    for line in e.output:
+                        cerror(line.rstrip())
+                    break
+                count += 1
+                sleep(5)
+
+        cdebug("        Leave: Power::amt")
+        return output
 
     # status
     #
-    def status(target):
-        pass
+    # AMT_PASSWORD='1Pa**word' amttool 10.10.10.100 info
+    #
+    def status(s, target):
+        cdebug("    Enter: Power::main")
+        for p in Configuration['systems'][target]['power']:
+            cdebug(p)
+
+            if p['type'] == 'amt':
+                output = s.amt(p['address'], p['password'], 'info')
+                for l in output:
+                    if 'Powerstate:' in l:
+                        state = l.split('(')[1].replace(')', '').strip()
+
+            print(state)
+        cdebug("    Leave: Power::main")
 
     # main
     #
-    def main(self):
-        debug("Enter: Power:main")
+    def main(s):
+        cdebug("Enter: Power::main")
         retval = 1
         try:
-            target = self.args.target[0] # One target
-            action = self.args.action[0] # One action
+            target = s.args.target[0] # One target
+            action = s.args.action[0] # One action
+
+            if action == 'status':
+                s.status(target)
 
             #metal = None
             #metal = MetalProvisioner()
@@ -148,31 +176,25 @@ class Power():
             print("Aborting ...")
 
         except ShellTimeoutError as e:
-            error('The command (%s) timed out. (%d)' % (e.cmd, e.timeout))
+            cerror('The command (%s) timed out. (%d)' % (e.cmd, e.timeout))
 
         except ShellError as e:
-            error('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
+            cerror('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
             for line in e.output:
-                error(line.rstrip())
+                cerror(line.rstrip())
 
         except ErrorExit:
             pass
 
         if retval > 0:
-            error("")
-            error("Due to the above error(s), this script is unable to continue and is terminating.")
-            error("")
+            cerror("")
+            cerror("Due to the above error(s), this script is unable to continue and is terminating.")
+            cerror("")
 
-        debug("Leave: Power:main")
+        cdebug("Leave: Power::main")
         return retval
 
 if __name__ == '__main__':
-    if getenv('DEBUG'):
-        LOGLEVEL = DEBUG
-    else:
-        LOGLEVEL = INFO
-    basicConfig(level=LOGLEVEL, format="%(levelname)s - %(message)s")
-
     app_description = '''
     '''
 
