@@ -39,7 +39,7 @@ Configuration = {
             "power" : [
                 {
                     "type"     : "amt",
-                    "address"  : "ec:a8:6b:fa:91:64", # 10.10.10.100
+                    "address"  : "10.10.10.100", # "ec:a8:6b:fa:91:64"
                     "user"     : "admin",
                     "password" : "1Pa**word"
                 }
@@ -54,7 +54,7 @@ Configuration = {
             "power" : [
                 {
                     "type"     : "amt",
-                    "address"  : "ec:a8:6b:fa:6f:be", # 10.10.10.101
+                    "address"  : "10.10.10.101", # "ec:a8:6b:fa:6f:be"
                     "user"     : "admin",
                     "password" : "1Pa**word"
                 }
