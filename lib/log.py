@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 from logging                            import info, debug, warning
-from ktl.termcolor                      import colored
+from lib.termcolor                      import colored
 
 def cinfo(msg, color='white'):
     Clog.info(msg, color)
