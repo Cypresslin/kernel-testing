@@ -7,7 +7,7 @@ from logging                            import debug, error, basicConfig, DEBUG,
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 from lib.jenkins                        import JenkinsException
 
-from lib.kt_jenkins                     import Server, Nodes, Jobs
+from lib.jenkins                        import Server, Nodes, Jobs
 from lib.log                            import cdebug, Clog
 
 if __name__ == '__main__':
