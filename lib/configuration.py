@@ -36,10 +36,14 @@ Configuration = {
             "provisioner" : "maas",
             "jenkins server" : "jenkins",
             "mac address" : "ec:a8:6b:fa:91:64",
-            "power" : {
-                "maas" : {
+            "power" : [
+                {
+                    "type"     : "amt",
+                    "address"  : "ec:a8:6b:fa:91:64", # 10.10.10.100
+                    "user"     : "admin",
+                    "password" : "1Pa**word"
                 }
-            },
+            ],
             "role" : "testing",
             "locked" : False
         },
@@ -47,10 +51,14 @@ Configuration = {
             "provisioner" : "maas",
             "jenkins server" : "jenkins",
             "mac address" : "ec:a8:6b:fa:6f:be",
-            "power" : {
-                "maas" : {
+            "power" : [
+                {
+                    "type"     : "amt",
+                    "address"  : "ec:a8:6b:fa:6f:be", # 10.10.10.101
+                    "user"     : "admin",
+                    "password" : "1Pa**word"
                 }
-            },
+            ],
             "role" : "testing",
             "locked" : False
         },
@@ -58,10 +66,15 @@ Configuration = {
             "provisioner" : "maas",
             "jenkins server" : "jenkins",
             "mac address" : "74:27:ea:d5:8b:c9",
-            "power" : {
-                "maas" : {
+            "power" : [
+                {
+                    "type"     : "Digital Loggers, Inc. PDU",
+                    "address"  : "10.10.10.200",
+                    "user"     : "admin",
+                    "password" : "admin",
+                    "outlet"   : "1"
                 }
-            },
+            ],
             "role" : "testing",
             "locked" : False
         },
@@ -69,10 +82,15 @@ Configuration = {
             "provisioner" : "maas",
             "jenkins server" : "jenkins",
             "mac address" : "74:27:ea:d5:8b:63",
-            "power" : {
-                "maas" : {
+            "power" : [
+                {
+                    "type"     : "Digital Loggers, Inc. PDU",
+                    "address"  : "10.10.10.200",
+                    "user"     : "admin",
+                    "password" : "admin",
+                    "outlet"   : "2"
                 }
-            },
+            ],
             "role" : "testing",
             "locked" : False
         }

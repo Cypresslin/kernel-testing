@@ -1,0 +1,199 @@
+#!/usr/bin/env python
+#
+
+from os                                 import getenv, path
+from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import debug, error, info, basicConfig, INFO, DEBUG, WARNING, getLevelName
+from time                               import sleep
+
+from lib.infrastructure                 import Orchestra, HWE, LabHW
+from lib.shell                          import sh, ShellError, ShellTimeoutError
+from lib.log                            import cdebug, Clog
+from lib.configuration                  import Configuration
+
+dry_run = False
+
+# ssh
+#
+def ssh(target, cmd, quiet=False, ignore_result=False):
+    ssh_cmd = 'ssh %s %s' % (target, cmd)
+    result = 0
+    cdebug('CMD: \'%s\'' % (ssh_cmd))
+    result, output = sh(ssh_cmd, quiet=quiet, ignore_result=ignore_result)
+
+    if result != 0 and not ignore_result:
+        raise ShellError(ssh_cmd, result, output)
+
+    return result, output
+
+# Timeout
+#
+class Timeout(Exception):
+    """
+    A task took longer than the specified timeout.
+    """
+    pass
+
+# ErrorExit
+#
+class ErrorExit(Exception):
+    """
+    If an error message has already been displayed and we want to just exit the app, this
+    exception is raised.
+    """
+    pass
+
+# MetalProvisioner
+#
+class MetalProvisioner():
+
+    # __init__
+    #
+    def __init__(self):
+        self.quiet = False
+
+    # cycle_power
+    #
+    def cycle_power(self, target):
+        '''
+        Has the smarts on how to go about turning the power off to a server
+        remotely and then turning it back on. In some cases, multiple ports
+        must be power cycled.
+        '''
+        if not self.quiet:
+            print('Cycling the power on \'%s\'' % (target))
+
+        t = LabHW[target]
+
+        if 'ipmi' in t:
+            for state in ['off', 'on']:
+                cmd = "ipmitool -H %s -I lanplus -U %s -P %s power %s" % (t['ipmi']['ip'], t['ipmi']['username'], t['ipmi']['passwd'], state)
+                print(cmd)
+                result, output = sh(cmd, ignore_result=False)
+
+                if state == 'off':
+                    sleep(60) # Some of the systems want a little delay
+                              # between being powered off and then back on.
+        else:
+            # Power cycle the system so it will netboot and install
+            #
+            for state in ['off', 'on']:
+                for psu in t['cdu']:
+                    if psu['ip'] != '':
+                        try:
+                            ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
+                        except ShellError as e:
+                            # Sometimes the call to the orchestra server will time-out (not sure why), just
+                            # wait a minute and try again.
+                            #
+                            sleep(60)
+                            if not self.quiet:
+                                print('    Initial power cycle attempt failed, trying a second time.')
+                            ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
+
+                if state == 'off':
+                    sleep(60) # Some of the systems want a little delay
+                              # between being powered off and then back on.
+
+# Power
+#
+class Power():
+    '''
+    '''
+
+    # __init__
+    #
+    def __init__(self, args):
+        self.args = args
+        self.__hwdb = None
+
+    # on
+    #
+    def on(target):
+        pass
+
+    # off
+    #
+    def off(target):
+        pass
+
+    # cycle
+    #
+    def cycle(target):
+        pass
+
+    # status
+    #
+    def status(target):
+        pass
+
+    # main
+    #
+    def main(self):
+        debug("Enter: Power:main")
+        retval = 1
+        try:
+            target = self.args.target[0] # One target
+            action = self.args.action[0] # One action
+
+            #metal = None
+            #metal = MetalProvisioner()
+            #metal.cycle_power(target)
+
+            retval = 0
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            print("Aborting ...")
+
+        except ShellTimeoutError as e:
+            error('The command (%s) timed out. (%d)' % (e.cmd, e.timeout))
+
+        except ShellError as e:
+            error('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
+            for line in e.output:
+                error(line.rstrip())
+
+        except ErrorExit:
+            pass
+
+        if retval > 0:
+            error("")
+            error("Due to the above error(s), this script is unable to continue and is terminating.")
+            error("")
+
+        debug("Leave: Power:main")
+        return retval
+
+if __name__ == '__main__':
+    if getenv('DEBUG'):
+        LOGLEVEL = DEBUG
+    else:
+        LOGLEVEL = INFO
+    basicConfig(level=LOGLEVEL, format="%(levelname)s - %(message)s")
+
+    app_description = '''
+    '''
+
+    app_epilog = '''
+    '''
+
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--debug', action='store_true', default=False, help='Print out lots of stuff.')
+    parser.add_argument('target', metavar='TARGET', type=str, nargs=1, help='The name of the system to be provisioned.')
+    parser.add_argument('action', metavar='ACTION', type=str, nargs=1, help='on | off | cycle | status')
+
+    args = parser.parse_args()
+
+    if args.debug:
+        level = DEBUG
+        Clog.dbg = True
+    else:
+        level = WARNING
+    basicConfig(filename=None, level=level, format="%(levelname)s - %(message)s")
+
+    app = Power(args)
+    exit(app.main())
+
+# vi:set ts=4 sw=4 expandtab syntax=python:
