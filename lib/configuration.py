@@ -68,11 +68,11 @@ Configuration = {
             "mac address" : "74:27:ea:d5:8b:c9",
             "power" : [
                 {
-                    "type"     : "Digital Loggers, Inc. PDU",
+                    "type"     : "dli", # Digital Loggers, Inc. PDU
                     "address"  : "10.10.10.200",
                     "user"     : "admin",
                     "password" : "admin",
-                    "outlet"   : "1"
+                    "outlet"   : 1
                 }
             ],
             "role" : "testing",
@@ -84,11 +84,11 @@ Configuration = {
             "mac address" : "74:27:ea:d5:8b:63",
             "power" : [
                 {
-                    "type"     : "Digital Loggers, Inc. PDU",
+                    "type"     : "dli", # Digital Loggers, Inc. PDU
                     "address"  : "10.10.10.200",
                     "user"     : "admin",
                     "password" : "admin",
-                    "outlet"   : "2"
+                    "outlet"   : 2
                 }
             ],
             "role" : "testing",

@@ -9,6 +9,7 @@ from time                               import sleep
 from lib.shell                          import sh, ShellError, ShellTimeoutError
 from lib.log                            import cdebug, Clog, cerror
 from lib.configuration                  import Configuration
+from lib.dlipower                       import PowerSwitch
 
 # Timeout
 #
@@ -148,6 +149,10 @@ class Power():
                 for l in output:
                     if 'Powerstate:' in l:
                         state = l.split('(')[1].replace(')', '').strip()
+
+            if p['type'] == 'dli':
+                switch = PowerSwitch(hostname=p['address'], userid=p['user'], password=p['password'])
+                state = switch[p['outlet']].state
 
             print(state)
         cdebug("    Leave: Power::main")
