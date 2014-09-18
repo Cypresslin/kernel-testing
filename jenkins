@@ -95,8 +95,6 @@ A command line interface to a Jenkins-CI server.
         level = WARNING
     basicConfig(filename=None, level=level, format="%(levelname)s - %(message)s")
 
-    cdebug("debugging enabled")
-
     try:
         retval = args.func(args)
     except JenkinsException as e:
