@@ -10,6 +10,7 @@ from logging                            import debug, error, basicConfig, DEBUG,
 from lib.jenkins                        import Jenkins, JenkinsException, LAUNCHER_SSH, LAUNCHER_COMMAND, LAUNCHER_WINDOWS_SERVICE
 import json
 from lib.configuration                  import Configuration
+from lib.log                            import cdebug
 
 # Server
 #
@@ -51,7 +52,7 @@ class Nodes(Common):
     #
     @classmethod
     def details(cls, args):
-        debug('Enter: Nodes.details')
+        cdebug('Enter: Nodes.details')
         retval = 0
         cls._Common__common(args)
 
@@ -63,14 +64,14 @@ class Nodes(Common):
 
         print(json.dumps(data, sort_keys=True, indent=4))
 
-        debug('Leave: Nodes.details')
+        cdebug('Leave: Nodes.details')
         return retval
 
     # lister
     #
     @classmethod
     def lister(cls, args):
-        debug('Enter: Nodes.lister')
+        cdebug('Enter: Nodes.lister')
         retval = 0
         cls._Common__common(args)
 
@@ -90,14 +91,14 @@ class Nodes(Common):
         else:
             for n in data:
                 print(n['displayName'])
-        debug('Leave: Nodes.lister')
+        cdebug('Leave: Nodes.lister')
         return retval
 
     # delete
     #
     @classmethod
     def delete(cls, args):
-        debug('Enter: Nodes.delete')
+        cdebug('Enter: Nodes.delete')
         retval = 0
         cls._Common__common(args)
 
@@ -109,14 +110,14 @@ class Nodes(Common):
                 print('node-delete: cannot delete \'%s\': The job does not exist.' % n)
                 retval = 1
 
-        debug('Leave: Nodes.delete')
+        cdebug('Leave: Nodes.delete')
         return retval
 
     # create
     #
     @classmethod
     def create(cls, args):
-        debug('Enter: Nodes.create')
+        cdebug('Enter: Nodes.create')
         retval = 0
         cls._Common__common(args)
 
@@ -134,7 +135,7 @@ class Nodes(Common):
                                 labels=args.tags,
                                 launcher=launcher, nodeDescription=args.description, launcher_params=launcher_params)
 
-        debug('Leave: Nodes.create')
+        cdebug('Leave: Nodes.create')
         return retval
 
 # Jobs
@@ -160,10 +161,10 @@ class Jobs(Common):
     #
     @classmethod
     def clone(cls, args):
-        debug('Enter: Jobs.clone')
-        debug('    existing_job: %s' % args.existing_job)
-        debug('       clone_job: %s' % args.clone_job)
-        debug('       overwrite: %s' % args.overwrite)
+        cdebug('Enter: Jobs.clone')
+        cdebug('    existing_job: %s' % args.existing_job)
+        cdebug('       clone_job: %s' % args.clone_job)
+        cdebug('       overwrite: %s' % args.overwrite)
         retval = 0
         cls._Common__common(args)
         try:
@@ -177,24 +178,24 @@ class Jobs(Common):
                 print('job-clone: the job \'%s\' does not exit.' % args.existing_job)
                 retval = 1
 
-        debug('Leave: Jobs.clone')
+        cdebug('Leave: Jobs.clone')
         return retval
 
     # create
     #
     @classmethod
     def create(cls, args):
-        debug('Enter: Jobs.create')
+        cdebug('Enter: Jobs.create')
         retval = 0
         cls._Common__common(args)
-        debug('Leave: Jobs.create')
+        cdebug('Leave: Jobs.create')
         return retval
 
     # control
     #
     @classmethod
     def control(cls, args):
-        debug('Enter: Jobs.control')
+        cdebug('Enter: Jobs.control')
         retval = 0
         cls._Common__common(args)
         if args.enable:
@@ -211,7 +212,7 @@ class Jobs(Common):
                 except JenkinsException as e:
                     print('job-control: the job \'%s\' does not exist.' % j)
                     retval = 1
-        debug('Leave: Jobs.control')
+        cdebug('Leave: Jobs.control')
         return retval
 
     # start
@@ -222,7 +223,7 @@ class Jobs(Common):
     def start(cls, args):
         '''
         '''
-        debug('Enter: Jobs.start')
+        cdebug('Enter: Jobs.start')
         retval = 0
         cls._Common__common(args)
         for j in args.jobs:
@@ -233,7 +234,7 @@ class Jobs(Common):
                 print('job-start: cannot start \'%s\': The job does not exist.' % j)
                 retval = 1
 
-        debug('Leave: Jobs.start')
+        cdebug('Leave: Jobs.start')
         return retval
 
     # stop
@@ -242,7 +243,7 @@ class Jobs(Common):
     def stop(cls, args):
         '''
         '''
-        debug('Enter: Jobs.stop')
+        cdebug('Enter: Jobs.stop')
         retval = 0
         cls._Common__common(args)
         for j in args.jobs:
@@ -253,7 +254,7 @@ class Jobs(Common):
                 print('job-stop: cannot stop \'%s\': The job does not exist.' % j)
                 retval = 1
 
-        debug('Leave: Jobs.stop')
+        cdebug('Leave: Jobs.stop')
         return retval
 
     # delete
@@ -263,7 +264,7 @@ class Jobs(Common):
         '''
         Delete one or more jobs from the Jenkins server.
         '''
-        debug('Enter: Jobs.delete')
+        cdebug('Enter: Jobs.delete')
         retval = 0
         cls._Common__common(args)
         for j in args.jobs:
@@ -274,14 +275,14 @@ class Jobs(Common):
                 print('job-delete: cannot delete \'%s\': The job does not exist.' % j)
                 retval = 1
 
-        debug('Leave: Jobs.delete')
+        cdebug('Leave: Jobs.delete')
         return retval
 
     # lister
     #
     @classmethod
     def lister(cls, args):
-        debug('Enter: Jobs.lister')
+        cdebug('Enter: Jobs.lister')
         retval = 0
         cls._Common__common(args)
         data = cls.jenkins.get_info()['jobs']
@@ -301,6 +302,6 @@ class Jobs(Common):
         else:
             for j in data:
                 print(j['name'])
-        debug('Leave: Jobs.lister')
+        cdebug('Leave: Jobs.lister')
         return retval
 
