@@ -83,11 +83,16 @@ class Runner():
         # Verify that certain tests have not been blaclisted for the series
         # that we are currently running.
         #
+        valid_tests = []
         for t in self.tests_list:
             if 'series-blacklist' in TestProfiles[t]:
                 if self.release_name in TestProfiles[t]['series-blacklist']:
                     error('Test \'%s\' has been blacklisted for this series' % t)
-                    self.tests_list.remove(t)
+                else:
+                    valid_tests.append(t)
+            else:
+                valid_tests.append(t)
+        self.tests_list = valid_tests
 
         # Verify that the tests are valid, autotest tests.
         #
