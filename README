@@ -1,1 +1,102 @@
-placeholder
+
+Description
+----------------------------------------------------------------------------------
+This is the minimal "infrastructure glue" that the kernel team uses. This provides
+the data about the sytems that are in the test pool, data about the tests and
+scripts that use that data in conjunction with provisioners (MAAS) and the tests
+themselves (autotest client tests).
+
+
+Utils
+----------------------------------------------------------------------------------
+info
+       A script that dumps out information about the current configuration. It will
+       tell you what systems are in the test pool. It can also list the tests that
+       are available and the test "groups".
+
+       Examples:
+
+       1.  $info systems
+
+           System          Provisioner  Role         Locked
+           --------------- ------------ ------------ --------------
+           gloin           maas         testing      False
+           nuc1            maas         testing      False
+           nuc2            maas         testing      False
+           oin             maas         testing      False
+
+
+           (A system that is "locked" is one that the scripts will not re-provision2. $info
+
+       2.  $info tests
+
+           Collection      Tests
+           --------------- ------------------------------------------------------------------------------------
+           cts             ubuntu_cts_kernel
+
+           default         qa
+
+           kernel          iperf ltp qa stress ubuntu_cts_kernel ubuntu_kvm_unit_tests
+                           ubuntu_leap_seconds virt
+
+           mainline        stress
+
+           power           power_consumption
+
+           qa              ubuntu_ecryptfs ubuntu_lxc ubuntu_qrt_apparmor ubuntu_qrt_kernel_aslr_collisions
+                           ubuntu_qrt_kernel_hardening ubuntu_qrt_kernel_panic
+                           ubuntu_qrt_kernel_security
+
+           sru             iperf qa ubuntu_cts_kernel ubuntu_kvm_unit_tests ubuntu_leap_seconds
+                           virt xfstests
+
+           wakeup_events   wakeup_events
+
+
+           Test                           Description
+           ------------------------------ ----------------------------------------
+           dbench
+           iozone
+           iozone-fsync
+           iozone-ioscheduler-xfs
+           iozone-nolazy
+           iperf
+           ltp
+           network_WiFiCaps
+           power_consumption
+           stress
+           tiobench
+           ubuntu_WiFi_SimpleConnection
+           ubuntu_cts_kernel
+           ubuntu_ecryptfs
+           ubuntu_kvm_unit_tests
+           ubuntu_leap_seconds
+           ubuntu_lxc
+           ubuntu_qrt_apparmor
+           ubuntu_qrt_kernel
+           ubuntu_qrt_kernel_aslr_collisions
+           ubuntu_qrt_kernel_hardening
+           ubuntu_qrt_kernel_panic
+           ubuntu_qrt_kernel_security
+           virt
+           wakeup_events
+           xfstests
+
+power
+        A script for manipulating the power to the systems in the test pool. This
+        can be used to power systems on/off or find out their current status.
+
+        Examples:
+
+        1. $power rizzo status
+
+           on
+           on
+
+           (rizzo has redundant powre supplies that are plugged into 2 separate CDUs in
+            the data center. This showes that both ports on the respective CDU are on.)
+
+       2. $power rizzo on
+
+       3. $power rizzo off
+
