@@ -51,7 +51,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Python built in modules
 import logging
-logging.basicConfig(level=logging.INFO)
 import os
 import time
 import base64
