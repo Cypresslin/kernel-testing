@@ -11,75 +11,6 @@ from lib.log                            import cdebug, Clog, cerror
 from lib.configuration                  import Configuration
 from lib.dlipower                       import PowerSwitch
 
-# Timeout
-#
-class Timeout(Exception):
-    """
-    A task took longer than the specified timeout.
-    """
-    pass
-
-# ErrorExit
-#
-class ErrorExit(Exception):
-    """
-    If an error message has already been displayed and we want to just exit the app, this
-    exception is raised.
-    """
-    pass
-
-# MetalProvisioner
-#
-class MetalProvisioner():
-
-    # __init__
-    #
-    def __init__(s):
-        s.quiet = False
-
-    # cycle_power
-    #
-    def cycle_power(s, target):
-        '''
-        Has the smarts on how to go about turning the power off to a server
-        remotely and then turning it back on. In some cases, multiple ports
-        must be power cycled.
-        '''
-        if not s.quiet:
-            print('Cycling the power on \'%s\'' % (target))
-
-        t = LabHW[target]
-
-        if 'ipmi' in t:
-            for state in ['off', 'on']:
-                cmd = "ipmitool -H %s -I lanplus -U %s -P %s power %s" % (t['ipmi']['ip'], t['ipmi']['username'], t['ipmi']['passwd'], state)
-                print(cmd)
-                result, output = sh(cmd, ignore_result=False)
-
-                if state == 'off':
-                    sleep(60) # Some of the systems want a little delay
-                              # between being powered off and then back on.
-        else:
-            # Power cycle the system so it will netboot and install
-            #
-            for state in ['off', 'on']:
-                for psu in t['cdu']:
-                    if psu['ip'] != '':
-                        try:
-                            ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
-                        except ShellError as e:
-                            # Sometimes the call to the orchestra server will time-out (not sure why), just
-                            # wait a minute and try again.
-                            #
-                            sleep(60)
-                            if not s.quiet:
-                                print('    Initial power cycle attempt failed, trying a second time.')
-                            ssh('%s@%s' % ('kernel', t['orchestra server']), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
-
-                if state == 'off':
-                    sleep(60) # Some of the systems want a little delay
-                              # between being powered off and then back on.
-
 # Power
 #
 class Power():
@@ -237,9 +168,6 @@ class Power():
             cerror('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
             for line in e.output:
                 cerror(line.rstrip())
-
-        except ErrorExit:
-            pass
 
         if retval > 0:
             cerror("")
