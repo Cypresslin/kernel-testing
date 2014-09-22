@@ -251,9 +251,20 @@ class Power():
 
 if __name__ == '__main__':
     app_description = '''
+This script is for working with the power of the test systems. This
+talks to the CDU or system administration interface. It does not go
+through MAAS.
+
+With this utility you can interogate the current status, change the
+state from on to off or off to on.
     '''
 
     app_epilog = '''
+Examples:
+    power rizzo status
+    power rizzo off
+    power rizzo on
+    power rizzo cycle
     '''
 
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
