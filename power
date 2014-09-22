@@ -91,28 +91,36 @@ class Power():
     def __init__(s, args):
         s.args = args
 
-    # on
+    # state
     #
-    def on(s, target):
-        pass
+    def state(s, target, state):
+        cdebug("    Enter: Power::state")
+        cdebug('        target: %s' % target)
+        cdebug('         state: %s' % state)
+        for p in Configuration['systems'][target]['power']:
+            cdebug(p)
 
-    # off
-    #
-    def off(s, target):
-        pass
+            if p['type'] == 'amt':
+                output = s.amt(p, state)
 
-    # cycle
-    #
-    def cycle(s, target):
-        pass
+            if p['type'] == 'dli':
+                state = s.dli(p, state)
 
-    def amt(s, target, password, cmd):
+            if p['type'] == 'ipmi':
+                output = s.ipmi(p, state)
+
+            if p['type'] == 'cdu':
+                output = s.cdu(p, state)
+
+        cdebug("    Leave: Power::state")
+
+    def amt(s, p, cmd):
         cdebug("        Enter: Power::amt")
 
         output = None
-        environ['AMT_PASSWORD'] = password
-        cmd = 'amttool %s %s' % (target, cmd)
-        cdebug('        CMD: \'%s\'' % cmd)
+        environ['AMT_PASSWORD'] = p['password']
+        cmd = 'amttool %s %s' % (p['address'], cmd)
+        cdebug('            CMD: \'%s\'' % cmd)
 
         # I've seen the amttool command fail to connect some times, just sleep a little and try again.
         # Try 3 times before giving up.
@@ -135,37 +143,65 @@ class Power():
         cdebug("        Leave: Power::amt")
         return output
 
+    def dli(s, p, cmd):
+        cdebug("        Enter: Power::dli")
+        switch = PowerSwitch(hostname=p['address'], userid=p['user'], password=p['password'])
+        if cmd == "status":
+            output = switch[p['outlet']].state
+        cdebug("        Enter: Power::dli")
+        return output
+
+    def ipmi(s, p, cmd):
+        cdebug("        Enter: Power::ipmi")
+        cdebug('             cmd: %s' % cmd)
+        output = None
+        username = Configuration[p['profile']]['username']
+        password = Configuration[p['profile']]['password']
+        cmd = "ipmitool -H %s -I lanplus -U %s -P %s power %s" % (p['address'], username, password, cmd)
+        cdebug('            CMD: \'%s\'' % cmd)
+        result, output = sh(cmd, ignore_result=False, quiet=True)
+        cdebug("        Enter: Power::ipmi")
+        return output
+
+    def cdu(s, p, cmd):
+        cdebug("        Enter: Power::cdu")
+        output = None
+        username = Configuration[p['profile']]['username']
+        password = Configuration[p['profile']]['password']
+        cmd = 'fence_cdu -a %s -l %s -p %s -n %s -o %s' % (p['address'], username, password, p['port'], cmd)
+        cdebug('            CMD: \'%s\'' % cmd)
+        result, output = sh(cmd, ignore_result=True, quiet=True)
+        cdebug("        Enter: Power::cdu")
+        return output
+
     # status
     #
     def status(s, target):
-        cdebug("    Enter: Power::main")
+        cdebug("    Enter: Power::status")
+        cdebug('        target: %s' % target)
+        state = 'unknown'
         for p in Configuration['systems'][target]['power']:
             cdebug(p)
 
             if p['type'] == 'amt':
-                output = s.amt(p['address'], p['password'], 'info')
+                output = s.amt(p, 'info')
                 for l in output:
                     if 'Powerstate:' in l:
                         state = l.split('(')[1].replace(')', '').strip()
 
             if p['type'] == 'dli':
-                switch = PowerSwitch(hostname=p['address'], userid=p['user'], password=p['password'])
-                state = switch[p['outlet']].state
+                state = s.dli(p, "status")
 
             if p['type'] == 'ipmi':
-                cmd = "ipmitool -H %s -I lanplus -U %s -P %s power status" % (p['address'], p['user'], p['password'])
-                result, output = sh(cmd, ignore_result=False, quiet=True)
-                for l in output:
-                    cdebug("        Line: \'%s\'" % l.strip())
+                output = s.ipmi(p, "status")
+                state = output[0].strip().replace('Chassis Power is ', '')
 
             if p['type'] == 'cdu':
-                cmd('fence_cdu -a %s -l %s -p %s -n %s -o %s' % (p['address'], p['user'], p['password'], p['port'], state))
-                result, output = sh(cmd, ignore_result=False, quiet=True)
-                for l in output:
-                    cdebug("        Line: \'%s\'" % l.strip())
+                output = s.cdu(p, "status")
+                state = output[0].strip().replace('Status: ', '')
 
-            print(state)
-        cdebug("    Leave: Power::main")
+            print(state.lower())
+        cdebug("    Leave: Power::status")
 
     # main
     #
@@ -178,10 +214,14 @@ class Power():
 
             if action == 'status':
                 s.status(target)
-
-            #metal = None
-            #metal = MetalProvisioner()
-            #metal.cycle_power(target)
+            if action == 'off':
+                s.state(target, 'off')
+            if action == 'on':
+                s.state(target, 'on')
+            if action == 'cycle':
+                s.state(target, "off")
+                sleep(60)
+                s.state(target, "on")
 
             retval = 0
 
