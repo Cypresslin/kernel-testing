@@ -32,6 +32,10 @@ class Power():
             cdebug(p)
 
             if p['type'] == 'amt':
+                if state == 'on':
+                    state = 'powerup'
+                else:
+                    state = 'powerdown'
                 output = s.amt(p, state)
 
             if p['type'] == 'dli':
