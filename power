@@ -115,10 +115,12 @@ class Power():
             cdebug(p)
 
             if p['type'] == 'amt':
+                state = 'off'
                 output = s.amt(p, 'info')
                 for l in output:
                     if 'Powerstate:' in l:
-                        state = l.split('(')[1].replace(')', '').strip()
+                        if 'S0' in l:
+                            state = 'on'
 
             if p['type'] == 'dli':
                 state = s.dli(p, "status")
