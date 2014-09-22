@@ -1,0 +1,113 @@
+#!/usr/bin/env python
+#
+
+from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import basicConfig, DEBUG, WARNING
+
+from lib.log                            import cdebug, Clog, cerror
+from lib.configuration                  import Configuration
+from lib.testsprops                     import TestProfiles, TestCollections
+
+# Info
+#
+class Info():
+    '''
+    '''
+
+    # __init__
+    #
+    def __init__(s, args):
+        s.args = args
+
+    # systems
+    #
+    def systems(s):
+        print("%-15s %-12s %-12s %-6s" % ('System', 'Provisioner', 'Role', 'Locked'))
+        print("--------------- ------------ ------------ --------------")
+        for s in sorted(Configuration['systems']):
+            r = Configuration['systems'][s]
+            r['name'] = s
+            print("%(name)-15s %(provisioner)-12s %(role)-12s %(locked)-6s" % r)
+
+    # tests
+    #
+    def tests(s):
+        print("%-15s %-15s" % ('Collection', 'Tests'))
+        print("--------------- ------------------------------------------------------------------------------------")
+        for c in sorted(TestCollections):
+            s = ''
+            t = ''
+            for i in sorted(TestCollections[c]):
+                s = s + i + ' '
+                if len(s) >= 50:
+                    t += s + '\n%16s' % ' '
+                    s = ''
+            if s != '':
+                t += s
+            print("%-15s %-s" % (c, t))
+            print('')
+
+        print('')
+        print("%-30s %-15s" % ('Test', 'Description'))
+        print("------------------------------ ----------------------------------------")
+        for t in sorted(TestProfiles):
+            print(t)
+
+    # main
+    #
+    def main(s):
+        cdebug("Enter: Info::main")
+        retval = 1
+        try:
+            query = s.args.query[0]
+
+            if query == 'systems':
+                s.systems()
+            if query == 'tests':
+                s.tests()
+
+            retval = 0
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            print("Aborting ...")
+
+        if retval > 0:
+            cerror("")
+            cerror("Due to the above error(s), this script is unable to continue and is terminating.")
+            cerror("")
+
+        cdebug("Leave: Info::main")
+        return retval
+
+if __name__ == '__main__':
+    app_description = '''
+Prints out some (hopefully) useful information about the test environment as
+it is currently configured. You can find out what systems are configured and
+the possible tests available.
+    '''
+
+    app_epilog = '''
+Examples:
+    info systems
+    info tests
+    '''
+
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--debug', action='store_true', default=False, help='Print out lots of stuff.')
+    parser.add_argument('query', metavar='QUERY', type=str, nargs=1, help='What you want information about. [systems | tests]')
+
+    args = parser.parse_args()
+
+    if args.debug:
+        level = DEBUG
+        Clog.dbg = True
+    else:
+        level = WARNING
+    basicConfig(filename=None, level=level, format="%(levelname)s - %(message)s")
+
+    app = Info(args)
+    exit(app.main())
+
+# vi:set ts=4 sw=4 expandtab syntax=python:
