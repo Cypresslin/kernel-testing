@@ -155,6 +155,16 @@ TestProfiles = {
         'scratch' : True,
         },
 
+    'ubuntu_fs_fio_perf' : {
+        'packages' : {
+            'common' : [
+                'xfsdump', 'xfsprogs', 'btrfs-tools', 'gdb',
+                ],
+            },
+        'atargs' : {}, # this gets filled in later, it's a hack
+        'scratch' : True,
+        },
+
     'iozone' : {
         'packages' : {
             'common' : [
