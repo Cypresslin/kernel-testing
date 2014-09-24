@@ -9,7 +9,10 @@
 from sys                                import argv
 from getopt                             import getopt, GetoptError
 from datetime                           import timedelta, datetime
-from os                                 import path
+from os                                 import path, rename, environ
+from shutil                             import rmtree
+from distutils.dir_util                 import copy_tree
+
 
 from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
@@ -155,7 +158,6 @@ class Ingest():
             data = {}
             data['results'] = self.jtr.results
             data['attributes'] = self.jtr.attributes
-            #dump(data)
             try:
                 template = self.index_template.render(data = data, timestamp = datetime.utcnow())
                 dest = path.join(self.trr.results_dir, 'results-index.html')
@@ -178,6 +180,19 @@ class Ingest():
                     print(line, "\n")
                 print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
 
+
+            # Hack:
+            #    Benchmark "tests" bring back a bunch of data that needs to be moved from
+            #    the job results to a benchmark results directory for out-of-band processing.
+            #
+            if 'BENCHMARKS' in data['attributes']['environ']:
+                # BAD! BAD! BAD!
+                # Rather than do this right, i'm going to just hardcode some things.
+                #
+                src = path.join(self.jrr.archive, 'ubuntu_fs_fio_perf', 'results', 'ubuntu_fs_fio_perf.ubuntu_fs_fio_perf', 'results')
+                dst = path.join(environ['HOME'], 'benchmark-results')
+                copy_tree(src, dst)
+                rmtree(src) # We don't want a separate copy eating up disk space
 
             #dump(self.jtr.results)
 
