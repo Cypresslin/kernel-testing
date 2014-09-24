@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 
-from os                                 import getenv, path, makedirs
+from os                                 import getenv, path, makedirs, environ
 from sys                                import exit
 from shutil                             import rmtree, copytree
 from logging                            import debug, error, basicConfig, DEBUG, WARNING
@@ -293,6 +293,13 @@ class Runner():
                 # drive is the 'b' device with that same device root.
                 #
                 TestProfiles['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] = '/dev/%sb' % self.root_device_prefix()
+
+            # Some tests may require environment variables bet set. Do that.
+            #
+            for t in self.tests_list:
+                if 'env' in TestProfiles[t]:
+                    for k, v in TestProfiles[t]['env']:
+                        environ[k] = v
 
             self.test_list_determine_control_files()
 

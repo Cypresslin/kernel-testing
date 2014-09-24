@@ -158,9 +158,10 @@ TestProfiles = {
     'ubuntu_fs_fio_perf' : {
         'packages' : {
             'common' : [
-                'xfsdump', 'xfsprogs', 'btrfs-tools', 'gdb',
+                 'git-core', 'fio', 'libaio-dev', 'xfsdump', 'xfsprogs', 'btrfs-tools', 'gdb',
                 ],
             },
+        'env' : {('BENCHMARKS', 'true')},
         'atargs' : {}, # this gets filled in later, it's a hack
         'scratch' : True,
         },
