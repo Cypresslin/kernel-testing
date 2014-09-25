@@ -88,7 +88,7 @@ Configuration = {
                     "address"  : "10.10.10.200",
                     "user"     : "admin",
                     "password" : "admin",
-                    "outlet"   : 2
+                    "outlet"   : 0
                 }
             ],
             "role" : "testing",
