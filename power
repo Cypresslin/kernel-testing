@@ -152,18 +152,21 @@ class Power():
             target = s.args.target[0] # One target
             action = s.args.action[0] # One action
 
-            if action == 'status':
-                s.status(target)
-            elif action == 'off':
-                s.state(target, 'off')
-            elif action == 'on':
-                s.state(target, 'on')
-            elif action == 'cycle':
-                s.state(target, "off")
-                sleep(60)
-                s.state(target, "on")
+            if target in Configuration['systems']:
+                if action == 'status':
+                    s.status(target)
+                elif action == 'off':
+                    s.state(target, 'off')
+                elif action == 'on':
+                    s.state(target, 'on')
+                elif action == 'cycle':
+                    s.state(target, "off")
+                    sleep(60)
+                    s.state(target, "on")
+                else:
+                    cerror('I don\'t know how to do that.')
             else:
-                cerror('I don\'t know how to do that.')
+                cerror('Unknown system')
 
             retval = 0
 
