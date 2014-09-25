@@ -86,6 +86,8 @@ class Power():
         switch = PowerSwitch(hostname=p['address'], userid=p['user'], password=p['password'])
         if cmd == "status":
             output = switch[p['outlet']].state
+        else:
+            switch[p['outlet']].state = cmd
         cdebug("        Enter: Power::dli")
         return output
 
