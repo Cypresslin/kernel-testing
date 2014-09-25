@@ -80,6 +80,7 @@ class Power():
 
     def dli(s, p, cmd):
         cdebug("        Enter: Power::dli")
+        output = None
         switch = PowerSwitch(hostname=p['address'], userid=p['user'], password=p['password'])
         if cmd == "status":
             output = switch[p['outlet']].state
