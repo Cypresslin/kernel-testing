@@ -54,7 +54,7 @@ class Power():
 
         output = None
         environ['AMT_PASSWORD'] = p['password']
-        cmd = 'amttool %s %s' % (p['address'], cmd)
+        cmd = 'yes | amttool %s %s' % (p['address'], cmd)
         cdebug('            CMD: \'%s\'' % cmd)
 
         # I've seen the amttool command fail to connect some times, just sleep a little and try again.
@@ -68,6 +68,8 @@ class Power():
                     cdebug("        Line: \'%s\'" % l.strip())
                 break
             except ShellError as e:
+                cdebug(output)
+                cdebug('Retrying...')
                 if count == 3:
                     for line in e.output:
                         cerror(line.rstrip())
@@ -152,14 +154,16 @@ class Power():
 
             if action == 'status':
                 s.status(target)
-            if action == 'off':
+            elif action == 'off':
                 s.state(target, 'off')
-            if action == 'on':
+            elif action == 'on':
                 s.state(target, 'on')
-            if action == 'cycle':
+            elif action == 'cycle':
                 s.state(target, "off")
                 sleep(60)
                 s.state(target, "on")
+            else:
+                cerror('I don\'t know how to do that.')
 
             retval = 0
 
