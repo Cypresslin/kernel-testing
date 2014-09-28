@@ -3,12 +3,13 @@
 
 from os                                 import getenv, path
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
-from logging                            import error, info, basicConfig, INFO, DEBUG
+from logging                            import error, info, basicConfig, DEBUG, WARNING, INFO
 
+from lib.log                            import cdebug, Clog, cerror
 from lib.shell                          import ShellError, ShellTimeoutError, sh, ssh, Shell
 from lib.provisioning                   import MetalProvisioner, VirtualProvisioner
 from lib.exceptions                     import ErrorExit
-from lib.infrastructure                 import HWE
+from lib.hwe                            import HWE
 
 # ProvApp
 #
@@ -67,6 +68,7 @@ class ProvApp():
     # main
     #
     def main(self):
+        cdebug("Enter ProvApp::main")
         retval = 1
         try:
             dry_run = self.args.dry_run
@@ -146,15 +148,10 @@ class ProvApp():
             error("Due to the above error(s), this script is unable to continue and is terminating.")
             error("")
 
+        cdebug("Leave ProvApp::main")
         return retval
 
 if __name__ == '__main__':
-    if getenv('DEBUG'):
-        LOGLEVEL = DEBUG
-    else:
-        LOGLEVEL = INFO
-    basicConfig(level=LOGLEVEL, format="%(levelname)s - %(message)s")
-
     app_description = '''
     '''
 
@@ -189,6 +186,7 @@ examples:
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
     parser.add_argument('--dry-run',  action='store_true', default=False, help='Don\'t do anything, just print out what would be done.')
     parser.add_argument('--quiet',  action='store_true', default=False, help='Do not print any progress information.')
+    parser.add_argument('--debug', action='store_true', default=False, help='Print out lots of stuff.')
 
     parser.add_argument('--sut',          required=True,  choices=['real', 'virtual'], help='Kind of SUT to be created.')
     parser.add_argument('--sut-series',   required=True,  help='The series that is to be installed on the SUT. lts-hwe-<series> denotes that a lts-hwe kernel is to be run on the appropriate lts series.')
@@ -204,6 +202,13 @@ examples:
     parser.add_argument('target', metavar='TARGET', type=str, nargs=1, help='The name of the system to be provisioned.')
 
     args = parser.parse_args()
+
+    if args.debug:
+        level = DEBUG
+        Clog.dbg = True
+    else:
+        level = WARNING
+    basicConfig(filename=None, level=level, format="%(levelname)s - %(message)s")
 
     # If the sut-name was not specified on the command line, use the
     # HW name.

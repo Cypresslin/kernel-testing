@@ -5,7 +5,7 @@ from sys                                import stdout
 from subprocess                         import Popen, PIPE, STDOUT
 from threading                          import Thread
 from time                               import sleep
-from logging                            import debug, error, info, basicConfig, INFO, DEBUG, WARNING, getLevelName
+from logging                            import debug, info
 
 try:
     from Queue import Queue, Empty

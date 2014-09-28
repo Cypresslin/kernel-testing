@@ -4,10 +4,10 @@ from os                                 import path
 from logging                            import error
 from datetime                           import datetime
 from time                               import sleep
-from logging                            import info
 import re
 
-from lib.infrastructure                 import Orchestra, LabHW, MAASConfig
+#from lib.infrastructure                 import Orchestra, LabHW, MAASConfig
+from lib.log                            import cdebug, cinfo
 from lib.hwe                            import HWE
 from lib.shell                          import sh, ShellError, ssh, Shell
 from lib.ubuntu                         import Ubuntu
@@ -25,6 +25,7 @@ class Provisioner():
     # __init__
     #
     def __init__(self, name, series, arch, hwe=False, debs=None, ppa=None, dry_run=False):
+        cdebug('Enter Provisioner::__init__')
         self.name   = name
         self.series = series
         self.arch   = arch
@@ -39,6 +40,7 @@ class Provisioner():
         Shell._dry_run = dry_run
         self.kickstarts_root = '/var/lib/cobbler/kickstarts/kernel'
         self.ubuntu = Ubuntu()
+        cdebug('Leave Provisioner::__init__')
 
     # enable_proposed
     #
@@ -47,10 +49,12 @@ class Provisioner():
         On the target system, enable the -proposed archive pocket for the
         specified series.
         '''
+        cdebug('Enter Provisioner::enable_proposed')
         if not self.quiet:
             print('    enabling proposed')
 
         ssh(target, '\'echo deb http://us.archive.ubuntu.com/ubuntu/ %s-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (series))
+        cdebug('Leave Provisioner::enable_proposed')
 
     # enable_ppa
     #
@@ -59,10 +63,12 @@ class Provisioner():
         On the target system, enable the -proposed archive pocket for the
         specified series.
         '''
+        cdebug('Enter Provisioner::enable_ppa')
         if not self.quiet:
             print('    enabling ppa %s' % self.ppa)
         ssh(target, '\'sudo apt-get -y install software-properties-common\'')
         ssh(target, '\'sudo add-apt-repository -y %s\'' % (self.ppa))
+        cdebug('Leave Provisioner::enable_ppa')
 
     # dist_upgrade
     #
@@ -70,8 +76,10 @@ class Provisioner():
         '''
         Perform a update and dist-upgrade on a remote system.
         '''
+        cdebug('Enter Provisioner::dist_upgrade')
         ssh(target, 'sudo apt-get update')
         ssh(target, 'sudo apt-get --yes dist-upgrade')
+        cdebug('Leave Provisioner::dist_upgrade')
 
     # kernel_upgrade
     #
@@ -79,8 +87,10 @@ class Provisioner():
         '''
         Perform a update of the kernels on a remote system.
         '''
+        cdebug('Enter Provisioner::kernel_upgrade')
         ssh(target, 'sudo apt-get update')
         ssh(target, 'sudo apt-get --yes install linux-image-generic linux-headers-generic')
+        cdebug('Leave Provisioner::kernel_upgrade')
 
     # mainline_firmware_hack
     #
@@ -88,18 +98,21 @@ class Provisioner():
         '''
         Mainline kernels look for their firmware in /lib/firmware and might miss other required firmware.
         '''
+        cdebug('Enter Provisioner::mainline_firmware_hack')
         ssh(target, 'sudo ln -s /lib/firmware/\$\(uname -r\)/* /lib/firmware/', ignore_result=True)
+        cdebug('Leave Provisioner::mainline_firmware_hack')
 
     # wait_for_system
     #
     @classmethod
     def wait_for_system(cls, target, timeout=10):
+        cdebug('Enter Provisioner::wait_for_system')
         if not cls._dry_run:
             if not cls._quiet:
                 print('Waiting for \'%s\' to come up.' % (target))
 
             start = datetime.utcnow()
-            info('Starting waiting for \'%s\' at %s' % (target, start))
+            cinfo('Starting waiting for \'%s\' at %s' % (target, start))
             while True:
                 try:
                     result, output = sh('ssh -qf %s exit' % target, quiet=True, ignore_result=True)
@@ -121,11 +134,12 @@ class Provisioner():
                 now = datetime.utcnow()
                 delta = now - start
                 if delta.seconds > timeout * 60:
-                    info('Timed out at: %s' % now)
+                    cinfo('Timed out at: %s' % now)
                     raise ErrorExit('The specified timeout (%d) was reached while waiting for the target system (%s) to come back up.' % (timeout, target))
 
                 sleep(60)
-                info('Checking at: %s' % datetime.utcnow())
+                cinfo('Checking at: %s' % datetime.utcnow())
+        cdebug('Leave Provisioner::wait_for_system')
 
     # reboot
     #
@@ -134,9 +148,11 @@ class Provisioner():
         '''
         Reboot the target system and wait 5 minutes for it to come up.
         '''
+        cdebug('Enter Provisioner::reboot')
         ssh(target, 'sudo reboot', quiet=quiet)
         if wait:
             cls.wait_for_system(target, timeout=10)
+        cdebug('Leave Provisioner::reboot')
 
     # install_custom_debs
     #
@@ -206,13 +222,13 @@ class VirtualProvisioner(Provisioner):
         if not self.quiet:
             print('Configure the Orchestra server')
 
-        o_series = Orchestra['series'][self.series]
-        o_arch   = Orchestra['arch'][self.arch]
+        o = Configuration['systems'][target]['provisioner']
+        o_series = o['series'][self.series]
+        o_arch   = o['arch'][self.arch]
         distro = '%s%s-%s' % (self.series, o_series['server distro decoration'], o_arch)
         kickstart = path.join(self.kickstarts_root, 'kt-virt-%s.preseed' % (o_series['preseed']))
 
-        t = LabHW[target]
-        server = t['provisioning']['server']
+        server = o['server']
         if not self.quiet:
             print('    remove profile \'%s\'' % self.name)
         ssh('%s@%s' % ('kernel', server), 'sudo cobbler profile remove --name=%s' % (self.name))
@@ -246,13 +262,18 @@ class VirtualProvisioner(Provisioner):
     # create_virtual_guest
     #
     def create_virtual_guest(self, target):
-        ssh(target, 'sudo koan --virt --server=%s --profile=%s --virt-name=%s --virt-bridge=br0 --vm-poll' % (LabHW[target]['provisioning']['server'], self.name, self.name))
+        cdebug('Enter VirtualProvisioner::create_virtual_guest')
+        p = Configuration['systems'][target]['provisioner']
+        cdebug('    provisioner: %s' % p)
+        pServer = Configuration[p]['system']
+        cdebug('    pServer: %s' % pServer)
+        ssh(target, 'sudo koan --virt --server=%s --profile=%s --virt-name=%s --virt-bridge=br0 --vm-poll' % (pServer, self.name, self.name))
+        cdebug('Leave VirtualProvisioner::create_virtual_guest')
 
     # provision
     #
     def provision(self):
         target = self.name
-
         # If we are installing a HWE kernel, we want to install the correct series first.
         #
         if self.hwe:
@@ -307,6 +328,8 @@ class MetalProvisioner(Provisioner):
         Create the appropriate profiles and system configurations to the orchestra server
         for the system we are going to provision.
         '''
+        cdebug('Enter MetalProvisioner::configure_orchestra')
+        cdebug('    target : %s' % target)
         if not self.quiet:
             print('Configure the Orchestra server')
 
@@ -329,6 +352,7 @@ class MetalProvisioner(Provisioner):
         if not self.quiet:
             print('    adding system \'%s\'' % (self.name))
         ssh('%s@%s' % ('kernel', server), 'sudo cobbler system add --name=%s --profile=%s --hostname=%s --mac=%s' % (self.name, self.name, self.name, t['mac address']))
+        cdebug('Leave MetalProvisioner::configure_orchestra')
 
     # cycle_power
     #
@@ -338,6 +362,8 @@ class MetalProvisioner(Provisioner):
         remotely and then turning it back on. In some cases, multiple ports
         must be power cycled.
         '''
+        cdebug('Enter MetalProvisioner::cycle_power')
+        cdebug('    target : %s' % target)
         if not self.quiet:
             print('Cycling the power on \'%s\'' % (target))
 
@@ -373,6 +399,7 @@ class MetalProvisioner(Provisioner):
                 if state == 'off':
                     sleep(120) # Some of the systems want a little delay
                               # between being powered off and then back on.
+        cdebug('Leave MetalProvisioner::cycle_power')
 
     # target_verified
     #
@@ -381,6 +408,10 @@ class MetalProvisioner(Provisioner):
         Confirm that the target system has installed what was supposed to be installed. If we asked for
         one series but another is on the system, fail.
         '''
+        cdebug('Enter MetalProvisioner::target_verified')
+        cdebug('    target : %s' % target)
+        cdebug('    series : %s' % series)
+        cdebug('      arch : %s' % arch)
         retval = False
 
         result, codename = ssh(target, r'lsb_release --codename')
@@ -388,10 +419,10 @@ class MetalProvisioner(Provisioner):
             line = line.strip()
             if line.startswith('Codename:'):
                 if series not in line:
-                    info("")
-                    info("*** ERROR:")
-                    info("    Was expecting the target to be (%s) but found it to be (%s) instead." % (series, line.replace('Codename:\t','')))
-                    info("")
+                    cinfo("")
+                    cinfo("*** ERROR:")
+                    cinfo("    Was expecting the target to be (%s) but found it to be (%s) instead." % (series, line.replace('Codename:\t','')))
+                    cinfo("")
                 else:
                     retval = True
 
@@ -416,10 +447,10 @@ class MetalProvisioner(Provisioner):
             if arch == installed_arch:
                 retval = True
             else:
-                info("")
-                info("*** ERROR:")
-                info("    Was expecting the target to be (%s) but found it to be (%s) instead." % (arch, installed_arch))
-                info("")
+                cinfo("")
+                cinfo("*** ERROR:")
+                cinfo("    Was expecting the target to be (%s) but found it to be (%s) instead." % (arch, installed_arch))
+                cinfo("")
 
         # Are we running the series correct kernel?
         #
@@ -443,25 +474,27 @@ class MetalProvisioner(Provisioner):
                 if installed_series == series:
                     retval = True
                 else:
-                    info("")
-                    info("*** ERROR:")
-                    info("    Was expecting the target to be (%s) but found it to be (%s) instead." % (series, installed_series))
-                    info("")
+                    cinfo("")
+                    cinfo("*** ERROR:")
+                    cinfo("    Was expecting the target to be (%s) but found it to be (%s) instead." % (series, installed_series))
+                    cinfo("")
             else:
-                info("")
-                info("*** ERROR:")
-                info("    Unable to find the kernel version in any line.")
+                cinfo("")
+                cinfo("*** ERROR:")
+                cinfo("    Unable to find the kernel version in any line.")
 
+        cdebug('Leave MetalProvisioner::target_verified')
         return retval
 
     # provision
     #
     def provision(self):
+        cdebug('Enter MetalProvisioner::provision')
         target = self.name
 
         # Some systems we don't want to re-provision by accident.
         #
-        if LabHW[target]['locked']:
+        if Configuration['systems'][target]['locked']:
             error('The system (%s) is locked and will not be provisioned.' % target)
             return False
 
@@ -496,12 +529,13 @@ class MetalProvisioner(Provisioner):
         # again.
         #
         if provisioner['type'] == 'maas':
-            info("Giving it 5 more minutes")
+            cinfo("Giving it 5 more minutes")
             sleep(60 * 5) # Give it 5 minutes
             self.wait_for_system(target, timeout=60)
 
         if not self.target_verified(target, self.series, self.arch):
-            info("Target verification failed.")
+            cinfo("Target verification failed.")
+            cdebug('Leave MetalProvisioner::provision')
             return False
 
         # Once the initial installation has completed, we continue to install and update
@@ -531,6 +565,7 @@ class MetalProvisioner(Provisioner):
         # kernel.
         #
         self.reboot(target)
+        cdebug('Leave MetalProvisioner::provision')
         return True
 
 # vi:set ts=4 sw=4 expandtab syntax=python:

@@ -6,7 +6,6 @@
 
 from os                                 import getenv, path
 from sys                                import exit, argv
-from logging                            import debug, error, basicConfig, DEBUG, WARNING
 from lib._jenkins                       import Jenkins, JenkinsException, LAUNCHER_SSH, LAUNCHER_COMMAND, LAUNCHER_WINDOWS_SERVICE
 import json
 from lib.configuration                  import Configuration
