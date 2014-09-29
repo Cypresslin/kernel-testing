@@ -121,6 +121,7 @@ def ssh(target, cmd, user=None, quiet=False, ignore_result=False):
 
 class Shell():
     _dry_run = False
+    ssh_options = '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet'
 
     def __init__(self):
         Shell._dry_run = False
@@ -130,11 +131,10 @@ class Shell():
     @classmethod
     def ssh(cls, target, cmd, user, quiet=False, ignore_result=False):
         debug("Enter Shell::ssh")
-        ssh_options = '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet'
         if user:
-            ssh_cmd = 'ssh %s %s@%s %s' % (ssh_options, user, target, cmd)
+            ssh_cmd = 'ssh %s %s@%s %s' % (cls.ssh_options, user, target, cmd)
         else:
-            ssh_cmd = 'ssh %s %s %s' % (ssh_options, target, cmd)
+            ssh_cmd = 'ssh %s %s %s' % (cls.ssh_options, target, cmd)
         result = 0
         output = ''
         #print("ssh: '%s'" % ssh_cmd)
