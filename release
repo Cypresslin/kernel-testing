@@ -38,6 +38,7 @@ class Release():
                     print(cmd)
                     result, output = sh(cmd, ignore_result=False)
                 else:
+                    state = "off"
                     for psu in t['cdu']:
                         if psu['ip'] != '':
                             try:
