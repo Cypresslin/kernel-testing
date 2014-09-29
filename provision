@@ -10,6 +10,7 @@ from lib.shell                          import ShellError, ShellTimeoutError, sh
 from lib.provisioning                   import MetalProvisioner, VirtualProvisioner, Metal, PS
 from lib.exceptions                     import ErrorExit
 from lib.hwe                            import HWE
+from lib.configuration                  import Configuration
 
 # ProvApp
 #
@@ -64,17 +65,43 @@ class ProvApp(object):
 
         return retval
 
+    # validate_args
+    #
+    # Makes sure the command line options specified will actually work with the targetted system.
+    #
+    def validate_args(s, args):
+        cdebug("    Enter ProvApp::validate_args")
+
+        if args.sut_name not in Configuration['systems']:
+            cdebug("        raising ErrorExit exception")
+            raise ErrorExit('The name (%s) is not a recognised system. Valid systems are:\n    %s' % (args.sut_name, '\n    '.join(Configuration['systems'].keys())))
+
+        target = Configuration['systems'][args.sut_name]
+        # Does the hw arch match that of what was specified on the command line?
+        #
+        if args.sut_arch not in target['arch']:
+            raise ErrorExit('The arch (%s) is not valid for the system (%s). Valid arches for that system are:\n    %s' % (args.sut_arch, args.sut_name, '\n    '.join(target['arch'])))
+
+        cdebug("    Leave ProvApp::validate_args")
+
     # neo
     #
     def neo(s, args):
         cdebug("Enter ProvApp::neo")
         retval = 1
         try:
+            s.validate_args(args)
             metal = Metal(args.sut_name, args.sut_series, args.sut_arch, args.sut_hwe, args.sut_debs_url, ppa=args.ppa, dry_run=args.dry_run)
             metal.provision()
             result, output = metal.prossh('id')
-        except:
+
+        except ErrorExit as e:
+            error(e.message)
+            ws = getenv('WORKSPACE')
+            if ws is not None:
+                s.produce_error_results(ws, e.message)
             pass
+
         cdebug("Leave ProvApp::neo (%d)" % retval)
         return retval
 
