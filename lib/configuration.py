@@ -35,7 +35,7 @@ Configuration = {
     #
     "systems" : {
         "nuc1" : {
-            "arch" : "x86",
+            "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "jenkins",
             "mac address" : "ec:a8:6b:fa:91:64",
@@ -51,7 +51,7 @@ Configuration = {
             "locked" : False
         },
         "nuc2" : {
-            "arch" : "x86",
+            "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "jenkins",
             "mac address" : "ec:a8:6b:fa:6f:be",
@@ -67,7 +67,7 @@ Configuration = {
             "locked" : False
         },
         "oin" : {
-            "arch" : "x86",
+            "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "jenkins",
             "mac address" : "74:27:ea:d5:8b:c9",
@@ -84,7 +84,7 @@ Configuration = {
             "locked" : False
         },
         "gloin" : {
-            "arch" : "x86",
+            "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "jenkins",
             "mac address" : "74:27:ea:d5:8b:63",
