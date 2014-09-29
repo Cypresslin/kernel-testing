@@ -16,7 +16,8 @@ Configuration = {
         "profile" : "jenkins",       # When talking to the maas server use this profile.
         "creds"   : "VxFpPVkTJ8fkH6MqCq:GC9QjEr4GFaHe2dFcC:eWELKWXvVpTRa8Vzkb9CajVVH2vhXTv9",
         "user"    : "jenkins",       # When ssh'ing to the maas server use this user
-        "type"    : "maas"           # This _is_ a MAAS server (as opposed to a cobbler server)
+        "type"    : "maas",          # This _is_ a MAAS server (as opposed to a cobbler server)
+        "sut-user": "ubuntu",        # The user on the test system after it's been provisioned
     },
 
     # I don't have a cobbler server so I could just leave this section
@@ -25,7 +26,8 @@ Configuration = {
     #
     "cobbler" : {
         "server"  : "cobbler",
-        "type"    : "cobbler"
+        "type"    : "cobbler",
+        "sut-user": "jenkins",       # The user on the test system after it's been provisioned
     },
 
     # Test systems section. This is a dictionary of all the test systems that are available

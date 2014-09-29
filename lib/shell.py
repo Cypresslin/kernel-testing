@@ -76,8 +76,6 @@ def enqueue_output(out, queue, quiet=False):
 # sh
 #
 def sh(cmd, timeout=None, ignore_result=False, quiet=False):
-    info(cmd)
-
     out = []
     p = Popen(cmd, stdout=PIPE, stderr=STDOUT, bufsize=1, shell=True)
     q = Queue()
@@ -117,8 +115,8 @@ def sh(cmd, timeout=None, ignore_result=False, quiet=False):
 
 # ssh
 #
-def ssh(target, cmd, quiet=False, ignore_result=False):
-    result, output = Shell.ssh(target, cmd, quiet=quiet, ignore_result=ignore_result)
+def ssh(target, cmd, user=None, quiet=False, ignore_result=False):
+    result, output = Shell.ssh(target, cmd, user=user, quiet=quiet, ignore_result=ignore_result)
     return result, output
 
 class Shell():
@@ -130,19 +128,22 @@ class Shell():
     # ssh
     #
     @classmethod
-    def ssh(cls, target, cmd, quiet=False, ignore_result=False):
-        ssh_cmd = 'ssh %s %s' % (target, cmd)
+    def ssh(cls, target, cmd, user, quiet=False, ignore_result=False):
+        debug("Enter Shell::ssh")
+        ssh_options = '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet'
+        if user:
+            ssh_cmd = 'ssh %s %s@%s %s' % (ssh_options, user, target, cmd)
+        else:
+            ssh_cmd = 'ssh %s %s %s' % (ssh_options, target, cmd)
         result = 0
         output = ''
         #print("ssh: '%s'" % ssh_cmd)
         if cls._dry_run:
             debug('[dry-run] %s' % (ssh_cmd))
         else:
-            if not quiet:
-                info(ssh_cmd)
-
             try:
                 result, output = sh(ssh_cmd, quiet=quiet, ignore_result=ignore_result)
+                debug(output)
 
             except ShellError as e:
                 if result != 0 and not ignore_result:
@@ -156,6 +157,7 @@ class Shell():
                         sleep(15)
                         raise ShellError(ssh_cmd, result, output)
 
+        debug("Leave Shell::ssh")
         return result, output
 
 # vi:set ts=4 sw=4 expandtab syntax=python:

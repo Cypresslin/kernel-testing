@@ -7,13 +7,13 @@ from logging                            import error, info, basicConfig, DEBUG, 
 
 from lib.log                            import cdebug, Clog, cerror
 from lib.shell                          import ShellError, ShellTimeoutError, sh, ssh, Shell
-from lib.provisioning                   import MetalProvisioner, VirtualProvisioner
+from lib.provisioning                   import MetalProvisioner, VirtualProvisioner, Metal, PS
 from lib.exceptions                     import ErrorExit
 from lib.hwe                            import HWE
 
 # ProvApp
 #
-class ProvApp():
+class ProvApp(object):
     '''
     Handle all the tasks for getting a test system fully up and installed and ready for
     running the kernel tests.
@@ -21,8 +21,7 @@ class ProvApp():
 
     # __init__
     #
-    def __init__(self, args):
-        self.args = args
+    def __init__(self):
         self.__hwdb = None
 
     def produce_error_results(self, workspace, msg):
@@ -65,26 +64,43 @@ class ProvApp():
 
         return retval
 
+    # neo
+    #
+    def neo(s, args):
+        cdebug("Enter ProvApp::neo")
+        retval = 1
+        try:
+            dry_run = args.dry_run
+            target = args.target[0]
+
+            metal = Metal(args.sut_name, args.sut_series, args.sut_arch, args.sut_hwe, args.sut_debs_url, ppa=args.ppa, dry_run=dry_run)
+            metal.provision()
+            result, output = metal.prossh('id')
+        except:
+            pass
+        cdebug("Leave ProvApp::neo (%d)" % retval)
+        return retval
+
     # main
     #
-    def main(self):
+    def main(s, args):
         cdebug("Enter ProvApp::main")
         retval = 1
         try:
-            dry_run = self.args.dry_run
-            target = self.args.target[0]
+            dry_run = args.dry_run
+            target = args.target[0]
 
             metal = None
-            if self.args.sut == 'real':
-                metal = MetalProvisioner(self.args.sut_name, self.args.sut_series, self.args.sut_arch, self.args.sut_hwe, self.args.sut_debs_url, ppa=self.args.ppa, dry_run=dry_run)
+            if args.sut == 'real':
+                metal = MetalProvisioner(args.sut_name, args.sut_series, args.sut_arch, args.sut_hwe, args.sut_debs_url, ppa=args.ppa, dry_run=dry_run)
                 metal.provision()
 
-                if self.args.sut_hwe:
-                    targeted_series = HWE[self.args.sut_series]['series']
+                if args.sut_hwe:
+                    targeted_series = HWE[args.sut_series]['series']
                 else:
-                    targeted_series = self.args.sut_series
+                    targeted_series = args.sut_series
 
-                if self.target_verified(self.args.sut_name, targeted_series):
+                if s.target_verified(args.sut_name, targeted_series):
                     retval = 0
             else:
                 info("=========================================================================")
@@ -92,23 +108,23 @@ class ProvApp():
                 info("=                   V I R T U A L   H O S T")
                 info("=")
                 info("=========================================================================")
-                metal = MetalProvisioner(self.args.vh_name, self.args.vh_series, self.args.vh_arch, self.args.vh_hwe, dry_run=dry_run)
+                metal = MetalProvisioner(args.vh_name, args.vh_series, args.vh_arch, args.vh_hwe, dry_run=dry_run)
                 metal.provision()
-                if self.target_verified(self.args.vh_name, self.args.vh_series):
+                if s.target_verified(args.vh_name, args.vh_series):
                     info("=========================================================================")
                     info("=")
                     info("=                   V I R T U A L   C L I E N T")
                     info("=")
                     info("=========================================================================")
-                    virt = VirtualProvisioner(self.args.vh_name, self.args.sut_name, self.args.sut_series, self.args.sut_arch, self.args.sut_hwe, dry_run=dry_run)
+                    virt = VirtualProvisioner(args.vh_name, args.sut_name, args.sut_series, args.sut_arch, args.sut_hwe, dry_run=dry_run)
                     virt.provision()
 
-                    if self.args.sut_hwe:
-                        targeted_series = HWE[self.args.sut_series]['series']
+                    if args.sut_hwe:
+                        targeted_series = HWE[args.sut_series]['series']
                     else:
-                        targeted_series = self.args.sut_series
+                        targeted_series = args.sut_series
 
-                    if self.target_verified(self.args.sut_name, targeted_series):
+                    if s.target_verified(args.sut_name, targeted_series):
                         retval = 0
 
         # Handle the user presses <ctrl-C>.
@@ -120,7 +136,7 @@ class ProvApp():
             msg = 'The command (%s) timed out. (%d)' % (e.cmd, e.timeout)
             ws = getenv('WORKSPACE')
             if ws is not None:
-                self.produce_error_results(ws, msg)
+                s.produce_error_results(ws, msg)
             error(msg)
 
         except ShellError as e:
@@ -134,13 +150,13 @@ class ProvApp():
 
             ws = getenv('WORKSPACE')
             if ws is not None:
-                self.produce_error_results(ws, msg)
+                s.produce_error_results(ws, msg)
 
         except ErrorExit as e:
             error(e.message)
             ws = getenv('WORKSPACE')
             if ws is not None:
-                self.produce_error_results(ws, e.message)
+                s.produce_error_results(ws, e.message)
             pass
 
         if retval > 0:
@@ -188,9 +204,9 @@ examples:
     parser.add_argument('--quiet',  action='store_true', default=False, help='Do not print any progress information.')
     parser.add_argument('--debug', action='store_true', default=False, help='Print out lots of stuff.')
 
-    parser.add_argument('--sut',          required=True,  choices=['real', 'virtual'], help='Kind of SUT to be created.')
+    parser.add_argument('--sut',          required=False,  default='real', choices=['real', 'virtual'], help='Kind of SUT to be created.')
     parser.add_argument('--sut-series',   required=True,  help='The series that is to be installed on the SUT. lts-hwe-<series> denotes that a lts-hwe kernel is to be run on the appropriate lts series.')
-    parser.add_argument('--sut-arch',     required=True,  choices=['amd64', 'i386'], help='The architecture (amd64 or i386) that is to be installed on the SUT.')
+    parser.add_argument('--sut-arch',     required=False,  default='amd64', choices=['amd64', 'i386', 'arm64', 'ppc64el'], help='The architecture (amd64 or i386) that is to be installed on the SUT.')
     parser.add_argument('--sut-hwe',      required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
     parser.add_argument('--sut-debs-url', required=False, default=None, help='A pointer to a set of kernel deb packages that are to be installed.')
     parser.add_argument('--ppa',          required=False, default=None, help='A ppa name to update packages from')
@@ -220,7 +236,10 @@ examples:
     else:
         args.sut_name = args.target[0]
 
-    app = ProvApp(args)
-    exit(app.main())
+    cdebug('sut : %s' % args.sut)
+    cdebug('sut-arch : %s' % args.sut_arch)
+
+    app = ProvApp()
+    exit(app.neo(args))
 
 # vi:set ts=4 sw=4 expandtab syntax=python:

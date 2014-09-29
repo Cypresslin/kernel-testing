@@ -15,6 +15,66 @@ from lib.exceptions                     import ErrorExit
 from lib.maas                           import MAAS, MAASNode
 from configuration                      import Configuration
 
+# PS
+#
+# Provisioning Server
+#
+class PS(object):
+    # __init__
+    #
+    def __init__(s, target):
+        cdebug("Enter PS::__init__")
+        sp = Configuration['systems'][target]['provisioner']
+        p = Configuration[sp]
+        for k in p:
+            print("%s : %s" % (k, p[k]))
+            setattr(s, k, p[k])
+        cdebug("Leave PS::__init__")
+
+# Metal
+#
+# Every SUT has a 'bare-metal' component. Most of the time that _is_ the SUT and there
+# is no other component. Sometimes the SUT is a VM which runs on 'bare-metal'.
+#
+class Metal(object):
+    # __init__
+    #
+    def __init__(s, target, series, arch, hwe=False, debs=None, ppa=None, dry_run=False):
+        cdebug("Enter Metal::__init__")
+        s.ps = PS(target)
+        s.target = target
+        cdebug("Leave Metal::__init__")
+
+    # ssh
+    #
+    # This ssh method uses the lower-level ssh function for actuall remote shell to
+    # the target system. This helper automatically provides the 'target' and 'user'
+    # options to every ssh call.
+    #
+    def ssh(s, cmd, quiet=False, ignore_result=False):
+        cdebug("Enter Metal::ssh")
+        result, output = Shell.ssh(s.target, cmd, user=s.ps.sut_user, quiet=quiet, ignore_result=ignore_result)
+        cdebug("Leave Metal::ssh")
+        return result, output
+
+    # prossh
+    #
+    # Helper for ssh'ing to the provisioning server.
+    #
+    def prossh(s, cmd, quiet=True, ignore_result=False):
+        cdebug("Enter Metal::prossh")
+        result, output = Shell.ssh(s.ps.server, cmd, user=s.ps.user, quiet=quiet, ignore_result=ignore_result)
+        cdebug("Leave Metal::prossh")
+        return result, output
+
+# SUT
+#
+class SUT(object):
+    # __init__
+    #
+    def __init__(s):
+        pass
+
 # Provisioner
 #
 class Provisioner():
@@ -40,6 +100,10 @@ class Provisioner():
         Shell._dry_run = dry_run
         self.kickstarts_root = '/var/lib/cobbler/kickstarts/kernel'
         self.ubuntu = Ubuntu()
+
+        self.target = name
+        self.ps = PS(self.target)
+
         cdebug('Leave Provisioner::__init__')
 
     # enable_proposed
@@ -105,7 +169,7 @@ class Provisioner():
     # wait_for_system
     #
     @classmethod
-    def wait_for_system(cls, target, timeout=10):
+    def wait_for_system(cls, target, user, timeout=10):
         cdebug('Enter Provisioner::wait_for_system')
         if not cls._dry_run:
             if not cls._quiet:
@@ -115,7 +179,9 @@ class Provisioner():
             cinfo('Starting waiting for \'%s\' at %s' % (target, start))
             while True:
                 try:
-                    result, output = sh('ssh -qf %s exit' % target, quiet=True, ignore_result=True)
+                    ssh_options = '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet -qf'
+                    result, output = sh('ssh %s %s@%s exit' % (ssh_options, user, target), quiet=True, ignore_result=True)
+                    #result, output = ssh(target, '-qf exit', quiet=True, ignore_result=True)
                     if result == 0:
                         break
 
@@ -144,14 +210,14 @@ class Provisioner():
     # reboot
     #
     @classmethod
-    def reboot(cls, target, wait=True, quiet=False):
+    def reboot(cls, target, user, wait=True, quiet=False):
         '''
         Reboot the target system and wait 5 minutes for it to come up.
         '''
         cdebug('Enter Provisioner::reboot')
         ssh(target, 'sudo reboot', quiet=quiet)
         if wait:
-            cls.wait_for_system(target, timeout=10)
+            cls.wait_for_system(target, user, timeout=10)
         cdebug('Leave Provisioner::reboot')
 
     # install_custom_debs
@@ -280,6 +346,9 @@ class VirtualProvisioner(Provisioner):
             self.hwe_series = self.series
             self.series = HWE[self.series]['series']
 
+        p = Configuration['systems'][target]['provisioner']
+        user = Configuration[p]['sut-user']
+
         # We network boot/install the bare-metal hw to get our desired configuration on it.
         #
         self.configure_orchestra(self.virt_host)
@@ -290,7 +359,7 @@ class VirtualProvisioner(Provisioner):
         # Once the initial installation has completed, we continue to install and update
         # packages so that we are testing the latest kernel, which is what we want.
         #
-        self.wait_for_system(target, timeout=60) # Allow 30 minutes for network installation
+        self.wait_for_system(target, user, timeout=60) # Allow 30 minutes for network installation
         if not self.ubuntu.is_development_series(self.series):
             self.enable_proposed(target, self.series)
         if self.ppa is not None:
@@ -308,9 +377,9 @@ class VirtualProvisioner(Provisioner):
         # to either the dist-upgrade that was performed, or the install of the hwe
         # kernel.
         #
-        self.reboot(target)
+        self.reboot(target, user)
 
-        self.configure_passwordless_access(target)
+        self.configure_passwordless_access(target, user)
 
 # MetalProvisioner
 #
@@ -403,7 +472,7 @@ class MetalProvisioner(Provisioner):
 
     # target_verified
     #
-    def target_verified(self, target, series, arch):
+    def target_verified(self, target, user, series, arch):
         '''
         Confirm that the target system has installed what was supposed to be installed. If we asked for
         one series but another is on the system, fail.
@@ -414,7 +483,7 @@ class MetalProvisioner(Provisioner):
         cdebug('      arch : %s' % arch)
         retval = False
 
-        result, codename = ssh(target, r'lsb_release --codename')
+        result, codename = ssh(target, r'lsb_release --codename', user=user)
         for line in codename:
             line = line.strip()
             if line.startswith('Codename:'):
@@ -430,7 +499,7 @@ class MetalProvisioner(Provisioner):
         #
         if retval:
             retval = False
-            result, processor = ssh(target, r'uname -p')
+            result, processor = ssh(target, r'uname -p', user=user)
             for line in processor:
                 line = line.strip()
 
@@ -457,7 +526,7 @@ class MetalProvisioner(Provisioner):
         if retval:
             retval = False
             kv = None
-            result, kernel = ssh(target, r'uname -vr')
+            result, kernel = ssh(target, r'uname -vr', user=user)
             for line in kernel:
                 line = line.strip()
 
@@ -507,6 +576,7 @@ class MetalProvisioner(Provisioner):
         # We network boot/install the bare-metal hw to get our desired configuration on it.
         #
         provisioner = Configuration[Configuration['systems'][target]['provisioner']]
+        user = provisioner['sut-user']
         if provisioner['type'] == 'cobbler':
             self.configure_orchestra(target)
             self.cycle_power(target)
@@ -521,7 +591,7 @@ class MetalProvisioner(Provisioner):
             error('Unrecognised provisioning type (%s)' % provisioner['type'])
             return False
 
-        self.wait_for_system(target, timeout=60) # Allow 30 minutes for network installation
+        self.wait_for_system(target, user, timeout=60) # Allow 30 minutes for network installation
 
         # If we are installing via maas we are likely using the fastpath installer. That does
         # it's own reboot after installation. There is a window where we could think the system
@@ -531,9 +601,9 @@ class MetalProvisioner(Provisioner):
         if provisioner['type'] == 'maas':
             cinfo("Giving it 5 more minutes")
             sleep(60 * 5) # Give it 5 minutes
-            self.wait_for_system(target, timeout=60)
+            self.wait_for_system(target, user, timeout=60)
 
-        if not self.target_verified(target, self.series, self.arch):
+        if not self.target_verified(target, user, self.series, self.arch):
             cinfo("Target verification failed.")
             cdebug('Leave MetalProvisioner::provision')
             return False
