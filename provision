@@ -73,39 +73,50 @@ class ProvApp(object):
     def validate_args(s, args):
         cdebug("    Enter ProvApp::validate_args")
 
-        if args.sut_name not in Configuration['systems']:
-            cdebug("        raising ErrorExit exception")
-            raise ErrorExit('The name (%s) is not a recognized system. Valid systems are:\n    %s' % (args.sut_name, '\n    '.join(Configuration['systems'].keys())))
+        if args.sut == 'real':
+            if args.sut_name not in Configuration['systems']:
+                cdebug("        raising ErrorExit exception")
+                raise ErrorExit('The name (%s) is not a recognized system. Valid systems are:\n    %s' % (args.sut_name, '\n    '.join(Configuration['systems'].keys())))
 
-        target = Configuration['systems'][args.sut_name]
-        # Does the hw arch match that of what was specified on the command line?
-        #
-        if args.sut_arch not in target['arch']:
-            raise ErrorExit('The arch (%s) is not valid for the system (%s). Valid arches for that system are:\n    %s' % (args.sut_arch, args.sut_name, '\n    '.join(target['arch'])))
+            # Some systems we don't want to re-provision by accident.
+            #
+            if Configuration['systems'][args.sut_name]['locked']:
+                raise ErrorExit('The system (%s) is locked and will not be provisioned.' % args.sut_name)
 
-        # NOTE: The following check is disabled while HWE continues to 'support' quantal and saucy.
-        #
-        ## Is the specified series a valid, supported series?
-        ##
-        #supported = []
-        #for s in Ubuntu.index_by_series_name:
-        #    try:
-        #        if Ubuntu.index_by_series_name[s]['supported'] or Ubuntu.index_by_series_name[s]['development']:
-        #            supported.append(s)
-        #    except KeyError as e:
-        #        pass
+            target = Configuration['systems'][args.sut_name]
+            # Does the hw arch match that of what was specified on the command line?
+            #
+            if args.sut_arch not in target['arch']:
+                raise ErrorExit('The arch (%s) is not valid for the system (%s). Valid arches for that system are:\n    %s' % (args.sut_arch, args.sut_name, '\n    '.join(target['arch'])))
 
-        #if args.sut_series not in supported:
-        #    raise ErrorExit('The series (%s) is not a recognized, supported series. Valid series are:\n    %s' % (args.sut_series, '\n    '.join(supported)))
+            # NOTE: The following check is disabled while HWE continues to 'support' quantal and saucy.
+            #
+            ## Is the specified series a valid, supported series?
+            ##
+            #supported = []
+            #for s in Ubuntu.index_by_series_name:
+            #    try:
+            #        if Ubuntu.index_by_series_name[s]['supported'] or Ubuntu.index_by_series_name[s]['development']:
+            #            supported.append(s)
+            #    except KeyError as e:
+            #        pass
 
-        if args.sut_hwe:
-            if HWE[args.sut_series]['series'] is None:
-                raise ErrorExit('The series (%s) does not have a HWE version.' % (args.sut_series))
+            #if args.sut_series not in supported:
+            #    raise ErrorExit('The series (%s) is not a recognized, supported series. Valid series are:\n    %s' % (args.sut_series, '\n    '.join(supported)))
+
+            if args.sut_hwe:
+                if HWE[args.sut_series]['series'] is None:
+                    raise ErrorExit('The series (%s) does not have a HWE version.' % (args.sut_series))
 
         if args.sut == 'virtual':
             if args.vh_name not in Configuration['systems']:
                 cdebug("        raising ErrorExit exception")
                 raise ErrorExit('The name (%s) is not a recognized system. Valid systems are:\n    %s' % (args.vh_name, '\n    '.join(Configuration['systems'].keys())))
+
+            # Some systems we don't want to re-provision by accident.
+            #
+            if Configuration['systems'][args.sut_name]['locked']:
+                raise ErrorExit('The system (%s) is locked and will not be provisioned.' % args.sut_name)
 
             # NOTE: The following check is disabled while HWE continues to 'support' quantal and saucy.
             #
