@@ -11,6 +11,7 @@ from lib.provisioning                   import MetalProvisioner, VirtualProvisio
 from lib.exceptions                     import ErrorExit
 from lib.hwe                            import HWE
 from lib.configuration                  import Configuration
+from lib.ubuntu                         import Ubuntu
 
 # ProvApp
 #
@@ -74,7 +75,7 @@ class ProvApp(object):
 
         if args.sut_name not in Configuration['systems']:
             cdebug("        raising ErrorExit exception")
-            raise ErrorExit('The name (%s) is not a recognised system. Valid systems are:\n    %s' % (args.sut_name, '\n    '.join(Configuration['systems'].keys())))
+            raise ErrorExit('The name (%s) is not a recognized system. Valid systems are:\n    %s' % (args.sut_name, '\n    '.join(Configuration['systems'].keys())))
 
         target = Configuration['systems'][args.sut_name]
         # Does the hw arch match that of what was specified on the command line?
@@ -82,7 +83,20 @@ class ProvApp(object):
         if args.sut_arch not in target['arch']:
             raise ErrorExit('The arch (%s) is not valid for the system (%s). Valid arches for that system are:\n    %s' % (args.sut_arch, args.sut_name, '\n    '.join(target['arch'])))
 
-        cdebug("    Leave ProvApp::validate_args")
+        # NOTE: The following check is disabled while HWE continues to 'support' quantal and saucy.
+        #
+        ## Is the specified series a valid, supported series?
+        ##
+        #supported = []
+        #for s in Ubuntu.index_by_series_name:
+        #    try:
+        #        if Ubuntu.index_by_series_name[s]['supported'] or Ubuntu.index_by_series_name[s]['development']:
+        #            supported.append(s)
+        #    except KeyError as e:
+        #        pass
+
+        #if args.sut_series not in supported:
+        #    raise ErrorExit('The series (%s) is not a recognized, supported series. Valid series are:\n    %s' % (args.sut_series, '\n    '.join(supported)))
 
     # neo
     #
