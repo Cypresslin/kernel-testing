@@ -63,9 +63,14 @@ class Metal(object):
     #
     def prossh(s, cmd, quiet=True, ignore_result=False):
         cdebug("Enter Metal::prossh")
+        cdebug('    CMD: ssh %s %s@%s %s' % (Shell.ssh_options, s.ps.user, s.ps.server, cmd))
         result, output = Shell.ssh(s.ps.server, cmd, user=s.ps.user, quiet=quiet, ignore_result=ignore_result)
         cdebug("Leave Metal::prossh")
         return result, output
+
+    def provision(s):
+        cdebug("Enter Metal::provision")
+        cdebug("Leave Metal::provision")
 
 # SUT
 #
