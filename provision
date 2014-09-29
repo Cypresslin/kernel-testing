@@ -98,6 +98,10 @@ class ProvApp(object):
         #if args.sut_series not in supported:
         #    raise ErrorExit('The series (%s) is not a recognized, supported series. Valid series are:\n    %s' % (args.sut_series, '\n    '.join(supported)))
 
+        if args.sut_hwe:
+            if HWE[args.sut_series]['series'] is None:
+                raise ErrorExit('The series (%s) does not have a HWE version.' % (args.sut_series))
+
     # neo
     #
     def neo(s, args):
