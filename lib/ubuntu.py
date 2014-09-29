@@ -169,6 +169,7 @@ class Ubuntu:
                 'linux-meta',
                 'linux-exynos5',
                 'linux-keystone',
+                'linux-meta-keystone',
             ],
             'dependent-packages' :
             {
@@ -176,6 +177,7 @@ class Ubuntu:
                     'meta'   : 'linux-meta',
                     'signed' : 'linux-signed'
                 },
+                'linux-keystone' : { 'meta' : 'linux-meta-keystone' },
             },
             'derivative-packages' :
             {
@@ -190,7 +192,7 @@ class Ubuntu:
             'series_version' : '13.10',
             'kernel'    : '3.11.0',
             'name'      : 'saucy',
-            'supported' : True,
+            'supported' : False,
             # adjust packages when this goes live
             'packages'  :
             [
@@ -249,7 +251,7 @@ class Ubuntu:
             'series_version' : '12.10',
             'kernel'    : '3.5.0',
             'name'      : 'quantal',
-            'supported' : True,
+            'supported' : False,
             # adjust packages when this goes live
             'packages'  :
             [
@@ -338,9 +340,9 @@ class Ubuntu:
             },
             'backport-packages' :
             {
-                'linux-lts-quantal' : [ 'linux', '12.10' ],
-                'linux-lts-raring' : [ 'linux', '13.04' ],
-                'linux-lts-saucy' : [ 'linux', '13.10' ],
+                #'linux-lts-quantal' : [ 'linux', '12.10' ],
+                #'linux-lts-raring' : [ 'linux', '13.04' ],
+                #'linux-lts-saucy' : [ 'linux', '13.10' ],
                 'linux-lts-trusty' : [ 'linux', '14.04' ],
             },
             'sha1' : '',
@@ -447,21 +449,11 @@ class Ubuntu:
             'packages' :
             [
                 'linux',
-                'linux-fsl-imx51',
-                'linux-mvl-dove',
                 'linux-ec2',
                 'linux-meta',
                 'linux-ports-meta',
                 'linux-meta-ec2',
-                'linux-meta-mvl-dove',
-                'linux-meta-fsl-imx51',
                 'linux-backports-modules-2.6.32',
-                'linux-lts-backport-oneiric',
-                'linux-meta-lts-backport-oneiric',
-                'linux-lts-backport-natty',
-                'linux-meta-lts-backport-natty',
-                'linux-lts-backport-maverick',
-                'linux-meta-lts-backport-maverick'
             ],
             'dependent-packages' :
             {
@@ -471,25 +463,10 @@ class Ubuntu:
                     'lbm' : 'linux-backports-modules-2.6.32'
                 },
                 'linux-ec2' : { 'meta' : 'linux-meta-ec2' },
-                'linux-lts-backport-oneiric' : {
-                    'meta' : 'linux-meta-lts-backport-oneiric'
-                },
-                'linux-lts-backport-natty' : {
-                    'meta' : 'linux-meta-lts-backport-natty'
-                },
-                'linux-lts-backport-maverick' : {
-                    'meta' : 'linux-meta-lts-backport-maverick'
-                }
             },
             'derivative-packages' :
             {
                 'linux' : [ 'linux-ec2' ]
-            },
-            'backport-packages' :
-            {
-                'linux-lts-backport-oneiric' : [ 'linux', '11.10' ],
-                'linux-lts-backport-natty' : [ 'linux', '11.04' ],
-                'linux-lts-backport-maverick' : [ 'linux', '10.10' ],
             },
             'sha1' : '298cbfdb55fc64d1135f06b3bed3c8748123c183',
             'md5' : '4b1f6f6fac43a23e783079db589fc7e2'
@@ -637,15 +614,11 @@ class Ubuntu:
         'linux-armadaxp', # precise, quantal
         'linux-exynos5',
         'linux-keystone',
-        'linux-mvl-dove', # maverick, karmic, lucid
-        'linux-fsl-imx51', # karmic, lucid
         'linux-ec2',
         'linux-meta',
         'linux-meta-ec2',
-        'linux-meta-mvl-dove', # maverick, karmic, lucid
         'linux-meta-ti-omap4', # maverick, natty
         'linux-meta-armadaxp', # precise, quantal
-        'linux-meta-fsl-imx51', # karmic, lucid ?
         'linux-ports-meta',
         'linux-source-2.6.15',
 
@@ -663,13 +636,13 @@ class Ubuntu:
 
         'linux-ubuntu-modules-2.6.24',
 
-        'linux-lts-backport-maverick',
-        'linux-lts-backport-natty',
-        'linux-lts-backport-oneiric',
+        #'linux-lts-backport-maverick',
+        #'linux-lts-backport-natty',
+        #'linux-lts-backport-oneiric',
         #'linux-lts-quantal',
-        'linux-meta-lts-backport-maverick',
-        'linux-meta-lts-backport-natty',
-        'linux-meta-lts-backport-oneiric',
+        #'linux-meta-lts-backport-maverick',
+        #'linux-meta-lts-backport-natty',
+        #'linux-meta-lts-backport-oneiric',
         #'linux-meta-lts-quantal',
     ]
 
