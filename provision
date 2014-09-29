@@ -70,10 +70,7 @@ class ProvApp(object):
         cdebug("Enter ProvApp::neo")
         retval = 1
         try:
-            dry_run = args.dry_run
-            target = args.target[0]
-
-            metal = Metal(args.sut_name, args.sut_series, args.sut_arch, args.sut_hwe, args.sut_debs_url, ppa=args.ppa, dry_run=dry_run)
+            metal = Metal(args.sut_name, args.sut_series, args.sut_arch, args.sut_hwe, args.sut_debs_url, ppa=args.ppa, dry_run=args.dry_run)
             metal.provision()
             result, output = metal.prossh('id')
         except:
@@ -87,12 +84,9 @@ class ProvApp(object):
         cdebug("Enter ProvApp::main")
         retval = 1
         try:
-            dry_run = args.dry_run
-            target = args.target[0]
-
             metal = None
             if args.sut == 'real':
-                metal = MetalProvisioner(args.sut_name, args.sut_series, args.sut_arch, args.sut_hwe, args.sut_debs_url, ppa=args.ppa, dry_run=dry_run)
+                metal = MetalProvisioner(args.sut_name, args.sut_series, args.sut_arch, args.sut_hwe, args.sut_debs_url, ppa=args.ppa, dry_run=args.dry_run)
                 metal.provision()
 
                 if args.sut_hwe:
@@ -108,7 +102,7 @@ class ProvApp(object):
                 info("=                   V I R T U A L   H O S T")
                 info("=")
                 info("=========================================================================")
-                metal = MetalProvisioner(args.vh_name, args.vh_series, args.vh_arch, args.vh_hwe, dry_run=dry_run)
+                metal = MetalProvisioner(args.vh_name, args.vh_series, args.vh_arch, args.vh_hwe, dry_run=args.dry_run)
                 metal.provision()
                 if s.target_verified(args.vh_name, args.vh_series):
                     info("=========================================================================")
@@ -116,7 +110,7 @@ class ProvApp(object):
                     info("=                   V I R T U A L   C L I E N T")
                     info("=")
                     info("=========================================================================")
-                    virt = VirtualProvisioner(args.vh_name, args.sut_name, args.sut_series, args.sut_arch, args.sut_hwe, dry_run=dry_run)
+                    virt = VirtualProvisioner(args.vh_name, args.sut_name, args.sut_series, args.sut_arch, args.sut_hwe, dry_run=args.dry_run)
                     virt.provision()
 
                     if args.sut_hwe:
