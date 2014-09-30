@@ -115,8 +115,8 @@ def sh(cmd, timeout=None, ignore_result=False, quiet=False):
 
 # ssh
 #
-def ssh(target, cmd, user=None, quiet=False, ignore_result=False):
-    result, output = Shell.ssh(target, cmd, user=user, quiet=quiet, ignore_result=ignore_result)
+def ssh(target, cmd, additional_ssh_options='', user=None, quiet=False, ignore_result=False):
+    result, output = Shell.ssh(target, cmd, additional_ssh_options=additional_ssh_options, user=user, quiet=quiet, ignore_result=ignore_result)
     return result, output
 
 class Shell():
@@ -129,12 +129,13 @@ class Shell():
     # ssh
     #
     @classmethod
-    def ssh(cls, target, cmd, user, quiet=False, ignore_result=False):
+    def ssh(cls, target, cmd, user, additional_ssh_options='', quiet=False, ignore_result=False):
         debug("Enter Shell::ssh")
+        ssh_options = cls.ssh_options + ' ' + additional_ssh_options
         if user:
-            ssh_cmd = 'ssh %s %s@%s %s' % (cls.ssh_options, user, target, cmd)
+            ssh_cmd = 'ssh %s %s@%s %s' % (ssh_options, user, target, cmd)
         else:
-            ssh_cmd = 'ssh %s %s %s' % (cls.ssh_options, target, cmd)
+            ssh_cmd = 'ssh %s %s %s' % (ssh_options, target, cmd)
         result = 0
         output = ''
         #print("ssh: '%s'" % ssh_cmd)
@@ -143,7 +144,6 @@ class Shell():
         else:
             try:
                 result, output = sh(ssh_cmd, quiet=quiet, ignore_result=ignore_result)
-                debug(output)
 
             except ShellError as e:
                 if result != 0 and not ignore_result:
