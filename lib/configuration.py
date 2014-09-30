@@ -17,7 +17,7 @@ Configuration = {
         "creds"   : "VxFpPVkTJ8fkH6MqCq:GC9QjEr4GFaHe2dFcC:eWELKWXvVpTRa8Vzkb9CajVVH2vhXTv9",
         "user"    : "jenkins",       # When ssh'ing to the maas server use this user
         "type"    : "maas",          # This _is_ a MAAS server (as opposed to a cobbler server)
-        "sut-user": "ubuntu",        # The user on the test system after it's been provisioned
+        "sut_user": "ubuntu",        # The user on the test system after it's been provisioned
     },
 
     # I don't have a cobbler server so I could just leave this section
