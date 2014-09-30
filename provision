@@ -136,6 +136,7 @@ class ProvApp(object):
             if args.vh_hwe:
                 if HWE[args.vh_series]['series'] is None:
                     raise ErrorExit('The series (%s) does not have a HWE version.' % (args.vh_series))
+        cdebug("    Leave ProvApp::validate_args")
 
     # neo
     #
