@@ -12,7 +12,8 @@ from lib.hwe                            import HWE
 from lib.shell                          import sh, ShellError, ssh, Shell
 from lib.ubuntu                         import Ubuntu
 from lib.exceptions                     import ErrorExit
-from lib.maas                           import MAAS, MAASNode
+from lib.maas                           import MAAS, MAASCore
+from lib.cobbler                        import Cobbler
 from configuration                      import Configuration
 
 # PS
@@ -22,14 +23,26 @@ from configuration                      import Configuration
 class PS(object):
     # __init__
     #
-    def __init__(s, target):
-        cdebug("Enter PS::__init__")
+    def __init__(s, target, series, arch):
+        cdebug("    Enter PS::__init__")
         sp = Configuration['systems'][target]['provisioner']
         p = Configuration[sp]
         for k in p:
-            print("%s : %s" % (k, p[k]))
+            print("        %16s : %s" % (k, p[k]))
             setattr(s, k, p[k])
-        cdebug("Leave PS::__init__")
+
+        if s.type == "cobbler":
+            s.server = Cobbler(target, series, arch)
+        elif s.type == "maas":
+            s.server = MAAS(s.profile, s.server, s.creds, target, series, arch)
+        else:
+            s.server = None
+        cdebug("    Leave PS::__init__")
+
+    # provision
+    #
+    def provision(s):
+        return s.server.provision()
 
 # Metal
 #
@@ -41,8 +54,19 @@ class Metal(object):
     #
     def __init__(s, target, series, arch, hwe=False, debs=None, ppa=None, dry_run=False):
         cdebug("Enter Metal::__init__")
-        s.ps = PS(target)
+
+        # If we are installing a HWE kernel, we want to install the correct series first.
+        #
+        if hwe:
+            s.hwe_series = series
+            series = HWE[series]['series']
+
+        s.ps = PS(target, series, arch)
         s.target = target
+        s.hwe = hwe
+        s.debs = debs
+        s.ppa  = ppa
+        s.dry_run = dry_run
         cdebug("Leave Metal::__init__")
 
     # ssh
@@ -51,9 +75,10 @@ class Metal(object):
     # the target system. This helper automatically provides the 'target' and 'user'
     # options to every ssh call.
     #
-    def ssh(s, cmd, quiet=False, ignore_result=False):
+    def ssh(s, cmd, options='', additional_ssh_options='', quiet=False, ignore_result=False):
         cdebug("Enter Metal::ssh")
-        result, output = Shell.ssh(s.target, cmd, user=s.ps.sut_user, quiet=quiet, ignore_result=ignore_result)
+        cdebug('    CMD: ssh %s %s %s@%s %s' % (Shell.ssh_options, additional_ssh_options, s.ps.sut_user, s.target, cmd))
+        result, output = Shell.ssh(s.target, cmd, user=s.ps.sut_user, additional_ssh_options=additional_ssh_options, quiet=quiet, ignore_result=ignore_result)
         cdebug("Leave Metal::ssh")
         return result, output
 
@@ -61,15 +86,133 @@ class Metal(object):
     #
     # Helper for ssh'ing to the provisioning server.
     #
-    def prossh(s, cmd, quiet=True, ignore_result=False):
+    def prossh(s, cmd, quiet=True, ignore_result=False, additional_ssh_options=''):
         cdebug("Enter Metal::prossh")
-        cdebug('    CMD: ssh %s %s@%s %s' % (Shell.ssh_options, s.ps.user, s.ps.server, cmd))
-        result, output = Shell.ssh(s.ps.server, cmd, user=s.ps.user, quiet=quiet, ignore_result=ignore_result)
+        cdebug('    CMD: ssh %s %s %s@%s %s' % (Shell.ssh_options, additional_ssh_options, s.ps.user, s.ps.user, cmd))
+        result, output = Shell.ssh(s.ps.server, cmd, additional_ssh_options=additional_ssh_options, user=s.ps.user, quiet=quiet, ignore_result=ignore_result)
         cdebug("Leave Metal::prossh")
         return result, output
 
+    # wait_for_target
+    #
+    def wait_for_target(s, timeout=10):
+        cdebug('        Enter Provisioner::wait_for_system')
+
+        start = datetime.utcnow()
+        cinfo('Starting waiting for \'%s\' at %s' % (s.target, start))
+        while True:
+            try:
+                result, output = s.ssh('exit', additional_ssh_options='-qf')
+                if result == 0:
+                    cdebug("exit result is 0")
+                    break
+
+            except ShellError as e:
+
+                if 'port 22: Connection refused' in e.output:
+                    # Just ignore this, we know that we can connect to the remote host
+                    # otherwise we wouldn't have been able to reboot it.
+                    #
+                    print("** Encountered 'Connection refused'")
+                    pass
+                else:
+                    print("Something else bad happened")
+                    cdebug('        Leave Provisioner::wait_for_system')
+                    raise
+
+            now = datetime.utcnow()
+            delta = now - start
+            if delta.seconds > timeout * 60:
+                cinfo('Timed out at: %s' % now)
+                raise ErrorExit('The specified timeout (%d) was reached while waiting for the target system (%s) to come back up.' % (timeout, s.target))
+
+            sleep(60)
+            cinfo('Checking at: %s' % datetime.utcnow())
+
+        cdebug('        Leave Provisioner::wait_for_system')
+
     def provision(s):
         cdebug("Enter Metal::provision")
+
+        s.ps.provision()
+        s.wait_for_target(timeout=60) # Allow 30 minutes for network installation
+
+        # If we are installing via maas we are likely using the fastpath installer. That does
+        # it's own reboot after installation. There is a window where we could think the system
+        # is up but it's not really. Wait for a bit and then check for the system to be up
+        # again.
+        #
+        if s.ps.type == 'maas':
+            cinfo("Giving it 5 more minutes")
+            sleep(60 * 5) # Give it 5 minutes
+            s.wait_for_target(timeout=60)
+        cdebug("Leave Metal::provision")
+        return
+
+
+
+
+        # We network boot/install the bare-metal hw to get our desired configuration on it.
+        #
+        provisioner = Configuration[Configuration['systems'][s.target]['provisioner']]
+        user = provisioner['sut-user']
+        if provisioner['type'] == 'cobbler':
+            s.configure_orchestra(s.target)
+            s.cycle_power(s.target)
+        elif provisioner['type'] == 'maas':
+            maas = MAASCore(provisioner['profile'], provisioner['server'], provisioner['creds'])
+            mt = maas.node(s.target)
+            mt.stop_and_release()
+            mt.series(s.series)
+            mt.arch(s.arch)
+            mt.acquire_and_start()
+        else:
+            error('Unrecognised provisioning type (%s)' % provisioner['type'])
+            return False
+
+
+        # If we are installing via maas we are likely using the fastpath installer. That does
+        # it's own reboot after installation. There is a window where we could think the system
+        # is up but it's not really. Wait for a bit and then check for the system to be up
+        # again.
+        #
+        if provisioner['type'] == 'maas':
+            cinfo("Giving it 5 more minutes")
+            sleep(60 * 5) # Give it 5 minutes
+            s.wait_for_system(s.target, user, timeout=60)
+
+        if not s.target_verified(s.target, user, s.series, s.arch):
+            cinfo("Target verification failed.")
+            cdebug('Leave MetalProvisioner::provision')
+            return False
+
+        # Once the initial installation has completed, we continue to install and update
+        # packages so that we are testing the latest kernel, which is what we want.
+        #
+        if not s.ubuntu.is_development_series(s.series):
+            s.enable_proposed(s.target, s.series)
+        if s.ppa is not None:
+            s.enable_ppa(s.target, s.series)
+        if s.ubuntu.is_development_series(s.series):
+            s.kernel_upgrade(s.target)
+        else:
+            s.dist_upgrade(s.target)
+        s.mainline_firmware_hack(s.target)
+
+        if s.hwe:
+            s.install_hwe_kernel(s.target)
+
+        if s.debs is not None:
+            s.install_custom_debs(s.target)
+
+        if provisioner['type'] == "cobbler":
+            s.configure_passwordless_access(s.target)
+
+        # We want to reboot to pick up any new kernel that we would have installed due
+        # to either the dist-upgrade that was performed, or the install of the hwe
+        # kernel.
+        #
+        s.reboot(s.target)
         cdebug("Leave Metal::provision")
 
 # SUT
@@ -586,7 +729,7 @@ class MetalProvisioner(Provisioner):
             self.configure_orchestra(target)
             self.cycle_power(target)
         elif provisioner['type'] == 'maas':
-            maas = MAAS(provisioner['profile'], provisioner['server'], provisioner['creds'])
+            maas = MAASCore(provisioner['profile'], provisioner['server'], provisioner['creds'])
             mt = maas.node(target)
             mt.stop_and_release()
             mt.series(self.series)

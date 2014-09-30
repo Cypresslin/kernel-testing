@@ -10,15 +10,45 @@ from os                                 import path
 from logging                            import debug
 import json
 from lib.shell                          import sh, ssh
+from lib.log                            import cdebug
 
 # MAAS
 #
-class MAAS():
+class MAAS(object):
+    # __init__
+    #
+    def __init__(s, profile, server, creds, target, series, arch):
+        cdebug('        Enter MAAS::__init__')
+
+        s.profile = profile
+        s.server  = server
+        s.creds   = creds
+        s.target  = target
+        s.series  = series
+        s.arch    = arch
+
+        cdebug('        Leave MAAS::__init__')
+
+    # provision
+    #
+    def provision(s):
+        cdebug('        Enter MAAS::provision')
+        maas = MAASCore(s.profile, s.server, s.creds)
+        mt = maas.node(s.target)
+        mt.stop_and_release()
+        mt.series(s.series)
+        mt.arch(s.arch)
+        mt.acquire_and_start()
+        cdebug('        Leave MAAS::provision')
+
+# MAASCore
+#
+class MAASCore():
 
     # __init__
     #
     def __init__(s, profile, server, creds):
-        debug('MAAS::__init__')
+        debug('MAASCore::__init__')
 
         s.profile = profile
         s.server  = server
