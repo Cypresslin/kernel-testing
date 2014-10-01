@@ -63,6 +63,8 @@ class Metal(object):
 
         s.ps = PS(target, series, arch)
         s.target = target
+        s.series = series
+        s.arch = arch
         s.hwe = hwe
         s.debs = debs
         s.ppa  = ppa
@@ -131,6 +133,95 @@ class Metal(object):
 
         cdebug('        Leave Provisioner::wait_for_system')
 
+    # target_verified
+    #
+    def target_verified(s):
+        '''
+        Confirm that the target system has installed what was supposed to be installed. If we asked for
+        one series but another is on the system, fail.
+        '''
+        cdebug('        Enter MetalProvisioner::target_verified')
+        retval = False
+
+        cdebug('            Verifying series:')
+        result, codename = s.ssh(r'lsb_release --codename')
+        for line in codename:
+            line = line.strip()
+            if line.startswith('Codename:'):
+                cdebug('                lsb_release --codename : ' + line)
+                if s.series not in line:
+                    cinfo("")
+                    cinfo("*** ERROR:")
+                    cinfo("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, line.replace('Codename:\t','')))
+                    cinfo("")
+                else:
+                    retval = True
+
+        # Verify we installed the arch we intended to install
+        #
+        cdebug('            Verifying arch:')
+        if retval:
+            retval = False
+            result, processor = s.ssh(r'uname -p')
+            for line in processor:
+                line = line.strip()
+                cdebug('                uname -p : ' + line)
+
+                if 'Warning: Permanently aded' in line: continue
+                if line == '': continue
+
+                if line == 'x86_64':
+                    installed_arch = 'amd64'
+                elif line == 'i686':
+                    installed_arch = 'i386'
+                else:
+                    installed_arch = line
+
+            if s.arch == installed_arch:
+                retval = True
+            else:
+                cinfo("")
+                cinfo("*** ERROR:")
+                cinfo("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.arch, installed_arch))
+                cinfo("")
+
+        # Are we running the series correct kernel?
+        #
+        cdebug('            Verifying kernel:')
+        if retval:
+            retval = False
+            kv = None
+            result, kernel = s.ssh(r'uname -vr')
+            for line in kernel:
+                line = line.strip()
+                cdebug('                uname -vr : ' + line)
+
+                if 'Warning: Permanently aded' in line: continue
+                if line == '': continue
+
+                m = re.search('(\d+.\d+.\d+)-\d+-.* #(\d+)-Ubuntu.*', line)
+                if m:
+                    kv = m.group(1)
+                cdebug('                kernel version : ' + kv)
+
+            if kv is not None:
+                installed_series = Ubuntu().lookup(kv)['name']
+
+                if installed_series == s.series:
+                    retval = True
+                else:
+                    cinfo("")
+                    cinfo("*** ERROR:")
+                    cinfo("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, installed_series))
+                    cinfo("")
+            else:
+                cinfo("")
+                cinfo("*** ERROR:")
+                cinfo("    Unable to find the kernel version in any line.")
+
+        cdebug('        Leave MetalProvisioner::target_verified (%s)' % retval)
+        return retval
+
     def provision(s):
         cdebug("Enter Metal::provision")
 
@@ -147,6 +238,12 @@ class Metal(object):
             sleep(60 * 5) # Give it 5 minutes
             s.wait_for_target(timeout=60)
         cdebug("Leave Metal::provision")
+
+        if not s.target_verified():
+            cinfo("Target verification failed.")
+            cdebug('Leave MetalProvisioner::provision')
+            return False
+
         return
 
 
