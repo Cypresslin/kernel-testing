@@ -44,16 +44,13 @@ class PS(object):
     def provision(s):
         return s.server.provision()
 
-# Metal
+# Base
 #
-# Every SUT has a 'bare-metal' component. Most of the time that _is_ the SUT and there
-# is no other component. Sometimes the SUT is a VM which runs on 'bare-metal'.
-#
-class Metal(object):
+class Base(object):
     # __init__
     #
     def __init__(s, target, series, arch, hwe=False, debs=None, ppa=None, dry_run=False):
-        cdebug("Enter Metal::__init__")
+        cdebug("Enter Base::__init__")
 
         # If we are installing a HWE kernel, we want to install the correct series first.
         #
@@ -69,7 +66,7 @@ class Metal(object):
         s.debs = debs
         s.ppa  = ppa
         s.dry_run = dry_run
-        cdebug("Leave Metal::__init__")
+        cdebug("Leave Base::__init__")
 
     # ssh
     #
@@ -78,10 +75,10 @@ class Metal(object):
     # options to every ssh call.
     #
     def ssh(s, cmd, options='', additional_ssh_options='', quiet=False, ignore_result=False):
-        cdebug("Enter Metal::ssh")
+        cdebug("Enter Base::ssh")
         cdebug('    CMD: ssh %s %s %s@%s %s' % (Shell.ssh_options, additional_ssh_options, s.ps.sut_user, s.target, cmd))
         result, output = Shell.ssh(s.target, cmd, user=s.ps.sut_user, additional_ssh_options=additional_ssh_options, quiet=quiet, ignore_result=ignore_result)
-        cdebug("Leave Metal::ssh")
+        cdebug("Leave Base::ssh")
         return result, output
 
     # prossh
@@ -89,16 +86,16 @@ class Metal(object):
     # Helper for ssh'ing to the provisioning server.
     #
     def prossh(s, cmd, quiet=True, ignore_result=False, additional_ssh_options=''):
-        cdebug("Enter Metal::prossh")
-        cdebug('    CMD: ssh %s %s %s@%s %s' % (Shell.ssh_options, additional_ssh_options, s.ps.user, s.ps.user, cmd))
+        cdebug("Enter Base::prossh")
+        cdebug('    CMD: ssh %s %s %s@%s %s' % (Shell.ssh_options, additional_ssh_options, s.ps.user, s.ps.server.server, cmd))
         result, output = Shell.ssh(s.ps.server, cmd, additional_ssh_options=additional_ssh_options, user=s.ps.user, quiet=quiet, ignore_result=ignore_result)
-        cdebug("Leave Metal::prossh")
+        cdebug("Leave Base::prossh")
         return result, output
 
     # wait_for_target
     #
     def wait_for_target(s, timeout=10):
-        cdebug('        Enter Provisioner::wait_for_system')
+        cdebug('        Enter Base::wait_for_system')
 
         start = datetime.utcnow()
         cinfo('Starting waiting for \'%s\' at %s' % (s.target, start))
@@ -119,7 +116,7 @@ class Metal(object):
                     pass
                 else:
                     print("Something else bad happened")
-                    cdebug('        Leave Provisioner::wait_for_system')
+                    cdebug('        Leave Base::wait_for_system')
                     raise
 
             now = datetime.utcnow()
@@ -131,7 +128,56 @@ class Metal(object):
             sleep(60)
             cinfo('Checking at: %s' % datetime.utcnow())
 
-        cdebug('        Leave Provisioner::wait_for_system')
+        cdebug('        Leave Base::wait_for_system')
+
+    # install_hwe_kernel
+    #
+    def install_hwe_kernel(s):
+        cdebug("        Enter Base::install_hwe_kernel")
+        '''
+        On the SUT, configure it to use a HWE kernel and then install the HWE
+        kernel.
+        '''
+        print('Updating to the HWE kernel.')
+
+        # We add the x-swat ppa so we can pick up the development HWE kernel
+        # if we want.
+        #
+        if 'ppa' in HWE[s.hwe_series]:
+            s.ssh('sudo apt-get install --yes python-software-properties')
+            s.ssh('sudo apt-add-repository ppa:ubuntu-x-swat/q-lts-backport')
+
+        hwe_package = HWE[s.hwe_series]['package']
+        s.ssh('sudo apt-get update')
+        s.ssh('sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=1 apt-get install --yes %s' % (hwe_package))
+        cdebug("        Leave Base::install_hwe_kernel")
+
+    # reboot
+    #
+    def reboot(s, wait=True, quiet=False):
+        '''
+        Reboot the target system and wait 5 minutes for it to come up.
+        '''
+        cdebug('Enter Base::reboot')
+        s.ssh('sudo reboot', quiet=quiet)
+        if wait:
+            s.wait_for_target( timeout=10)
+        cdebug('Leave Base::reboot')
+
+# Metal
+#
+# Every SUT has a 'bare-metal' component. Most of the time that _is_ the SUT and there
+# is no other component. Sometimes the SUT is a VM which runs on 'bare-metal'.
+#
+class Metal(Base):
+    # __init__
+    #
+    def __init__(s, target, series, arch, hwe=False, debs=None, ppa=None, dry_run=False):
+        cdebug("Enter Metal::__init__")
+
+        Base.__init__(s, target, series, arch, hwe=False, debs=None, ppa=None, dry_run=False)
+
+        cdebug("Leave Metal::__init__")
 
     # target_verified
     #
@@ -222,6 +268,8 @@ class Metal(object):
         cdebug('        Leave MetalProvisioner::target_verified (%s)' % retval)
         return retval
 
+    # provision
+    #
     def provision(s):
         cdebug("Enter Metal::provision")
 
@@ -244,44 +292,15 @@ class Metal(object):
             cdebug('Leave MetalProvisioner::provision')
             return False
 
+        if s.hwe:
+            s.install_hwe_kernel()
+            s.reboot()
+
+        cdebug("Leave Metal::provision")
         return
 
 
 
-
-        # We network boot/install the bare-metal hw to get our desired configuration on it.
-        #
-        provisioner = Configuration[Configuration['systems'][s.target]['provisioner']]
-        user = provisioner['sut-user']
-        if provisioner['type'] == 'cobbler':
-            s.configure_orchestra(s.target)
-            s.cycle_power(s.target)
-        elif provisioner['type'] == 'maas':
-            maas = MAASCore(provisioner['profile'], provisioner['server'], provisioner['creds'])
-            mt = maas.node(s.target)
-            mt.stop_and_release()
-            mt.series(s.series)
-            mt.arch(s.arch)
-            mt.acquire_and_start()
-        else:
-            error('Unrecognised provisioning type (%s)' % provisioner['type'])
-            return False
-
-
-        # If we are installing via maas we are likely using the fastpath installer. That does
-        # it's own reboot after installation. There is a window where we could think the system
-        # is up but it's not really. Wait for a bit and then check for the system to be up
-        # again.
-        #
-        if provisioner['type'] == 'maas':
-            cinfo("Giving it 5 more minutes")
-            sleep(60 * 5) # Give it 5 minutes
-            s.wait_for_system(s.target, user, timeout=60)
-
-        if not s.target_verified(s.target, user, s.series, s.arch):
-            cinfo("Target verification failed.")
-            cdebug('Leave MetalProvisioner::provision')
-            return False
 
         # Once the initial installation has completed, we continue to install and update
         # packages so that we are testing the latest kernel, which is what we want.
