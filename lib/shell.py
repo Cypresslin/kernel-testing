@@ -131,6 +131,12 @@ class Shell():
     @classmethod
     def ssh(cls, target, cmd, user, additional_ssh_options='', quiet=False, ignore_result=False):
         debug("Enter Shell::ssh")
+        debug('                    target : \'%s\'' % target)
+        debug('                       cmd : \'%s\'' % cmd)
+        debug('                      user : \'%s\'' % user)
+        debug('    additional_ssh_options : \'%s\'' % additional_ssh_options)
+        debug('                     quiet : %s' % quiet)
+        debug('             ignore_result : %s' % ignore_result)
         ssh_options = cls.ssh_options + ' ' + additional_ssh_options
         if user:
             ssh_cmd = 'ssh %s %s@%s %s' % (ssh_options, user, target, cmd)
