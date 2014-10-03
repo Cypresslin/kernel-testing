@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 #
+from sys                                import stdout
 from os                                 import path
 from logging                            import error
 from datetime                           import datetime
@@ -28,7 +29,7 @@ class PS(object):
         sp = Configuration['systems'][target]['provisioner']
         p = Configuration[sp]
         for k in p:
-            print("        %16s : %s" % (k, p[k]))
+            cdebug("        %16s : %s" % (k, p[k]))
             setattr(s, k, p[k])
 
         if s.type == "cobbler":
@@ -66,7 +67,19 @@ class Base(object):
         s.debs = debs
         s.ppa  = ppa
         s.dry_run = dry_run
+        s.progress_dots = 0
+        s.progress_msg = ''
         cdebug("Leave Base::__init__")
+
+    # progress
+    #
+    def progress(s, msg):
+        dots = '.'
+        s.progress_dots += 1
+        prev_msg = s.progress_msg
+        s.progress_msg = dots + ' ' + msg
+        stdout.write(' ' + s.progress_msg + '\n')
+        stdout.flush()
 
     # ssh
     #
@@ -74,9 +87,8 @@ class Base(object):
     # the target system. This helper automatically provides the 'target' and 'user'
     # options to every ssh call.
     #
-    def ssh(s, cmd, options='', additional_ssh_options='', quiet=False, ignore_result=False):
+    def ssh(s, cmd, additional_ssh_options='', quiet=True, ignore_result=False):
         cdebug("Enter Base::ssh")
-        cdebug('    CMD: ssh %s %s %s@%s %s' % (Shell.ssh_options, additional_ssh_options, s.ps.sut_user, s.target, cmd))
         result, output = Shell.ssh(s.target, cmd, user=s.ps.sut_user, additional_ssh_options=additional_ssh_options, quiet=quiet, ignore_result=ignore_result)
         cdebug("Leave Base::ssh")
         return result, output
@@ -87,7 +99,6 @@ class Base(object):
     #
     def prossh(s, cmd, quiet=True, ignore_result=False, additional_ssh_options=''):
         cdebug("Enter Base::prossh")
-        cdebug('    CMD: ssh %s %s %s@%s %s' % (Shell.ssh_options, additional_ssh_options, s.ps.user, s.ps.server.server, cmd))
         result, output = Shell.ssh(s.ps.server, cmd, additional_ssh_options=additional_ssh_options, user=s.ps.user, quiet=quiet, ignore_result=ignore_result)
         cdebug("Leave Base::prossh")
         return result, output
@@ -95,15 +106,18 @@ class Base(object):
     # wait_for_target
     #
     def wait_for_target(s, timeout=10):
-        cdebug('        Enter Base::wait_for_system')
+        cdebug('        Enter Base::wait_for_system_ex')
 
         start = datetime.utcnow()
         cinfo('Starting waiting for \'%s\' at %s' % (s.target, start))
+
+        # Keep spinning until we either timeout or we get back some output from 'uname -vr'
+        #
         while True:
             try:
-                result, output = s.ssh('exit', additional_ssh_options='-qf')
-                if result == 0:
-                    cdebug("exit result is 0")
+                result, output = s.ssh('uname -vr')
+                if result == 0 and len(output) > 0:
+                    cdebug("             exit result is 0")
                     break
 
             except ShellError as e:
@@ -128,7 +142,7 @@ class Base(object):
             sleep(60)
             cinfo('Checking at: %s' % datetime.utcnow())
 
-        cdebug('        Leave Base::wait_for_system')
+        cdebug('        Leave Base::wait_for_system_ex')
 
     # install_hwe_kernel
     #
@@ -138,8 +152,6 @@ class Base(object):
         On the SUT, configure it to use a HWE kernel and then install the HWE
         kernel.
         '''
-        print('Updating to the HWE kernel.')
-
         # We add the x-swat ppa so we can pick up the development HWE kernel
         # if we want.
         #
@@ -154,15 +166,96 @@ class Base(object):
 
     # reboot
     #
-    def reboot(s, wait=True, quiet=False):
+    def reboot(s, wait=True, quiet=True):
         '''
         Reboot the target system and wait 5 minutes for it to come up.
         '''
-        cdebug('Enter Base::reboot')
+        cdebug('        Enter Base::reboot')
         s.ssh('sudo reboot', quiet=quiet)
         if wait:
-            s.wait_for_target( timeout=10)
-        cdebug('Leave Base::reboot')
+            s.wait_for_target()
+        cdebug('        Leave Base::reboot')
+
+    # enable_proposed
+    #
+    def enable_proposed(s):
+        '''
+        On the target system, enable the -proposed archive pocket for the
+        specified series.
+        '''
+        cdebug('        Enter Base::enable_proposed')
+        s.ssh('\'echo deb http://us.archive.ubuntu.com/ubuntu/ %s-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
+        cdebug('        Leave Base::enable_proposed')
+
+    # enable_ppa
+    #
+    def enable_ppa(s):
+        '''
+        On the target system, enable the -proposed archive pocket for the
+        specified series.
+        '''
+        cdebug('        Enter Base::enable_ppa')
+        s.ssh('\'sudo apt-get -y install software-properties-common\'')
+        s.ssh('\'sudo add-apt-repository -y %s\'' % (s.ppa))
+        cdebug('        Leave Base::enable_ppa')
+
+    # dist_upgrade
+    #
+    def dist_upgrade(s):
+        '''
+        Perform a update and dist-upgrade on a remote system.
+        '''
+        cdebug('        Enter Base::dist_upgrade')
+        s.ssh('sudo apt-get update')
+        s.ssh('sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=1 apt-get --yes dist-upgrade')
+        cdebug('        Leave Base::dist_upgrade')
+
+    # kernel_upgrade
+    #
+    def kernel_upgrade(s):
+        '''
+        Perform a update of the kernels on a remote system.
+        '''
+        cdebug('        Enter Base::kernel_upgrade')
+        s.ssh('sudo apt-get update')
+        s.ssh('sudo apt-get --yes install linux-image-generic linux-headers-generic')
+        cdebug('        Leave Base::kernel_upgrade')
+
+    # install_custom_debs
+    #
+    def install_custom_debs(s):
+        '''
+        On the SUT, download and install custome kernel debs for testing.
+        '''
+        cdebug('        Enter Base::install_custom_debs')
+        # Pull them down
+        #
+        s.ssh('wget -r -A .deb -e robots=off -nv -l1 --no-directories %s' % s.debs)
+
+        # Install everything
+        #
+        s.ssh('sudo dpkg -i *_all.deb *_%s.deb' % s.arch, ignore_result=True) # best effort
+        cdebug('        Leave Base::install_custom_debs')
+
+    # configure_passwordless_access
+    #
+    def configure_passwordless_access(s):
+        result, out = sh('scp -r $HOME/.ssh %s:' % (s.target), ignore_result=True)
+        if result > 0:
+            error('****')
+            error('**** Failed to scp .ssh to %s' % s.target)
+            error(out)
+            error('****')
+
+    # mainline_firmware_hack
+    #
+    def mainline_firmware_hack(s):
+        '''
+        Mainline kernels look for their firmware in /lib/firmware and might miss other required firmware.
+        '''
+        cdebug('        Enter Metal::mainline_firmware_hack')
+        s.ssh('sudo ln -s /lib/firmware/\$\(uname -r\)/* /lib/firmware/', ignore_result=True)
+        cdebug('        Leave Metal::mainline_firmware_hack')
 
 # Metal
 #
@@ -175,18 +268,18 @@ class Metal(Base):
     def __init__(s, target, series, arch, hwe=False, debs=None, ppa=None, dry_run=False):
         cdebug("Enter Metal::__init__")
 
-        Base.__init__(s, target, series, arch, hwe=False, debs=None, ppa=None, dry_run=False)
+        Base.__init__(s, target, series, arch, hwe=hwe, debs=debs, ppa=ppa, dry_run=dry_run)
 
         cdebug("Leave Metal::__init__")
 
-    # target_verified
+    # verify_target
     #
-    def target_verified(s):
+    def verify_target(s):
         '''
         Confirm that the target system has installed what was supposed to be installed. If we asked for
         one series but another is on the system, fail.
         '''
-        cdebug('        Enter MetalProvisioner::target_verified')
+        cdebug('        Enter Metal::verify_target')
         retval = False
 
         cdebug('            Verifying series:')
@@ -265,7 +358,48 @@ class Metal(Base):
                 cinfo("*** ERROR:")
                 cinfo("    Unable to find the kernel version in any line.")
 
-        cdebug('        Leave MetalProvisioner::target_verified (%s)' % retval)
+        cdebug('        Leave Metal::verify_target (%s)' % retval)
+        return retval
+
+    # verify_target
+    #
+    def verify_hwe_target(s):
+        cdebug('        Enter Metal::verify_hwe_target')
+        retval = True
+        # Are we running the series correct kernel?
+        #
+        cdebug('            Verifying hwe kernel:')
+        if retval:
+            retval = False
+            kv = None
+            result, kernel = s.ssh(r'uname -vr')
+            for line in kernel:
+                line = line.strip()
+                cdebug('                uname -vr : ' + line)
+
+                if 'Warning: Permanently aded' in line: continue
+                if line == '': continue
+
+                m = re.search('(\d+.\d+.\d+)-\d+-.* #(\d+)\~\S+-Ubuntu.*', line)
+                if m:
+                    kv = m.group(1)
+                cdebug('                kernel version : ' + kv)
+
+            if kv is not None:
+                installed_series = Ubuntu().lookup(kv)['name']
+
+                if installed_series == s.hwe_series:
+                    retval = True
+                else:
+                    cinfo("")
+                    cinfo("*** ERROR:")
+                    cinfo("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, installed_series))
+                    cinfo("")
+            else:
+                cinfo("")
+                cinfo("*** ERROR:")
+                cinfo("    Unable to find the kernel version in any line.")
+        cdebug('        Leave Metal::verify_hwe_target (%s)' % retval)
         return retval
 
     # provision
@@ -273,7 +407,9 @@ class Metal(Base):
     def provision(s):
         cdebug("Enter Metal::provision")
 
+        s.progress('Provisioner setup')
         s.ps.provision()
+        s.progress('Installing')
         s.wait_for_target(timeout=60) # Allow 30 minutes for network installation
 
         # If we are installing via maas we are likely using the fastpath installer. That does
@@ -284,51 +420,62 @@ class Metal(Base):
         if s.ps.type == 'maas':
             cinfo("Giving it 5 more minutes")
             sleep(60 * 5) # Give it 5 minutes
+            s.progress('Coming up')
             s.wait_for_target(timeout=60)
         cdebug("Leave Metal::provision")
 
-        if not s.target_verified():
+        s.progress('Verifying base install')
+        if not s.verify_target():
             cinfo("Target verification failed.")
             cdebug('Leave MetalProvisioner::provision')
             return False
 
+        # If we want an HWE kernel installed on the bare metal then at this point the correct
+        # LTS kernel has been installed and it's time to install the HWE kernel.
+        #
         if s.hwe:
+            s.progress('Installing HWE Kernel')
             s.install_hwe_kernel()
+            s.progress('Rebooting for HWE Kernel')
             s.reboot()
-
-        cdebug("Leave Metal::provision")
-        return
-
-
-
+            s.progress('Verifying HWE install')
+            if not s.verify_hwe_target():
+                cinfo("Target verification failed.")
+                cdebug('Leave MetalProvisioner::provision')
+                return False
 
         # Once the initial installation has completed, we continue to install and update
         # packages so that we are testing the latest kernel, which is what we want.
         #
-        if not s.ubuntu.is_development_series(s.series):
-            s.enable_proposed(s.target, s.series)
+        if not Ubuntu().is_development_series(s.series):
+            s.progress('Enabling Proposed')
+            s.enable_proposed()
         if s.ppa is not None:
-            s.enable_ppa(s.target, s.series)
-        if s.ubuntu.is_development_series(s.series):
-            s.kernel_upgrade(s.target)
+            s.progress('Enabling PPA')
+            s.enable_ppa()
+        if Ubuntu().is_development_series(s.series):
+            s.progress('Kernel Upgrade')
+            s.kernel_upgrade()
         else:
-            s.dist_upgrade(s.target)
-        s.mainline_firmware_hack(s.target)
-
-        if s.hwe:
-            s.install_hwe_kernel(s.target)
+            s.progress('Dist Upgrade')
+            s.dist_upgrade()
+        s.mainline_firmware_hack()
 
         if s.debs is not None:
-            s.install_custom_debs(s.target)
+            s.progress('Install custom debs')
+            s.install_custom_debs()
 
-        if provisioner['type'] == "cobbler":
-            s.configure_passwordless_access(s.target)
+        if s.ps.type == "cobbler":
+            s.progress('Configure passwordless access')
+            s.configure_passwordless_access()
 
         # We want to reboot to pick up any new kernel that we would have installed due
         # to either the dist-upgrade that was performed, or the install of the hwe
         # kernel.
         #
         s.reboot(s.target)
+        s.progress('That\'s All Folks!')
+
         cdebug("Leave Metal::provision")
 
 # SUT
