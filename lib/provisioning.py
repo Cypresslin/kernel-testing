@@ -477,6 +477,7 @@ class Metal(Base):
         s.progress('That\'s All Folks!')
 
         cdebug("Leave Metal::provision")
+        return True
 
 # SUT
 #
