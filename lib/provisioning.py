@@ -50,7 +50,7 @@ class PS(object):
 class Base(object):
     # __init__
     #
-    def __init__(s, target, series, arch, hwe=False, debs=None, ppa=None, dry_run=False):
+    def __init__(s, target, series, arch, hwe=False, xen=False, debs=None, ppa=None, dry_run=False):
         cdebug("Enter Base::__init__")
 
         # If we are installing a HWE kernel, we want to install the correct series first.
@@ -64,6 +64,7 @@ class Base(object):
         s.series = series
         s.arch = arch
         s.hwe = hwe
+        s.xen = xen
         s.debs = debs
         s.ppa  = ppa
         s.dry_run = dry_run
@@ -147,11 +148,11 @@ class Base(object):
     # install_hwe_kernel
     #
     def install_hwe_kernel(s):
-        cdebug("        Enter Base::install_hwe_kernel")
         '''
         On the SUT, configure it to use a HWE kernel and then install the HWE
         kernel.
         '''
+        cdebug("        Enter Base::install_hwe_kernel")
         # We add the x-swat ppa so we can pick up the development HWE kernel
         # if we want.
         #
@@ -163,6 +164,28 @@ class Base(object):
         s.ssh('sudo apt-get update')
         s.ssh('sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=1 apt-get install --yes %s' % (hwe_package))
         cdebug("        Leave Base::install_hwe_kernel")
+
+    # install_xen
+    #
+    def install_xen(s):
+        cdebug("        Enter Base::install_xen")
+        if s.series == 'lucid':
+            cdebug("            Can't do lucid")
+        elif s.series == 'precise':
+            cdebug("            Doing it the hard way")
+            # Do it the hard way
+            #
+            s.ssh('sudo apt-get update')
+            s.ssh('sudo apt-get install --yes xen-hypervisor', ignore_result=True)
+            s.ssh(r'sudo sed -i \'s/GRUB_DEFAULT=.*\\+/GRUB_DEFAULT=\"Xen 4.1-amd64\"/\' /etc/default/grub')
+            s.ssh(r'sudo sed -i \'s/GRUB_CMDLINE_LINUX=.*\\+/GRUB_CMDLINE_LINUX=\"apparmor=0\"/\' /etc/default/grub')
+            s.ssh(r'sudo sed -i \'s/GRUB_CMDLINE_LINUX_DEFAULT=\"\"/GRUB_CMDLINE_LINUX_DEFAULT=\"\"\\nGRUB_CMDLINE_XEN=\""dom0_mem=1G,max:1G dom0_max_vcpus=1\""/\' /etc/default/grub')
+            s.ssh('sudo update-grub')
+        else:
+            cdebug("            Doing it the easy way")
+            s.ssh('sudo apt-get update')
+            s.ssh('sudo apt-get install --yes xen-hypervisor-amd64', ignore_result=True)
+        cdebug("        Leave Base::install_xen")
 
     # reboot
     #
@@ -265,10 +288,10 @@ class Base(object):
 class Metal(Base):
     # __init__
     #
-    def __init__(s, target, series, arch, hwe=False, debs=None, ppa=None, dry_run=False):
+    def __init__(s, target, series, arch, hwe=False, xen=False, debs=None, ppa=None, dry_run=False):
         cdebug("Enter Metal::__init__")
 
-        Base.__init__(s, target, series, arch, hwe=hwe, debs=debs, ppa=ppa, dry_run=dry_run)
+        Base.__init__(s, target, series, arch, hwe=hwe, xen=xen, debs=debs, ppa=ppa, dry_run=dry_run)
 
         cdebug("Leave Metal::__init__")
 
@@ -361,7 +384,7 @@ class Metal(Base):
         cdebug('        Leave Metal::verify_target (%s)' % retval)
         return retval
 
-    # verify_target
+    # verify_hwe_target
     #
     def verify_hwe_target(s):
         cdebug('        Enter Metal::verify_hwe_target')
@@ -391,15 +414,51 @@ class Metal(Base):
                 if installed_series == s.hwe_series:
                     retval = True
                 else:
-                    cinfo("")
-                    cinfo("*** ERROR:")
-                    cinfo("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, installed_series))
-                    cinfo("")
+                    error("")
+                    error("*** ERROR:")
+                    error("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, installed_series))
+                    error("")
             else:
-                cinfo("")
-                cinfo("*** ERROR:")
-                cinfo("    Unable to find the kernel version in any line.")
+                error("")
+                error("*** ERROR:")
+                error("    Unable to find the kernel version in any line.")
         cdebug('        Leave Metal::verify_hwe_target (%s)' % retval)
+        return retval
+
+    # verify_xen_target
+    #
+    def verify_xen_target(s):
+        cdebug('        Enter Metal::verify_xen_target')
+        retval = False
+
+        if s.series == 'lucid':
+            cdebug("            Can't do lucid")
+
+        elif s.series == 'precise':
+            result, output = s.ssh('sudo xm list')
+            for line in output:
+                line = line.strip()
+                if 'Domain-0' in line:
+                    retval = True
+                    break
+
+            pass
+
+        else:
+
+            result, output = s.ssh('sudo xl list')
+            for line in output:
+                line = line.strip()
+                if 'Domain-0' in line:
+                    retval = True
+                    break
+
+        if not retval:
+            error("")
+            error("Failed to find the Domain-0 domain.")
+            error("")
+
+        cdebug('        Leave Metal::verify_xen_target (%s)' % retval)
         return retval
 
     # provision
@@ -419,7 +478,7 @@ class Metal(Base):
         #
         if s.ps.type == 'maas':
             cinfo("Giving it 5 more minutes")
-            sleep(60 * 5) # Give it 5 minutes
+            sleep(60 * 3) # Give it 5 minutes
             s.progress('Coming up')
             s.wait_for_target(timeout=60)
         cdebug("Leave Metal::provision")
@@ -427,7 +486,7 @@ class Metal(Base):
         s.progress('Verifying base install')
         if not s.verify_target():
             cinfo("Target verification failed.")
-            cdebug('Leave MetalProvisioner::provision')
+            cdebug('Leave Metal::provision')
             return False
 
         # If we want an HWE kernel installed on the bare metal then at this point the correct
@@ -441,7 +500,18 @@ class Metal(Base):
             s.progress('Verifying HWE install')
             if not s.verify_hwe_target():
                 cinfo("Target verification failed.")
-                cdebug('Leave MetalProvisioner::provision')
+                cdebug('Leave Metal::provision')
+                return False
+
+        if s.xen:
+            s.progress('Installing Xen Kernel')
+            s.install_xen()
+            s.progress('Rebooting for Xen Kernel')
+            s.reboot()
+            s.progress('Verifying Xen install')
+            if not s.verify_xen_target():
+                cinfo("Target verification failed.")
+                cdebug('Leave Metal::provision')
                 return False
 
         # Once the initial installation has completed, we continue to install and update

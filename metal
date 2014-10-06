@@ -90,7 +90,7 @@ class MetalApp(object):
         retval = 1
         try:
             s.validate_args(args)
-            metal = Metal(args.name, args.series, args.arch, args.hwe, args.debs_url, ppa=args.ppa, dry_run=args.dry_run)
+            metal = Metal(args.name, args.series, args.arch, hwe=args.hwe, xen=args.xen, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run)
             if metal.provision():
                 retval = 0
 
@@ -172,9 +172,10 @@ examples:
 
     parser.add_argument('--series',   required=True,  help='The series that is to be installed on the SUT. lts-hwe-<series> denotes that a lts-hwe kernel is to be run on the appropriate lts series.')
     parser.add_argument('--arch',     required=False,  default='amd64', choices=['amd64', 'i386', 'arm64', 'ppc64el'], help='The architecture (amd64, i386, arm64 or ppc64el) that is to be installed on the SUT. (amd64 is the default)')
-    parser.add_argument('---hwe',      required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
     parser.add_argument('--debs-url', required=False, default=None, help='A pointer to a set of kernel deb packages that are to be installed.')
     parser.add_argument('--ppa',          required=False, default=None, help='A ppa name to update packages from')
+    parser.add_argument('--hwe',      required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
+    parser.add_argument('--xen',      required=False, action='store_true', default=False, help='The bare-metal should be a Xen host.')
 
     parser.add_argument('target', metavar='TARGET', type=str, nargs=1, help='The name of the system to be provisioned.')
 
