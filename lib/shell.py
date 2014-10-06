@@ -144,14 +144,18 @@ class Shell():
             ssh_cmd = 'ssh %s %s %s' % (ssh_options, target, cmd)
         result = 0
         output = ''
-        #print("ssh: '%s'" % ssh_cmd)
+        debug("                  ssh_cmd : '%s'" % ssh_cmd)
         if cls._dry_run:
             debug('[dry-run] %s' % (ssh_cmd))
         else:
             try:
                 result, output = sh(ssh_cmd, quiet=quiet, ignore_result=ignore_result)
+                debug("+++ Completed")
+                debug(output)
 
             except ShellError as e:
+                debug("+++ ShellError")
+                debug(output)
                 if result != 0 and not ignore_result:
                     # Wait for just a few seconds and try it again.
                     #
@@ -162,6 +166,8 @@ class Shell():
                     if result != 0 and not ignore_result:
                         sleep(15)
                         raise ShellError(ssh_cmd, result, output)
+            except:
+                debug("+++ Some other exception")
 
         debug("Leave Shell::ssh")
         return result, output
