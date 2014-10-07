@@ -77,7 +77,7 @@ Configuration = {
                     "address"  : "10.10.10.200",
                     "user"     : "admin",
                     "password" : "admin",
-                    "outlet"   : 2
+                    "outlet"   : 1
                 }
             ],
             "role" : "testing",
@@ -94,7 +94,7 @@ Configuration = {
                     "address"  : "10.10.10.200",
                     "user"     : "admin",
                     "password" : "admin",
-                    "outlet"   : 1
+                    "outlet"   : 0
                 }
             ],
             "role" : "testing",
