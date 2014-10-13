@@ -301,7 +301,7 @@ system: The name of the lab system that is to be used for the testing. The
             #
             tests = SRU_TestsList
             for t in tests:
-                if 'iozone' in t:
+                if 'ubuntu_fs_fio_perf' in t:
                     jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t)
                 else:
                     jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['testing'], series_decoration='SRU', tests=t)
@@ -339,11 +339,9 @@ system: The name of the lab system that is to be used for the testing. The
         #
         tests = SRU_TestsList
         for t in tests:
-            if 'iozone' in t:
-                #jobs = s.create_test_jobs(props['Series'], s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t, ppa='ppa:canonical-kernel-team/ppa')
+            if 'ubuntu_fs_fio_perf' in t:
                 jobs = s.create_test_jobs(props['Series'], s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t, hwe=hwe)
             else:
-                #jobs = s.create_test_jobs(props['Series'], s.default_arches, s.sut_pool['testing'], series_decoration='SRU', tests=t, ppa='ppa:canonical-kernel-team/ppa')
                 jobs = s.create_test_jobs(props['Series'], s.default_arches, s.sut_pool['testing'], series_decoration='SRU', tests=t, hwe=hwe)
             if jobs is not None:
                 info('The following jenkins jobs were created')
