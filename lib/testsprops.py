@@ -28,6 +28,17 @@ TestProfiles = {
             ],
         },
 
+    'ubuntu_seccomp' : {
+        'packages' : {
+            'common' : [
+                'git'
+                ],
+            },
+        'series-blacklist' : [
+            'lucid', 'precise', 'quantal', 'saucy',
+            ],
+        },
+
     'ubuntu_kvm_unit_tests' : {
         'packages' : {
             'common' : [
