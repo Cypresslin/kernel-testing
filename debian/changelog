@@ -1,3 +1,7 @@
+ubuntu-kernel-tests (0.1.3-1) unstable; urgency=low
+
+ * [lib/testsprops.py] Add a ubuntu_stress_ng test
+
 ubuntu-kernel-tests (0.1.2-1) unstable; urgency=low
 
  * [lib/testsprops.py] Add ubuntu_seccomp to the QA group
