@@ -1,3 +1,9 @@
+ubuntu-kernel-tests (0.1.2-1) unstable; urgency=low
+
+ * [lib/testsprops.py] Add ubuntu_seccomp to the QA group
+ * [lib/testsprops.py] Added Kees' seccomp tests
+ * [ukb-mail-handler] Handle the fs tests correctly
+
 ubuntu-kernel-tests (0.1.1-1) unstable; urgency=low
 
  * [lib/testsprops.py] More dependencies for virt tests
