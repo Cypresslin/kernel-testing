@@ -31,7 +31,18 @@ TestProfiles = {
     'ubuntu_seccomp' : {
         'packages' : {
             'common' : [
-                'git'
+                'build-essential', 'gcc-multilib', 'gdb', 'git'
+                ],
+            },
+        'series-blacklist' : [
+            'lucid', 'precise', 'quantal', 'saucy',
+            ],
+        },
+
+    'ubuntu_stress_ng' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'gcc-multilib', 'gdb', 'bzr'
                 ],
             },
         'series-blacklist' : [
