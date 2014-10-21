@@ -288,7 +288,7 @@ TestProfiles = {
 TestCollections = {
     # The set of tests that Ubuntu Engineering QA run.
     #
-    'qa' : ['ubuntu_ecryptfs', 'ubuntu_qrt_kernel_hardening', 'ubuntu_qrt_kernel_panic', 'ubuntu_qrt_kernel_security', 'ubuntu_qrt_kernel_aslr_collisions', 'ubuntu_qrt_apparmor', 'ubuntu_lxc'],
+    'qa' : ['ubuntu_ecryptfs', 'ubuntu_qrt_kernel_hardening', 'ubuntu_qrt_kernel_panic', 'ubuntu_qrt_kernel_security', 'ubuntu_qrt_kernel_aslr_collisions', 'ubuntu_qrt_apparmor', 'ubuntu_lxc', 'ubuntu_seccomp'],
 
     # This is the set of tests that will run if no KERNEL_TEST_LIST variable is set.
     # (QA runs this set)
