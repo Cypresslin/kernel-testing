@@ -28,6 +28,17 @@ TestProfiles = {
             ],
         },
 
+    'docker' : {
+        'packages' : {
+            'common' : [
+                'docker.io', 'gdb'
+                ],
+            },
+        'series-blacklist' : [
+            'lucid', 'precise', 'quantal', 'saucy',
+            ],
+        },
+
     'ubuntu_seccomp' : {
         'packages' : {
             'common' : [
