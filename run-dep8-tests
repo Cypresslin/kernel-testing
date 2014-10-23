@@ -1,0 +1,35 @@
+#!/bin/sh
+set -e
+
+# Pull the sources down and get them put into the autotest tree where
+# they belong.
+#
+git clone git://kernel.ubuntu.com/ubuntu/autotest
+git clone git://kernel.ubuntu.com/ubuntu/autotest-client-tests
+git clone git://kernel.ubuntu.com/ubuntu/autotest-client-virt-tests
+git clone git://kernel.ubuntu.com/ubuntu/autotest-docker
+
+
+rmdir autotest/client/tests/
+mv autotest-client-tests/ autotest/client/tests
+
+rmdir autotest/client/tests/virt
+mv autotest-client-virt-tests/ autotest/client/tests/virt
+
+rmdir autotest/client/tests/docker
+mv autotest-docker/ autotest/client/tests/docker
+
+
+# Run the tests that we care about
+#
+autotest/client/autotest-local autotest/client/tests/ubuntu_seccomp/control
+
+# Collect the artifacts
+#
+tar cJf $ADT_ARTIFACTS/results.tar.xz autotest/client/results
+
+# Determine if there were any errors
+#
+if grep -q FAIL autotest/client/results/default/debug/client.DEBUG; then
+    exit 1
+fi
