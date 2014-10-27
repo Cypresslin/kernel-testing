@@ -308,6 +308,10 @@ TestProfiles = {
 # Test Collections may be defined, and will run the list of autotest tests in them
 #
 TestCollections = {
+    # These are the tests that get run as DEP8 tests
+    #
+    'dep8' : ['ubuntu_seccomp', 'ubuntu_stress_ng'],
+
     # The set of tests that Ubuntu Engineering QA run.
     #
     'qa' : ['ubuntu_ecryptfs', 'ubuntu_qrt_kernel_hardening', 'ubuntu_qrt_kernel_panic', 'ubuntu_qrt_kernel_security', 'ubuntu_qrt_kernel_aslr_collisions', 'ubuntu_qrt_apparmor', 'ubuntu_lxc', 'ubuntu_seccomp'],
