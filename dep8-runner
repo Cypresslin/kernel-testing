@@ -1,0 +1,387 @@
+#!/usr/bin/env python
+#
+
+from os                                 import getenv, path, makedirs, environ
+from sys                                import exit
+from shutil                             import rmtree, copytree
+from logging                            import debug, error, basicConfig, DEBUG, WARNING
+from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
+import json
+
+from lib.testsprops                     import TestProfiles, TestCollections
+from lib.test_attributes                import TestAttributes
+from lib.shell                          import sh, ShellError, ShellTimeoutError
+
+# ErrorExit
+#
+class ErrorExit(Exception):
+    """
+    If an error message has already been displayed and we want to just exit the app, this
+    exception is raised.
+    """
+    pass
+
+# Runner
+#
+class Runner():
+    """
+    """
+
+    # __init__
+    #
+    def __init__(s, args):
+        s.args = args
+        s.__release_name = None
+        s.__scratch_needed = None
+        s.test_list = None
+        s.autotest_client_root = 'autotest/client'
+        s.autotest_exe_path = path.join(s.autotest_client_root, 'autotest-local')
+        s.autotest_tests_root = path.join(s.autotest_client_root, 'tests')
+        s.saved_results_root = 'kernel-test-results'
+        s.autotest_results_root = path.join(s.autotest_client_root, 'results', 'default')
+        s.per_test_logs_root = ''
+        s.per_test_results_root = ''
+
+    # tests_list_expand
+    #
+    def tests_list_expand(s):
+        # The list of tests or the group(s) of tests that we are to
+        # run is passed in on the command line.
+        #
+        debug('Expanding test list')
+        s.tests_list = s.args.tests.split(',')
+        fully_expanded = False
+        while not fully_expanded:
+            fully_expanded = True
+            neo = []
+            for t in s.tests_list:
+                if t in TestCollections:
+                    for c in TestCollections[t]:
+                        if c not in neo:
+                            neo.append(c)
+                        fully_expanded = False
+                else:
+                    if t not in neo:
+                        neo.append(t)
+            s.tests_list = neo
+        debug('    test list: %s' % s.tests_list)
+
+    # tests_list_verify
+    #
+    def tests_list_verify(s):
+        errors = False
+
+        # Verify that all the tests in the list are ones that
+        # we know about.
+        #
+        for t in s.tests_list:
+            if t not in TestProfiles:
+                error('Test \'%s\' is not recognized.' % t)
+                errors = True
+
+
+        # Verify that certain tests have not been blaclisted for the series
+        # that we are currently running.
+        #
+        valid_tests = []
+        for t in s.tests_list:
+            if 'series-blacklist' in TestProfiles[t]:
+                if s.release_name in TestProfiles[t]['series-blacklist']:
+                    error('Test \'%s\' has been blacklisted for this series' % t)
+                else:
+                    valid_tests.append(t)
+            else:
+                valid_tests.append(t)
+        s.tests_list = valid_tests
+
+        # Verify that the tests are valid, autotest tests.
+        #
+        if not path.exists(s.autotest_tests_root):
+            error('The autotest client tests were not found (%s).' % (s.autotest_tests_root))
+        else:
+            for t in s.tests_list:
+                if not path.exists(path.join(s.autotest_tests_root, t)):
+                    error('The autotest test (%s) is not available in the autotest tree (%s).' % (t, s.autotest_tests_root))
+                    errors = True
+
+        if errors:
+            s.tests_list = None
+            raise ErrorExit()
+
+    # release_name
+    #
+    @property
+    def release_name(s):
+        if s.__release_name is None:
+            status, std_out = sh("lsb_release -a", quiet=True)
+            for line in std_out:
+                parts = line.split(":")
+                if parts[0] == "Codename":
+                    s.__release_name = parts[1].strip()
+                    debug("Release name is %s" % s.__release_name)
+                    break
+        return s.__release_name
+
+    # scratch_needed
+    #
+    @property
+    def scratch_needed(s):
+        if s.__scratch_needed is None:
+            s.__scratch_needed = False
+            for t in s.tests_list:
+                if 'scratch' in TestProfiles[t]:
+                    s.__scratch_needed = True
+        debug('scratch needed: %s' % s.__scratch_needed)
+        return s.__scratch_needed
+
+    # mounts
+    #
+    def mounts(s):
+        status, retval = sh('mount')
+        return retval
+
+    # root_device_prefix
+    #
+    def root_device_prefix(s):
+        retval='bogus'
+        for line in s.mounts():
+            if ' / ' in line:
+                retval = line.split()[0].replace('/dev/', '')[0:2]
+                debug('The root drive prefix is: %s' % retval)
+        return retval
+
+    # test_list_determine_control_files
+    #
+    def test_list_determine_control_files(s):
+        for t in s.tests_list:
+            debug("Determining correct control file for test: %s" % t)
+
+            # Is there control file named 'control.ubuntu.<series>'?
+            #
+            fid = path.join(s.autotest_tests_root, t, 'control.ubuntu.%s' % s.release_name)
+            if path.exists(fid):
+                TestProfiles[t]['control file'] = fid
+                debug("    using: %s" % fid)
+                continue
+
+            # Is there a control file named 'control.ubuntu'?
+            #
+            fid = path.join(s.autotest_tests_root, t, 'control.ubuntu')
+            if path.exists(fid):
+                TestProfiles[t]['control file'] = fid
+                debug("    using: %s" % fid)
+                continue
+
+            # Is there a control file named 'control'?
+            #
+            fid = path.join(s.autotest_tests_root, t, 'control')
+            if path.exists(fid):
+                TestProfiles[t]['control file'] = fid
+                debug("    using: %s" % fid)
+                continue
+
+            # No control file was found, this is an error.
+            #
+            error('Unable to find any control file for the autotest test (%s).' % t)
+            raise ErrorExit()
+
+    # per_test_setup
+    #
+    def per_test_setup(s, test):
+        tp = path.join(s.saved_results_root, test)
+        if path.exists(tp):
+            rmtree(tp)
+
+        s.per_test_logs_root = path.join(tp, 'logs')
+        if not path.exists(s.per_test_logs_root):
+            makedirs(s.per_test_logs_root)
+
+        s.per_test_results_root = path.join(tp, 'results')
+        #if not path.exists(s.per_test_results_root):
+        #    makedirs(s.per_test_results_root)
+
+    # gather_pretest_information
+    #
+    def gather_pretest_information(s, test):
+        pass
+
+    # gather_posttest_information
+    #
+    def gather_posttest_information(s, test):
+        pass
+
+    # gather_test_results
+    #
+    def gather_test_results(s, test):
+        user = getenv('USER')
+        result, output = sh('sudo chown -R %s.%s %s' % (user, user, s.autotest_results_root))
+        result, output = sh(r'sudo find %s -type d | xargs chmod +x' % (s.autotest_results_root))
+
+        copytree(s.autotest_results_root, s.per_test_results_root)
+
+    # install_required_packages
+    #
+    def install_required_packages(s):
+        deps = []
+        for t in s.tests_list:
+            if 'packages' in TestProfiles[t]:
+                if 'common' in TestProfiles[t]['packages']:
+                    for pkg in TestProfiles[t]['packages']['common']:
+                        deps.append(pkg)
+                if s.release_name in TestProfiles[t]['packages']:
+                    for pkg in TestProfiles[t]['packages'][s.release_name]:
+                        deps.append(pkg)
+            else:
+                debug('No package dependencies for \'%s\'' % t)
+
+        sh('sudo apt-get -fy install -fy')
+        for dep in deps:
+            debug('Installing: \'%s\'' % dep)
+            sh('sudo apt-get install -fy %s' % dep)
+
+    # autotest
+    #
+    def autotest(s, test):
+        '''
+        '''
+        retval = 0
+
+        # Build up the shell command that we are going to run.
+        #
+        cmd = 'AUTOTEST_PATH=%s sudo -E %s' % (path.join(path.expanduser('~'), 'autotest'), s.autotest_exe_path)
+        if 'atargs' in TestProfiles[test]:
+            cmd += ' --args="'
+            for key, value in TestProfiles[test]['atargs'].iteritems():
+                cmd += '%s=%s ' % (key, value)
+            cmd = cmd.strip() # Remove that last space character
+            cmd += '"'
+
+        cmd += ' --verbose %s' % TestProfiles[test]['control file']
+
+        # Run the command
+        #
+        result, output = sh(cmd)
+        for l in output:
+            if 'END ERROR' in l:
+                retval = -1
+
+        # Run the test results munger so that they are in a format that
+        # we like.
+        #
+        result, output = sh('sudo %s %s > %s' % (path.join(s.autotest_client_root, 'tools', 'results2junit.py'), s.autotest_results_root, path.join(s.saved_results_root, 'autotest-results.%s.xml' % test)))
+
+        return retval
+
+    # gather_test_attributes
+    #
+    def gather_test_attributes(s):
+        attributes = TestAttributes(s.args)
+        attributes_path = path.join(s.saved_results_root, 'test-attributes.json')
+        with open(attributes_path, 'w') as f:
+            f.write(json.dumps(attributes.gather(), sort_keys=True, indent=4))
+        sh('sudo cat %s' % attributes_path)
+
+    # main
+    #
+    def main(s):
+        debug('Enter: main')
+        retval = 1
+        try:
+            s.release_name     # Ran here because if --debug set it's handy to know the release name right away
+            s.tests_list_expand()
+            s.tests_list_verify()
+
+            # Some tests may require environment variables bet set. Do that.
+            #
+            for t in s.tests_list:
+                if 'env' in TestProfiles[t]:
+                    for k, v in TestProfiles[t]['env']:
+                        environ[k] = v
+
+            # Determine which control file to use for the test. This is based on several things.
+            #
+            s.test_list_determine_control_files()
+
+            s.install_required_packages()
+
+            # Create the test-results directory where everything we care about will end
+            # up.
+            if not path.exists(s.saved_results_root):
+                makedirs(s.saved_results_root)
+
+            s.gather_test_attributes()
+
+            retval = 0
+
+            # Run the tests
+            #
+            for t in s.tests_list:
+                s.per_test_setup(t)
+
+                # 1. Gather pre-test log files
+                s.gather_pretest_information(t)
+
+                # 2. Run the test
+                if s.autotest(t) == -1:
+                    retval = -1
+
+                # 3. Copy all the results to the results directory so they are not overwritten
+                #    by subsequent test runts.
+                #
+                s.gather_test_results(t)
+
+                # 4. Gather post-test log files
+                s.gather_posttest_information(t)
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            pass
+
+        #except KeyError:
+        #    import json
+        #    print(json.dumps(testsprops.profiles, sort_keys=True, indent=4))
+
+        except ShellTimeoutError as e:
+            error('The command (%s) timed out. (%d)' % (e.cmd, e.timeout))
+            raise ErrorExit()
+
+        except ShellError as e:
+            error('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
+            for l in e.output:
+                error(l.strip())
+            raise ErrorExit
+
+        debug('Leave: main')
+        return(retval)
+
+if __name__ == '__main__':
+    app_description = '''
+    '''
+
+    app_epilog = '''
+    '''
+
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--debug',  action='store_true', default=False, help='Verbose output.')
+    parser.add_argument('--tests',  type=str, default="dep8", help='The tests that are to be run.')
+    args = parser.parse_args()
+
+    if args.debug:
+        LOGLEVEL = DEBUG
+    else:
+        LOGLEVEL = WARNING
+    basicConfig(level=LOGLEVEL, format="%(levelname)s - %(message)s")
+
+    status = 1
+    try:
+        app = Runner(args)
+        status = app.main()
+    except ErrorExit:
+        error("")
+        error("Due to the above error(s), this script is unable to continue and is terminating.")
+        error("")
+    exit(status)
+
+# vi:set ts=4 sw=4 expandtab syntax=python:
+
