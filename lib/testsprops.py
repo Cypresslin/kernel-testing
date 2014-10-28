@@ -53,7 +53,18 @@ TestProfiles = {
     'ubuntu_stress_ng' : {
         'packages' : {
             'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'bzr'
+                'build-essential', 'gcc-multilib', 'gdb', 'git'
+                ],
+            },
+        'series-blacklist' : [
+            'lucid', 'precise', 'quantal', 'saucy',
+            ],
+        },
+
+    'ubuntu_futex' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'gcc-multilib', 'gdb', 'git'
                 ],
             },
         'series-blacklist' : [
