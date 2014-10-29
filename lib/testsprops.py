@@ -72,6 +72,17 @@ TestProfiles = {
             ],
         },
 
+    'ubuntu_unionmount_overlayfs_suite' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'gcc-multilib', 'gdb', 'git'
+                ],
+            },
+        'series-blacklist' : [
+            'lucid', 'precise', 'quantal', 'saucy',
+            ],
+        },
+
     'ubuntu_kvm_unit_tests' : {
         'packages' : {
             'common' : [
