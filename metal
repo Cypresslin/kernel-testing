@@ -5,12 +5,21 @@ from os                                 import getenv, path
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import error, info, basicConfig, DEBUG, WARNING, INFO
 
+try:
+    from lib.configuration                  import Configuration
+except ImportError as e:
+    print("")
+    print("*** Error: Failed to import lib.configuration. Do you need to create the symlink from your")
+    print("           local configuration-<mine>.py file to lib/configuration.py?")
+    print("")
+    exit(-1)
+
 from lib.log                            import cdebug, Clog, cerror
 from lib.shell                          import ShellError, ShellTimeoutError, sh, ssh, Shell
 from lib.provisioning                   import MetalProvisioner, VirtualProvisioner, Metal, PS
 from lib.exceptions                     import ErrorExit
 from lib.hwe                            import HWE
-from lib.configuration                  import Configuration
+
 from lib.ubuntu                         import Ubuntu
 
 # MetalApp
