@@ -2,11 +2,23 @@
 #
 
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
-from logging                            import basicConfig, DEBUG, WARNING
+from logging                            import basicConfig, DEBUG, INFO
+from lib.termcolor                      import colored
+
+try:
+    from lib.configuration                  import Configuration
+except ImportError as e:
+    print("")
+    print("*** Error: Failed to import lib.configuration. Do you need to create the symlink from your")
+    print("           local configuration-<mine>.py file to lib/configuration.py?")
+    print("")
+    exit(-1)
 
 from lib.log                            import cdebug, Clog, cerror
-from lib.configuration                  import Configuration
 from lib.testsprops                     import TestProfiles, TestCollections
+
+def p(s, c='white'):
+    print(colored(s, c))
 
 # Info
 #
@@ -28,6 +40,25 @@ class Info():
             r = Configuration['systems'][s]
             r['name'] = s
             print("%(name)-15s %(provisioner)-12s %(role)-12s %(locked)-6s" % r)
+
+        p('\n----------------------------------------------------------------------------------------\n', 'cyan')
+
+        for s in sorted(Configuration['systems']):
+            cfg = Configuration['systems'][s]
+            p(s, 'green')
+            p(colored('            Arches: ', 'cyan') + ' '.join(cfg['arch']))
+            p(colored('       Povisioning: ', 'cyan') + Configuration[cfg['provisioner']]['type'])
+            p(colored('    Jenkins Server: ', 'cyan') + Configuration[cfg['jenkins server']]['server_url'])
+            p(colored('       Mac Address: ', 'cyan') + cfg['mac address'])
+            p(colored('              Role: ', 'cyan') + cfg['role'])
+            p(colored('            Locked: ', 'cyan') + str(cfg['locked']).title())
+            p(colored('             Power: ', 'cyan'))
+            for pow in cfg['power']:
+                if pow['type'] is 'cdu':
+                    p(colored('                  type: ', 'cyan') + pow['type'] + ' %s %s %s %s %s %s %s %s' % (colored('address:', 'cyan'), pow['address'], colored('port:', 'cyan'), pow['port'], colored('user:', 'cyan'), pow['user'], colored('pass:', 'cyan'), pow['password']))
+                elif pow['type'] is 'ipmi':
+                    p(colored('                  type: ', 'cyan') + pow['type'] + ' %s %s %s %s %s %s' % (colored('address:', 'cyan'), pow['address'], colored('username:', 'cyan'), pow['username'], colored('passwd:', 'cyan'), pow['passwd']))
+            p('')
 
     # tests
     #
@@ -104,7 +135,7 @@ Examples:
         level = DEBUG
         Clog.dbg = True
     else:
-        level = WARNING
+        level = INFO
     basicConfig(filename=None, level=level, format="%(levelname)s - %(message)s")
 
     app = Info(args)
