@@ -112,7 +112,7 @@ Configuration = {
                 {
                     "type"     : "cdu",
                     "address"  : "10.98.4.33",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                     "port"     : "gonzo"
                 },
@@ -130,14 +130,14 @@ Configuration = {
                     "type" : "cdu",
                     "address" : "10.98.4.32",
                     "port" : "fozzie_ps1",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 },
                 {
                     "type" : "cdu",
                     "address" : "10.98.4.33",
                     "port" : "fozzie_ps2",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 }
             ],
@@ -154,14 +154,14 @@ Configuration = {
                     "type" : "cdu",
                     "address" : "10.98.4.32",
                     "port" : "rizzo_ps1",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 },
                 {
                     "type" : "cdu",
                     "address" : "10.98.4.33",
                     "port" : "rizzo_ps2",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 }
             ],
@@ -177,8 +177,8 @@ Configuration = {
                 {
                     "type" : "cdu",
                     "address" : "10.98.4.30",
-                    "port" : "waldorf",
-                    "user"     : "kernel",
+                    "port" : "waldorf_ps1",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 }
             ],
@@ -195,14 +195,14 @@ Configuration = {
                     "type" : "cdu",
                     "address" : "10.98.4.30",
                     "port" : "statler_ps1",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 },
                 {
                     "type" : "cdu",
                     "address" : "10.98.4.31",
                     "port" : "statler_ps2",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 }
             ],
@@ -219,14 +219,14 @@ Configuration = {
                     "type" : "cdu",
                     "address" : "10.98.4.30",
                     "port" : "gloin_ps1",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 },
                 {
                     "type" : "cdu",
                     "address" : "10.98.4.31",
                     "port" : "gloin_ps2",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 }
             ],
@@ -243,7 +243,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.98.5.77",
                     "username" : "root",
-                    "passwd" : "insecure"
+                    "password" : "insecure"
                 },
             ],
             "role" : "openstack",
@@ -259,7 +259,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.98.5.86",
                     "username" : "root",
-                    "passwd" : "insecure"
+                    "password" : "insecure"
                 },
             ],
             "role" : "openstack",
@@ -275,7 +275,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.98.5.85",
                     "username" : "root",
-                    "passwd" : "insecure"
+                    "password" : "insecure"
                 },
             ],
             "role" : "openstack",
@@ -291,7 +291,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.98.5.92",
                     "username" : "root",
-                    "passwd" : "insecure"
+                    "password" : "insecure"
                 },
             ],
             "role" : "arges",
@@ -308,7 +308,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.98.5.83",
                     "username" : "Administrator",
-                    "passwd" : "insecure"
+                    "password" : "insecure"
                 },
             ],
             "role" : "openstack",
@@ -324,7 +324,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.98.5.84",
                     "username" : "Administrator",
-                    "passwd" : "insecure"
+                    "password" : "insecure"
                 },
             ],
             "role" : "smb",
@@ -340,7 +340,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.98.5.89",
                     "username" : "Administrator",
-                    "passwd" : "insecure"
+                    "password" : "insecure"
                 },
             ],
             "role" : "unknown",
@@ -356,7 +356,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.98.5.90",
                     "username" : "Administrator",
-                    "passwd" : "insecure"
+                    "password" : "insecure"
                 },
             ],
             "role" : "smb",
@@ -372,7 +372,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.98.5.91",
                     "username" : "Administrator",
-                    "passwd" : "insecure"
+                    "password" : "insecure"
                 },
             ],
             "role" : "openstack",
@@ -388,7 +388,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.98.5.87",
                     "username" : "Administrator",
-                    "passwd" : "insecure"
+                    "password" : "insecure"
                 },
             ],
             "role" : "openstack",
@@ -404,7 +404,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.98.5.88",
                     "username" : "Administrator",
-                    "passwd" : "insecure"
+                    "password" : "insecure"
                 },
             ],
             "role" : "openstack",
@@ -425,7 +425,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.98.5.73",
                     "username" : "root",
-                    "passwd" : "insecure"
+                    "password" : "insecure"
                 },
             ],
             "role" : "dead",
@@ -441,14 +441,14 @@ Configuration = {
                     "type" : "cdu",
                     "address" : "10.98.4.32",
                     "port" : "dori_ps1",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 },
                 {
                     "type" : "cdu",
                     "address" : "10.98.4.33",
                     "port" : "dori_ps2",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 }
             ],
@@ -465,14 +465,14 @@ Configuration = {
                     "type" : "cdu",
                     "address" : "10.98.4.30",
                     "port" : "bofur_ps1",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 },
                 {
                     "type" : "cdu",
                     "address" : "10.98.4.31",
                     "port" : "bofur_ps2",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 }
             ],
@@ -489,14 +489,14 @@ Configuration = {
                     "type" : "cdu",
                     "address" : "10.98.4.30",
                     "port" : "gimli_ps1",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 },
                 {
                     "type" : "cdu",
                     "address" : "10.98.4.31",
                     "port" : "gimli_ps2",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 }
             ],
@@ -513,14 +513,14 @@ Configuration = {
                     "type" : "cdu",
                     "address" : "10.98.4.32",
                     "port" : "floyd_ps1",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 },
                 {
                     "type" : "cdu",
                     "address" : "10.98.4.33",
                     "port" : "floyd_ps2",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 }
             ],
@@ -537,14 +537,14 @@ Configuration = {
                     "type" : "cdu",
                     "address" : "10.98.4.32",
                     "port" : "janice_ps1",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 },
                 {
                     "type" : "cdu",
                     "address" : "10.98.4.33",
                     "port" : "janice_ps2",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 }
             ],
@@ -561,14 +561,14 @@ Configuration = {
                     "type" : "cdu",
                     "address" : "10.98.4.30",
                     "port" : "pops_ps1",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 },
                 {
                     "type" : "cdu",
                     "address" : "10.98.4.31",
                     "port" : "pops_ps2",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 }
             ],
@@ -585,14 +585,14 @@ Configuration = {
                     "type" : "cdu",
                     "address" : "10.98.4.30",
                     "port" : "zoot_ps1",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 },
                 {
                     "type" : "cdu",
                     "address" : "10.98.4.31",
                     "port" : "zoot_ps2",
-                    "user"     : "kernel",
+                    "username"     : "kernel",
                     "password" : "K3rn3!",
                 }
             ],

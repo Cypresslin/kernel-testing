@@ -95,8 +95,8 @@ class Power():
         cdebug("        Enter: Power::ipmi")
         cdebug('             cmd: %s' % cmd)
         output = None
-        username = Configuration[p['profile']]['username']
-        password = Configuration[p['profile']]['password']
+        username = p['username']
+        password = p['password']
         cmd = "ipmitool -H %s -I lanplus -U %s -P %s power %s" % (p['address'], username, password, cmd)
         cdebug('            CMD: \'%s\'' % cmd)
         result, output = sh(cmd, ignore_result=False, quiet=True)
@@ -106,8 +106,8 @@ class Power():
     def cdu(s, p, cmd):
         cdebug("        Enter: Power::cdu")
         output = None
-        username = Configuration[p['profile']]['username']
-        password = Configuration[p['profile']]['password']
+        username = p['username']
+        password = p['password']
         cmd = 'fence_cdu -a %s -l %s -p %s -n %s -o %s' % (p['address'], username, password, p['port'], cmd)
         cdebug('            CMD: \'%s\'' % cmd)
         result, output = sh(cmd, ignore_result=True, quiet=True)
