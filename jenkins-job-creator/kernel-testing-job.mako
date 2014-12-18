@@ -30,6 +30,7 @@
         <hudson.tasks.Shell>
             <command>
     KT=/var/lib/jenkins/kernel-testing
+    SSH_OPTIONS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet"
 
 <%
 if data.sut == 'virtual':
@@ -60,7 +61,7 @@ if data.ppa is not None:
     $KT/remote ${data.sut_name} --kernel-test-list="${data.test}"
 
     ARCHIVE=$JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_ID/archive
-    scp -r ${data.sut_name}:kernel-test-results $ARCHIVE
+    scp $SSH_OPTIONS -r ${data.sut_name}:kernel-test-results $ARCHIVE
     $JENKINS_HOME/autotest/client/tools/glue_testsuites $ARCHIVE/*.xml > $WORKSPACE/kernel-results.xml
 
     # Publish the results
