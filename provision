@@ -147,7 +147,7 @@ class ProvApp(object):
             s.validate_args(args)
             metal = Metal(args.sut_name, args.sut_series, args.sut_arch, args.sut_hwe, args.sut_debs_url, ppa=args.ppa, dry_run=args.dry_run)
             metal.provision()
-            result, output = metal.prossh('id')
+            retval = 0
 
         except ErrorExit as e:
             error(e.message)
