@@ -28,7 +28,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "cobbler",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "08:9e:01:3c:c9:60",
             "power" : [
                 {
                     "type"     : "cdu",
@@ -45,7 +44,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "cobbler",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "90:b1:1c:10:6b:03",
             "power" : [
                 {
                     "type" : "cdu",
@@ -69,7 +67,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "jenkins",
-            "mac address" : "d4:ae:52:7c:c6:2a",
             "power" : [
                 {
                     "type" : "ipmi",
@@ -85,7 +82,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "cobbler",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "00:1e:67:34:b8:5c",
             "power" : [
                 {
                     "type" : "cdu",
@@ -102,7 +98,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "cobbler",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "60:eb:69:21:2c:6c",
             "power" : [
                 {
                     "type" : "cdu",
@@ -126,7 +121,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "a0:36:9f:21:d8:f8",
             "power" : [
                 {
                     "type" : "cdu",
@@ -150,7 +144,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "00:1e:67:94:75:98",
             "power" : [
                 {
                     "type" : "ipmi",
@@ -166,7 +159,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "00:1e:67:94:77:43",
             "power" : [
                 {
                     "type" : "ipmi",
@@ -182,7 +174,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "bc:30:5b:e2:92:80",
             "power" : [
                 {
                     "type" : "ipmi",
@@ -198,7 +189,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "00:1e:67:94:89:42",
             "power" : [
                 {
                     "type" : "ipmi",
@@ -214,7 +204,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "00:1e:67:94:70:ba",
             "power" : [
                 {
                     "type" : "ipmi",
@@ -231,7 +220,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "ac:16:2d:aa:6c:e8",
             "power" : [
                 {
                     "type" : "ipmi",
@@ -247,7 +235,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "e4:11:5b:de:01:13",
             "power" : [
                 {
                     "type" : "ipmi",
@@ -263,7 +250,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "80:c1:6e:62:22:30",
             "power" : [
                 {
                     "type" : "ipmi",
@@ -279,7 +265,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "ac:16:2d:b8:cb:f8",
             "power" : [
                 {
                     "type" : "ipmi",
@@ -295,7 +280,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "ac:16:2d:b9:25:f8",
             "power" : [
                 {
                     "type" : "ipmi",
@@ -311,7 +295,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "6c:3b:e5:a9:8b:08",
             "power" : [
                 {
                     "type" : "ipmi",
@@ -327,7 +310,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "10:60:4b:a9:e8:b8",
             "power" : [
                 {
                     "type" : "ipmi",
@@ -348,7 +330,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "00:1e:67:94:7d:9b",
             "power" : [
                 {
                     "type" : "ipmi",
@@ -364,7 +345,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "00:1e:67:59:82:08",
             "power" : [
                 {
                     "type" : "cdu",
@@ -388,7 +368,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "00:1e:67:59:7f:e9",
             "power" : [
                 {
                     "type" : "cdu",
@@ -412,7 +391,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "a0:36:9f:24:44:f8",
             "power" : [
                 {
                     "type" : "cdu",
@@ -436,7 +414,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "a0:36:9f:14:65:38",
             "power" : [
                 {
                     "type" : "cdu",
@@ -460,7 +437,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "a0:36:9f:14:65:70",
             "power" : [
                 {
                     "type" : "cdu",
@@ -484,7 +460,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "a0:36:9f:0f:1c:cc",
             "power" : [
                 {
                     "type" : "cdu",
@@ -508,7 +483,6 @@ Configuration = {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
-            "mac address" : "a0:36:9f:0e:ed:08",
             "power" : [
                 {
                     "type" : "cdu",
