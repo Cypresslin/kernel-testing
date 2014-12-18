@@ -170,12 +170,28 @@ Configuration = {
             "power" : [
                 {
                     "type" : "ipmi",
-                    "address" : "10.98.5.86",
-                    "username" : "root",
-                    "password" : "insecure"
+                    "address" : "10.245.80.209",
+                    "username" : "maas",
+                    "password" : "145M3gj5sm8NMX"
                 },
             ],
-            "role" : "openstack",
+            "role" : "none",
+            "locked" : False,
+        },
+        "tarf" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "mac address" : "bc:30:5b:e2:92:80",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.80.222",
+                    "username" : "maas",
+                    "password" : "PcnHDCZbbOalvi"
+                },
+            ],
+            "role" : "none",
             "locked" : False,
         },
         "fili" : {
