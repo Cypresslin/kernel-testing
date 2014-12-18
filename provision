@@ -138,10 +138,10 @@ class ProvApp(object):
                     raise ErrorExit('The series (%s) does not have a HWE version.' % (args.vh_series))
         cdebug("    Leave ProvApp::validate_args")
 
-    # neo
+    # main
     #
-    def neo(s, args):
-        cdebug("Enter ProvApp::neo")
+    def main(s, args):
+        cdebug("Enter ProvApp::main")
         retval = 1
         try:
             s.validate_args(args)
@@ -156,91 +156,9 @@ class ProvApp(object):
                 s.produce_error_results(ws, e.message)
             pass
 
-        cdebug("Leave ProvApp::neo (%d)" % retval)
+        cdebug("Leave ProvApp::main (%d)" % retval)
         return retval
 
-    # main
-    #
-    def main(s, args):
-        cdebug("Enter ProvApp::main")
-        retval = 1
-        try:
-            metal = None
-            if args.sut == 'real':
-                metal = MetalProvisioner(args.sut_name, args.sut_series, args.sut_arch, args.sut_hwe, args.sut_debs_url, ppa=args.ppa, dry_run=args.dry_run)
-                metal.provision()
-
-                if args.sut_hwe:
-                    targeted_series = HWE[args.sut_series]['series']
-                else:
-                    targeted_series = args.sut_series
-
-                if s.target_verified(args.sut_name, targeted_series):
-                    retval = 0
-            else:
-                info("=========================================================================")
-                info("=")
-                info("=                   V I R T U A L   H O S T")
-                info("=")
-                info("=========================================================================")
-                metal = MetalProvisioner(args.vh_name, args.vh_series, args.vh_arch, args.vh_hwe, dry_run=args.dry_run)
-                metal.provision()
-                if s.target_verified(args.vh_name, args.vh_series):
-                    info("=========================================================================")
-                    info("=")
-                    info("=                   V I R T U A L   C L I E N T")
-                    info("=")
-                    info("=========================================================================")
-                    virt = VirtualProvisioner(args.vh_name, args.sut_name, args.sut_series, args.sut_arch, args.sut_hwe, dry_run=args.dry_run)
-                    virt.provision()
-
-                    if args.sut_hwe:
-                        targeted_series = HWE[args.sut_series]['series']
-                    else:
-                        targeted_series = args.sut_series
-
-                    if s.target_verified(args.sut_name, targeted_series):
-                        retval = 0
-
-        # Handle the user presses <ctrl-C>.
-        #
-        except KeyboardInterrupt:
-            print("Aborting ...")
-
-        except ShellTimeoutError as e:
-            msg = 'The command (%s) timed out. (%d)' % (e.cmd, e.timeout)
-            ws = getenv('WORKSPACE')
-            if ws is not None:
-                s.produce_error_results(ws, msg)
-            error(msg)
-
-        except ShellError as e:
-            msg = 'The command (%s) returned a non-zero exit status (%d).\n' % (e.cmd, e.returncode)
-            for line in e.output:
-                msg += line.rstrip() + '\n'
-
-            error('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
-            for line in e.output:
-                error(line.rstrip())
-
-            ws = getenv('WORKSPACE')
-            if ws is not None:
-                s.produce_error_results(ws, msg)
-
-        except ErrorExit as e:
-            error(e.message)
-            ws = getenv('WORKSPACE')
-            if ws is not None:
-                s.produce_error_results(ws, e.message)
-            pass
-
-        if retval > 0:
-            error("")
-            error("Due to the above error(s), this script is unable to continue and is terminating.")
-            error("")
-
-        cdebug("Leave ProvApp::main")
-        return retval
 
 if __name__ == '__main__':
     app_description = '''
@@ -315,6 +233,6 @@ examples:
     cdebug('sut-arch : %s' % args.sut_arch)
 
     app = ProvApp()
-    exit(app.neo(args))
+    exit(app.main(args))
 
 # vi:set ts=4 sw=4 expandtab syntax=python:
