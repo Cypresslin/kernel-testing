@@ -58,10 +58,10 @@ if data.ppa is not None:
 % if not data.no_test:
     # Kick off testing on the newly provisioned SUT
     #
-    $KT/remote ${data.sut_name} --kernel-test-list="${data.test}"
+    $KT/remote ubuntu@${data.sut_name} --kernel-test-list="${data.test}"
 
     ARCHIVE=$JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_ID/archive
-    scp $SSH_OPTIONS -r ${data.sut_name}:kernel-test-results $ARCHIVE
+    scp $SSH_OPTIONS -r ubuntu@${data.sut_name}:kernel-test-results $ARCHIVE
     $JENKINS_HOME/autotest/client/tools/glue_testsuites $ARCHIVE/*.xml > $WORKSPACE/kernel-results.xml
 
     # Publish the results
