@@ -63,7 +63,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.212",
                     "username" : "maas",
-                    "password" : "IZ6ZpxRKMJGd7E"
+                    "password" : "lZ6ZpxRKMJGd7E"
                 },
             ],
             "role" : "openstack",
@@ -123,7 +123,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.222",
                     "username" : "maas",
-                    "password" : "PcnHDCZbb0alvi"
+                    "password" : "PcnHDCZbb0aIvi"
                 },
             ],
             "role" : "none",
@@ -183,7 +183,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.202",
                     "username" : "maas",
-                    "password" : "BE7Orv9a"
+                    "password" : "BE7Orv9A"
                 },
             ],
             "role" : "none",
@@ -228,7 +228,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.205",
                     "username" : "maas",
-                    "password" : "DJ6DA9qa"
+                    "password" : "DJ6DA9qA"
                 },
             ],
             "role" : "none",
