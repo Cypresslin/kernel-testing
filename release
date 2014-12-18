@@ -6,9 +6,9 @@ from logging                            import debug, error, info, basicConfig, 
 from time                               import sleep
 
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
-from lib.infrastructure                 import MAASConfig, LabHW
+from lib.configuration                  import Configuration
 from lib.shell                          import sh, ssh, ShellError, ShellTimeoutError
-from lib.maas                           import MAAS
+from lib.maas                           import MAASCore
 
 # Release
 #
@@ -18,39 +18,19 @@ class Release():
 
     # __init__
     #
-    def __init__(self, args):
-        self.args = args
+    def __init__(s, args):
+        s.args = args
 
     # main
     #
-    def main(self):
+    def main(s):
         retval = 1
         try:
-            provisionor = LabHW[target]['provisioning']['type']
-            if provisionor == 'maas':
-                maas = MAAS(MAASConfig['profile'], MAASConfig['server'], MAASConfig['creds'])
-                mt = maas.node(target)
-                mt.stop_and_release()
-            else:
-                t = LabHW[target]
-                if 'ipmi' in t:
-                    cmd = "ipmitool -H %s -I lanplus -U %s -P %s power off" % (t['ipmi']['ip'], t['ipmi']['username'], t['ipmi']['passwd'])
-                    print(cmd)
-                    result, output = sh(cmd, ignore_result=False)
-                else:
-                    state = "off"
-                    for psu in t['cdu']:
-                        if psu['ip'] != '':
-                            try:
-                                ssh('%s@%s' % ('kernel', t['provisioning']['server']), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
-                            except ShellError as e:
-                                # Sometimes the call to the orchestra server will time-out (not sure why), just
-                                # wait a minute and try again.
-                                #
-                                sleep(60)
-                                if not self.quiet:
-                                    print('    Initial power cycle attempt failed, trying a second time.')
-                                ssh('%s@%s' % ('kernel', t['provisioning']['server']), 'fence_cdu -a %s -l kernel -p K3rn3! -n %s -o %s' % (psu['ip'], psu['port'], state), quiet=True)
+            c = Configuration[Configuration["systems"][s.args.target]["provisioner"]]
+
+            maas = MAASCore(c['profile'], c['server'], c['creds'])
+            mt = maas.node(s.args.target)
+            mt.stop_and_release()
 
             retval = 0
 
@@ -91,9 +71,10 @@ if __name__ == '__main__':
     parser.add_argument('target', metavar='TARGET', type=str, nargs=1, help='The name of the system to be provisioned.')
 
     args = parser.parse_args()
-    target = args.target[0]
+    args.target = args.target[0]
 
     app = Release(args)
     exit(app.main())
 
 # vi:set ts=4 sw=4 expandtab syntax=python:
+
