@@ -14,7 +14,7 @@ from logging                            import debug, info, basicConfig, DEBUG, 
 from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
 from lib.jenkins                        import Jenkins, JenkinsException, LAUNCHER_SSH, LAUNCHER_COMMAND, LAUNCHER_WINDOWS_SERVICE
-from lib.infrastructure                 import LabHW
+from lib.configuration                  import Configuration
 
 # find_kt_home
 #
@@ -297,9 +297,9 @@ examples:
     parser.add_argument('--vh-arch',      required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the arch of that virtual host.')
     parser.add_argument('--vh-hwe',       required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
 
-    parser.add_argument('--hw',           required=True,  choices=LabHW.keys(), help='The hardware-name for the system in the hardware database that will be used for the bare metal installation portion of any of these jobs.')
+    parser.add_argument('--hw',           required=True,  choices=Configuration["systems"].keys(), help='The hardware-name for the system in the hardware database that will be used for the bare metal installation portion of any of these jobs.')
 
-    parser.add_argument('--jenkins-url',  required=False, default='http://kernel-jenkins.ubuntu-ci:8080', help='URL to the jenkins host.')
+    parser.add_argument('--jenkins-url',  required=False, default='http://kernel-jenkins:8080', help='URL to the jenkins host.')
     parser.add_argument('--no-autostart', required=False, action='store_true', default=False, help='Create the jenkins jobs but do not start them.')
     parser.add_argument('--no-test',      required=False, action='store_true', default=False, help='Don\'t create the test job. Sometimes you just want the job(s) that do the provisioning.')
     parser.add_argument('--tt',           required=False, default=default_testing_job_template, help='The name of the test-job template. (If you don\'t know what this is you shouldn\'t be specifying it.)')
@@ -323,7 +323,7 @@ examples:
     # attribute to contain specifics about that hw system.
     #
     setattr(args, 'hw_name', args.hw)  # This really doesn't make sense!
-    args.hw = LabHW[args.hw]
+    args.hw = Configuration["systems"][args.hw]
     setattr(args, 'kt_home', find_kt_home())
 
     app = SutJobsFactory(args)
