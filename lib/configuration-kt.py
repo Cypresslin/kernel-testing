@@ -5,29 +5,19 @@ Configuration = {
 
     # The Jenkins server section. My Jenkins server is named 'jenkins'.
     #
-    "kernel-jenkins" : {
-        "server_url" : "http://10.98.2.20:8080"
+    "jenkins" : {
+        "server_url" : "http://10.245.80.50:8080"
     },
 
     # I only have one MAAS server and it's named 'maas'.
     #
     "maas" : {
-        "server"  : "thorin.ubuntu-ci", # Hostname of this maas server.
+        "server"  : "kernel-maas",   # Hostname of this maas server.
         "profile" : "jenkins",       # When talking to the maas server use this profile.
-        "creds"   : "cvTDA3bvTZ2hvKwKgZ:jKNrDvejEBzmYspTZS:9kjNNPw2EBYzpGAA5CeqEYhBF5yPgEED",
+        "creds"   : "NZn8yvnLAJEGD5bMmk:YfFPyvrspJDbf4cHsd:ZcfkrFk98FwRpwYyv5DVvDmAjRGWXGKn",
         "user"    : "jenkins",       # When ssh'ing to the maas server use this user
         "type"    : "maas",          # This _is_ a MAAS server (as opposed to a cobbler server)
-        "sut_user": "jenkins",       # The user on the test system after it's been provisioned
-    },
-
-    # I don't have a cobbler server so I could just leave this section
-    # out. However, if I did have a cobbler server it would be named
-    # 'cobbler'.
-    #
-    "cobbler" : {
-        "server"  : "cobbler",
-        "type"    : "cobbler",
-        "sut-user": "jenkins",       # The user on the test system after it's been provisioned
+        "sut_user": "ubuntu",        # The user on the test system after it's been provisioned
     },
 
     # Test systems section. This is a dictionary of all the test systems that are available
@@ -146,24 +136,16 @@ Configuration = {
         },
         "rizzo" : {
             "arch" : ['amd64', 'i386'],
-            "provisioner" : "cobbler",
-            "jenkins server" : "kernel-jenkins",
+            "provisioner" : "maas",
+            "jenkins server" : "jenkins",
             "mac address" : "d4:ae:52:7c:c6:2a",
             "power" : [
                 {
-                    "type" : "cdu",
-                    "address" : "10.98.4.32",
-                    "port" : "rizzo_ps1",
-                    "username"     : "kernel",
-                    "password" : "K3rn3!",
+                    "type" : "ipmi",
+                    "address" : "10.245.80.210",
+                    "username" : "maas",
+                    "password" : "GY31V77wr"
                 },
-                {
-                    "type" : "cdu",
-                    "address" : "10.98.4.33",
-                    "port" : "rizzo_ps2",
-                    "username"     : "kernel",
-                    "password" : "K3rn3!",
-                }
             ],
             "role" : "testing",
             "locked" : False,
