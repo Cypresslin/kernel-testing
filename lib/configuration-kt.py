@@ -30,16 +30,213 @@ Configuration = {
             "jenkins server" : "kernel-jenkins",
             "power" : [
                 {
-                    "type"     : "cdu",
-                    "address"  : "10.98.4.33",
-                    "username"     : "kernel",
-                    "password" : "K3rn3!",
-                    "port"     : "gonzo"
+                    "type" : "ipmi",
+                    "address" : "10.245.80.227",
+                    "username" : "maas",
+                    "password" : "3tHOR7kJvXP"
                 },
             ],
             "role" : "colin",
             "locked" : False,
         },
+        "rizzo" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.80.210",
+                    "username" : "maas",
+                    "password" : "GY31V77wr"
+                },
+            ],
+            "role" : "testing",
+            "locked" : False,
+        },
+        "nori" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.80.212",
+                    "username" : "maas",
+                    "password" : "IZ6ZpxRKMJGd7E"
+                },
+            ],
+            "role" : "openstack",
+            "locked" : False,
+        },
+        "kili" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.80.209",
+                    "username" : "maas",
+                    "password" : "145M3gj5sm8NMX"
+                },
+            ],
+            "role" : "none",
+            "locked" : False,
+        },
+        "cavac" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "192.168.228.83",
+                    "username" : "maas",
+                    "password" : "jwolLJyecdWB"
+                },
+            ],
+            "role" : "openstack",
+            "locked" : False,
+        },
+        "larsen" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "192.168.228.90",
+                    "username" : "maas",
+                    "password" : "wi7hthvxPpNH3"
+                },
+            ],
+            "role" : "smb",
+            "locked" : False,
+        },
+        "tarf" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.80.222",
+                    "username" : "maas",
+                    "password" : "PcnHDCZbb0alvi"
+                },
+            ],
+            "role" : "none",
+            "locked" : False,
+        },
+        "alkaid" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.80.219",
+                    "username" : "maas",
+                    "password" : "XN40Btk6aji"
+                },
+            ],
+            "role" : "none",
+            "locked" : False,
+        },
+        "phact" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.80.224",
+                    "username" : "maas",
+                    "password" : "66W9ZESwzWdza"
+                },
+            ],
+            "role" : "none",
+            "locked" : False,
+        },
+        "rukbah" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.80.206",
+                    "username" : "maas",
+                    "password" : "08JqQ3y4IpuN"
+                },
+            ],
+            "role" : "none",
+            "locked" : False,
+        },
+        "zmeu" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.80.202",
+                    "username" : "maas",
+                    "password" : "BE7Orv9a"
+                },
+            ],
+            "role" : "none",
+            "locked" : False,
+        },
+        "zuijin" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.80.223",
+                    "username" : "maas",
+                    "password" : "XT9Jlikfw226AKp"
+                },
+            ],
+            "role" : "none",
+            "locked" : False,
+        },
+        "onza" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.80.207",
+                    "username" : "maas",
+                    "password" : "gkMEkXdhy5"
+                },
+            ],
+            "role" : "none",
+            "locked" : False,
+        },
+        "onibi" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.80.205",
+                    "username" : "maas",
+                    "password" : "DJ6DA9qa"
+                },
+            ],
+            "role" : "none",
+            "locked" : False,
+        },
+
+        # ----------------
+
         "fozzie" : {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "cobbler",
@@ -59,21 +256,6 @@ Configuration = {
                     "username"     : "kernel",
                     "password" : "K3rn3!",
                 }
-            ],
-            "role" : "testing",
-            "locked" : False,
-        },
-        "rizzo" : {
-            "arch" : ['amd64', 'i386'],
-            "provisioner" : "maas",
-            "jenkins server" : "jenkins",
-            "power" : [
-                {
-                    "type" : "ipmi",
-                    "address" : "10.245.80.210",
-                    "username" : "maas",
-                    "password" : "GY31V77wr"
-                },
             ],
             "role" : "testing",
             "locked" : False,
@@ -140,51 +322,6 @@ Configuration = {
             "role" : "none",
             "locked" : True,                      # This is used as a kernel-team build system
         },
-        "nori" : {
-            "arch" : ['amd64', 'i386'],
-            "provisioner" : "maas",
-            "jenkins server" : "kernel-jenkins",
-            "power" : [
-                {
-                    "type" : "ipmi",
-                    "address" : "10.98.5.77",
-                    "username" : "root",
-                    "password" : "insecure"
-                },
-            ],
-            "role" : "openstack",
-            "locked" : False,
-        },
-        "kili" : {
-            "arch" : ['amd64', 'i386'],
-            "provisioner" : "maas",
-            "jenkins server" : "kernel-jenkins",
-            "power" : [
-                {
-                    "type" : "ipmi",
-                    "address" : "10.245.80.209",
-                    "username" : "maas",
-                    "password" : "145M3gj5sm8NMX"
-                },
-            ],
-            "role" : "none",
-            "locked" : False,
-        },
-        "tarf" : {
-            "arch" : ['amd64', 'i386'],
-            "provisioner" : "maas",
-            "jenkins server" : "kernel-jenkins",
-            "power" : [
-                {
-                    "type" : "ipmi",
-                    "address" : "10.245.80.222",
-                    "username" : "maas",
-                    "password" : "PcnHDCZbbOalvi"
-                },
-            ],
-            "role" : "none",
-            "locked" : False,
-        },
         "fili" : {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
@@ -216,21 +353,6 @@ Configuration = {
             "locked" : False,
         },
 
-        "cavac" : {
-            "arch" : ['amd64', 'i386'],
-            "provisioner" : "maas",
-            "jenkins server" : "kernel-jenkins",
-            "power" : [
-                {
-                    "type" : "ipmi",
-                    "address" : "10.98.5.83",
-                    "username" : "Administrator",
-                    "password" : "insecure"
-                },
-            ],
-            "role" : "openstack",
-            "locked" : False,
-        },
         "etnyre" : {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
@@ -259,21 +381,6 @@ Configuration = {
                 },
             ],
             "role" : "unknown",
-            "locked" : False,
-        },
-        "larsen" : {
-            "arch" : ['amd64', 'i386'],
-            "provisioner" : "maas",
-            "jenkins server" : "kernel-jenkins",
-            "power" : [
-                {
-                    "type" : "ipmi",
-                    "address" : "10.98.5.90",
-                    "username" : "Administrator",
-                    "password" : "insecure"
-                },
-            ],
-            "role" : "smb",
             "locked" : False,
         },
         "rainier" : {
