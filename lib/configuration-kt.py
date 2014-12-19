@@ -54,6 +54,21 @@ Configuration = {
             "role" : "testing",
             "locked" : False,
         },
+        "pepe" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.80.213",
+                    "username" : "admin",
+                    "password" : "insecure"
+                },
+            ],
+            "role" : "testing",
+            "locked" : False,
+        },
         "fozzie" : {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "cobbler",
@@ -272,8 +287,8 @@ Configuration = {
                 {
                     "type" : "ipmi",
                     "address" : "192.168.228.83",
-                    "username" : "maas",
-                    "password" : "jwolLJyecdWB"
+                    "username" : "Administrator",
+                    "password" : "insecure"
                 },
             ],
             "role" : "openstack",
@@ -287,13 +302,75 @@ Configuration = {
                 {
                     "type" : "ipmi",
                     "address" : "192.168.228.90",
-                    "username" : "maas",
-                    "password" : "wi7hthvxPpNH3"
+                    "username" : "Administrator",
+                    "password" : "insecure"
                 },
             ],
             "role" : "smb",
             "locked" : False,
         },
+        "bantam" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "192.168.228.89",
+                    "username" : "Administrator",
+                    "password" : "insecure"
+                },
+            ],
+            "role" : "unknown",
+            "locked" : False,
+        },
+        "modoc" : {
+            "arch" : ['ppc64el'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "192.168.228.20",
+                    "username" : "",
+                    "password" : "admin"
+                },
+            ],
+            "role" : "none",
+            "locked" : False,
+        },
+        "dwalin" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.80.225",
+                    "username" : "maas",
+                    "password" : "fyN0VY2BS9vX"
+                },
+            ],
+            "role" : "arges",
+            "locked" : False,
+        },
+
+        "etnyre" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "192.168.228.84",
+                    "username" : "Administrator",
+                    "password" : "insecure"
+                },
+            ],
+            "role" : "smb",
+            "locked" : False,
+        },
+
 
         # ----------------
 
@@ -372,52 +449,6 @@ Configuration = {
                 },
             ],
             "role" : "openstack",
-            "locked" : False,
-        },
-        "dwalin" : {
-            "arch" : ['amd64', 'i386'],
-            "provisioner" : "maas",
-            "jenkins server" : "kernel-jenkins",
-            "power" : [
-                {
-                    "type" : "ipmi",
-                    "address" : "10.98.5.92",
-                    "username" : "root",
-                    "password" : "insecure"
-                },
-            ],
-            "role" : "arges",
-            "locked" : False,
-        },
-
-        "etnyre" : {
-            "arch" : ['amd64', 'i386'],
-            "provisioner" : "maas",
-            "jenkins server" : "kernel-jenkins",
-            "power" : [
-                {
-                    "type" : "ipmi",
-                    "address" : "10.98.5.84",
-                    "username" : "Administrator",
-                    "password" : "insecure"
-                },
-            ],
-            "role" : "smb",
-            "locked" : False,
-        },
-        "bantam" : {
-            "arch" : ['amd64', 'i386'],
-            "provisioner" : "maas",
-            "jenkins server" : "kernel-jenkins",
-            "power" : [
-                {
-                    "type" : "ipmi",
-                    "address" : "192.168.228.89",
-                    "username" : "Administrator",
-                    "password" : "insecure"
-                },
-            ],
-            "role" : "unknown",
             "locked" : False,
         },
 
