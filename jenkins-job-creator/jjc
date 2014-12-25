@@ -289,7 +289,7 @@ examples:
     parser.add_argument('--test-options', required=False, default='', help='A string that is passed as is to the kernel-testing script. It can be used to pass environment variables when autotest client is invoked.')
 
     parser.add_argument('--sut-series',   required=True,  help='The series that is to be installed on the SUT. lts-hwe-<series> denotes that a lts-hwe kernel is to be run on the appropriate lts series.')
-    parser.add_argument('--sut-arch',     required=True,  choices=['amd64', 'i386'], help='The architecture (amd64 or i386) that is to be installed on the SUT.')
+    parser.add_argument('--sut-arch',     required=True,  choices=['amd64', 'i386', 'ppc64el'], help='The architecture (amd64 or i386) that is to be installed on the SUT.')
     parser.add_argument('--sut-hwe',      required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
     parser.add_argument('--sut-series-decoration',   required=False,  help='Text that is added to the job name.')
 
