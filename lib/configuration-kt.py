@@ -96,7 +96,7 @@ Configuration = {
                     "password" : "lZ6ZpxRKMJGd7E"
                 },
             ],
-            "role" : "openstack",
+            "role" : "none",
             "locked" : False,
         },
         "kili" : {
@@ -126,7 +126,7 @@ Configuration = {
                     "password" : "PcnHDCZbb0aIvi"
                 },
             ],
-            "role" : "none",
+            "role" : "testing",
             "locked" : False,
         },
         "alkaid" : {
@@ -186,7 +186,7 @@ Configuration = {
                     "password" : "BE7Orv9A"
                 },
             ],
-            "role" : "none",
+            "role" : "testing",
             "locked" : False,
         },
         "zuijin" : {
@@ -246,7 +246,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : "testing",
             "locked" : False,
         },
         "fuller" : {
@@ -291,7 +291,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "openstack",
+            "role" : "testing",
             "locked" : False,
         },
         "larsen" : {
@@ -306,7 +306,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "smb",
+            "role" : "testing",
             "locked" : False,
         },
         "bantam" : {
@@ -321,7 +321,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "unknown",
+            "role" : "testing",
             "locked" : False,
         },
         "modoc" : {
@@ -336,7 +336,7 @@ Configuration = {
                     "password" : "admin"
                 },
             ],
-            "role" : "none",
+            "role" : "testing",
             "locked" : False,
         },
         "dwalin" : {
@@ -367,10 +367,25 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "smb",
+            "role" : "none",
             "locked" : False,
         },
 
+        "etnyre" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "192.168.228.84",
+                    "username" : "Administrator",
+                    "password" : "insecure"
+                },
+            ],
+            "role" : "none",
+            "locked" : False,
+        },
 
         # ----------------
 
@@ -448,7 +463,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "openstack",
+            "role" : "none",
             "locked" : False,
         },
 
