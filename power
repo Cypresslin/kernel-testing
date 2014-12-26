@@ -98,7 +98,7 @@ class Power():
         username = p['username']
         password = p['password']
         if p['username'] == "":
-            cmd = "ipmitool -H %s -I lanplus -P %s power %s" % (p['address'], username, password, cmd)
+            cmd = "ipmitool -H %s -I lanplus -P %s power %s" % (p['address'], password, cmd)
         else:
             cmd = "ipmitool -H %s -I lanplus -U %s -P %s power %s" % (p['address'], username, password, cmd)
         cdebug('            CMD: \'%s\'' % cmd)
