@@ -123,7 +123,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.222",
                     "username" : "maas",
-                    "password" : "PcnHDCZbb0aIvi"
+                    "password" : "mBZpvBcB8sQeo"
                 },
             ],
             "role" : "testing",
@@ -183,7 +183,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.202",
                     "username" : "maas",
-                    "password" : "eWQOaFt8znwXI0"
+                    "password" : "e3IxQKEFn"
                 },
             ],
             "role" : "testing",
