@@ -14,7 +14,7 @@ Configuration = {
     "maas" : {
         "server"  : "kernel-maas",   # Hostname of this maas server.
         "profile" : "jenkins",       # When talking to the maas server use this profile.
-        "creds"   : "NZn8yvnLAJEGD5bMmk:YfFPyvrspJDbf4cHsd:ZcfkrFk98FwRpwYyv5DVvDmAjRGWXGKn",
+        "creds"   : "q6TPsE3AJBcVAvMqvB:uj8JPvENCh8hjdubmy:XcRLhdXxjdckFm6DQEpUKGQzMDe7VnXY",
         "user"    : "jenkins",       # When ssh'ing to the maas server use this user
         "type"    : "maas",          # This _is_ a MAAS server (as opposed to a cobbler server)
         "sut_user": "ubuntu",        # The user on the test system after it's been provisioned
@@ -403,7 +403,7 @@ Configuration = {
                 }
             ],
             "role" : "unknown",
-            "locked" : False,
+            "locked" : True,
         },
         "statler" : {
             "arch" : ['amd64', 'i386'],
@@ -426,7 +426,7 @@ Configuration = {
                 }
             ],
             "role" : "unknown",                 # This system has a raid controler that is a pita
-            "locked" : False,
+            "locked" : True,
         },
         "gloin" : {
             "arch" : ['amd64', 'i386'],
