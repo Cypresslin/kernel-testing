@@ -33,7 +33,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.227",
                     "username" : "maas",
-                    "password" : "3tHOR7kJvXP"
+                    "password" : "dSJ2jE3Znp"
                 },
             ],
             "role" : "colin",
@@ -48,7 +48,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.210",
                     "username" : "maas",
-                    "password" : "GY31V77wr"
+                    "password" : "s1lgI8YlgTT"
                 },
             ],
             "role" : "testing",
@@ -78,7 +78,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.211",
                     "username" : "maas",
-                    "password" : "jwateotpELFuGAH"
+                    "password" : "Nq7hYxkV"
                 },
             ],
             "role" : "none",
@@ -93,7 +93,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.212",
                     "username" : "maas",
-                    "password" : "lZ6ZpxRKMJGd7E"
+                    "password" : "ATtJzkf9leCZZqM"
                 },
             ],
             "role" : "none",
@@ -108,7 +108,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.209",
                     "username" : "maas",
-                    "password" : "145M3gj5sm8NMX"
+                    "password" : "exdUKMYnhIMDwY"
                 },
             ],
             "role" : "none",
@@ -138,7 +138,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.219",
                     "username" : "maas",
-                    "password" : "XN40Btk6aji"
+                    "password" : "CdyHUUy9xkDXz"
                 },
             ],
             "role" : "none",
@@ -153,7 +153,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.224",
                     "username" : "maas",
-                    "password" : "66W9ZESwzWdza"
+                    "password" : "xYpuDDore"
                 },
             ],
             "role" : "none",
@@ -168,7 +168,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.206",
                     "username" : "maas",
-                    "password" : "08JqQ3y4IpuN"
+                    "password" : "Iuh3JVYagppn0m"
                 },
             ],
             "role" : "none",
@@ -183,7 +183,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.202",
                     "username" : "maas",
-                    "password" : "BE7Orv9A"
+                    "password" : "eWQOaFt8znwXI0"
                 },
             ],
             "role" : "testing",
@@ -198,7 +198,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.223",
                     "username" : "maas",
-                    "password" : "XT9Jlikfw226AKp"
+                    "password" : "QEPQON1r3vN8"
                 },
             ],
             "role" : "none",
@@ -213,7 +213,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.207",
                     "username" : "maas",
-                    "password" : "gkMEkXdhy5"
+                    "password" : "DIACTcZKAm1tR"
                 },
             ],
             "role" : "none",
@@ -228,7 +228,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.205",
                     "username" : "maas",
-                    "password" : "DJ6DA9qA"
+                    "password" : "uodA1fl6uf8"
                 },
             ],
             "role" : "none",
