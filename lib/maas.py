@@ -11,6 +11,7 @@ from logging                            import debug
 import json
 from lib.shell                          import sh, ssh
 from lib.log                            import cdebug
+from time                               import sleep
 
 # MAAS
 #
@@ -180,6 +181,7 @@ class MAASNode():
         '''
         '''
         s.stop()
+        sleep(60)   # Pause for a bit while the stop completes.
         s.release()
 
     def status(s):
