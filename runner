@@ -7,6 +7,7 @@ from shutil                             import rmtree, copytree
 from logging                            import debug, error, basicConfig, DEBUG, WARNING
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 import json
+import platform
 
 from lib.testsprops                     import TestProfiles, TestCollections
 from lib.test_attributes                import TestAttributes
@@ -41,6 +42,7 @@ class Runner():
         self.autotest_results_root = path.join(self.autotest_client_root, 'results', 'default')
         self.per_test_logs_root = ''
         self.per_test_results_root = ''
+        self.arch = platform.processor()
 
     # tests_list_expand
     #
@@ -227,10 +229,16 @@ class Runner():
             if 'packages' in TestProfiles[t]:
                 if 'common' in TestProfiles[t]['packages']:
                     for pkg in TestProfiles[t]['packages']['common']:
-                        deps.append(pkg)
+                        if self.arch == 'ppc64le':
+                            deps.append(pkg.replace('-multilib', ''))
+                        else:
+                            deps.append(pkg)
                 if self.release_name in TestProfiles[t]['packages']:
                     for pkg in TestProfiles[t]['packages'][self.release_name]:
-                        deps.append(pkg)
+                        if self.arch == 'ppc64le':
+                            deps.append(pkg.replace('-multilib', ''))
+                        else:
+                            deps.append(pkg)
             else:
                 debug('No package dependencies for \'%s\'' % t)
 
