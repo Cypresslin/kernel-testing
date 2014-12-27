@@ -301,16 +301,16 @@ class Runner():
                     for k, v in TestProfiles[t]['env']:
                         environ[k] = v
 
-            self.test_list_determine_control_files()
-
-            self.install_required_packages()
-
             # Create the test-results directory where everything we care about will end
             # up.
             if not path.exists(self.saved_results_root):
                 makedirs(self.saved_results_root)
 
             self.gather_test_attributes()
+
+            self.test_list_determine_control_files()
+
+            self.install_required_packages()
 
             # Run the tests
             #
