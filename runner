@@ -242,6 +242,8 @@ class Runner():
             else:
                 debug('No package dependencies for \'%s\'' % t)
 
+        debug('%s' % str(deps))
+        sh('sudo apt-get update')
         sh('sudo apt-get -fy install -fy')
         for dep in deps:
             debug('Installing: \'%s\'' % dep)
