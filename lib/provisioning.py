@@ -312,10 +312,10 @@ class Metal(Base):
             if line.startswith('Codename:'):
                 cdebug('                lsb_release --codename : ' + line)
                 if s.series not in line:
-                    cinfo("")
-                    cinfo("*** ERROR:")
-                    cinfo("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, line.replace('Codename:\t','')))
-                    cinfo("")
+                    error("")
+                    error("*** ERROR:")
+                    error("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, line.replace('Codename:\t','')))
+                    error("")
                 else:
                     retval = True
 
@@ -342,10 +342,10 @@ class Metal(Base):
             if s.arch == installed_arch:
                 retval = True
             else:
-                cinfo("")
-                cinfo("*** ERROR:")
-                cinfo("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.arch, installed_arch))
-                cinfo("")
+                error("")
+                error("*** ERROR:")
+                error("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.arch, installed_arch))
+                error("")
 
         # Are we running the series correct kernel?
         #
@@ -372,14 +372,15 @@ class Metal(Base):
                 if installed_series == s.series:
                     retval = True
                 else:
-                    cinfo("")
-                    cinfo("*** ERROR:")
-                    cinfo("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, installed_series))
-                    cinfo("")
+                    error("")
+                    error("*** ERROR:")
+                    error("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, installed_series))
+                    error("")
             else:
-                cinfo("")
-                cinfo("*** ERROR:")
-                cinfo("    Unable to find the kernel version in any line.")
+                error("")
+                error("*** ERROR:")
+                error("    Unable to find the kernel version in any line.")
+                error("")
 
         cdebug('        Leave Metal::verify_target (%s)' % retval)
         return retval
