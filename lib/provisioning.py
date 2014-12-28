@@ -503,10 +503,10 @@ class Metal(Base):
             s.progress('Rebooting for HWE Kernel')
             s.reboot()
             s.progress('Verifying HWE install')
-            if not s.verify_hwe_target():
-                cinfo("Target verification failed.")
-                cdebug('Leave Metal::provision')
-                return False
+            #if not s.verify_hwe_target():
+            #    cinfo("Target verification failed.")
+            #    cdebug('Leave Metal::provision')
+            #    return False
 
         if s.xen:
             s.progress('Installing Xen Kernel')
