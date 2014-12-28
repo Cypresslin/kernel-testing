@@ -336,7 +336,20 @@ TestCollections = {
 
     # The set of tests that Ubuntu Engineering QA run.
     #
-    'qa' : ['ubuntu_ecryptfs', 'ubuntu_qrt_kernel_hardening', 'ubuntu_qrt_kernel_panic', 'ubuntu_qrt_kernel_security', 'ubuntu_qrt_kernel_aslr_collisions', 'ubuntu_qrt_apparmor', 'ubuntu_lxc', 'ubuntu_seccomp'],
+    'qa' : [
+            'ubuntu_ecryptfs',
+            'ubuntu_qrt_kernel_hardening',
+            'ubuntu_qrt_kernel_panic',
+            'ubuntu_qrt_kernel_security',
+            'ubuntu_qrt_kernel_aslr_collisions',
+            'ubuntu_qrt_apparmor',
+            'ubuntu_lxc',
+            'ubuntu_seccomp',
+            'ubuntu_kvm_unit_tests',
+            'ubuntu_cts_kernel',
+            'ubuntu_leap_seconds',
+            'ubuntu_stress_ng',
+        ],
 
     # This is the set of tests that will run if no KERNEL_TEST_LIST variable is set.
     # (QA runs this set)
