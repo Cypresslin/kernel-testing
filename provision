@@ -195,6 +195,7 @@ examples:
     parser.add_argument('--dry-run',  action='store_true', default=False, help='Don\'t do anything, just print out what would be done.')
     parser.add_argument('--quiet',  action='store_true', default=False, help='Do not print any progress information.')
     parser.add_argument('--debug', action='store_true', default=False, help='Print out lots of stuff.')
+    parser.add_argument('--nc', action='store_true', default=False, help='Debut output should not be colored.')
 
     parser.add_argument('--sut',          required=False,  default='real', choices=['real', 'virtual'], help='Kind of SUT to be created.')
     parser.add_argument('--sut-series',   required=True,  help='The series that is to be installed on the SUT. lts-hwe-<series> denotes that a lts-hwe kernel is to be run on the appropriate lts series.')
@@ -214,6 +215,7 @@ examples:
     if args.debug:
         level = DEBUG
         Clog.dbg = True
+        Clog.color = not args.nc
     else:
         level = WARNING
     basicConfig(filename=None, level=level, format="%(levelname)s - %(message)s")

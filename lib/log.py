@@ -23,6 +23,7 @@ class Clog:
     Colored logging.
     '''
     dbg = False
+    color = True
 
     @classmethod
     def info(c, msg, color='white'):
@@ -31,20 +32,29 @@ class Clog:
             # and "INFO -" is fewer chars then "DEBUG -" and so things don't line
             # up.
             #
-            debug(colored(msg, color))
+            debug(msg)
         else:
-            info(colored(msg, color))
+            info(msg)
 
     @classmethod
     def debug(c, msg, color='magenta'):
-        debug(colored(msg, color))
+        if c.color:
+            debug(colored(msg, color))
+        else:
+            debug(msg)
 
     @classmethod
     def warn(c, msg, color='red'):
-        c.info(colored(msg, color))
+        if c.color:
+            c.info(colored(msg, color))
+        else:
+            c.info(msg)
 
     @classmethod
     def notice(c, msg, color='yellow'):
-        c.info(colored(msg, color))
+        if c.color:
+            c.info(colored(msg, color))
+        else:
+            c.info(msg)
 
 # vi:set ts=4 sw=4 expandtab syntax=python:
