@@ -8,36 +8,21 @@ HWE = {
         'lucid' : {
             'series' : None,
         },
-        'oneiric' : {
-            'series' : 'lucid',
-            'package' : 'linux-image-generic-lts-backport-oneiric',
-        },
         'precise' : {
             'series' : None,
-        },
-        'quantal' : {
-            'series' : 'precise',
-            'package' : 'linux-generic-lts-quantal',
-        },
-        'raring' : {
-            'series' : 'precise',
-            'package' : 'linux-generic-lts-raring',
-            'ppa' : True,
-        },
-        'saucy' : {
-            'series' : 'precise',
-            'package' : 'linux-generic-lts-saucy',
-            'ppa' : True,
         },
         'trusty' : {
             'series' : 'precise',
             'package' : 'linux-generic-lts-trusty',
-            'ppa' : True,
         },
         'utopic' : {
             'series' : 'trusty',
             'package' : 'linux-generic-lts-utopic',
-            'ppa' : True,
+        },
+        'vivid' : {
+            'series' : 'trusty',
+            'package' : 'linux-generic-lts-utopic',
+            'ppa' : True
         },
 }
 
