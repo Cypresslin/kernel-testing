@@ -406,7 +406,7 @@ class Metal(Base):
                 m = re.search('(\d+.\d+.\d+)-\d+-.* #(\d+)\~\S+-Ubuntu.*', line)
                 if m:
                     kv = m.group(1)
-                cdebug('                kernel version : ' + kv)
+                    cdebug('                kernel version : ' + kv)
 
             if kv is not None:
                 installed_series = Ubuntu().lookup(kv)['name']
@@ -422,6 +422,11 @@ class Metal(Base):
                 error("")
                 error("*** ERROR:")
                 error("    Unable to find the kernel version in any line.")
+                error("")
+                for line in kernel:
+                    line = line.strip()
+                    error("    line: %s" % line)
+
         cdebug('        Leave Metal::verify_hwe_target (%s)' % retval)
         return retval
 
