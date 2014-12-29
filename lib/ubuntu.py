@@ -134,7 +134,7 @@ class Ubuntu:
         {
             'development' : True,        # This is the version that is currently under development
             'series_version' : '15.04',
-            'kernel'    : '3.18.0',
+            'kernel'    : '3.16.0',
             'name'      : 'vivid',
             'supported' : False,
             # adjust packages when this goes live

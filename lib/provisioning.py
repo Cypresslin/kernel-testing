@@ -311,6 +311,7 @@ class Metal(Base):
             line = line.strip()
             if line.startswith('Codename:'):
                 cdebug('                lsb_release --codename : ' + line)
+                print('         series: ' + line.replace('Codename:','').strip())
                 if s.series not in line:
                     error("")
                     error("*** ERROR:")
@@ -339,6 +340,7 @@ class Metal(Base):
                 else:
                     installed_arch = line
 
+            print('         arch: ' + installed_arch)
             if s.arch == installed_arch:
                 retval = True
             # Special case for Power8 (ppc64el)
@@ -370,6 +372,7 @@ class Metal(Base):
                     kv = m.group(1)
                 cdebug('                kernel version : ' + kv)
 
+            print('         kernel: ' + kv)
             if kv is not None:
                 installed_series = Ubuntu().lookup(kv)['name']
 
