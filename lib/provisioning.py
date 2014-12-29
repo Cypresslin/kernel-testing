@@ -161,7 +161,7 @@ class Base(object):
             s.ssh('sudo apt-add-repository ppa:ubuntu-x-swat/q-lts-backport')
 
         hwe_package = HWE[s.hwe_series]['package']
-        s.ssh('sudo apt-get update')
+        s.ssh('sudo apt-get update', ignore_result=True)
         s.ssh('sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=1 apt-get install --yes %s' % (hwe_package))
         cdebug("        Leave Base::install_hwe_kernel")
 
@@ -175,7 +175,7 @@ class Base(object):
             cdebug("            Doing it the hard way")
             # Do it the hard way
             #
-            s.ssh('sudo apt-get update')
+            s.ssh('sudo apt-get update', ignore_result=True)
             s.ssh('sudo apt-get install --yes xen-hypervisor', ignore_result=True)
             s.ssh(r'sudo sed -i \'s/GRUB_DEFAULT=.*\\+/GRUB_DEFAULT=\"Xen 4.1-amd64\"/\' /etc/default/grub')
             s.ssh(r'sudo sed -i \'s/GRUB_CMDLINE_LINUX=.*\\+/GRUB_CMDLINE_LINUX=\"apparmor=0\"/\' /etc/default/grub')
@@ -183,7 +183,7 @@ class Base(object):
             s.ssh('sudo update-grub')
         else:
             cdebug("            Doing it the easy way")
-            s.ssh('sudo apt-get update')
+            s.ssh('sudo apt-get update', ignore_result=True)
             s.ssh('sudo apt-get install --yes xen-hypervisor-amd64', ignore_result=True)
         cdebug("        Leave Base::install_xen")
 
@@ -229,7 +229,7 @@ class Base(object):
         Perform a update and dist-upgrade on a remote system.
         '''
         cdebug('        Enter Base::dist_upgrade')
-        s.ssh('sudo apt-get update')
+        s.ssh('sudo apt-get update', ignore_result=True)
         s.ssh('sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=1 apt-get --yes dist-upgrade')
         cdebug('        Leave Base::dist_upgrade')
 
@@ -240,7 +240,7 @@ class Base(object):
         Perform a update of the kernels on a remote system.
         '''
         cdebug('        Enter Base::kernel_upgrade')
-        s.ssh('sudo apt-get update')
+        s.ssh('sudo apt-get update', ignore_result=True)
         s.ssh('sudo apt-get --yes install linux-image-generic linux-headers-generic')
         cdebug('        Leave Base::kernel_upgrade')
 
@@ -340,6 +340,10 @@ class Metal(Base):
                     installed_arch = line
 
             if s.arch == installed_arch:
+                retval = True
+            # Special case for Power8 (ppc64el)
+            #
+            elif s.arch == 'ppc64el' and installed_arch == 'ppc64le':
                 retval = True
             else:
                 error("")
@@ -629,7 +633,7 @@ class Provisioner():
         Perform a update and dist-upgrade on a remote system.
         '''
         cdebug('Enter Provisioner::dist_upgrade')
-        ssh(target, 'sudo apt-get update')
+        ssh(target, 'sudo apt-get update', ignore_result=True)
         ssh(target, 'sudo apt-get --yes dist-upgrade')
         cdebug('Leave Provisioner::dist_upgrade')
 
@@ -640,7 +644,7 @@ class Provisioner():
         Perform a update of the kernels on a remote system.
         '''
         cdebug('Enter Provisioner::kernel_upgrade')
-        ssh(target, 'sudo apt-get update')
+        ssh(target, 'sudo apt-get update', ignore_result=True)
         ssh(target, 'sudo apt-get --yes install linux-image-generic linux-headers-generic')
         cdebug('Leave Provisioner::kernel_upgrade')
 
@@ -743,7 +747,7 @@ class Provisioner():
             ssh(target, 'sudo apt-add-repository ppa:ubuntu-x-swat/q-lts-backport')
 
         hwe_package = HWE[self.hwe_series]['package']
-        ssh(target, 'sudo apt-get update')
+        ssh(target, 'sudo apt-get update', ignore_result=True)
         ssh(target, 'sudo apt-get install --yes %s' % (hwe_package))
 
     # configure_passwordless_access
