@@ -92,6 +92,9 @@ TestProfiles = {
         'series-blacklist' : [
             'lucid', 'precise', 'quantal', 'saucy',
             ],
+        'arch-blaclist' : [
+            'ppc64el',
+            ],
         },
 
     'ubuntu_lxc' : {

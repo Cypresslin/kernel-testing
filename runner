@@ -68,6 +68,20 @@ class Runner():
             self.tests_list = neo
         debug('    test list: %s' % self.tests_list)
 
+    def blacklisted_by_series(self, profile):
+        retval = False
+        if 'series-blacklist' in profile:
+            if self.release_name in profile['series-blacklist']:
+                retval = True
+        return retval
+
+    def blacklisted_by_arch(self, profile):
+        retval = False
+        if 'arch-blacklist' in profile:
+            if self.arch in profile['arch-blacklist']:
+                retval = True
+        return retval
+
     # tests_list_verify
     #
     def tests_list_verify(self):
@@ -87,13 +101,13 @@ class Runner():
         #
         valid_tests = []
         for t in self.tests_list:
-            if 'series-blacklist' in TestProfiles[t]:
-                if self.release_name in TestProfiles[t]['series-blacklist']:
-                    error('Test \'%s\' has been blacklisted for this series' % t)
-                else:
-                    valid_tests.append(t)
+            if self.blacklisted_by_series(TestProfiles[t]):
+                error('Test \'%s\' has been blacklisted for this series (%s)' % (t, self.release_name))
+            elif self.blacklisted_by_arch(TestProfiles[t]):
+                error('Test \'%s\' has been blacklisted for this arch (%s)' % (t, self.arch))
             else:
                 valid_tests.append(t)
+
         self.tests_list = valid_tests
 
         # Verify that the tests are valid, autotest tests.
