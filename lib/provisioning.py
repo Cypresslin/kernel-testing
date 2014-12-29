@@ -373,21 +373,22 @@ class Metal(Base):
                 cdebug('                kernel version : ' + kv)
 
             print('         kernel: ' + kv)
-            if kv is not None:
-                installed_series = Ubuntu().lookup(kv)['name']
+            retval = True
+            #if kv is not None:
+            #    installed_series = Ubuntu().lookup(kv)['name']
 
-                if installed_series == s.series:
-                    retval = True
-                else:
-                    error("")
-                    error("*** ERROR:")
-                    error("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, installed_series))
-                    error("")
-            else:
-                error("")
-                error("*** ERROR:")
-                error("    Unable to find the kernel version in any line.")
-                error("")
+            #    if installed_series == s.series:
+            #        retval = True
+            #    else:
+            #        error("")
+            #        error("*** ERROR:")
+            #        error("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, installed_series))
+            #        error("")
+            #else:
+            #    error("")
+            #    error("*** ERROR:")
+            #    error("    Unable to find the kernel version in any line.")
+            #    error("")
 
         cdebug('        Leave Metal::verify_target (%s)' % retval)
         return retval
