@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 #
 
+import re
+
 #
 # Warning - using the following dictionary to get the series name from the kernel version works for the linux package,
 # but not for some others (some ARM packages are known to be wrong). This is because the ARM kernels used for some
@@ -128,13 +130,40 @@ class Ubuntu:
     # * sha1 XXX: doesn't seem to be used anymore
     # * md5 XXX: doesn't seem to be used anymore
     db = {
-        '14.10' :
+        '15.04' :
         {
             'development' : True,        # This is the version that is currently under development
+            'series_version' : '15.04',
+            'kernel'    : '3.18.0',
+            'name'      : 'vivid',
+            'supported' : False,
+            # adjust packages when this goes live
+            'packages'  :
+            [
+                'linux',
+                'linux-meta',
+            ],
+            'dependent-packages' :
+            {
+                'linux' : {
+                    'meta'   : 'linux-meta',
+                    'signed' : 'linux-signed'
+                },
+            },
+            'derivative-packages' :
+            {
+                'linux' : []
+            },
+            'sha1' : '',
+            'md5' : ''
+        },
+        '14.10' :
+        {
+            'development' : False,        # This is the version that is currently under development
             'series_version' : '14.10',
             'kernel'    : '3.16.0',
             'name'      : 'utopic',
-            'supported' : False,
+            'supported' : True,
             # adjust packages when this goes live
             'packages'  :
             [
@@ -170,6 +199,9 @@ class Ubuntu:
                 'linux-exynos5',
                 'linux-keystone',
                 'linux-meta-keystone',
+                'linux-lts-utopic',
+                'linux-meta-lts-utopic',
+                'linux-signed-lts-utopic',
             ],
             'dependent-packages' :
             {
@@ -177,11 +209,19 @@ class Ubuntu:
                     'meta'   : 'linux-meta',
                     'signed' : 'linux-signed'
                 },
+                'linux-lts-utopic' : {
+                    'meta' : 'linux-meta-lts-utopic',
+                    'signed' : 'linux-signed-lts-utopic'
+                },
                 'linux-keystone' : { 'meta' : 'linux-meta-keystone' },
             },
             'derivative-packages' :
             {
                 'linux' : ['linux-keystone']
+            },
+            'backport-packages' :
+            {
+                'linux-lts-utopic' : [ 'linux', '14.10' ],
             },
             'sha1' : '',
             'md5' : ''
@@ -569,6 +609,7 @@ class Ubuntu:
     }
 
     index_by_kernel_version = {
+        '3.18.0'   : db['15.04'],
         '3.16.0'   : db['14.10'],
         '3.13.0'   : db['14.04'],
         '3.11.0'   : db['13.10'],
@@ -589,6 +630,7 @@ class Ubuntu:
     }
 
     index_by_series_name = {
+        'vivid'    : db['15.04'],
         'utopic'   : db['14.10'],
         'trusty'   : db['14.04'],
         'saucy'    : db['13.10'],
@@ -751,9 +793,12 @@ class Ubuntu:
         if package.startswith('linux-lts-'):
             Dbg.verbose('package condition 2\n')
             for entry in self.db.itervalues():
-                if entry['name'] in version:
+                # starting with trusty, the lts packages now include the series
+                # version instead of the series name, e.g: 3.16.0-23.31~14.04.2
+                # instead of 3.16.0-23.31~trusty1
+                expected = '.*~(%s\.\d+|%s\d+)' % (entry['series_version'], entry['name'])
+                if re.match(expected, version):
                     retval = entry['name']
-
         else:
             Dbg.verbose('package condition 1\n')
             for entry in self.db.itervalues():
