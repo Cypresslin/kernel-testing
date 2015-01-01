@@ -12,6 +12,7 @@ import json
 from lib.shell                          import sh, ssh
 from lib.log                            import cdebug
 from time                               import sleep
+from datetime                           import datetime, timedelta
 
 # MAAS
 #
@@ -63,8 +64,20 @@ class MAASCore():
         s.__nodes = None
         s.__nodes_by_name = None
         s.prefix = 'maas %s ' % s.profile
+        s.previous_node_cmd = datetime.utcnow()
+        s.cmd_delay = 60 * 3
+
+    def delay(s):
+        # MAAS can't handle commands comming in too quickly to the same node.
+        #
+        now = datetime.utcnow()
+        delta = now - s.previous_node_cmd
+        if delta.seconds < s.cmd_delay:
+            sleep(s.cmd_delay - delta.seconds)
+        s.previous_node_cmd = datetime.utcnow()
 
     def node_cmd(s, hostname, cmd, properties=None):
+        s.delay()
         if properties:
             cmd = '%s node %s %s %s' % (s.prefix, cmd, s.nodes_by_name[hostname]['system_id'], properties)
         else:
