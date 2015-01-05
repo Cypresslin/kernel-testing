@@ -64,13 +64,13 @@ if data.ppa is not None:
     scp $SSH_OPTIONS -r ubuntu@${data.sut_name}:kernel-test-results $ARCHIVE
     $JENKINS_HOME/autotest/client/tools/glue_testsuites $ARCHIVE/*.xml > $WORKSPACE/kernel-results.xml
 
-    # Publish the results
-    #
-    $KT/test-results/mk-ingest-job --job-name=$JOB_NAME --build-id=$BUILD_ID
-
     # Don't need the HW any longer, it can be powered off.
     #
     $KT/release ${data.sut_name}
+
+    # Publish the results. This *MUST* always be the very last thing the job does.
+    #
+    $KT/test-results/mk-ingest-job --job-name=$JOB_NAME --build-id=$BUILD_ID
 % endif
             </command>
         </hudson.tasks.Shell>
