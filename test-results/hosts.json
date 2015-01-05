@@ -1,4 +1,49 @@
 {
+    "zmeu" : {
+        "platform" : "Dell PowerEdge R415",
+        "processors" : "1 x AMD Opteron(tm) 4162 EE (6 Cores)",
+        "memory" : "8GB"
+    },
+    "onibi" : {
+        "platform" : "Dell PowerEdge R310",
+        "processors" : "1 x Intel(R) Xeon(R) CPU 3430 @ 2.40 GHz (4 Cores)",
+        "memory" : "8GB"
+    },
+    "rukbah" : {
+        "platform" : "Dell PowerEdge R210 II",
+        "processors" : "Intel(R) Core(TM) i3-2100 CPU @ 3.10 GHz (2 Cores)",
+        "memory" : "4GB"
+    },
+    "onza" : {
+        "platform" : "Dell PowerEdge R310",
+        "processors" : "1 x Intel(R) Xeon(R) CPU 3430 @ 2.40 GHz (4 Cores)",
+        "memory" : "4GB"
+    },
+    "alkaid" : {
+        "platform" : "Dell PowerEdge R210 II",
+        "processors" : "Intel(R) Core(TM) i3-2100 CPU @ 3.10 GHz (2 Cores)",
+        "memory" : "4GB"
+    },
+    "tarf" : {
+        "platform" : "Dell PowerEdge R210 II",
+        "processors" : "Intel(R) Core(TM) i3-2100 CPU @ 3.10 GHz (2 Cores)",
+        "memory" : "4GB"
+    },
+    "zuijun" : {
+        "platform" : "Dell PowerEdge R415",
+        "processors" : "1 x AMD Opteron(tm) 4162 EE (6 Cores)",
+        "memory" : "8GB"
+    },
+    "phact" : {
+        "platform" : "Dell PowerEdge R210 II",
+        "processors" : "Intel(R) Core(TM) i3-2100 CPU @ 3.10 GHz (2 Cores)",
+        "memory" : "4GB"
+    },
+    "modoc" : {
+        "platform" : "IBM Power8 S822L",
+        "processors" : "",
+        "memory" : "128GB"
+    },
     "cavac" : {
         "platform" : "HP ProLiant BL460c G7",
         "processors" : "1 x Intel(R) Xeon(R) CPU E5620 @ 2.40GHz (4 Cores)",
