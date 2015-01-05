@@ -5,7 +5,7 @@ from os                                 import getenv, path
 from sys                                import exit, stdin
 from logging                            import debug, info, error, basicConfig, DEBUG, WARNING, INFO
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
-from lib.infrastructure                 import LabHW
+from lib.configuration                  import Configuration
 from lib.testsprops                     import SRU_TestsList
 from lib.ubuntu                         import Ubuntu
 from email                              import Parser as EmailParser
@@ -36,20 +36,20 @@ class MailHandler():
     #
     def __init__(s, args):
         s.args = args
-        s.jenkins_url_default = "http://10.98.2.20:8080"
+        s.jenkins_url_default = "http://10.245.80.32:8080"
         s.default_arches=['amd64', 'i386']
 
         # Create a dictionary of the lab HW keyed by role.
         #
         s.sut_pool = {}
-        for sut in LabHW:
-            roles = LabHW[sut]['role']
-            for r in roles:
-                try:
-                    s.sut_pool[r].append(sut)
-                except:
-                    s.sut_pool[r] = []
-                    s.sut_pool[r].append(sut)
+        for sut in Configuration['systems']:
+            role = Configuration['systems'][sut]['role']
+
+            try:
+                s.sut_pool[role].append(sut)
+            except:
+                s.sut_pool[role] = []
+                s.sut_pool[role].append(sut)
 
     # send_reply
     #
@@ -122,7 +122,7 @@ class MailHandler():
             debs_url = None
             ppa = None
             arches = s.default_arches
-            systems = s.sut_pool['testing']
+            systems = s.sut_pool['Personal Testing']
             tests = 'default'
             send_help = False
             hwe = False
@@ -144,7 +144,7 @@ class MailHandler():
                     (x, tests) = line.split(':', 1)
                     tests = tests.strip()
                     if 'fs_fio_perf' in tests:
-                        systems = s.sut_pool['benchmarks']
+                        systems = s.sut_pool['Filesystem Benchmarking']
                 elif search('system\s*:', line) is not None:
                     (x, system) = line.split(':', 1)
                     system = system.strip()
@@ -302,9 +302,9 @@ system: The name of the lab system that is to be used for the testing. The
             tests = SRU_TestsList
             for t in tests:
                 if 'ubuntu_fs_fio_perf' in t:
-                    jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t)
+                    jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['Filesystem Benchmarking'], series_decoration='SRU', tests=t)
                 else:
-                    jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['testing'], series_decoration='SRU', tests=t)
+                    jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['SRU Testing'], series_decoration='SRU', tests=t)
                 if jobs is not None:
                     info('The following jenkins jobs were created')
                     for job in jobs:
@@ -340,9 +340,9 @@ system: The name of the lab system that is to be used for the testing. The
         tests = SRU_TestsList
         for t in tests:
             if 'ubuntu_fs_fio_perf' in t:
-                jobs = s.create_test_jobs(props['Series'], s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t, hwe=hwe)
+                jobs = s.create_test_jobs(props['Series'], s.default_arches, s.sut_pool['Filesystem Benchmarking'], series_decoration='SRU', tests=t, hwe=hwe)
             else:
-                jobs = s.create_test_jobs(props['Series'], s.default_arches, s.sut_pool['testing'], series_decoration='SRU', tests=t, hwe=hwe)
+                jobs = s.create_test_jobs(props['Series'], s.default_arches, s.sut_pool['SRU Testing'], series_decoration='SRU', tests=t, hwe=hwe)
             if jobs is not None:
                 info('The following jenkins jobs were created')
                 for job in jobs:
@@ -358,9 +358,9 @@ system: The name of the lab system that is to be used for the testing. The
         tests = SRU_TestsList
         for t in tests:
             if 'iozone' in t:
-                jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['benchmarks'], series_decoration='SRU', tests=t, hwe=True)
+                jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['Filesystem Benchmarking'], series_decoration='SRU', tests=t, hwe=True)
             else:
-                jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['testing'], series_decoration='SRU', tests=t, hwe=True)
+                jobs = s.create_test_jobs(series, s.default_arches, s.sut_pool['SRU Testing'], series_decoration='SRU', tests=t, hwe=True)
             if jobs is not None:
                 info('The following jenkins jobs were created')
                 for job in jobs:
