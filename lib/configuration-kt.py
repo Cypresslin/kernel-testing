@@ -36,7 +36,7 @@ Configuration = {
                     "password" : "dSJ2jE3Znp"
                 },
             ],
-            "role" : "colin",
+            "role" : "Filesystem Benchmarking",
             "locked" : False,
         },
         "rizzo" : {
@@ -51,7 +51,7 @@ Configuration = {
                     "password" : "s1lgI8YlgTT"
                 },
             ],
-            "role" : "testing",
+            "role" : "SRU Testing",
             "locked" : False,
         },
         "pepe" : {
@@ -66,7 +66,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "testing",
+            "role" : "Personal Testing",
             "locked" : False,
         },
         "fozzie" : {
@@ -126,7 +126,7 @@ Configuration = {
                     "password" : "mBZpvBcB8sQeo"
                 },
             ],
-            "role" : "testing",
+            "role" : "SRU Testing",
             "locked" : False,
         },
         "alkaid" : {
@@ -141,7 +141,7 @@ Configuration = {
                     "password" : "CdyHUUy9xkDXz"
                 },
             ],
-            "role" : "none",
+            "role" : "Personal Testing",
             "locked" : False,
         },
         "phact" : {
@@ -186,7 +186,7 @@ Configuration = {
                     "password" : "e3IxQKEFn"
                 },
             ],
-            "role" : "testing",
+            "role" : "SRU Testing",
             "locked" : False,
         },
         "zuijin" : {
@@ -201,7 +201,7 @@ Configuration = {
                     "password" : "QEPQON1r3vN8"
                 },
             ],
-            "role" : "none",
+            "role" : "Personal Testing",
             "locked" : False,
         },
         "onza" : {
@@ -246,7 +246,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "testing",
+            "role" : "SRU Testing",
             "locked" : False,
         },
         "fuller" : {
@@ -261,7 +261,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : "Personal Testing",
             "locked" : False,
         },
         "dagmar" : {
@@ -291,7 +291,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "testing",
+            "role" : "SRU Testing",
             "locked" : False,
         },
         "larsen" : {
@@ -306,7 +306,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "testing",
+            "role" : "SRU Testing",
             "locked" : False,
         },
         "bantam" : {
@@ -321,7 +321,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "testing",
+            "role" : "none",
             "locked" : False,
         },
         "modoc" : {
@@ -336,7 +336,7 @@ Configuration = {
                     "password" : "admin"
                 },
             ],
-            "role" : "testing",
+            "role" : "SRU Testing",
             "locked" : False,
         },
         "dwalin" : {
