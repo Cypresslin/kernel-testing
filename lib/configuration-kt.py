@@ -26,7 +26,7 @@ Configuration = {
     "systems" : {
         "gonzo" : {
             "arch" : ['amd64', 'i386'],
-            "provisioner" : "cobbler",
+            "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
             "power" : [
                 {
@@ -71,7 +71,7 @@ Configuration = {
         },
         "fozzie" : {
             "arch" : ['amd64', 'i386'],
-            "provisioner" : "cobbler",
+            "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
             "power" : [
                 {
