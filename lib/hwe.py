@@ -11,6 +11,14 @@ HWE = {
         'precise' : {
             'series' : None,
         },
+        'quantal' : {
+            'series' : 'precise',
+            'package' : 'linux-generic-lts-quantal',
+        },
+        'saucy' : {
+            'series' : 'precise',
+            'package' : 'linux-generic-lts-saucy',
+        },
         'trusty' : {
             'series' : 'precise',
             'package' : 'linux-generic-lts-trusty',
