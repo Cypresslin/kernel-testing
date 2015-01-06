@@ -199,6 +199,18 @@ class Base(object):
             s.wait_for_target()
         cdebug('        Leave Base::reboot')
 
+    # enable_src
+    #
+    def enable_src(s):
+        '''
+        On the target system, enable the src packages specified series.
+        '''
+        cdebug('        Enter Base::enable_proposed')
+        s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
+        s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s-updates restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
+        s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s-security restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
+        cdebug('        Leave Base::enable_proposed')
+
     # enable_proposed
     #
     def enable_proposed(s):
@@ -533,6 +545,7 @@ class Metal(Base):
         #
         if not Ubuntu().is_development_series(s.series):
             s.progress('Enabling Proposed')
+            s.enable_src()
             s.enable_proposed()
         if s.ppa is not None:
             s.progress('Enabling PPA')
