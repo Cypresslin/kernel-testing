@@ -156,6 +156,9 @@ class MAASCore():
     def update_arch(s, hostname, arch):
         s.node_cmd(hostname, 'update', 'osystem=ubuntu architecture=%s/generic' % arch)
 
+    def update_series_and_arch(s, hostname, series, arch):
+        s.node_cmd(hostname, 'update', 'osystem=ubuntu distro_series=ubuntu/%s architecture=%s/generic' % (series, arch))
+
     def __stale(s):
         s.__nodes = None
         s.__nodes_by_name = None
@@ -211,6 +214,11 @@ class MAASNode():
         '''
         '''
         return s.__maas.update_arch(s.__hostname, arch)
+
+    def series_and_arch(s, series, arch):
+        '''
+        '''
+        return s.__maas.update_arch(s.__hostname, series, arch)
 
     # acquire
     #

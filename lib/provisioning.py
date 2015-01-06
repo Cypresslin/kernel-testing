@@ -1093,8 +1093,7 @@ class MetalProvisioner(Provisioner):
             maas = MAASCore(provisioner['profile'], provisioner['server'], provisioner['creds'])
             mt = maas.node(target)
             mt.stop_and_release()
-            mt.series(self.series)
-            mt.arch(self.arch)
+            mt.series_and_arch(self.series, self.arch)
             mt.acquire_and_start()
         else:
             error('Unrecognised provisioning type (%s)' % provisioner['type'])
