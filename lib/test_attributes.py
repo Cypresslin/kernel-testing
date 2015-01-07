@@ -77,7 +77,10 @@ class TestAttributes():
 
         # Timestamp
         #
-        data['timestamp'] = date_to_string(datetime.utcnow())
+        # Obtaining the timestamp from the system that was just provisioned is not reliable. The
+        # true timestamp is obtained on the jenkins system and passed in as the _TS_ env variable.
+        #
+        data['timestamp'] = environ['_TS_']
 
         # Version
         #
