@@ -33,7 +33,7 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.227",
                     "username" : "maas",
-                    "password" : "dSJ2jE3Znp"
+                    "password" : "CvGJbzlt"
                 },
             ],
             "role" : "Filesystem Benchmarking",
