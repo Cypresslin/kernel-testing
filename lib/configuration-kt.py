@@ -51,6 +51,7 @@ Configuration = {
                     "password" : "s1lgI8YlgTT"
                 },
             ],
+            "scratch drive" : "/dev/sdb",
             "role" : "SRU Testing",
             "locked" : False,
         },
@@ -212,8 +213,8 @@ Configuration = {
                 {
                     "type" : "ipmi",
                     "address" : "10.245.80.207",
-                    "username" : "maas",
-                    "password" : "DIACTcZKAm1tR"
+                    "username" : "admin",
+                    "password" : "insecure"
                 },
             ],
             "role" : "none",
@@ -227,8 +228,8 @@ Configuration = {
                 {
                     "type" : "ipmi",
                     "address" : "10.245.80.205",
-                    "username" : "maas",
-                    "password" : "uodA1fl6uf8"
+                    "username" : "admin",
+                    "password" : "insecure"
                 },
             ],
             "role" : "none",
@@ -336,6 +337,7 @@ Configuration = {
                     "password" : "admin"
                 },
             ],
+            "scratch drive" : "/dev/sdb",
             "role" : "SRU Testing",
             "locked" : False,
         },
