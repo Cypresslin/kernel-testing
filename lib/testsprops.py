@@ -208,7 +208,7 @@ TestProfiles = {
     'xfstests' : {
         'packages' : {
             'common' : [
-                'uuid-dev', 'xfslibs-dev', 'xfsdump', 'autoconf', 'kpartx', 'libtool', 'python-xattr', 'libacl1-dev', 'libaio-dev', 'quota', 'bc', 'libdm0-dev', 'btrfs-tools', 'attr', 'gdb',
+                'build-essential', 'uuid-dev', 'xfslibs-dev', 'xfsdump', 'autoconf', 'kpartx', 'libtool', 'python-xattr', 'libacl1-dev', 'libaio-dev', 'quota', 'bc', 'libdm0-dev', 'btrfs-tools', 'attr', 'gdb',
                 ],
             },
         'command' : 'sudo mkdir -p /media/xfsmount ; sudo adduser --quiet --disabled-password -gecos "XFS test user,,," fsgqa || true',
