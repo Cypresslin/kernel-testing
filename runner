@@ -12,6 +12,7 @@ import platform
 from lib.testsprops                     import TestProfiles, TestCollections
 from lib.test_attributes                import TestAttributes
 from lib.shell                          import sh, ShellError, ShellTimeoutError
+from lib.configuration                  import Configuration
 
 # ErrorExit
 #
@@ -33,7 +34,7 @@ class Runner():
     def __init__(self, args):
         self.args = args
         self.__release_name = None
-        self.__scratch_needed = None
+        self.scratch_needed = False
         self.test_list = None
         self.autotest_client_root = 'autotest/client'
         self.autotest_exe_path = path.join(self.autotest_client_root, 'autotest-local')
@@ -110,6 +111,22 @@ class Runner():
 
         self.tests_list = valid_tests
 
+        # If a test requires a scratch drive make sure that this system has one. If
+        # not, drop the test.
+        #
+        valid_tests = []
+        for t in self.tests_list:
+            if 'scratch' in TestProfiles[t]:
+                # We require a spare drive for xfstesting. We make an assumption about what that
+                # spare drive is. Look at the device the root device is and assume that the scratch
+                # drive is the 'b' device with that same device root.
+                #
+                node = platform.node()
+                if 'scratch drive' in Configuration['systems'][node]:
+                    valid_tests.append(t)
+                    self.__scratch_needed = True
+        self.tests_list = valid_tests
+
         # Verify that the tests are valid, autotest tests.
         #
         if not path.exists(self.autotest_tests_root):
@@ -137,34 +154,6 @@ class Runner():
                     debug("Release name is %s" % self.__release_name)
                     break
         return self.__release_name
-
-    # scratch_needed
-    #
-    @property
-    def scratch_needed(self):
-        if self.__scratch_needed is None:
-            self.__scratch_needed = False
-            for t in self.tests_list:
-                if 'scratch' in TestProfiles[t]:
-                    self.__scratch_needed = True
-        debug('scratch needed: %s' % self.__scratch_needed)
-        return self.__scratch_needed
-
-    # mounts
-    #
-    def mounts(self):
-        status, retval = sh('mount')
-        return retval
-
-    # root_device_prefix
-    #
-    def root_device_prefix(self):
-        retval='bogus'
-        for line in self.mounts():
-            if ' / ' in line:
-                retval = line.split()[0].replace('/dev/', '')[0:2]
-                debug('The root drive prefix is: %s' % retval)
-        return retval
 
     # test_list_determine_control_files
     #
@@ -312,11 +301,10 @@ class Runner():
             self.tests_list_verify()
 
             if self.scratch_needed:
-                # We require a spare drive for xfstesting. We make an assumption about what that
-                # spare drive is. Look at the device the root device is and assume that the scratch
-                # drive is the 'b' device with that same device root.
-                #
-                TestProfiles['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] = '/dev/%sb' % self.root_device_prefix()
+                node = platform.node()
+                if 'scratch drive' in Configuration['systems'][node]:
+                    device = Configuration['systems'][node]['scratch']
+                    TestProfiles['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] = device
 
             # Some tests may require environment variables bet set. Do that.
             #
