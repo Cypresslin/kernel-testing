@@ -145,7 +145,7 @@ class ProvApp(object):
         retval = 1
         try:
             s.validate_args(args)
-            metal = Metal(args.sut_name, args.sut_series, args.sut_arch, args.sut_hwe, args.sut_debs_url, ppa=args.ppa, dry_run=args.dry_run)
+            metal = Metal(args.sut_name, args.sut_series, args.sut_arch, hwe=args.sut_hwe, debs=args.sut_debs_url, ppa=args.ppa, dry_run=args.dry_run)
             retval = not metal.provision()
 
         except ErrorExit as e:
