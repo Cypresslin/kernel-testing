@@ -148,8 +148,6 @@ class TheApp():
                 # The secondary key for 'data' is the kernel version.
                 #
                 k = results['attributes']['kernel']
-                if who is not None:
-                    k = k + '&nbsp;&nbsp;(%s)' % who
                 if k not in data[who][series]:
                     data[who][series][k] = []
                 data[who][series][k].append(results)
