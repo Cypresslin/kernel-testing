@@ -95,7 +95,7 @@
 
                                                                 dt = datetime.strptime(record['attributes']['timestamp'], '%Y-%m-%d %H:%M')
                                                                 ts = dt.strftime('%Y-%m-%d_%H-%M-%S')
-                                                                link = "http://kernel.ubuntu.com/testing/test-results/%s__%s__%s/results-index.html" % (record['attributes']['platform']['hostname'], record['attributes']['kernel'], ts)
+                                                                link = "http://kernel.ubuntu.com/testing/%s__%s__%s/results-index.html" % (record['attributes']['platform']['hostname'], record['attributes']['kernel'], ts)
 
                                                                 hardware = 'real'
                                                                 if 'hardware' in record['attributes']['platform']:
@@ -108,7 +108,7 @@
                                                             %>
                                                             <tr>
                                                                 <td>&nbsp;</td>
-                                                                <td><a href="test-results/${ record['attributes']['platform']['hostname'] }.html">${ record['attributes']['platform']['hostname'] }</a></td>
+                                                                <td><a href="${ record['attributes']['platform']['hostname'] }.html">${ record['attributes']['platform']['hostname'] }</a></td>
                                                                 <td align="center">${ arch } </td>
                                                                 <td align="center">${hardware}</td>
                                                                 <td align="center">${ record['attributes']['timestamp'] }</td>
@@ -143,9 +143,9 @@
                                             <table border="0" cellpadding="0" cellspacing="0">
                                                 <tr>
                                                     <th width="100">&nbsp;</th>
-                                                    <th align="center" colspan="2" style="border-color: green; border-width: 0 0 1px 0; border-style: solid;"><a href="test-results/statler.html">statler</a></th>
+                                                    <th align="center" colspan="2" style="border-color: green; border-width: 0 0 1px 0; border-style: solid;"><a href="statler.html">statler</a></th>
                                                     <th width="10">&nbsp;</th>
-                                                    <th align="center" colspan="2" style="border-color: green; border-width: 0 0 1px 0; border-style: solid;"><a href="test-results/waldorf.html">waldorf</a></th>
+                                                    <th align="center" colspan="2" style="border-color: green; border-width: 0 0 1px 0; border-style: solid;"><a href="waldorf.html">waldorf</a></th>
                                                 </tr>
                                                 <tr>
                                                     <td>bonnie</td>
@@ -182,9 +182,9 @@
                                             <table border="0" cellpadding="0" cellspacing="0">
                                                 <tr>
                                                     <th width="100">&nbsp;</th>
-                                                    <th align="center" colspan="2" style="border-color: green; border-width: 0 0 1px 0; border-style: solid;"><a href="test-results/statler.html">statler</a></th>
+                                                    <th align="center" colspan="2" style="border-color: green; border-width: 0 0 1px 0; border-style: solid;"><a href="statler.html">statler</a></th>
                                                     <th width="10">&nbsp;</th>
-                                                    <th align="center" colspan="2" style="border-color: green; border-width: 0 0 1px 0; border-style: solid;"><a href="test-results/waldorf.html">waldorf</a></th>
+                                                    <th align="center" colspan="2" style="border-color: green; border-width: 0 0 1px 0; border-style: solid;"><a href="waldorf.html">waldorf</a></th>
                                                 </tr>
                                                 <tr>
                                                     <td>bonnie</td>
