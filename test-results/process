@@ -4,6 +4,7 @@
 from sys                                import argv
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import basicConfig, INFO, DEBUG, info
+from lib.log                            import cdebug, Clog, cerror
 from datetime                           import datetime
 from os                                 import path
 
@@ -12,7 +13,7 @@ from mako.exceptions                    import RichTraceback
 
 from grinder                            import Exit, TestResultsRepository, TestResultsRepositoryError, load_template
 from lib.dbg                            import Dbg
-from lib.utils                          import error, stdo, dump, string_to_date, json_load
+from lib.utils                          import error, dump, string_to_date, json_load
 
 from lib.ubuntu                         import Ubuntu
 from lib.debian                         import Debian
@@ -29,15 +30,17 @@ class TheApp():
     def __init__(s, args):
         '''
         '''
+        s.cfg = {}
+        s.cfg['template'] = 'digest-index.mako'
         s.args = args
 
     # initialize
     #
     def initialize(self):
-        Dbg.enter("Digest.initialize")
+        cdebug("Enter Digest.initialize")
 
         try:
-            self.trr = TestResultsRepository()
+            self.trr = TestResultsRepository(rc='bjf-results.rc')
             self.ubuntu = Ubuntu()
 
             self.index_template = Template(load_template(self.cfg['template']))
@@ -47,15 +50,15 @@ class TheApp():
 
         except TestResultsRepositoryError as e:
             error(e.msg)
-            Dbg.leave("Digest.initialize")
+            cdebug("Leave Digest.initialize")
             raise Exit()
 
-        Dbg.leave("Digest.initialize")
+        cdebug("Leave Digest.initialize")
 
     # series
     #
     def series(self, results):
-        Dbg.enter("Digest.series")
+        cdebug("    Enter Digest.series")
 
         retval = "unknown"
         try:
@@ -89,13 +92,13 @@ class TheApp():
             except KeyError:
                 print(" ** WARNING: The kernel version (%s) did not match up with any Ubuntu series." % (results['attributes']['kernel']))
 
-        Dbg.leave("Digest.series")
+        cdebug("    Leave Digest.series (%s)" % retval)
         return retval
 
     # main
     #
     def main(self):
-        Dbg.enter("Digest.main")
+        cdebug("Enter Digest.main")
 
         try:
             self.initialize()
@@ -111,22 +114,8 @@ class TheApp():
                     continue
 
                 #dump(results['attributes'])
-                Dbg.verbose("%s\n" % (tr))
-                Dbg.verbose("    kernel: %s\n" % (results['attributes']['kernel']))
-
-                series = self.series(results)
-                results['attributes']['series'] = series
-                Dbg.verbose("    series: %s\n" % (series))
-
-                # "Fixup" the timestamp to be what we want it to look like on the web page
-                #
-                ts = string_to_date(results['attributes']['timestamp'])
-                results['attributes']['timestamp'] = ts.strftime("%Y-%m-%d %H:%M")
-
-                # The primary key is the series.
-                #
-                if series not in data:
-                    data[series] = {}
+                cdebug("Processing: %s" % (tr), 'green')
+                cdebug("    kernel: %s" % (results['attributes']['kernel']))
 
                 # If the kernel used was a "custom" kernel, one that someone on the kernel
                 # team built themselves or a mainline build kernel, we want that information
@@ -135,15 +124,35 @@ class TheApp():
                 who = None
                 if '_for_' in job:
                     (junk, who) = job.split('_for_')
+                    cdebug("       who: %s" % (who))
+                else:
+                    who = 'sru'
+
+                if who not in data:
+                    data[who] = {}
+
+                series = self.series(results)
+                results['attributes']['series'] = series
+                cdebug("    series: %s" % (series))
+
+                # "Fixup" the timestamp to be what we want it to look like on the web page
+                #
+                ts = string_to_date(results['attributes']['timestamp'])
+                results['attributes']['timestamp'] = ts.strftime("%Y-%m-%d %H:%M")
+
+                # The primary key is the series.
+                #
+                if series not in data[who]:
+                    data[who][series] = {}
 
                 # The secondary key for 'data' is the kernel version.
                 #
                 k = results['attributes']['kernel']
                 if who is not None:
                     k = k + '&nbsp;&nbsp;(%s)' % who
-                if k not in data[series]:
-                    data[series][k] = []
-                data[series][k].append(results)
+                if k not in data[who][series]:
+                    data[who][series][k] = []
+                data[who][series][k].append(results)
 
             #dump(data)
 
@@ -151,10 +160,19 @@ class TheApp():
             # Generate the testing, index page.
             #
             try:
-                template = self.index_template.render(data = data, timestamp = datetime.utcnow())
+                cdebug('Generating: index.html')
+                template = self.index_template.render(data = data['sru'], timestamp = datetime.utcnow())
                 dest = path.join(self.trr.cfg['repository_root'], 'index.html')
                 with open(dest, 'w') as f:
                     f.write(template)
+
+                for k in data:
+                    if k is 'sru': continue
+                    cdebug('Generating: %s-index.html' % k)
+                    template = self.index_template.render(data = data[k], timestamp = datetime.utcnow())
+                    dest = path.join(self.trr.cfg['repository_root'], '%s-index.html' % k)
+                    with open(dest, 'w') as f:
+                        f.write(template)
 
                 for host in self.hosts_info:
                     template = self.host_template.render(data = self.hosts_info[host], title = host, timestamp = datetime.utcnow())
@@ -171,7 +189,7 @@ class TheApp():
 
         except TestResultsRepositoryError as e:
             error(e.msg)
-            Dbg.leave("Digest.main")
+            cdebug("Leave Digest.main")
             raise Exit()
 
         # Handle the user presses <ctrl-C>.
@@ -182,7 +200,7 @@ class TheApp():
         except Exit:
             pass
 
-        Dbg.leave("Digest.main")
+        cdebug("Leave Digest.main")
         return
 
 if __name__ == '__main__':
@@ -197,6 +215,7 @@ examples:
     '''
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
     parser.add_argument('--debug', action='store_true', default=False, help='Print out a lot of messages about what is going on.')
+    parser.add_argument('--nc', action='store_true', default=False, help='Debut output should not be colored.')
     args = parser.parse_args()
 
     # If logging parameters were set on the command line, handle them
@@ -205,6 +224,8 @@ examples:
     log_format = "%(levelname)s - %(message)s"
     if args.debug:
         basicConfig(level=DEBUG, format=log_format)
+        Clog.dbg = True
+        Clog.color = not args.nc
     else:
         basicConfig(level=INFO, format=log_format)
 
