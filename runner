@@ -67,6 +67,25 @@ class Runner():
                     if t not in neo:
                         neo.append(t)
             self.tests_list = neo
+
+        # If a test requires a scratch drive make sure that this system has one. If
+        # not, drop the test.
+        #
+        valid_tests = []
+        for t in self.tests_list:
+            if 'scratch' in TestProfiles[t]:
+                # We require a spare drive for xfstesting. We make an assumption about what that
+                # spare drive is. Look at the device the root device is and assume that the scratch
+                # drive is the 'b' device with that same device root.
+                #
+                node = platform.node()
+                if 'scratch drive' in Configuration['systems'][node]:
+                    valid_tests.append(t)
+                    self.__scratch_needed = True
+            else:
+                valid_tests.append(t)
+        self.tests_list = valid_tests
+
         debug('    test list: %s' % self.tests_list)
 
     def blacklisted_by_series(self, profile):
@@ -96,7 +115,6 @@ class Runner():
                 error('Test \'%s\' is not recognized.' % t)
                 errors = True
 
-
         # Verify that certain tests have not been blaclisted for the series
         # that we are currently running.
         #
@@ -111,21 +129,6 @@ class Runner():
 
         self.tests_list = valid_tests
 
-        # If a test requires a scratch drive make sure that this system has one. If
-        # not, drop the test.
-        #
-        valid_tests = []
-        for t in self.tests_list:
-            if 'scratch' in TestProfiles[t]:
-                # We require a spare drive for xfstesting. We make an assumption about what that
-                # spare drive is. Look at the device the root device is and assume that the scratch
-                # drive is the 'b' device with that same device root.
-                #
-                node = platform.node()
-                if 'scratch drive' in Configuration['systems'][node]:
-                    valid_tests.append(t)
-                    self.__scratch_needed = True
-        self.tests_list = valid_tests
 
         # Verify that the tests are valid, autotest tests.
         #
