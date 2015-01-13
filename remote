@@ -69,6 +69,8 @@ while [ $# -gt 0 ]; do
     shift
 done
 
+set -e
+
 export SSH_OPTIONS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet"
 
 # Push the tests and the kernel team infrastructure to the SUT.
