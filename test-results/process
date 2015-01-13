@@ -40,7 +40,7 @@ class TheApp():
         cdebug("Enter Digest.initialize")
 
         try:
-            self.trr = TestResultsRepository(rc='bjf-results.rc')
+            self.trr = TestResultsRepository(rc='test-results.rc')
             self.ubuntu = Ubuntu()
 
             self.index_template = Template(load_template(self.cfg['template']))
@@ -167,7 +167,6 @@ class TheApp():
                     f.write(template)
 
                 for k in data:
-                    if k is 'sru': continue
                     cdebug('Generating: %s-index.html' % k)
                     template = self.index_template.render(data = data[k], timestamp = datetime.utcnow())
                     dest = path.join(self.trr.cfg['repository_root'], '%s-index.html' % k)
