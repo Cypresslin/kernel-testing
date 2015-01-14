@@ -340,6 +340,9 @@ Configuration = {
             "scratch drive" : "/dev/sdb",
             "role" : "SRU Testing",
             "locked" : False,
+            'series-blacklist' : [
+                'lucid', 'precise',
+                ],
         },
         "dwalin" : {
             "arch" : ['amd64', 'i386'],
