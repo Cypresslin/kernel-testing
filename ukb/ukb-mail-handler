@@ -37,7 +37,7 @@ class MailHandler():
     def __init__(s, args):
         s.args = args
         s.jenkins_url_default = "http://10.245.80.32:8080"
-        s.default_arches=['amd64', 'i386']
+        s.default_arches=['amd64', 'i386', 'ppc64el']
 
         # Create a dictionary of the lab HW keyed by role.
         #
@@ -81,25 +81,26 @@ class MailHandler():
         retval = []
         for arch in arches:
             for system in systems:
-                cmd = '/home/work/kernel-testing/jenkins-job-creator/jjc --sut=real --hw=%s --sut-arch=%s --sut-series=%s --jenkins-url=%s --test=%s' % (system, arch, series, s.jenkins_url_default, tests)
-                if series_decoration is not None:
-                    cmd += ' --sut-series-decoration=%s' % series_decoration
-                if url is not None:
-                    cmd += ' --debs=%s' % (url)
-                if user is not None:
-                    cmd += ' --user=%s' % (user)
-                if hwe:
-                    cmd += ' --sut-hwe'
-                if ppa:
-                    cmd += ' --ppa=%s' % (ppa)
-                debug('  ' + cmd)
-                print(cmd)
-                (return_code, output) = sh(cmd, quiet=False)
-                for line in output:
-                    line = line.strip()
-                    if 'created jenkins job:' in line:
-                        (x, job) = line.split('job:', 1)
-                        retval.append(job.strip())
+                if arch in Configuration['systems'][system]['arch']:
+                    cmd = '/home/work/kernel-testing/jenkins-job-creator/jjc --sut=real --hw=%s --sut-arch=%s --sut-series=%s --jenkins-url=%s --test=%s' % (system, arch, series, s.jenkins_url_default, tests)
+                    if series_decoration is not None:
+                        cmd += ' --sut-series-decoration=%s' % series_decoration
+                    if url is not None:
+                        cmd += ' --debs=%s' % (url)
+                    if user is not None:
+                        cmd += ' --user=%s' % (user)
+                    if hwe:
+                        cmd += ' --sut-hwe'
+                    if ppa:
+                        cmd += ' --ppa=%s' % (ppa)
+                    debug('  ' + cmd)
+                    print(cmd)
+                    (return_code, output) = sh(cmd, quiet=False)
+                    for line in output:
+                        line = line.strip()
+                        if 'created jenkins job:' in line:
+                            (x, job) = line.split('job:', 1)
+                            retval.append(job.strip())
 
         return retval
 
