@@ -335,7 +335,7 @@ TestProfiles = {
 TestCollections = {
     # These are the tests that get run as DEP8 tests
     #
-    'dep8' : ['ubuntu_seccomp', 'ubuntu_stress_ng'],
+    'dep8' : ['ubuntu_seccomp', 'ubuntu_qrt_apparmor'],
 
     # The set of tests that Ubuntu Engineering QA run.
     #
