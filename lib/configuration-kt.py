@@ -36,6 +36,7 @@ Configuration = {
                     "password" : "CvGJbzlt"
                 },
             ],
+            "scratch drive" : "/dev/sdb",
             "role" : "Filesystem Benchmarking",
             "locked" : False,
         },
