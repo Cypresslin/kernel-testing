@@ -219,7 +219,7 @@ TestProfiles = {
     'ubuntu_fs_fio_perf' : {
         'packages' : {
             'common' : [
-                 'git-core', 'fio', 'libaio-dev', 'xfsdump', 'xfsprogs', 'btrfs-tools', 'gdb',
+                 'build-essential', 'git-core', 'fio', 'libaio-dev', 'xfsdump', 'xfsprogs', 'btrfs-tools', 'gdb',
                 ],
             },
         'env' : {('BENCHMARKS', 'true')},
