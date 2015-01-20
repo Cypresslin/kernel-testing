@@ -61,6 +61,13 @@ class TestResultsReaper():
                                 print('REAP: %s' % results_dir)
                             else:
                                 rmtree(results_dir)
+                    if self.cfg.kernel:
+                        if results['attributes']['kernel'] == self.cfg.kernel:
+                            if self.cfg.dry_run:
+                                print('REAP: %s' % results_dir)
+                            else:
+                                rmtree(results_dir)
+
                     else:
                         if '_for_' in job:
                             # This is a "custom" or "mainline build" job and has a shorter
@@ -104,6 +111,7 @@ if __name__ == '__main__':
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
     parser.add_argument('--user',     required=False, help='Delete all the testing results for custom test runs for a particular user.')
     parser.add_argument('--series',   required=False, help='Delete all the testing results for a particular series.')
+    parser.add_argument('--kernel',   required=False, help='Delete all the testing results for a particular kernel.')
     parser.add_argument('--dry-run',  action='store_true', default=False, help='Don\'t do anything, just print out what would be done.')
     args = parser.parse_args()
 
