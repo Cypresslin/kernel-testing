@@ -1,0 +1,338 @@
+#!/usr/bin/env python
+#
+
+from argparse                           import ArgumentParser, RawDescriptionHelpFormatter, RawTextHelpFormatter
+from logging                            import basicConfig, INFO, DEBUG, info, warning
+from lib.ubuntu                         import Ubuntu
+from lib.log                            import cdebug, Clog, cerror
+from lib.configuration                  import Configuration
+from lib.hwe                            import HWE
+from lib.testsprops                     import TestProfiles, TestCollections
+import json
+import pika
+
+# MQMonitor
+#
+class MQMonitor():
+
+    # __init__
+    #
+    def __init__(s, address='162.213.32.100', port=5672, exchange='kernel'):
+        s.server_address = address
+        s.server_port    = port
+        s.exchange_name  = exchange
+
+    def _get_channel(s):
+        params = pika.ConnectionParameters(s.server_address, s.server_port, connection_attempts=3)
+        connection = pika.BlockingConnection(params)
+        channel = connection.channel()
+        channel.exchange_declare(exchange=s.exchange_name, type='topic')
+        return channel
+
+    def listen(s, queue_name, routing_key, handler_function):
+        def wrapped_handler(channel, method, properties, body):
+            payload = json.loads(body)
+            handler_function(payload)
+        channel = s._get_channel()
+        channel.queue_declare(queue_name, durable=True)
+
+        channel.queue_bind(exchange=s.exchange_name, queue=queue_name, routing_key=routing_key)
+
+        channel.basic_consume(wrapped_handler, queue=queue_name, no_ack=True)
+        channel.start_consuming()
+
+
+    def publish(s, routing_key, payload):
+        channel = s._get_channel()
+        message_body = json.dumps(payload)
+        properties = pika.BasicProperties(delivery_mode=2)
+        channel.basic_publish(exchange=s.exchange_name, routing_key=routing_key, body=message_body, properties=properties)
+
+# Exit
+#
+class Exit():
+    """
+    If an error message has already been displayed and we want to just exit the app, this
+    exception is raised.
+    """
+    pass
+
+# TheApp
+#
+class TheApp():
+    '''
+    This class is just the engine that makes everything go.
+    '''
+
+    # __init__
+    #
+    def __init__(s, args):
+        '''
+        '''
+        s.args = args
+
+    # __arg_list
+    #
+    def __arg_list(s, string):
+        if ',' in string:
+            retval = string(' ', '').split(',')
+        else:
+            retval = []
+            retval.append(string)
+        return retval
+
+    # main
+    #
+    def main(s):
+        '''
+        '''
+        retval = 1
+
+        try:
+            msg = {
+                'key'            : 'kernel.testing.test.request',
+                'who'            : 'brad.figg',
+                'op'             : 'request',
+                'date'           : '2014.11.02_08.00.00',
+
+                'series-name'    : 'precise',
+                'series-version' : '12.04',
+                'tests'          : 'sru',
+                'systems'        : ['rizzo', 'tarf'],
+                'hwe'            : False,
+                'arches'         : ['amd64', 'i386']
+            }
+
+            # ----------------------------------------------------------------------
+            # series
+            #
+            cdebug('series: ' + s.args.series)
+            try:
+                record = Ubuntu().lookup(s.args.series)
+                msg['series-name'] = record['name']
+                msg['series-version'] = record['series_version']
+            except KeyError:
+                print('  *** Error: Invalid series (%s) was specified. Valid, supported, series' % s.args.series)
+                print('             are: ')
+                db = Ubuntu().db
+                for k in db:
+                    if db[k]['supported']:
+                        print('                 ' + db[k]['name'])
+                raise Exit
+            #print(json.dumps(msg, sort_keys=True, indent=4))
+
+            # ----------------------------------------------------------------------
+            # arch
+            #
+            if s.args.arch:
+                cdebug('arch: ' + s.args.arch)
+                arches = s.__arg_list(s.args.arch)
+
+                for a in arches:
+                    if a not in ['amd64', 'i386', 'ppc64el']:
+                        print('  *** Error: The arch specified (%s) is not valid. Supported arches' % a)
+                        print('             are:')
+                        print('                 amd64  i386  ppc64el')
+                        raise Exit
+
+                msg['arches'] = arches
+            #print(json.dumps(msg, sort_keys=True, indent=4))
+
+            # ----------------------------------------------------------------------
+            # hwe
+            #
+            cdebug('hwe: ' + str(s.args.hwe))
+            if s.args.hwe:
+                if HWE[s.args.series]['series'] is not None:
+                    msg['hwe'] = True
+                else:
+                    print('  *** Error: The series specified (%s) is not a backport kernel.' % s.args.series)
+                    raise Exit
+            #print(json.dumps(msg, sort_keys=True, indent=4))
+
+            # ----------------------------------------------------------------------
+            # systems
+            #
+            if s.args.systems:
+                systems = s.__arg_list(s.args.systems)
+
+                for s in systems:
+                    if s not in Configuration['systems']:
+                        print('  *** Error: The system specified (%s) is not valid.' % s)
+                        raise Exit
+                msg['systems'] = systems
+            #print(json.dumps(msg, sort_keys=True, indent=4))
+
+            # ----------------------------------------------------------------------
+            # tests
+            #
+            if s.args.tests:
+                tests = s.__arg_list(s.args.tests)
+
+                for t in tests:
+                    if t not in TestProfiles and t not in TestCollections:
+                        print('  *** Error: The test specified (%s) is not valid.' % t)
+                        raise Exit
+
+                msg['tests'] = tests
+            #print(json.dumps(msg, sort_keys=True, indent=4))
+
+            # ----------------------------------------------------------------------
+            # url
+            #
+            if s.args.url:
+                msg['url'] = s.args.url
+
+            # ----------------------------------------------------------------------
+            # ppa
+            #
+            if s.args.ppa:
+                msg['url'] = s.args.ppa
+
+            print(json.dumps(msg, sort_keys=True, indent=4))
+
+
+            # Submit the message to the Message Queue
+            #
+            if s.args.local:
+                mq = MQMonitor(address='localhost', port=9123)
+            else:
+                mq = MQMonitor()
+
+            mq.publish(msg['key'], msg)
+
+            retval = 0
+
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            warning("Aborting ...")
+
+        except Exit:
+            print("")
+            print("Due to the above error(s), this script is unable to continue and is terminating.")
+            print("")
+
+        return retval
+
+if __name__ == '__main__':
+    # Command line argument setup and initial processing
+    #
+    app_description = '''
+I'm a utility for submitting test requests into the Kernel testing
+system.
+    '''
+    app_epilog = '''
+examples:
+    tr --help
+
+    tr --series trusty
+
+    try --series=trusty --arch=amd64 --tests=ubuntu_qrt_kernel_security
+    '''
+    help_series = '''\
+The ubuntu series that is initially installed onto the test system
+prior to installing the custom kernel deps. This is the only option
+that is required.
+
+Ex.
+    --series=precise\
+
+    '''
+
+    help_arch = '''\
+The architecture of the kernel to be tested. This can be a comma separated
+list of architectures or a single one. If not spcified, both amd64 and i386
+architectures are tested.
+
+Ex.
+    --arch=amd64
+
+Ex.
+    --arch='amd64,i386'\
+
+    '''
+
+    help_tests = '''\
+The list of autotest tests that are to be run on the system. If none
+are specified, then the 'default' is used. At this time 'default' is:
+    ubuntu_ecryptfs, ubuntu_qrt_kernel_hardening, ubuntu_qrt_kernel_panic,
+    ubuntu_qrt_kernel_security, ubuntu_qrt_kernel_aslr_collisions,
+    ubuntu_qrt_apparmor
+
+Ex.
+    --tests='ubuntu_qrt_apparmor'\
+
+    '''
+
+    help_url = '''\
+The URL to the directory containing the custom kernel debs to be installed
+and tested on the system under test.
+
+Ex.
+    --url='http://kernel.ubuntu.com/~bradf/precise-lp111666'\
+
+    '''
+
+    help_systems = '''\
+The name of the lab system that is to be used for the testing. The
+default is 'waldorf, beaker, rizzo'. In general, you shouldn't do
+this unless you know what other test systems are being used for.
+
+Ex.
+    --systems='gonzo'\
+
+    '''
+
+    help_ppa = '''\
+The ppa to get target .deb packages from
+
+Ex.
+    --ppa='canonical-kernel-team/ppa'\
+
+    '''
+
+    help_hwe = '''\
+The test request is for a HWE kernel (lts-backport).
+
+Ex.
+    --hwe\
+
+    '''
+
+    help_debug = '''\
+Print out a lot of messages about what is going on.\
+
+    '''
+
+    #parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter, usage=usage)
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawTextHelpFormatter)
+    # formatter_class=argparse.RawDescriptionHelpFormatter,
+    parser.add_argument('--debug',    action='store_true', default=False,                   help=help_debug)
+    parser.add_argument('--series',   required=True,                                        help=help_series)
+    parser.add_argument('--arch',     required=False,                                       help=help_arch)
+    parser.add_argument('--hwe',      required=False, action='store_true', default=False,   help=help_hwe)
+    parser.add_argument('--systems',  required=False,                                       help=help_systems)
+    parser.add_argument('--tests',    required=False,                                       help=help_tests)
+    parser.add_argument('--url',      required=False,                                       help=help_url)
+    parser.add_argument('--ppa',      required=False,                                       help=help_ppa)
+    parser.add_argument('--local',    action='store_true', default=False,                   help='Assume we have sshuttle setup to the MQ server.')
+    args = parser.parse_args()
+
+    # If logging parameters were set on the command line, handle them
+    # here.
+    #
+    log_format = "%(levelname)s - %(message)s"
+    if args.debug:
+        basicConfig(level=DEBUG, format=log_format)
+        Clog.dbg = True
+    else:
+        basicConfig(level=INFO, format=log_format)
+
+    app = TheApp(args)
+    exit(app.main())
+
+
+# vi:set ts=4 sw=4 expandtab:
+
