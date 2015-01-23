@@ -4,13 +4,11 @@
 import sys
 import os
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
-from logging                            import basicConfig, INFO, DEBUG, info, warning
+from logging                            import basicConfig, WARNING, info, warning, DEBUG
 from lib.msgq                           import MsgQueue
 from lib.configuration                  import Configuration
 from lib.testsprops                     import SRU_TestsList
-from time                               import sleep
-from lib.shell                          import sh, ShellError
-import json
+from lib.shell                          import sh
 
 # Exit
 #
@@ -210,7 +208,7 @@ examples:
     if args.verbose:
         basicConfig(level=DEBUG, format=log_format)
     else:
-        basicConfig(level=INFO, format=log_format)
+        basicConfig(level=WARNING, format=log_format)
 
     app = TheApp(args)
     exit(app.main())
