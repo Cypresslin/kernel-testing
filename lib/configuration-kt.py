@@ -338,7 +338,6 @@ Configuration = {
                     "password" : "admin"
                 },
             ],
-            "scratch drive" : "/dev/sdb",
             "role" : "SRU Testing",
             "locked" : False,
             'series-blacklist' : [
