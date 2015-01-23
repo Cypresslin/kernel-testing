@@ -8,45 +8,8 @@ from lib.log                            import cdebug, Clog, cerror
 from lib.configuration                  import Configuration
 from lib.hwe                            import HWE
 from lib.testsprops                     import TestProfiles, TestCollections
+from lib.msgq                           import MsgQueue
 import json
-import pika
-
-# MQMonitor
-#
-class MQMonitor():
-
-    # __init__
-    #
-    def __init__(s, address='162.213.32.100', port=5672, exchange='kernel'):
-        s.server_address = address
-        s.server_port    = port
-        s.exchange_name  = exchange
-
-    def _get_channel(s):
-        params = pika.ConnectionParameters(s.server_address, s.server_port, connection_attempts=3)
-        connection = pika.BlockingConnection(params)
-        channel = connection.channel()
-        channel.exchange_declare(exchange=s.exchange_name, type='topic')
-        return channel
-
-    def listen(s, queue_name, routing_key, handler_function):
-        def wrapped_handler(channel, method, properties, body):
-            payload = json.loads(body)
-            handler_function(payload)
-        channel = s._get_channel()
-        channel.queue_declare(queue_name, durable=True)
-
-        channel.queue_bind(exchange=s.exchange_name, queue=queue_name, routing_key=routing_key)
-
-        channel.basic_consume(wrapped_handler, queue=queue_name, no_ack=True)
-        channel.start_consuming()
-
-
-    def publish(s, routing_key, payload):
-        channel = s._get_channel()
-        message_body = json.dumps(payload)
-        properties = pika.BasicProperties(delivery_mode=2)
-        channel.basic_publish(exchange=s.exchange_name, routing_key=routing_key, body=message_body, properties=properties)
 
 # Exit
 #
@@ -91,16 +54,9 @@ class TheApp():
         try:
             msg = {
                 'key'            : 'kernel.testing.test.request',
-                'who'            : 'brad.figg',
                 'op'             : 'request',
                 'date'           : '2014.11.02_08.00.00',
-
-                'series-name'    : 'precise',
-                'series-version' : '12.04',
-                'tests'          : 'sru',
-                'systems'        : ['rizzo', 'tarf'],
                 'hwe'            : False,
-                'arches'         : ['amd64', 'i386']
             }
 
             # ----------------------------------------------------------------------
@@ -187,7 +143,7 @@ class TheApp():
             # ppa
             #
             if s.args.ppa:
-                msg['url'] = s.args.ppa
+                msg['ppa'] = s.args.ppa
 
             print(json.dumps(msg, sort_keys=True, indent=4))
 
@@ -195,9 +151,9 @@ class TheApp():
             # Submit the message to the Message Queue
             #
             if s.args.local:
-                mq = MQMonitor(address='localhost', port=9123)
+                mq = MsgQueue(address='localhost', port=9123)
             else:
-                mq = MQMonitor()
+                mq = MsgQueue()
 
             mq.publish(msg['key'], msg)
 
