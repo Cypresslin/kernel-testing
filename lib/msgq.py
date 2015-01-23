@@ -17,14 +17,12 @@ class MsgQueue():
 
     def listen(s, queue_name, routing_key, handler_function):
         def wrapped_handler(channel, method, properties, body):
-            print("*HIT*")
             payload = json.loads(body)
             handler_function(payload)
 
         s.channel.queue_declare(queue_name, durable=True)
         s.channel.queue_bind(exchange=s.exchange_name, queue=queue_name, routing_key=routing_key)
         s.channel.basic_consume(wrapped_handler, queue=queue_name, no_ack=True)
-        print("start_consuming: %s" % queue_name)
         s.channel.start_consuming()
 
     def publish(s, routing_key, payload):
