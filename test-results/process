@@ -73,12 +73,27 @@ class TheApp():
                 m = Debian.version_rc.match(kv)
                 if m:
                     for s in Ubuntu.index_by_series_name:
+                        cdebug("        series: " + s)
                         if s in kv:
+                            cdebug("            is backport kernel", 'blue')
                             # If the series is in the kernel version string, it is most likely
                             # a "backport" kernel and we should use the series in the version
                             #
                             retval = s
                             break
+
+                    if retval == 'unknown':
+                        # Starting with Utopic we are adding the series version to the kernel version and not
+                        # the series name.
+                        #
+                        for k in Ubuntu.db:
+                            if '~%s' % k in kv:
+                                cdebug("            is backport kernel", 'blue')
+                                # If the series is in the kernel version string, it is most likely
+                                # a "backport" kernel and we should use the series in the version
+                                #
+                                retval = Ubuntu.db[k]['name']
+                                break
 
                     if retval == 'unknown':
                         # What a hack ...
