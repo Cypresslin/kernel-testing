@@ -130,7 +130,7 @@ class TheApp():
     # create_test_jobs
     #
     def create_test_jobs(s, series, arches, systems, url=None, user=None, tests='default', series_decoration=None, hwe=False, ppa=None):
-        retval = []
+        retval = None
         for arch in arches:
             for system in systems:
                 if 'ubuntu_fs_fio_perf' == tests:
@@ -150,6 +150,7 @@ class TheApp():
                 if ppa:
                     cmd += ' --ppa=%s' % (ppa)
                 (return_code, output) = sh(cmd, quiet=False)
+                if retval is None: retval = []
                 for line in output:
                     line = line.strip()
                     if 'created jenkins job:' in line:
