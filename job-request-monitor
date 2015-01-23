@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 #
 
+import sys
+import os
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import basicConfig, INFO, DEBUG, info, warning
 from lib.msgq                           import MsgQueue
@@ -55,6 +57,9 @@ class TheApp():
             except:
                 s.sut_pool[role] = []
                 s.sut_pool[role].append(sut)
+
+        s.jjc = os.path.dirname(sys.argv[0])
+        s.jjc = os.path.join(s.jjc, 'jenkins-job-creator', 'jjc')
 
     # _handler
     #
@@ -143,7 +148,7 @@ class TheApp():
                         continue
                 if arch not in Configuration['systems'][system]['arch']: continue
 
-                cmd = '/home/work/kernel-testing/jenkins-job-creator/jjc --sut=real --hw=%s --sut-arch=%s --sut-series=%s --jenkins-url=%s --test=%s' % (system, arch, series, s.jenkins_url_default, tests)
+                cmd = s.jjc + ' --sut=real --hw=%s --sut-arch=%s --sut-series=%s --jenkins-url=%s --test=%s' % (system, arch, series, s.jenkins_url_default, tests)
                 if series_decoration is not None:
                     cmd += ' --sut-series-decoration=%s' % series_decoration
                 if url is not None:
@@ -155,12 +160,12 @@ class TheApp():
                 if ppa:
                     cmd += ' --ppa=%s' % (ppa)
                 print(cmd)
-                #(return_code, output) = sh(cmd, quiet=False)
-                #for line in output:
-                #    line = line.strip()
-                #    if 'created jenkins job:' in line:
-                #        (x, job) = line.split('job:', 1)
-                #        retval.append(job.strip())
+                (return_code, output) = sh(cmd, quiet=False)
+                for line in output:
+                    line = line.strip()
+                    if 'created jenkins job:' in line:
+                        (x, job) = line.split('job:', 1)
+                        retval.append(job.strip())
 
         print("        enter create_test_jobs")
         return retval
