@@ -109,7 +109,7 @@ class TheApp():
 
         # 
         for t in job['tests']:
-            jobs = s.create_test_jobs(series=job['series-name'],
+            created = s.create_test_jobs(series=job['series-name'],
                                       arches=job['arches'],
                                       systems=job['systems'],
                                       series_decoration=job['decoration'],
@@ -118,10 +118,10 @@ class TheApp():
                                       user=job['who'],
                                       hwe=job['hwe'],
                                       ppa=job['ppa'])
-            if jobs is not None:
+            if created is not None:
                 info('The following jenkins jobs were created')
-                for job in jobs:
-                    info('    %s' % job)
+                for j in created:
+                    info('    %s' % j)
 
         print("leave handler")
 
