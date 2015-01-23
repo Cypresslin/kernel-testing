@@ -206,9 +206,14 @@ class Base(object):
         On the target system, enable the src packages specified series.
         '''
         cdebug('        Enter Base::enable_proposed')
-        s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
-        s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s-updates restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
-        s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s-security restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
+        if s.arch == 'ppc64el': # This really should be a generic 'if s.arch in s.ports:'
+            s.ssh('\'echo deb-src http://ports.ubuntu.com/ubuntu-ports/ %s restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
+            s.ssh('\'echo deb-src http://ports.ubuntu.com/ubuntu-ports/ %s-updates restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
+            s.ssh('\'echo deb-src http://ports.ubuntu.com/ubuntu-ports/ %s-security restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
+        else:
+            s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
+            s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s-updates restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
+            s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s-security restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
         cdebug('        Leave Base::enable_proposed')
 
     # enable_proposed
@@ -219,7 +224,10 @@ class Base(object):
         specified series.
         '''
         cdebug('        Enter Base::enable_proposed')
-        s.ssh('\'echo deb http://us.archive.ubuntu.com/ubuntu/ %s-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
+        if s.arch == 'ppc64el': # This really should be a generic 'if s.arch in s.ports:'
+            s.ssh('\'echo deb http://ports.ubuntu.com/ubuntu-ports/ %s-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
+        else:
+            s.ssh('\'echo deb http://us.archive.ubuntu.com/ubuntu/ %s-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
         cdebug('        Leave Base::enable_proposed')
 
     # enable_ppa
