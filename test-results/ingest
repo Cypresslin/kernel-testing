@@ -189,7 +189,7 @@ class Ingest():
                 # BAD! BAD! BAD!
                 # Rather than do this right, i'm going to just hardcode some things.
                 #
-                src = path.join(self.jrr.archive, 'ubuntu_fs_fio_perf', 'results', 'ubuntu_fs_fio_perf.ubuntu_fs_fio_perf', 'results')
+                src = path.join(self.jtr.archive, 'ubuntu_fs_fio_perf', 'results', 'ubuntu_fs_fio_perf.ubuntu_fs_fio_perf', 'results')
                 dst = path.join(environ['HOME'], 'benchmark-results')
                 copy_tree(src, dst)
                 rmtree(src) # We don't want a separate copy eating up disk space
