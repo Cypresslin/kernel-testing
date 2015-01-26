@@ -9,6 +9,7 @@ from lib.configuration                  import Configuration
 from lib.hwe                            import HWE
 from lib.testsprops                     import TestProfiles, TestCollections
 from lib.msgq                           import MsgQueue
+from datetime                           import datetime
 import json
 
 # Exit
@@ -55,7 +56,6 @@ class TheApp():
             msg = {
                 'key'            : 'kernel.testing.test.request',
                 'op'             : 'request',
-                'date'           : '2014.11.02_08.00.00',
                 'hwe'            : False,
             }
 
@@ -75,6 +75,27 @@ class TheApp():
                     if db[k]['supported']:
                         print('                 ' + db[k]['name'])
                 raise Exit
+            #print(json.dumps(msg, sort_keys=True, indent=4))
+
+            # ----------------------------------------------------------------------
+            # date
+            #
+            msg['date'] = str(datetime.utcnow())
+
+            # ----------------------------------------------------------------------
+            # who
+            #
+            if s.args.who:
+                cdebug('who: ' + s.args.who)
+                msg['who'] = s.args.who
+            #print(json.dumps(msg, sort_keys=True, indent=4))
+
+            # ----------------------------------------------------------------------
+            # op
+            #
+            if s.args.op:
+                cdebug('op: ' + s.args.op)
+                msg['op'] = s.args.op
             #print(json.dumps(msg, sort_keys=True, indent=4))
 
             # ----------------------------------------------------------------------
@@ -112,9 +133,9 @@ class TheApp():
             if s.args.systems:
                 systems = s.__arg_list(s.args.systems)
 
-                for s in systems:
-                    if s not in Configuration['systems']:
-                        print('  *** Error: The system specified (%s) is not valid.' % s)
+                for system in systems:
+                    if system not in Configuration['systems']:
+                        print('  *** Error: The system specified (%s) is not valid.' % system)
                         raise Exit
                 msg['systems'] = systems
             #print(json.dumps(msg, sort_keys=True, indent=4))
@@ -273,6 +294,8 @@ Print out a lot of messages about what is going on.\
     parser.add_argument('--tests',    required=False,                                       help=help_tests)
     parser.add_argument('--url',      required=False,                                       help=help_url)
     parser.add_argument('--ppa',      required=False,                                       help=help_ppa)
+    parser.add_argument('--who',      required=False,                                       help="")
+    parser.add_argument('--op',       required=False,                                       help="")
     parser.add_argument('--local',    action='store_true', default=False,                   help='Assume we have sshuttle setup to the MQ server.')
     args = parser.parse_args()
 
