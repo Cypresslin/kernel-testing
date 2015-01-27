@@ -158,7 +158,7 @@ class TheApp():
             # url
             #
             if s.args.url:
-                msg['url'] = s.args.url
+                msg['debs'] = s.args.url
 
             # ----------------------------------------------------------------------
             # ppa
