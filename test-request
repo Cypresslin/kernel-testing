@@ -54,7 +54,7 @@ class TheApp():
 
         try:
             msg = {
-                'key'            : 'kernel.testing.test.request',
+                'key'            : 'kernel.testing.request',
                 'op'             : 'request',
                 'hwe'            : False,
             }
