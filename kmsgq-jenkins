@@ -4,6 +4,7 @@
 import sys
 import os
 import copy
+from time                               import sleep
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import basicConfig, info, warning, DEBUG, INFO
 from lib.msgq                           import MsgQueue
@@ -77,7 +78,7 @@ class TheApp():
     #
     def job_name(s, jd, arch, system):
         center('TheApp::job_name')
-        retval = ""
+        retval = "bjf__"
 
         # The job name starts with some form of the test name(s)
         #
@@ -110,23 +111,39 @@ class TheApp():
 
     # handle_request
     #
-    def handle_request(s, job_description):
+    def handle_request(s, jd):
         center('TheApp::handle_request')
 
-        for t in job_description['tests']:
-            created = s.create_test_jobs(series=job_description['series-name'],
-                                      arches=job_description['arches'],
-                                      systems=job_description['systems'],
-                                      series_decoration=job_description['decoration'],
-                                      tests=t,
-                                      url=job_description['url'],
-                                      user=job_description['who'],
-                                      hwe=job_description['hwe'],
-                                      ppa=job_description['ppa'])
-            if created is not None:
-                info('The following jenkins jobs were created')
-                for j in created:
-                    info('    %s' % j)
+        if s.args.debug:
+            cdebug('    {')
+            for k in jd:
+                cdebug('        %s : %s,' % (k, jd[k]))
+            cdebug('    }')
+
+        jd['series-decoration'] = 'SRU'
+        jd['who'] = None
+
+        # debug:
+        jd['tests']   = ['ubuntu_qrt_kernel_security']
+        #jd['systems'] = ['rizzo']
+        #jd['arches']  = ['amd64']
+        jd['fs-benchmarks'] = False
+        s.from_tests_generate_jobs(jd)
+
+        #for t in job_description['tests']:
+        #    created = s.create_test_jobs(series=job_description['series-name'],
+        #                              arches=job_description['arches'],
+        #                              systems=job_description['systems'],
+        #                              series_decoration=job_description['decoration'],
+        #                              tests=t,
+        #                              url=job_description['url'],
+        #                              user=job_description['who'],
+        #                              hwe=job_description['hwe'],
+        #                              ppa=job_description['ppa'])
+        #    if created is not None:
+        #        info('The following jenkins jobs were created')
+        #        for j in created:
+        #            info('    %s' % j)
 
         cleave('TheApp::handle_request')
 
@@ -143,6 +160,11 @@ class TheApp():
         jd['series-decoration'] = 'SRU'
         jd['who'] = None
 
+        # debug:
+        jd['tests']   = ['ubuntu_qrt_kernel_security']
+        #jd['systems'] = ['rizzo']
+        #jd['arches']  = ['amd64']
+        jd['fs-benchmarks'] = False
         s.from_tests_generate_jobs(jd)
 
         cleave('TheApp::handle_kernel_publish')
@@ -223,6 +245,9 @@ class TheApp():
         job_data['description'] = json.dumps(job_data, sort_keys=True, indent=4)
         try:
             job_xml = s.job_template.render(data=job_data)
+
+            with open('/tmp/jenkins.xml', 'w') as f:
+                f.write(job_xml)
 
         except:
             traceback = RichTraceback()
