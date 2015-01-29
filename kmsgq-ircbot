@@ -187,7 +187,9 @@ class TheApp():
                 series = payload['series-name']
 
             if 'test completed' == what:
-                content += ' %s %s'     % (series, payload['version'])
+                content += '%s' % (series)
+                if 'version' in payload:
+                    content += ' %s'     % (payload['version'])
                 content += ' on %s (%s)' % (payload['sut-name'], payload['sut-arch'])
 
             elif 'published' == what:
