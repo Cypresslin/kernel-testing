@@ -58,6 +58,7 @@ class IrcClient(threading.Thread):
         sent_user     = False
         sent_pong     = False
         sent_join     = False
+        sent_hello    = False
         while s.alive.isSet():
             if not logged_in:
                 if not sent_password:
@@ -88,6 +89,10 @@ class IrcClient(threading.Thread):
                         sent = s.client_ssl_socket.send('PONG %s\r\n' % (line.replace('PING :', '')))
                         cdebug('sending PONG')
                         sent_pong = True
+
+                    if ' JOIN :' in line:
+                        for chan in s.cfg['channels'].split(','):
+                            sent = s.client_ssl_socket.send('PRIVMSG %s :%s\r\n' % (chan, '\o/'))
 
                     cdebug(line)
             except ssl.SSLError:
@@ -128,7 +133,7 @@ class IrcClient(threading.Thread):
     #
     def _handle_SEND(s, cmd):
         cdebug('Enter IrcClient::_handle_SEND')
-        sent = s.client_ssl_socket.send('PRIVMSG #kernel.publish :%s\r\n' % (cmd.data))
+        sent = s.client_ssl_socket.send('PRIVMSG #kmsgq :%s\r\n' % (cmd.data))
         cdebug('Leave IrcClient::_handle_SEND')
 
 # TheApp
@@ -147,9 +152,9 @@ class TheApp():
         s.queue_name = 'kernel-irc'
 
         s.channel_map = {
-            'kernel.publish'         : ['#kernel-publish', 'published'],
-            'kernel.testing.kernel'  : ['#kernel-publish', 'test completed'],
-            'kernel.testing.request' : ['#kernel-publish', 'requested'],
+            'kernel.publish'         : ['#kmsgq', 'published'],
+            'kernel.testing.kernel'  : ['#kmsgq', 'test completed'],
+            'kernel.testing.request' : ['#kmsgq', 'requested'],
         }
 
     # decode_payload
@@ -161,7 +166,7 @@ class TheApp():
 
         # Determine which channel to post the decoded content to
         #
-        channel = '#kernel-publish'
+        channel = '#kmsgq'
         what = 'unknown'
         for key in s.channel_map:
             if payload['key'].startswith(key):
@@ -220,7 +225,7 @@ class TheApp():
                 'password' : 'kthxbye',
                 'nick'     : 'kbot',
                 'name'     : 'Kernel Bot',
-                'channels' : '#kernel.publish,#kernel.testing,#kernel.requests',
+                'channels' : '#kmsgq',
             }
             s.irc = IrcClient(cfg=irc_cfg)
             s.irc.start()
