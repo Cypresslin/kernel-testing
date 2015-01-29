@@ -1,31 +1,8 @@
-<--
-{
-    hwe : False,
-    package : linux,
-    url : https://bugs.launchpad.net/bugs/1410384,
-    series-name : trusty,
-    who : kernel,
-    pocket : proposed,
-    version : 3.13.0-45.74,
-    key : kernel.publish.proposed.trusty,
-    bug id : 1410384,
-    date : 2015-01-26 20:09:48.928018,
-    series-version : 10.04,
-    op : sru,
-    sut-arch : amd64,
-    sut-name : rizzo,
-}
--->
-
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
     <actions/>
     <description>
-        {
-% for key in data:
-            ${key} : ${data[key]},
-% endfor
-        }
+${data['description']}
     </description>
     <keepDependencies>false</keepDependencies>
     <properties>
@@ -52,9 +29,10 @@
             <command>
     KT=/var/lib/jenkins/kernel-testing
     SSH_OPTIONS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet"
+    SUT=${data['sut-name']}
 
 <%
-provision = '$KT/provision %s' % (data['sut-name'])
+provision = '$KT/provision $SUT'
 provision += ' --sut=real --sut-series=%s --sut-arch=%s' % (data['series-name'], data['sut-arch'])
 
 if 'debs' in data:
@@ -73,15 +51,15 @@ if 'ppa' in data:
 % if 'no-test' not in data:
     # Kick off testing on the newly provisioned SUT
     #
-    $KT/remote ubuntu@${data['sut-name']} --kernel-test-list="${data['test']}"
+    $KT/remote ubuntu@$SUT --kernel-test-list="${data['test']}"
 
     ARCHIVE=$JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_ID/archive
-    scp $SSH_OPTIONS -r ubuntu@${data['sut-name']}:kernel-test-results $ARCHIVE
+    scp $SSH_OPTIONS -r ubuntu@$SUT:kernel-test-results $ARCHIVE
     $JENKINS_HOME/autotest/client/tools/glue_testsuites $ARCHIVE/*.xml > $WORKSPACE/kernel-results.xml
 
     # Don't need the HW any longer, it can be powered off.
     #
-    $KT/release ${data['sut-name']}
+    $KT/release $SUT
 
     # Publish the results. This *MUST* always be the very last thing the job does.
     #
