@@ -173,6 +173,38 @@ class TheApp():
                 channel = s.channel_map[key][0]
                 what    = s.channel_map[key][1]
 
+        if what != 'unknown':
+            # Make pretty content.
+            #
+            who = payload['who']
+            if not who:
+                who = 'kernel'
+            content += who + ', ' + what + ': '
+
+            if payload['hwe']:
+                series = 'lts-' + payload['series-name']
+            else:
+                series = payload['series-name']
+
+            if 'test completed' == what:
+                content += ' %s %s'     % (series, payload['version'])
+                content += ' on %s (%s)' % (payload['sut-name'], payload['sut-arch'])
+
+            elif 'published' == what:
+                if payload['hwe']:
+                    content += 'lts-'
+
+                content += ' %s %s'     % (series, payload['version'])
+                content += ' to -' + payload['pocket']
+        else:
+            # We don't recognize this payload. Dump our some information that would help
+            # us understand it.
+            #
+            if 'key' in payload:
+                content += 'unknown key: %s' % payload['key']
+            else:
+                content += 'unrecognized payload with no \'key\': %s' % json.dumps(payload, sort_keys=True, indent=4)
+
         # Make pretty content.
         #
         who = payload['who']
