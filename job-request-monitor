@@ -3,8 +3,9 @@
 
 import sys
 import os
+import copy
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
-from logging                            import basicConfig, WARNING, info, warning, DEBUG
+from logging                            import basicConfig, info, warning, DEBUG, INFO
 from lib.msgq                           import MsgQueue
 from lib.configuration                  import Configuration
 from lib.testsprops                     import SRU_TestsList
@@ -38,10 +39,10 @@ class TheApp():
         '''
         '''
         s.args = args
-        s.jenkins_url_default = "http://10.245.80.32:8080"
+        s.jenkins_url_default = "http://kernel-jenkins.kernel:8080"
         s.jenkins = Jenkins(s.jenkins_url_default)
         s.job_defaults = {
-            'key'            : 'kernel.testing.test.request',
+            'key'            : 'kernel.testing.request',
             'who'            : None,
             'op'             : 'bogus',
             'date'           : '1960.11.02_08.00.00',
@@ -69,6 +70,8 @@ class TheApp():
 
         if s.args.debug:
             cdebug(json.dumps(s.sut_pool, sort_keys=True, indent=4))
+
+        s.job_template = s.load_template('standard-jenkins-test-job.mako')
 
     # job_name
     #
@@ -210,16 +213,17 @@ class TheApp():
     def generate_individual_job(s, test, arch, system, jd):
         center('TheApp::generate_individual_job')
 
-        job_data = jd
+        job_data = copy.deepcopy(jd)
         job_name = s.job_name(jd, arch, system)
 
         job_data['job-name'] = job_name
         job_data['sut-arch'] = arch
         job_data['sut-name'] = system
         job_data['test']     = test
-        template = s.load_template('standard-jenkins-test-job.mako')
+        job_data['description'] = json.dumps(job_data, sort_keys=True, indent=4)
         try:
-            job_xml = template.render(data=jd)
+            job_xml = s.job_template.render(data=job_data)
+
         except:
             traceback = RichTraceback()
             for (filename, lineno, function, line) in traceback.traceback:
@@ -229,26 +233,34 @@ class TheApp():
             print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
             raise
 
-        #try:
-        #    s.jenkins.delete_job(job_name)
-        #except:
-        #    pass
+        try:
+            s.jenkins.delete_job(job_name)
+        except:
+            pass
 
-        #s.jenkins.create_job(job_name, job_xml)
-        info('created jenkins job: %s' % job_name)
+        s.jenkins.create_job(job_name, job_xml)
+        #s.jenkins.build_job(job_name)
+        warning('created jenkins job: %s' % job_name)
         cleave('TheApp::generate_individual_job')
+
+    # dump
+    #
+    def _dump(s, d, title=None):
+        if s.args.debug:
+            if title:
+                cdebug(title)
+                cdebug('-------------------------------------------------------------------------------------------')
+            cdebug('    {')
+            for k in d:
+                cdebug('        %s : %s,' % (k, d[k]))
+            cdebug('    }')
 
     # _handler
     #
     def _handler(s, payload):
         center('TheApp::_handler')
-        if s.args.debug:
-            cdebug('    {')
-            for k in payload:
-                cdebug('        %s : %s,' % (k, payload[k]))
-            cdebug('    }')
 
-        jd = s.job_defaults  # Job Description (jd)
+        jd = copy.deepcopy(s.job_defaults)  # Job Description (jd)
 
         # Anything / everything in the payload overrides the defaults.
         #
@@ -409,7 +421,7 @@ examples:
     if args.debug:
         basicConfig(level=DEBUG, format=log_format)
     else:
-        basicConfig(level=WARNING, format=log_format)
+        basicConfig(level=INFO, format=log_format)
 
     app = TheApp(args)
     exit(app.main())
