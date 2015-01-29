@@ -6,9 +6,10 @@ from logging                            import basicConfig, DEBUG, WARNING
 import socket
 import threading
 import Queue
-from lib.log                            import cdebug
+from lib.log                            import cdebug, center, cleave
 import ssl
-from lib.mq_monitor                     import MQMonitor
+from lib.msgq                           import MsgQueue
+import json
 
 class IrcClientCommand(object):
     """
@@ -127,10 +128,7 @@ class IrcClient(threading.Thread):
     #
     def _handle_SEND(s, cmd):
         cdebug('Enter IrcClient::_handle_SEND')
-        if cmd.data['op'] == 'publish':
-            sent = s.client_ssl_socket.send('NOTICE #kernel.publish :%s\r\n' % (cmd.data))
-        else:
-            sent = s.client_ssl_socket.send('NOTICE #kernel.testing :%s\r\n' % (cmd.data))
+        sent = s.client_ssl_socket.send('PRIVMSG #kernel.publish :%s\r\n' % (cmd.data))
         cdebug('Leave IrcClient::_handle_SEND')
 
 # TheApp
@@ -146,13 +144,65 @@ class TheApp():
         '''
         '''
         s.args = args
-        s.queue_name = 'kernel'
+        s.queue_name = 'kernel-irc'
+
+        s.channel_map = {
+            'kernel.publish'         : ['#kernel-publish', 'published'],
+            'kernel.testing.kernel'  : ['#kernel-publish', 'test completed'],
+            'kernel.testing.request' : ['#kernel-publish', 'requested'],
+        }
+
+    # decode_payload
+    #
+    def decode_payload(s, payload):
+        center('TheApp::decode_payload')
+        channel = None
+        content = ""
+
+        # Determine which channel to post the decoded content to
+        #
+        channel = '#kernel-publish'
+        what = 'unknown'
+        for key in s.channel_map:
+            if payload['key'].startswith(key):
+                channel = s.channel_map[key][0]
+                what    = s.channel_map[key][1]
+
+        # Make pretty content.
+        #
+        who = payload['who']
+        if not who:
+            who = 'kernel'
+        content += who + ', ' + what + ': '
+
+        if payload['hwe']:
+            series = 'lts-' + payload['series-name']
+        else:
+            series = payload['series-name']
+
+        if 'test completed' == what:
+            content += ' %s %s'     % (series, payload['version'])
+            content += ' on %s (%s)' % (payload['sut-name'], payload['sut-arch'])
+
+        elif 'published' == what:
+            if payload['hwe']:
+                content += 'lts-'
+
+            content += ' %s %s'     % (series, payload['version'])
+            content += ' to -' + payload['pocket']
+
+        cleave('TheApp::decode_payload')
+        return channel, content
 
     # _handler
     #
     def _handler(s, payload):
         cdebug("TheApp::_handler")
-        s.irc.cmd_q.put(IrcClientCommand(IrcClientCommand.SEND, payload))
+        print(json.dumps(payload, sort_keys=True, indent=4))
+
+        (channel, content) = s.decode_payload(payload)
+
+        s.irc.cmd_q.put(IrcClientCommand(IrcClientCommand.SEND, content))
 
     # main
     #
@@ -170,16 +220,18 @@ class TheApp():
                 'password' : 'kthxbye',
                 'nick'     : 'kbot',
                 'name'     : 'Kernel Bot',
-                'channels' : '#kernel.publish,#kernel.testing',
+                'channels' : '#kernel.publish,#kernel.testing,#kernel.requests',
             }
             s.irc = IrcClient(cfg=irc_cfg)
             s.irc.start()
 
-            if s.args.local:
-                mq = MQMonitor(address='localhost', port=9123)
+            if args.local:
+                mq = MsgQueue(address='localhost', port=9123)
             else:
-                mq = MQMonitor()
-            mq.listen(s.queue_name, 'kernel.*.*.*.*', s._handler)
+                mq = MsgQueue()
+            mq.listen(s.args.queue, 'kernel.#', s._handler)
+
+            print("done")
             retval = 0
 
         # Handle the user presses <ctrl-C>.
@@ -203,6 +255,7 @@ examples:
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
     parser.add_argument('--debug', action='store_true', default=False, help='Print out a lot of messages about what is going on.')
     parser.add_argument('--local', action='store_true', default=False, help='Assume we have sshuttle setup to the MQ server.')
+    parser.add_argument('queue', help='Name of the queue to use')
     args = parser.parse_args()
 
     # If logging parameters were set on the command line, handle them
