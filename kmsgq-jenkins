@@ -305,8 +305,10 @@ class TheApp():
             #
             s.handle_kernel_publish(jd)
         else:
-            print(" *** Error: Unknown payload key (%s)" % jd['key'])
-            print("")
+            # Just ignore any payload keys we don't recognize. kernel.testing.kernel.completed is
+            # an example.
+            #
+            pass
 
         cleave('TheApp::_handler')
 
