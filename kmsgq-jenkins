@@ -246,6 +246,11 @@ class TheApp():
     def _handler(s, payload):
         center('TheApp::_handler')
 
+        if payload['key'] not in ['kernel.testing.request', 'kernel.publish']:
+            info("Ignoring : %s" % payload['key'])
+            cleave('TheApp::_handler')
+            return
+
         jd = copy.deepcopy(s.job_defaults)  # Job Description (jd)
 
         # Anything / everything in the payload overrides the defaults.
