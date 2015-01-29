@@ -196,6 +196,18 @@ class TheApp():
 
                 content += ' %s %s'     % (series, payload['version'])
                 content += ' to -' + payload['pocket']
+            elif 'requested' == what:
+                content += '%s' % (series)
+                if 'arches' in payload:
+                    content += ' (%s)' % (','.join(payload['arches']))
+                if 'debs' in payload:
+                    content += ', debs: %s,' % payload['debs']
+                if 'ppa' in payload:
+                    content += ', ppa: %s,' % payload['ppa']
+                content += ' be tested'
+                if 'tests' in payload:
+                    content += ' with %s' % (','.join(payload['tests']))
+
         else:
             # We don't recognize this payload. Dump our some information that would help
             # us understand it.
@@ -204,29 +216,6 @@ class TheApp():
                 content += 'unknown key: %s' % payload['key']
             else:
                 content += 'unrecognized payload with no \'key\': %s' % json.dumps(payload, sort_keys=True, indent=4)
-
-        # Make pretty content.
-        #
-        who = payload['who']
-        if not who:
-            who = 'kernel'
-        content += who + ', ' + what + ': '
-
-        if payload['hwe']:
-            series = 'lts-' + payload['series-name']
-        else:
-            series = payload['series-name']
-
-        if 'test completed' == what:
-            content += ' %s %s'     % (series, payload['version'])
-            content += ' on %s (%s)' % (payload['sut-name'], payload['sut-arch'])
-
-        elif 'published' == what:
-            if payload['hwe']:
-                content += 'lts-'
-
-            content += ' %s %s'     % (series, payload['version'])
-            content += ' to -' + payload['pocket']
 
         cleave('TheApp::decode_payload')
         return channel, content
