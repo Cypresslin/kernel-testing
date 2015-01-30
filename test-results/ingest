@@ -17,7 +17,7 @@ from distutils.dir_util                 import copy_tree
 from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
 
-from grinder                            import CmdlineError, Exit, TestResultsRepository, TestResultsRepositoryError, JenkinsTestResultsTree, JenkinsTestResultsTreeError, load_template
+from lib.grinder                        import CmdlineError, Exit, TestResultsRepository, TestResultsRepositoryError, JenkinsTestResultsTree, JenkinsTestResultsTreeError, load_template
 from lib.dbg                            import Dbg
 from lib.utils                          import error, stdo, dump
 

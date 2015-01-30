@@ -12,7 +12,7 @@ from os                                 import path
 from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
 
-from grinder                            import CmdlineError, Exit, TestResultsRepository, TestResultsRepositoryError, load_template
+from lib.grinder                        import CmdlineError, Exit, TestResultsRepository, TestResultsRepositoryError, load_template
 from lib.dbg                            import Dbg
 from lib.utils                          import error, stdo, dump, string_to_date, json_load
 
