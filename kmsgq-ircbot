@@ -162,6 +162,7 @@ class TheApp():
     def decode_payload(s, payload):
         center('TheApp::decode_payload')
         channel = None
+        retval = []
         content = ""
 
         # Determine which channel to post the decoded content to
@@ -192,12 +193,22 @@ class TheApp():
                     content += ' %s'     % (payload['version'])
                 content += ' on %s (%s)' % (payload['sut-name'], payload['sut-arch'])
 
+                content += ';  LP: #%d\n' % (payload['bug id'])
+                retval.append(content)
+
+                if 'results' in payload:
+                    r = payload['results']
+                    #content += '; test suites: %d,  tests ran: %3d,  tests failed: %d,  results: %s' % (r['suites'], r['ran'], r['failed'], r['url'])
+                    content = '        tests ran: %3d, failed: %d;  %s' % (r['ran'], r['failed'], r['url'])
+                    retval.append(content)
+
             elif 'published' == what:
                 if payload['hwe']:
                     content += 'lts-'
 
                 content += ' %s %s'     % (series, payload['version'])
                 content += ' to -' + payload['pocket']
+                retval.append(content)
             elif 'requested' == what:
                 content += '%s' % (series)
                 if 'arches' in payload:
@@ -209,6 +220,7 @@ class TheApp():
                 content += ' be tested'
                 if 'tests' in payload:
                     content += ' with %s' % (','.join(payload['tests']))
+                retval.append(content)
 
         else:
             # We don't recognize this payload. Dump our some information that would help
@@ -218,19 +230,20 @@ class TheApp():
                 content += 'unknown key: %s' % payload['key']
             else:
                 content += 'unrecognized payload with no \'key\': %s' % json.dumps(payload, sort_keys=True, indent=4)
+            retval.append(content)
 
         cleave('TheApp::decode_payload')
-        return channel, content
+        return retval
 
     # _handler
     #
     def _handler(s, payload):
         cdebug("TheApp::_handler")
-        print(json.dumps(payload, sort_keys=True, indent=4))
 
-        (channel, content) = s.decode_payload(payload)
+        content = s.decode_payload(payload)
 
-        s.irc.cmd_q.put(IrcClientCommand(IrcClientCommand.SEND, content))
+        for line in content:
+            s.irc.cmd_q.put(IrcClientCommand(IrcClientCommand.SEND, line))
 
     # main
     #
