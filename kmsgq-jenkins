@@ -246,7 +246,12 @@ class TheApp():
     def _handler(s, payload):
         center('TheApp::_handler')
 
-        if payload['key'] not in ['kernel.testing.request', 'kernel.publish']:
+        valid_key = False
+        for key in ['kernel.testing.request', 'kernel.publish']:
+            if payload['key'].startswith(key):
+                valid_key = True
+                break
+        if not valid_key:
             info("Ignoring : %s" % payload['key'])
             cleave('TheApp::_handler')
             return
