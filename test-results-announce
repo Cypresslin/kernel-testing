@@ -9,6 +9,8 @@ from lib.log                            import cdebug, center, cleave
 from lib.msgq                           import MsgQueue
 import json
 
+from lib.grinder                        import JenkinsTestResultsTree, JenkinsTestResultsTreeError
+from lib.utils                          import string_to_date
 from lib.jenkins                        import Jenkins
 
 # Exit
@@ -42,6 +44,18 @@ class TheApp():
         job_info = s.jenkins.get_job_info(job_name)
         return json.loads(job_info['description'])
 
+    # dump
+    #
+    def _dump(s, d, title=None):
+        if s.args.debug:
+            if title:
+                cdebug(title)
+                cdebug('-------------------------------------------------------------------------------------------')
+            cdebug('    {')
+            for k in d:
+                cdebug('        %s : %s,' % (k, d[k]))
+            cdebug('    }')
+
     # main
     #
     def main(s):
@@ -51,11 +65,45 @@ class TheApp():
         retval = 1
 
         try:
+            # Determine some simple stats for the number of tests run.
+            #
+            results_dir = s.args.results
+            jtr = JenkinsTestResultsTree(results_dir)
+            results = jtr.results
+            suites  = 0
+            failed  = 0
+            run     = 0
+            skipped = 0
+            for i in results['suites']:
+                suites  += 1
+                failed  += i['tests failed']
+                run     += i['tests run']
+                skipped += i['tests skipped']
+                cdebug('%50s : failed: %3d  run: %3d  sipped:%3d' % (i['name'],
+                                                                     i['tests failed'],
+                                                                     i['tests run'],
+                                                                     i['tests skipped']))
+
+            cdebug('Totals : suites %d  tests run %3d  failed %d'  %(suites, run, failed))
+
+            # Determine the url where the test results can be found
+            #
+            attributes = jtr.attributes
+            ts = string_to_date(attributes['timestamp']).strftime('%Y-%m-%d_%H-%M-%S')
+            tr_dest = "%s__%s__%s" % (attributes['platform']['hostname'], attributes['kernel'], ts)
+            url = 'http://kernel.ubuntu.com/testing/%s/results-index.html' % tr_dest
+            cdebug(url)
+
             details = s.fetch_job_details(s.args.job)
-            print(json.dumps(details, sort_keys=True, indent=4))
+            s._dump(details, 'Jenkins Job Details')
 
             details['key'] = 'kernel.testing.kernel.completed'
             details['op']  = 'testing-completed'
+            details['results'] = {}
+            details['results']['suites'] = suites
+            details['results']['ran'] = run
+            details['results']['failed'] = failed
+            details['results']['url'] = url
 
             # Submit the message to the Message Queue
             #
@@ -95,6 +143,7 @@ examples:
     parser.add_argument('--debug', action='store_true', default=False, help='Print out a lot of messages about what is going on.')
     parser.add_argument('--local', action='store_true', default=False, help='Assume we have sshuttle setup to the MQ server.')
     parser.add_argument('job', help='Name of the job')
+    parser.add_argument('results', help='where the results are located')
 
     args = parser.parse_args()
 
@@ -107,9 +156,11 @@ examples:
     else:
         basicConfig(level=WARNING, format=log_format)
 
-    app = TheApp(args)
-    exit(app.main())
-
+    try:
+        app = TheApp(args)
+        exit(app.main())
+    except Exit:
+        pass
 
 # vi:set ts=4 sw=4 expandtab:
 
