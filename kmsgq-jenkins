@@ -78,7 +78,7 @@ class TheApp():
     #
     def job_name(s, jd, arch, system):
         center('TheApp::job_name')
-        retval = "bjf__"
+        retval = ""
 
         # The job name starts with some form of the test name(s)
         #
