@@ -225,6 +225,7 @@ class TheApp():
             pass
 
         s.jenkins.create_job(job_name, job_xml)
+        sleep(10)
         s.jenkins.build_job(job_name)
         warning('created jenkins job: %s' % job_name)
         cleave('TheApp::generate_individual_job')
