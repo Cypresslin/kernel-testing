@@ -307,11 +307,11 @@ class TestResultsRepository():
                 if not path.exists(fid): # Users home directory
                     fid = path.join(path.dirname(argv[0]), rc)
                     if not path.exists(fid):
-                        raise FileDoesntExist(rc)
+                        fid = path.join(path.dirname(argv[0]), 'lib', rc)
+                        if not path.exists(fid):
+                            raise FileDoesntExist(rc)
 
             self.cfg = json_load(fid)
-
-            self.text_file_template = Template(filename=locate('text-file.mako'), default_filters=['decode.utf8'], input_encoding='utf-8', output_encoding='utf8')
 
         except FileDoesntExist as e:
             raise TestResultsRepositoryError('The file (%s) does not exist.\n' % e.file_name)
@@ -346,6 +346,8 @@ class TestResultsRepository():
 
     def ingest(self, jtr):
         Dbg.enter("TestResultsRepository.ingest")
+
+        self.text_file_template = Template(filename=locate('text-file.mako'), default_filters=['decode.utf8'], input_encoding='utf-8', output_encoding='utf8')
 
         data = {}
         data['results'] = jtr.results
