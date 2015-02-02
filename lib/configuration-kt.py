@@ -32,8 +32,8 @@ Configuration = {
                 {
                     "type" : "ipmi",
                     "address" : "10.245.80.227",
-                    "username" : "maas",
-                    "password" : "CvGJbzlt"
+                    "username" : "admin",
+                    "password" : "insecure"
                 },
             ],
             "scratch drive" : "/dev/sdb",
@@ -48,8 +48,8 @@ Configuration = {
                 {
                     "type" : "ipmi",
                     "address" : "10.245.80.210",
-                    "username" : "maas",
-                    "password" : "s1lgI8YlgTT"
+                    "username" : "admin",
+                    "password" : "insecure"
                 },
             ],
             "scratch drive" : "/dev/sdb",
@@ -79,8 +79,8 @@ Configuration = {
                 {
                     "type" : "ipmi",
                     "address" : "10.245.80.211",
-                    "username" : "maas",
-                    "password" : "Nq7hYxkV"
+                    "username" : "admin",
+                    "password" : "insecure"
                 },
             ],
             "role" : "none",
@@ -139,8 +139,8 @@ Configuration = {
                 {
                     "type" : "ipmi",
                     "address" : "10.245.80.219",
-                    "username" : "maas",
-                    "password" : "CdyHUUy9xkDXz"
+                    "username" : "admin",
+                    "password" : "insecure"
                 },
             ],
             "role" : "Personal Testing",
@@ -154,8 +154,8 @@ Configuration = {
                 {
                     "type" : "ipmi",
                     "address" : "10.245.80.224",
-                    "username" : "maas",
-                    "password" : "xYpuDDore"
+                    "username" : "admin",
+                    "password" : "insecure"
                 },
             ],
             "role" : "none",
@@ -169,8 +169,8 @@ Configuration = {
                 {
                     "type" : "ipmi",
                     "address" : "10.245.80.206",
-                    "username" : "maas",
-                    "password" : "Iuh3JVYagppn0m"
+                    "username" : "admin",
+                    "password" : "insecure"
                 },
             ],
             "role" : "none",
@@ -199,8 +199,8 @@ Configuration = {
                 {
                     "type" : "ipmi",
                     "address" : "10.245.80.223",
-                    "username" : "maas",
-                    "password" : "QEPQON1r3vN8"
+                    "username" : "admin",
+                    "password" : "insecure"
                 },
             ],
             "role" : "Personal Testing",
@@ -279,7 +279,7 @@ Configuration = {
                 },
             ],
             "role" : "none",
-            "locked" : True,                      # This system has the MAAS server running in a LXC
+            "locked" : False,
         },
         "cavac" : {
             "arch" : ['amd64', 'i386'],
