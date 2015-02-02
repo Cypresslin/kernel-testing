@@ -45,7 +45,7 @@ class Clog:
 
     @classmethod
     def debug(c, msg, color='magenta'):
-        msg = ' ' * c.indent + msg
+        msg = ' ' * c.indent + str(msg)
         if c.color:
             debug(colored(msg, color))
         else:
