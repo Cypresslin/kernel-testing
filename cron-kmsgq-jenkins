@@ -1,0 +1,2 @@
+#!/bin/sh
+flock -nx /tmp/kmsgq-jenkins.lck -c "$HOME/kernel-testing/kmsgq-jenkins"
