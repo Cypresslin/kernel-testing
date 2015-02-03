@@ -193,7 +193,8 @@ class TheApp():
                     content += ' %s'     % (payload['version'])
                 content += ' on %s (%s)' % (payload['sut-name'], payload['sut-arch'])
 
-                content += ';  LP: #%d\n' % (payload['bug id'])
+                if 'bug id' in payload:
+                    content += ';  LP: #%d\n' % (payload['bug id'])
                 retval.append(content)
 
                 if 'results' in payload:
