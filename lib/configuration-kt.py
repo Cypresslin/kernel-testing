@@ -184,8 +184,8 @@ Configuration = {
                 {
                     "type" : "ipmi",
                     "address" : "10.245.80.202",
-                    "username" : "maas",
-                    "password" : "e3IxQKEFn"
+                    "username" : "admin",
+                    "password" : "insecure"
                 },
             ],
             "role" : "SRU Testing",
