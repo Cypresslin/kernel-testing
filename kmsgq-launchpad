@@ -1,0 +1,132 @@
+#!/usr/bin/env python
+#
+
+import sys
+import os
+import copy
+from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import basicConfig, info, warning, DEBUG, INFO
+from lib.msgq                           import MsgQueue
+from lib.log                            import cdebug, center, cleave
+import json
+from lpltk.LaunchpadService             import LaunchpadService
+
+
+# Exit
+#
+class Exit():
+    """
+    If an error message has already been displayed and we want to just exit the app, this
+    exception is raised.
+    """
+    pass
+
+# TheApp
+#
+class TheApp():
+    '''
+    This class is just the engine that makes everything go.
+    '''
+
+    # __init__
+    #
+    def __init__(s, args):
+        '''
+        '''
+        s.args = args
+
+    # dump
+    #
+    def _dump(s, d, title=None):
+        if s.args.debug:
+            if title:
+                cdebug(title)
+                cdebug('-------------------------------------------------------------------------------------------')
+            cdebug('    {')
+            for k in d:
+                cdebug('        %s : %s,' % (k, d[k]))
+            cdebug('    }')
+
+    # _handler
+    #
+    def _handler(s, payload):
+        center('TheApp::_handler')
+        s._dump(payload)
+
+        if 'bug id' in payload:
+            lp = LaunchpadService({'launchpad_client_name': 'kernel-team-sru-workflow-manager' })
+            bug = lp.get_bug(payload['bug id'])
+            cdebug(bug.title)
+
+            content = ''
+
+            if 'results' in payload:
+                r = payload['results']
+                content += '        tests ran: %3d, failed: %d;\n  %s' % (r['ran'], r['failed'], r['url'])
+
+            subject = '%s (%s) - tests ran: %3d, failed: %d' % (payload['sut-name'], payload['sut-arch'], r['ran'], r['failed'])
+            bug.add_comment(content=content, subject=subject)
+
+        cleave('TheApp::_handler')
+
+    # main
+    #
+    def main(s):
+        '''
+        '''
+        center('TheApp::main')
+        retval = 1
+
+        try:
+            if args.local:
+                mq = MsgQueue(address='localhost', port=9123)
+            else:
+                mq = MsgQueue()
+            mq.listen('kernel-testing-lp-monitor', 'kernel.testing.#', s._handler)
+
+            retval = 0
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            warning("Aborting ...")
+
+        except Exit:
+            print("")
+            print("Due to the above error(s), this script is unable to continue and is terminating.")
+            print("")
+
+        cleave('TheApp::main')
+        return retval
+
+if __name__ == '__main__':
+    # Command line argument setup and initial processing
+    #
+    app_description = '''
+I'm a application skeleton, your job is to make me into something useful.
+    '''
+    app_epilog = '''
+examples:
+    jc --help
+    '''
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--debug', action='store_true', default=False, help='Print out a lot of messages about what is going on.')
+    parser.add_argument('--local', action='store_true', default=False, help='Assume we have sshuttle setup to the MQ server.')
+
+    args = parser.parse_args()
+
+    # If logging parameters were set on the command line, handle them
+    # here.
+    #
+    log_format = "%(levelname)s - %(message)s"
+    if args.debug:
+        basicConfig(level=DEBUG, format=log_format)
+    else:
+        basicConfig(level=INFO, format=log_format)
+
+    app = TheApp(args)
+    exit(app.main())
+
+
+# vi:set ts=4 sw=4 expandtab:
+
