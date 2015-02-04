@@ -118,6 +118,7 @@ Configuration = {
         },
         "tarf" : {
             "arch" : ['amd64', 'i386'],
+            "scratch drive" : "/dev/sdb",
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
             "power" : [
@@ -133,6 +134,7 @@ Configuration = {
         },
         "alkaid" : {
             "arch" : ['amd64', 'i386'],
+            "scratch drive" : "/dev/sdb",
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
             "power" : [
@@ -148,6 +150,7 @@ Configuration = {
         },
         "phact" : {
             "arch" : ['amd64', 'i386'],
+            "scratch drive" : "/dev/sdb",
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
             "power" : [
@@ -179,6 +182,7 @@ Configuration = {
         },
         "zmeu" : {
             "arch" : ['amd64', 'i386'],
+            "scratch drive" : "/dev/sdb",
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
             "power" : [
@@ -209,6 +213,7 @@ Configuration = {
         },
         "onza" : {
             "arch" : ['amd64', 'i386'],
+            "scratch drive" : "/dev/sdb",
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
             "power" : [
