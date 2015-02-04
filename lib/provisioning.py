@@ -553,9 +553,11 @@ class Metal(Base):
         # Once the initial installation has completed, we continue to install and update
         # packages so that we are testing the latest kernel, which is what we want.
         #
+        if Ubuntu().is_development_series(s.series):
+            s.progress('Enabling Src')
+            s.enable_src()
         if not Ubuntu().is_development_series(s.series):
             s.progress('Enabling Proposed')
-            s.enable_src()
             s.enable_proposed()
         if s.ppa is not None:
             s.progress('Enabling PPA')
