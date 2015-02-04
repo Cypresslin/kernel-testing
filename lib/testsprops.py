@@ -170,6 +170,9 @@ TestProfiles = {
                 'python-pexpect', 'apparmor', 'apparmor-utils', 'netcat', 'sudo', 'build-essential', 'libapparmor-dev',
                 'attr', 'apport', 'libpam-apparmor', 'libgtk2.0-dev', 'pyflakes', 'apparmor-profiles', 'quilt', 'libdbus-1-dev'
                 ],
+            'vivid' : [
+                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby', 'apparmor-easyprof',
+                ],
             'utopic' : [
                 'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby', 'apparmor-easyprof',
                 ],
