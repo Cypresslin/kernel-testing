@@ -11,7 +11,7 @@ from os                                 import path
 from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
 
-from grinder                            import Exit, TestResultsRepository, TestResultsRepositoryError, load_template
+from lib.grinder                        import Exit, TestResultsRepository, TestResultsRepositoryError, load_template
 from lib.dbg                            import Dbg
 from lib.utils                          import error, dump, string_to_date, json_load
 
