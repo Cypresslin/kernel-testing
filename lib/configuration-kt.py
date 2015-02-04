@@ -163,6 +163,7 @@ Configuration = {
         },
         "rukbah" : {
             "arch" : ['amd64', 'i386'],
+            "scratch drive" : "/dev/sdb",
             "provisioner" : "maas",
             "jenkins server" : "kernel-jenkins",
             "power" : [
