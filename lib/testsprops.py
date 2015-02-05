@@ -355,7 +355,6 @@ TestCollections = {
             'ubuntu_lxc',
             'ubuntu_seccomp',
             'ubuntu_kvm_unit_tests',
-            'ubuntu_cts_kernel',
             'ubuntu_leap_seconds',
         ],
 
@@ -382,7 +381,12 @@ TestCollections = {
     # The set of tests that SRU kernels run
     #
     #'sru' : ['qa', 'iperf', 'ubuntu_leap_seconds', 'xfstests', 'ubuntu_cts_kernel', 'virt', 'ubuntu_kvm_unit_tests'],
-    'sru' : ['qa', 'ubuntu_leap_seconds', 'xfstests' ],
+    'sru' : [
+             'qa',
+             'ubuntu_leap_seconds',
+             'xfstests',
+             'ubuntu_cts_kernel'
+        ],
 
     # A set of test cases that came from CTS and are regression tests for things
     # that have been fixed.
