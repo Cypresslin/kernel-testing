@@ -213,6 +213,9 @@ TestProfiles = {
             'common' : [
                 'build-essential', 'uuid-dev', 'xfslibs-dev', 'xfsdump', 'autoconf', 'kpartx', 'libtool', 'python-xattr', 'libacl1-dev', 'libaio-dev', 'quota', 'bc', 'libdm0-dev', 'btrfs-tools', 'attr', 'gdb',
                 ],
+            'vivid' : [
+                'libtool-bin'
+                ],
             },
         'command' : 'sudo mkdir -p /media/xfsmount ; sudo adduser --quiet --disabled-password -gecos "XFS test user,,," fsgqa || true',
         'atargs' : {}, # this gets filled in later, it's a hack
