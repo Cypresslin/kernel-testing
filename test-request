@@ -296,7 +296,7 @@ Print out a lot of messages about what is going on.\
     parser.add_argument('--ppa',      required=False,                                       help=help_ppa)
     parser.add_argument('--who',      required=False,                                       help="")
     parser.add_argument('--op',       required=False,                                       help="")
-    parser.add_argument('--local',    action='store_true', default=False,                   help='Assume we have sshuttle setup to the MQ server.')
+    parser.add_argument('--local',    action='store_true', default=False,                   help='Assume we have an ssh tunnel setup to the MQ server.')
     args = parser.parse_args()
 
     # If logging parameters were set on the command line, handle them
