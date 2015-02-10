@@ -80,7 +80,10 @@ class TestAttributes():
         # Obtaining the timestamp from the system that was just provisioned is not reliable. The
         # true timestamp is obtained on the jenkins system and passed in as the _TS_ env variable.
         #
-        data['timestamp'] = environ['_TS_']
+        if '_TS_' in environ:
+            data['timestamp'] = environ['_TS_']
+        else:
+            data['timestamp'] = 'unknown'
 
         # Version
         #
