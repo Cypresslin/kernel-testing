@@ -7,6 +7,7 @@ from shutil                             import rmtree, copytree
 from logging                            import debug, error, basicConfig, DEBUG, WARNING
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 import json
+import platform
 
 from lib.testsprops                     import TestProfiles, TestCollections
 from lib.test_attributes                import TestAttributes
@@ -41,6 +42,7 @@ class Runner():
         s.autotest_results_root = path.join(s.autotest_client_root, 'results', 'default')
         s.per_test_logs_root = ''
         s.per_test_results_root = ''
+        s.arch = platform.processor()
 
     # tests_list_expand
     #
@@ -66,6 +68,20 @@ class Runner():
             s.tests_list = neo
         debug('    test list: %s' % s.tests_list)
 
+    def blacklisted_by_series(s, profile):
+        retval = False
+        if 'series-blacklist' in profile:
+            if s.release_name in profile['series-blacklist']:
+                retval = True
+        return retval
+
+    def blacklisted_by_arch(s, profile):
+        retval = False
+        if 'arch-blacklist' in profile:
+            if s.arch in profile['arch-blacklist']:
+                retval = True
+        return retval
+
     # tests_list_verify
     #
     def tests_list_verify(s):
@@ -79,19 +95,18 @@ class Runner():
                 error('Test \'%s\' is not recognized.' % t)
                 errors = True
 
-
         # Verify that certain tests have not been blaclisted for the series
         # that we are currently running.
         #
         valid_tests = []
         for t in s.tests_list:
-            if 'series-blacklist' in TestProfiles[t]:
-                if s.release_name in TestProfiles[t]['series-blacklist']:
-                    error('Test \'%s\' has been blacklisted for this series' % t)
-                else:
-                    valid_tests.append(t)
+            if s.blacklisted_by_series(TestProfiles[t]):
+                error('Test \'%s\' has been blacklisted for this series (%s)' % (t, s.release_name))
+            elif s.blacklisted_by_arch(TestProfiles[t]):
+                error('Test \'%s\' has been blacklisted for this arch (%s)' % (t, s.arch))
             else:
                 valid_tests.append(t)
+
         s.tests_list = valid_tests
 
         # Verify that the tests are valid, autotest tests.
@@ -227,14 +242,22 @@ class Runner():
             if 'packages' in TestProfiles[t]:
                 if 'common' in TestProfiles[t]['packages']:
                     for pkg in TestProfiles[t]['packages']['common']:
-                        deps.append(pkg)
+                        if s.arch == 'ppc64le':
+                            deps.append(pkg.replace('-multilib', ''))
+                        else:
+                            if pkg not in deps:
+                                deps.append(pkg)
                 if s.release_name in TestProfiles[t]['packages']:
                     for pkg in TestProfiles[t]['packages'][s.release_name]:
-                        deps.append(pkg)
+                        if s.arch == 'ppc64le':
+                            deps.append(pkg.replace('-multilib', ''))
+                        else:
+                            if pkg not in deps:
+                                deps.append(pkg)
             else:
                 debug('No package dependencies for \'%s\'' % t)
 
-        sh('sudo apt-get -fy install -fy')
+        debug('%s' % str(deps))
         for dep in deps:
             debug('Installing: \'%s\'' % dep)
             sh('sudo apt-get install -fy %s' % dep)
