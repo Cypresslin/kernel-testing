@@ -314,7 +314,8 @@ class TheApp():
         elif jd['key'].startswith('kernel.publish'):
             # This *is* a notification from shankbot that a new kernel is available for testing.
             #
-            s.handle_kernel_publish(jd)
+            if 'proposed' in jd['pocket']:
+                s.handle_kernel_publish(jd)
         else:
             # Just ignore any payload keys we don't recognize. kernel.testing.kernel.completed is
             # an example.
