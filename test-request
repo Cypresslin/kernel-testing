@@ -28,16 +28,12 @@ class TheApp():
     This class is just the engine that makes everything go.
     '''
 
-    # __init__
-    #
-    def __init__(s, args):
-        '''
-        '''
-        s.args = args
-
     # __arg_list
     #
     def __arg_list(s, string):
+        '''
+        Turn a string with comma delimited terms into a list of those terms.
+        '''
         if ',' in string:
             retval = string(' ', '').split(',')
         else:
@@ -47,7 +43,7 @@ class TheApp():
 
     # main
     #
-    def main(s):
+    def main(s, args):
         '''
         '''
         retval = 1
@@ -62,13 +58,13 @@ class TheApp():
             # ----------------------------------------------------------------------
             # series
             #
-            cdebug('series: ' + s.args.series)
+            cdebug('series: ' + args.series)
             try:
-                record = Ubuntu().lookup(s.args.series)
+                record = Ubuntu().lookup(args.series)
                 msg['series-name'] = record['name']
                 msg['series-version'] = record['series_version']
             except KeyError:
-                print('  *** Error: Invalid series (%s) was specified. Valid, supported, series' % s.args.series)
+                print('  *** Error: Invalid series (%s) was specified. Valid, supported, series' % args.series)
                 print('             are: ')
                 db = Ubuntu().db
                 for k in db:
@@ -85,25 +81,25 @@ class TheApp():
             # ----------------------------------------------------------------------
             # who
             #
-            if s.args.who:
-                cdebug('who: ' + s.args.who)
-                msg['who'] = s.args.who
+            if args.who:
+                cdebug('who: ' + args.who)
+                msg['who'] = args.who
             #print(json.dumps(msg, sort_keys=True, indent=4))
 
             # ----------------------------------------------------------------------
             # op
             #
-            if s.args.op:
-                cdebug('op: ' + s.args.op)
-                msg['op'] = s.args.op
+            if args.op:
+                cdebug('op: ' + args.op)
+                msg['op'] = args.op
             #print(json.dumps(msg, sort_keys=True, indent=4))
 
             # ----------------------------------------------------------------------
             # arch
             #
-            if s.args.arch:
-                cdebug('arch: ' + s.args.arch)
-                arches = s.__arg_list(s.args.arch)
+            if args.arch:
+                cdebug('arch: ' + args.arch)
+                arches = s.__arg_list(args.arch)
 
                 for a in arches:
                     if a not in ['amd64', 'i386', 'ppc64el']:
@@ -118,20 +114,20 @@ class TheApp():
             # ----------------------------------------------------------------------
             # hwe
             #
-            cdebug('hwe: ' + str(s.args.hwe))
-            if s.args.hwe:
-                if HWE[s.args.series]['series'] is not None:
+            cdebug('hwe: ' + str(args.hwe))
+            if args.hwe:
+                if HWE[args.series]['series'] is not None:
                     msg['hwe'] = True
                 else:
-                    print('  *** Error: The series specified (%s) is not a backport kernel.' % s.args.series)
+                    print('  *** Error: The series specified (%s) is not a backport kernel.' % args.series)
                     raise Exit
             #print(json.dumps(msg, sort_keys=True, indent=4))
 
             # ----------------------------------------------------------------------
             # systems
             #
-            if s.args.systems:
-                systems = s.__arg_list(s.args.systems)
+            if args.systems:
+                systems = s.__arg_list(args.systems)
 
                 for system in systems:
                     if system not in Configuration['systems']:
@@ -143,8 +139,8 @@ class TheApp():
             # ----------------------------------------------------------------------
             # tests
             #
-            if s.args.tests:
-                tests = s.__arg_list(s.args.tests)
+            if args.tests:
+                tests = s.__arg_list(args.tests)
 
                 for t in tests:
                     if t not in TestProfiles and t not in TestCollections:
@@ -157,21 +153,21 @@ class TheApp():
             # ----------------------------------------------------------------------
             # url
             #
-            if s.args.url:
-                msg['debs'] = s.args.url
+            if args.url:
+                msg['debs'] = args.url
 
             # ----------------------------------------------------------------------
             # ppa
             #
-            if s.args.ppa:
-                msg['ppa'] = s.args.ppa
+            if args.ppa:
+                msg['ppa'] = args.ppa
 
             print(json.dumps(msg, sort_keys=True, indent=4))
 
 
             # Submit the message to the Message Queue
             #
-            if s.args.local:
+            if args.local:
                 mq = MsgQueue(address='localhost', port=9123)
             else:
                 mq = MsgQueue()
@@ -307,8 +303,7 @@ Print out a lot of messages about what is going on.\
     else:
         basicConfig(level=INFO, format=log_format)
 
-    app = TheApp(args)
-    exit(app.main())
+    exit(TheApp().main(args))
 
 
 # vi:set ts=4 sw=4 expandtab:
