@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 #
 
-from argparse                           import ArgumentParser, RawDescriptionHelpFormatter, RawTextHelpFormatter
-from logging                            import basicConfig, INFO, DEBUG, info, warning
+from argparse                           import ArgumentParser, RawTextHelpFormatter
+from logging                            import basicConfig, INFO, DEBUG, warning
 from lib.ubuntu                         import Ubuntu
-from lib.log                            import cdebug, Clog, cerror
+from lib.log                            import cdebug, Clog
 from lib.configuration                  import Configuration
 from lib.hwe                            import HWE
 from lib.testsprops                     import TestProfiles, TestCollections
@@ -283,9 +283,7 @@ Print out a lot of messages about what is going on.\
 
     '''
 
-    #parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter, usage=usage)
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawTextHelpFormatter)
-    # formatter_class=argparse.RawDescriptionHelpFormatter,
     parser.add_argument('--debug',    action='store_true', default=False,                   help=help_debug)
     parser.add_argument('--series',   required=True,                                        help=help_series)
     parser.add_argument('--arch',     required=False,                                       help=help_arch)
