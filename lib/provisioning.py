@@ -13,8 +13,7 @@ from lib.hwe                            import HWE
 from lib.shell                          import sh, ShellError, ssh, Shell
 from lib.ubuntu                         import Ubuntu
 from lib.exceptions                     import ErrorExit
-from lib.maas                           import MAAS, MAASCore
-from lib.cobbler                        import Cobbler
+from lib.maas                           import MAAS
 from configuration                      import Configuration
 
 # PS
@@ -32,9 +31,7 @@ class PS(object):
             cdebug("        %16s : %s" % (k, p[k]))
             setattr(s, k, p[k])
 
-        if s.type == "cobbler":
-            s.server = Cobbler(target, series, arch)
-        elif s.type == "maas":
+        if s.type == "maas":
             s.server = MAAS(s.profile, s.server, s.creds, target, series, arch)
         else:
             s.server = None
@@ -294,16 +291,6 @@ class Base(object):
         #
         s.ssh('sudo dpkg -i *_all.deb *_%s.deb' % s.arch, ignore_result=True) # best effort
         cdebug('        Leave Base::install_custom_debs')
-
-    # configure_passwordless_access
-    #
-    def configure_passwordless_access(s):
-        result, out = sh('scp -r $HOME/.ssh %s:' % (s.target), ignore_result=True)
-        if result > 0:
-            error('****')
-            error('**** Failed to scp .ssh to %s' % s.target)
-            error(out)
-            error('****')
 
     # mainline_firmware_hack
     #
@@ -588,10 +575,6 @@ class Metal(Base):
         if s.debs is not None:
             s.progress('Install custom debs')
             s.install_custom_debs()
-
-        if s.ps.type == "cobbler":
-            s.progress('Configure passwordless access')
-            s.configure_passwordless_access()
 
         # We want to reboot to pick up any new kernel that we would have installed due
         # to either the dist-upgrade that was performed, or the install of the hwe
