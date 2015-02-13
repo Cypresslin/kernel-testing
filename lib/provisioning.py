@@ -75,6 +75,10 @@ class Base(object):
     # progress
     #
     def progress(s, msg):
+        '''
+        Simple 'progress' messages sent to stdout to give the user some feeling that something
+        is happening.
+        '''
         dots = '.'
         s.progress_dots += 1
         prev_msg = s.progress_msg
@@ -84,11 +88,12 @@ class Base(object):
 
     # ssh
     #
-    # This ssh method uses the lower-level ssh function for actuall remote shell to
-    # the target system. This helper automatically provides the 'target' and 'user'
-    # options to every ssh call.
-    #
     def ssh(s, cmd, additional_ssh_options='', quiet=True, ignore_result=False):
+        '''
+        This ssh method uses the lower-level ssh function for actuall remote shell to
+        the target system. This helper automatically provides the 'target' and 'user'
+        options to every ssh call.
+        '''
         cdebug("Enter Base::ssh")
         result, output = Shell.ssh(s.target, cmd, user=s.ps.sut_user, additional_ssh_options=additional_ssh_options, quiet=quiet, ignore_result=ignore_result)
         cdebug("Leave Base::ssh")
@@ -96,9 +101,12 @@ class Base(object):
 
     # prossh
     #
-    # Helper for ssh'ing to the provisioning server.
     #
     def prossh(s, cmd, quiet=True, ignore_result=False, additional_ssh_options=''):
+        '''
+        Helper for ssh'ing to the provisioning server. This is done a lot with the
+        same options over and over.
+        '''
         cdebug("Enter Base::prossh")
         result, output = Shell.ssh(s.ps.server, cmd, additional_ssh_options=additional_ssh_options, user=s.ps.user, quiet=quiet, ignore_result=ignore_result)
         cdebug("Leave Base::prossh")
@@ -107,6 +115,10 @@ class Base(object):
     # wait_for_target
     #
     def wait_for_target(s, timeout=10):
+        '''
+        Wait for the remote system to come up far enough that we can start talking
+        (ssh) to it.
+        '''
         cdebug('        Enter Base::wait_for_system_ex')
 
         start = datetime.utcnow()
@@ -168,6 +180,9 @@ class Base(object):
     # install_xen
     #
     def install_xen(s):
+        '''
+        Configure the remote system as a xen host.
+        '''
         cdebug("        Enter Base::install_xen")
         if s.series == 'lucid':
             cdebug("            Can't do lucid")
