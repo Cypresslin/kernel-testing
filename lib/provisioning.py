@@ -218,6 +218,7 @@ class Base(object):
         On the target system, enable the src packages specified series.
         '''
         cdebug('        Enter Base::enable_proposed')
+        s.progress('Enabling Src')
         if s.arch == 'ppc64el': # This really should be a generic 'if s.arch in s.ports:'
             s.ssh('\'echo deb-src http://ports.ubuntu.com/ubuntu-ports/ %s restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
             s.ssh('\'echo deb-src http://ports.ubuntu.com/ubuntu-ports/ %s-updates restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
@@ -555,9 +556,7 @@ class Metal(Base):
         # Once the initial installation has completed, we continue to install and update
         # packages so that we are testing the latest kernel, which is what we want.
         #
-        if Ubuntu().is_development_series(s.series):
-            s.progress('Enabling Src')
-            s.enable_src()
+        s.enable_src()
         if not Ubuntu().is_development_series(s.series):
             s.progress('Enabling Proposed')
             s.enable_proposed()
