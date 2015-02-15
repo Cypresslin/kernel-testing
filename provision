@@ -207,6 +207,8 @@ examples:
     parser.add_argument('--vh-arch',      required=False, help='If the SUT is a virtual client, a virtual host is needed. This is the arch of that virtual host.')
     parser.add_argument('--vh-hwe',       required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
 
+    parser.add_argument('--nolog',        required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
+
     parser.add_argument('target', metavar='TARGET', type=str, nargs=1, help='The name of the system to be provisioned.')
 
     args = parser.parse_args()
@@ -217,7 +219,12 @@ examples:
         Clog.color = not args.nc
     else:
         level = WARNING
-    basicConfig(filename=None, level=level, format="%(levelname)s - %(message)s")
+
+    if args.nolog:
+        basicConfig(filename=None, level=level, format="%(levelname)s - %(message)s")
+    else:
+        logfile = 'provisioning.log'
+        basicConfig(filename=logfile, level=level, format="%(levelname)s - %(message)s")
 
     # If the sut-name was not specified on the command line, use the
     # HW name.

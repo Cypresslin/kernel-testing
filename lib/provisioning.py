@@ -8,7 +8,7 @@ from time                               import sleep
 import re
 
 #from lib.infrastructure                 import Orchestra, LabHW, MAASConfig
-from lib.log                            import cdebug, cinfo
+from lib.log                            import cdebug, cinfo, center, cleave
 from lib.hwe                            import HWE
 from lib.shell                          import sh, ShellError, ssh, Shell
 from lib.ubuntu                         import Ubuntu
@@ -24,18 +24,18 @@ class PS(object):
     # __init__
     #
     def __init__(s, target, series, arch):
-        cdebug("    Enter PS::__init__")
+        center("PS::__init__")
         sp = Configuration['systems'][target]['provisioner']
         p = Configuration[sp]
         for k in p:
-            cdebug("        %16s : %s" % (k, p[k]))
+            cdebug("%16s : %s" % (k, p[k]))
             setattr(s, k, p[k])
 
         if s.type == "maas":
             s.server = MAAS(s.profile, s.server, s.creds, target, series, arch)
         else:
             s.server = None
-        cdebug("    Leave PS::__init__")
+        cleave("PS::__init__")
 
     # provision
     #
@@ -48,7 +48,7 @@ class Base(object):
     # __init__
     #
     def __init__(s, target, series, arch, hwe=False, xen=False, debs=None, ppa=None, dry_run=False):
-        cdebug("Enter Base::__init__")
+        center("Base::__init__")
 
         # If we are installing a HWE kernel, we want to install the correct series first.
         #
@@ -67,7 +67,8 @@ class Base(object):
         s.dry_run = dry_run
         s.progress_dots = 0
         s.progress_msg = ''
-        cdebug("Leave Base::__init__")
+
+        cleave("Base::__init__")
 
     # progress
     #
@@ -91,9 +92,9 @@ class Base(object):
         the target system. This helper automatically provides the 'target' and 'user'
         options to every ssh call.
         '''
-        cdebug("Enter Base::ssh")
+        center("Base::ssh")
         result, output = Shell.ssh(s.target, cmd, user=s.ps.sut_user, additional_ssh_options=additional_ssh_options, quiet=quiet, ignore_result=ignore_result)
-        cdebug("Leave Base::ssh")
+        cleave("Base::ssh")
         return result, output
 
     # prossh
@@ -104,9 +105,9 @@ class Base(object):
         Helper for ssh'ing to the provisioning server. This is done a lot with the
         same options over and over.
         '''
-        cdebug("Enter Base::prossh")
+        center("Base::prossh")
         result, output = Shell.ssh(s.ps.server, cmd, additional_ssh_options=additional_ssh_options, user=s.ps.user, quiet=quiet, ignore_result=ignore_result)
-        cdebug("Leave Base::prossh")
+        cleave("Base::prossh (%d)" % result)
         return result, output
 
     # wait_for_target
@@ -116,7 +117,7 @@ class Base(object):
         Wait for the remote system to come up far enough that we can start talking
         (ssh) to it.
         '''
-        cdebug('        Enter Base::wait_for_system_ex')
+        center('Base::wait_for_system_ex')
 
         start = datetime.utcnow()
         cinfo('Starting waiting for \'%s\' at %s' % (s.target, start))
@@ -127,7 +128,7 @@ class Base(object):
             try:
                 result, output = s.ssh('uname -vr')
                 if result == 0 and len(output) > 0:
-                    cdebug("             exit result is 0")
+                    cdebug("exit result is 0")
                     break
 
             except ShellError as e:
@@ -140,7 +141,7 @@ class Base(object):
                     pass
                 else:
                     print("Something else bad happened")
-                    cdebug('        Leave Base::wait_for_system')
+                    cleave('Base::wait_for_system')
                     raise
 
             now = datetime.utcnow()
@@ -152,7 +153,7 @@ class Base(object):
             sleep(60)
             cinfo('Checking at: %s' % datetime.utcnow())
 
-        cdebug('        Leave Base::wait_for_system_ex')
+        cleave('Base::wait_for_system_ex')
 
     # install_hwe_kernel
     #
@@ -161,7 +162,7 @@ class Base(object):
         On the SUT, configure it to use a HWE kernel and then install the HWE
         kernel.
         '''
-        cdebug("        Enter Base::install_hwe_kernel")
+        center("Base::install_hwe_kernel")
         # We add the x-swat ppa so we can pick up the development HWE kernel
         # if we want.
         #
@@ -172,7 +173,7 @@ class Base(object):
         hwe_package = HWE[s.hwe_series]['package']
         s.ssh('sudo apt-get update', ignore_result=True)
         s.ssh('sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=1 apt-get install --yes %s' % (hwe_package))
-        cdebug("        Leave Base::install_hwe_kernel")
+        cleave("Base::install_hwe_kernel")
 
     # install_xen
     #
@@ -180,11 +181,11 @@ class Base(object):
         '''
         Configure the remote system as a xen host.
         '''
-        cdebug("        Enter Base::install_xen")
+        center("        Enter Base::install_xen")
         if s.series == 'lucid':
-            cdebug("            Can't do lucid")
+            cdebug("Can't do lucid")
         elif s.series == 'precise':
-            cdebug("            Doing it the hard way")
+            cdebug("Doing it the hard way")
             # Do it the hard way
             #
             s.ssh('sudo apt-get update', ignore_result=True)
@@ -194,10 +195,10 @@ class Base(object):
             s.ssh(r'sudo sed -i \'s/GRUB_CMDLINE_LINUX_DEFAULT=\"\"/GRUB_CMDLINE_LINUX_DEFAULT=\"\"\\nGRUB_CMDLINE_XEN=\""dom0_mem=1G,max:1G dom0_max_vcpus=1\""/\' /etc/default/grub')
             s.ssh('sudo update-grub')
         else:
-            cdebug("            Doing it the easy way")
+            cdebug("Doing it the easy way")
             s.ssh('sudo apt-get update', ignore_result=True)
             s.ssh('sudo apt-get install --yes xen-hypervisor-amd64', ignore_result=True)
-        cdebug("        Leave Base::install_xen")
+        cleave("        Leave Base::install_xen")
 
     # reboot
     #
@@ -205,11 +206,11 @@ class Base(object):
         '''
         Reboot the target system and wait 5 minutes for it to come up.
         '''
-        cdebug('        Enter Base::reboot')
+        center('Base::reboot')
         s.ssh('sudo reboot', quiet=quiet)
         if wait:
             s.wait_for_target()
-        cdebug('        Leave Base::reboot')
+        cleave('Base::reboot')
 
     # enable_src
     #
@@ -217,7 +218,7 @@ class Base(object):
         '''
         On the target system, enable the src packages specified series.
         '''
-        cdebug('        Enter Base::enable_proposed')
+        center('Base::enable_proposed')
         s.progress('Enabling Src')
         if s.arch == 'ppc64el': # This really should be a generic 'if s.arch in s.ports:'
             s.ssh('\'echo deb-src http://ports.ubuntu.com/ubuntu-ports/ %s restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
@@ -227,7 +228,7 @@ class Base(object):
             s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
             s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s-updates restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
             s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s-security restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
-        cdebug('        Leave Base::enable_proposed')
+        cleave('Base::enable_proposed')
 
     # enable_proposed
     #
@@ -236,12 +237,12 @@ class Base(object):
         On the target system, enable the -proposed archive pocket for the
         specified series.
         '''
-        cdebug('        Enter Base::enable_proposed')
+        center('Base::enable_proposed')
         if s.arch == 'ppc64el': # This really should be a generic 'if s.arch in s.ports:'
             s.ssh('\'echo deb http://ports.ubuntu.com/ubuntu-ports/ %s-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
         else:
             s.ssh('\'echo deb http://us.archive.ubuntu.com/ubuntu/ %s-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
-        cdebug('        Leave Base::enable_proposed')
+        cleave('Base::enable_proposed')
 
     # enable_ppa
     #
@@ -250,10 +251,10 @@ class Base(object):
         On the target system, enable the -proposed archive pocket for the
         specified series.
         '''
-        cdebug('        Enter Base::enable_ppa')
+        center('Base::enable_ppa')
         s.ssh('\'sudo apt-get -y install software-properties-common\'')
         s.ssh('\'sudo add-apt-repository -y %s\'' % (s.ppa))
-        cdebug('        Leave Base::enable_ppa')
+        cleave('Base::enable_ppa')
 
     # dist_upgrade
     #
@@ -261,10 +262,10 @@ class Base(object):
         '''
         Perform a update and dist-upgrade on a remote system.
         '''
-        cdebug('        Enter Base::dist_upgrade')
+        center('Base::dist_upgrade')
         s.ssh('sudo apt-get update', ignore_result=True)
         s.ssh('sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=1 apt-get --yes dist-upgrade')
-        cdebug('        Leave Base::dist_upgrade')
+        cleave('Base::dist_upgrade')
 
     # kernel_upgrade
     #
@@ -272,10 +273,10 @@ class Base(object):
         '''
         Perform a update of the kernels on a remote system.
         '''
-        cdebug('        Enter Base::kernel_upgrade')
+        center('Base::kernel_upgrade')
         s.ssh('sudo apt-get update', ignore_result=True)
         s.ssh('sudo apt-get --yes install linux-image-generic linux-headers-generic')
-        cdebug('        Leave Base::kernel_upgrade')
+        cleave('Base::kernel_upgrade')
 
     # install_custom_debs
     #
@@ -283,7 +284,7 @@ class Base(object):
         '''
         On the SUT, download and install custome kernel debs for testing.
         '''
-        cdebug('        Enter Base::install_custom_debs')
+        center('Base::install_custom_debs')
         # Pull them down
         #
         s.ssh('wget -r -A .deb -e robots=off -nv -l1 --no-directories %s' % s.debs)
@@ -291,7 +292,7 @@ class Base(object):
         # Install everything
         #
         s.ssh('sudo dpkg -i *_all.deb *_%s.deb' % s.arch, ignore_result=True) # best effort
-        cdebug('        Leave Base::install_custom_debs')
+        cleave('Base::install_custom_debs')
 
     # mainline_firmware_hack
     #
@@ -299,9 +300,9 @@ class Base(object):
         '''
         Mainline kernels look for their firmware in /lib/firmware and might miss other required firmware.
         '''
-        cdebug('        Enter Metal::mainline_firmware_hack')
+        center('Base::mainline_firmware_hack')
         s.ssh('sudo ln -s /lib/firmware/\$\(uname -r\)/* /lib/firmware/', ignore_result=True)
-        cdebug('        Leave Metal::mainline_firmware_hack')
+        cleave('Base::mainline_firmware_hack')
 
 # Metal
 #
@@ -312,11 +313,11 @@ class Metal(Base):
     # __init__
     #
     def __init__(s, target, series, arch, hwe=False, xen=False, debs=None, ppa=None, dry_run=False):
-        cdebug("Enter Metal::__init__")
+        center("Metal::__init__")
 
         Base.__init__(s, target, series, arch, hwe=hwe, xen=xen, debs=debs, ppa=ppa, dry_run=dry_run)
 
-        cdebug("Leave Metal::__init__")
+        cleave("Metal::__init__")
 
     # verify_target
     #
@@ -325,15 +326,15 @@ class Metal(Base):
         Confirm that the target system has installed what was supposed to be installed. If we asked for
         one series but another is on the system, fail.
         '''
-        cdebug('        Enter Metal::verify_target')
+        center('Metal::verify_target')
         retval = False
 
-        cdebug('            Verifying series:')
+        cdebug('Verifying series:')
         result, codename = s.ssh(r'lsb_release --codename')
         for line in codename:
             line = line.strip()
             if line.startswith('Codename:'):
-                cdebug('                lsb_release --codename : ' + line)
+                cdebug('lsb_release --codename : ' + line)
                 print('         series: ' + line.replace('Codename:','').strip())
                 if s.series not in line:
                     error("")
@@ -345,13 +346,13 @@ class Metal(Base):
 
         # Verify we installed the arch we intended to install
         #
-        cdebug('            Verifying arch:')
+        cdebug('Verifying arch:')
         if retval:
             retval = False
             result, processor = s.ssh(r'uname -p')
             for line in processor:
                 line = line.strip()
-                cdebug('                uname -p : ' + line)
+                cdebug('uname -p : ' + line)
 
                 if 'Warning: Permanently aded' in line: continue
                 if line == '': continue
@@ -380,14 +381,14 @@ class Metal(Base):
 
         # Are we running the series correct kernel?
         #
-        cdebug('            Verifying kernel:')
+        cdebug('Verifying kernel:')
         if retval:
             retval = False
             kv = None
             result, kernel = s.ssh(r'uname -vr')
             for line in kernel:
                 line = line.strip()
-                cdebug('                uname -vr : ' + line)
+                cdebug('uname -vr : ' + line)
 
                 if 'Warning: Permanently aded' in line: continue
                 if line == '': continue
@@ -395,7 +396,7 @@ class Metal(Base):
                 m = re.search('(\d+.\d+.\d+)-\d+-.* #(\d+)-Ubuntu.*', line)
                 if m:
                     kv = m.group(1)
-                cdebug('                kernel version : ' + kv)
+                cdebug('kernel version : ' + kv)
 
             print('         kernel: ' + kv)
             retval = True
@@ -415,24 +416,24 @@ class Metal(Base):
             #    error("    Unable to find the kernel version in any line.")
             #    error("")
 
-        cdebug('        Leave Metal::verify_target (%s)' % retval)
+        cleave('Metal::verify_target (%s)' % retval)
         return retval
 
     # verify_hwe_target
     #
     def verify_hwe_target(s):
-        cdebug('        Enter Metal::verify_hwe_target')
+        center('Metal::verify_hwe_target')
         retval = True
         # Are we running the series correct kernel?
         #
-        cdebug('            Verifying hwe kernel:')
+        cdebug('Verifying hwe kernel:')
         if retval:
             retval = False
             kv = None
             result, kernel = s.ssh(r'uname -vr')
             for line in kernel:
                 line = line.strip()
-                cdebug('                uname -vr : ' + line)
+                cdebug('uname -vr : ' + line)
 
                 if 'Warning: Permanently aded' in line: continue
                 if line == '': continue
@@ -440,7 +441,7 @@ class Metal(Base):
                 m = re.search('(\d+.\d+.\d+)-\d+-.* #(\d+)\~\S+-Ubuntu.*', line)
                 if m:
                     kv = m.group(1)
-                    cdebug('                kernel version : ' + kv)
+                    cdebug('kernel version : ' + kv)
 
             if kv is not None:
                 installed_series = Ubuntu().lookup(kv)['name']
@@ -461,18 +462,17 @@ class Metal(Base):
                     line = line.strip()
                     error("    line: %s" % line)
 
-        cdebug('        Leave Metal::verify_hwe_target (%s)' % retval)
+        cleave('Metal::verify_hwe_target (%s)' % retval)
         return retval
 
     # verify_xen_target
     #
     def verify_xen_target(s):
-        cdebug('        Enter Metal::verify_xen_target')
+        center('Metal::verify_xen_target')
         retval = False
 
         if s.series == 'lucid':
-            cdebug("            Can't do lucid")
-
+            cdebug("Can't do lucid")
         elif s.series == 'precise':
             result, output = s.ssh('sudo xm list')
             for line in output:
@@ -480,30 +480,25 @@ class Metal(Base):
                 if 'Domain-0' in line:
                     retval = True
                     break
-
-            pass
-
         else:
-
             result, output = s.ssh('sudo xl list')
             for line in output:
                 line = line.strip()
                 if 'Domain-0' in line:
                     retval = True
                     break
-
         if not retval:
             error("")
             error("Failed to find the Domain-0 domain.")
             error("")
 
-        cdebug('        Leave Metal::verify_xen_target (%s)' % retval)
+        cleave('Metal::verify_xen_target (%s)' % retval)
         return retval
 
     # provision
     #
     def provision(s):
-        cdebug("Enter Metal::provision")
+        center("Enter Metal::provision")
 
         s.progress('Provisioner setup')
         s.ps.provision()
@@ -520,12 +515,11 @@ class Metal(Base):
             sleep(60 * 3) # Give it 5 minutes
             s.progress('Coming up')
             s.wait_for_target(timeout=60)
-        cdebug("Leave Metal::provision")
 
         s.progress('Verifying base install')
         if not s.verify_target():
             cinfo("Target verification failed.")
-            cdebug('Leave Metal::provision')
+            cleave('Metal::provision')
             return False
 
         # If we want an HWE kernel installed on the bare metal then at this point the correct
@@ -550,7 +544,7 @@ class Metal(Base):
             s.progress('Verifying Xen install')
             if not s.verify_xen_target():
                 cinfo("Target verification failed.")
-                cdebug('Leave Metal::provision')
+                cleave('Metal::provision')
                 return False
 
         # Once the initial installation has completed, we continue to install and update
@@ -582,7 +576,7 @@ class Metal(Base):
         s.reboot(s.target)
         s.progress('That\'s All Folks!')
 
-        cdebug("Leave Metal::provision")
+        cleave("Metal::provision")
         return True
 
 # vi:set ts=4 sw=4 expandtab syntax=python:
