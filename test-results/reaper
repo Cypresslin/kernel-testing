@@ -9,7 +9,7 @@ from os                                 import getenv, path
 from shutil                             import rmtree
 from datetime                           import datetime
 from logging                            import debug, info, basicConfig, DEBUG, INFO
-from grinder                            import Exit, TestResultsRepository, TestResultsRepositoryError
+from lib.grinder                        import Exit, TestResultsRepository, TestResultsRepositoryError
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 from lib.utils                          import string_to_date
 import json
