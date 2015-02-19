@@ -48,6 +48,9 @@ TestProfiles = {
         'series-blacklist' : [
             'lucid', 'precise', 'quantal', 'saucy',
             ],
+        'arch-blacklist' : [
+            'i386',
+            ],
         },
 
     'ubuntu_stress_ng' : {
