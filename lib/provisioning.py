@@ -265,7 +265,10 @@ class Base(object):
         center('Base::enable_ppa')
         s.progress('Enabling PPA')
         s.ssh('\'sudo apt-get -y install software-properties-common\'')
-        s.ssh('\'sudo add-apt-repository -y %s\'' % (s.ppa))
+        if s.ppa.startswith('ppa:'):
+            s.ssh('\'sudo add-apt-repository -y %s\'' % (s.ppa))
+        else:
+            s.ssh('\'sudo add-apt-repository -y ppa:%s\'' % (s.ppa))
         cleave('Base::enable_ppa')
 
     # dist_upgrade
