@@ -112,12 +112,15 @@ class Base(object):
 
     # wait_for_target
     #
-    def wait_for_target(s, timeout=10):
+    def wait_for_target(s, progress=None, timeout=10):
         '''
         Wait for the remote system to come up far enough that we can start talking
         (ssh) to it.
         '''
         center('Base::wait_for_system_ex')
+
+        if progress:
+            s.progress(progress)
 
         start = datetime.utcnow()
         cinfo('Starting waiting for \'%s\' at %s' % (s.target, start))
@@ -163,6 +166,8 @@ class Base(object):
         kernel.
         '''
         center("Base::install_hwe_kernel")
+        s.progress('Installing HWE Kernel')
+
         # We add the x-swat ppa so we can pick up the development HWE kernel
         # if we want.
         #
@@ -173,6 +178,7 @@ class Base(object):
         hwe_package = HWE[s.hwe_series]['package']
         s.ssh('sudo apt-get update', ignore_result=True)
         s.ssh('sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=1 apt-get install --yes %s' % (hwe_package))
+
         cleave("Base::install_hwe_kernel")
 
     # install_xen
@@ -182,6 +188,7 @@ class Base(object):
         Configure the remote system as a xen host.
         '''
         center("        Enter Base::install_xen")
+        s.progress('Installing Xen Kernel')
         if s.series == 'lucid':
             cdebug("Can't do lucid")
         elif s.series == 'precise':
@@ -202,11 +209,14 @@ class Base(object):
 
     # reboot
     #
-    def reboot(s, wait=True, quiet=True):
+    def reboot(s, progress=None, wait=True, quiet=True):
         '''
         Reboot the target system and wait 5 minutes for it to come up.
         '''
         center('Base::reboot')
+        if progress:
+            s.progress(progress)
+
         s.ssh('sudo reboot', quiet=quiet)
         if wait:
             s.wait_for_target()
@@ -218,7 +228,7 @@ class Base(object):
         '''
         On the target system, enable the src packages specified series.
         '''
-        center('Base::enable_proposed')
+        center('Base::enable_src')
         s.progress('Enabling Src')
         if s.arch == 'ppc64el': # This really should be a generic 'if s.arch in s.ports:'
             s.ssh('\'echo deb-src http://ports.ubuntu.com/ubuntu-ports/ %s restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
@@ -228,7 +238,7 @@ class Base(object):
             s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
             s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s-updates restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
             s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s-security restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
-        cleave('Base::enable_proposed')
+        cleave('Base::enable_src')
 
     # enable_proposed
     #
@@ -238,6 +248,7 @@ class Base(object):
         specified series.
         '''
         center('Base::enable_proposed')
+        s.progress('Enabling Proposed')
         if s.arch == 'ppc64el': # This really should be a generic 'if s.arch in s.ports:'
             s.ssh('\'echo deb http://ports.ubuntu.com/ubuntu-ports/ %s-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
         else:
@@ -252,6 +263,7 @@ class Base(object):
         specified series.
         '''
         center('Base::enable_ppa')
+        s.progress('Enabling PPA')
         s.ssh('\'sudo apt-get -y install software-properties-common\'')
         s.ssh('\'sudo add-apt-repository -y %s\'' % (s.ppa))
         cleave('Base::enable_ppa')
@@ -263,6 +275,7 @@ class Base(object):
         Perform a update and dist-upgrade on a remote system.
         '''
         center('Base::dist_upgrade')
+        s.progress('Dist Upgrade')
         s.ssh('sudo apt-get update', ignore_result=True)
         s.ssh('sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=1 apt-get --yes dist-upgrade')
         cleave('Base::dist_upgrade')
@@ -274,6 +287,7 @@ class Base(object):
         Perform a update of the kernels on a remote system.
         '''
         center('Base::kernel_upgrade')
+        s.progress('Kernel Upgrade')
         s.ssh('sudo apt-get update', ignore_result=True)
         s.ssh('sudo apt-get --yes install linux-image-generic linux-headers-generic')
         cleave('Base::kernel_upgrade')
@@ -285,6 +299,7 @@ class Base(object):
         On the SUT, download and install custome kernel debs for testing.
         '''
         center('Base::install_custom_debs')
+        s.progress('Install custom debs')
         # Pull them down
         #
         s.ssh('wget -r -A .deb -e robots=off -nv -l1 --no-directories %s' % s.debs)
@@ -328,6 +343,7 @@ class Metal(Base):
         '''
         center('Metal::verify_target')
         retval = False
+        s.progress('Verifying base install')
 
         cdebug('Verifying series:')
         result, codename = s.ssh(r'lsb_release --codename')
@@ -424,6 +440,7 @@ class Metal(Base):
     def verify_hwe_target(s):
         center('Metal::verify_hwe_target')
         retval = True
+        s.progress('Verifying HWE install')
         # Are we running the series correct kernel?
         #
         cdebug('Verifying hwe kernel:')
@@ -470,6 +487,7 @@ class Metal(Base):
     def verify_xen_target(s):
         center('Metal::verify_xen_target')
         retval = False
+        s.progress('Verifying Xen install')
 
         if s.series == 'lucid':
             cdebug("Can't do lucid")
@@ -502,8 +520,7 @@ class Metal(Base):
 
         s.progress('Provisioner setup')
         s.ps.provision()
-        s.progress('Installing')
-        s.wait_for_target(timeout=60) # Allow 30 minutes for network installation
+        s.wait_for_target(progress='Installing', timeout=60) # Allow 30 minutes for network installation
 
         # If we are installing via maas we are likely using the fastpath installer. That does
         # it's own reboot after installation. There is a window where we could think the system
@@ -512,11 +529,9 @@ class Metal(Base):
         #
         if s.ps.type == 'maas':
             cinfo("Giving it 5 more minutes")
-            sleep(60 * 3) # Give it 5 minutes
-            s.progress('Coming up')
-            s.wait_for_target(timeout=60)
+            sleep(60 * 3) # Give it 3 minutes
+            s.wait_for_target(progress='Coming up', timeout=60)
 
-        s.progress('Verifying base install')
         if not s.verify_target():
             cinfo("Target verification failed.")
             cleave('Metal::provision')
@@ -526,22 +541,16 @@ class Metal(Base):
         # LTS kernel has been installed and it's time to install the HWE kernel.
         #
         if s.hwe:
-            s.progress('Installing HWE Kernel')
             s.install_hwe_kernel()
-            s.progress('Rebooting for HWE Kernel')
-            s.reboot()
-            s.progress('Verifying HWE install')
+            s.reboot(progress='Rebooting for HWE Kernel')
             #if not s.verify_hwe_target():
             #    cinfo("Target verification failed.")
             #    cdebug('Leave Metal::provision')
             #    return False
 
         if s.xen:
-            s.progress('Installing Xen Kernel')
             s.install_xen()
-            s.progress('Rebooting for Xen Kernel')
-            s.reboot()
-            s.progress('Verifying Xen install')
+            s.reboot(progress='Rebooting for Xen Kernel')
             if not s.verify_xen_target():
                 cinfo("Target verification failed.")
                 cleave('Metal::provision')
@@ -552,21 +561,16 @@ class Metal(Base):
         #
         s.enable_src()
         if not Ubuntu().is_development_series(s.series):
-            s.progress('Enabling Proposed')
             s.enable_proposed()
         if s.ppa is not None:
-            s.progress('Enabling PPA')
             s.enable_ppa()
         if Ubuntu().is_development_series(s.series):
-            s.progress('Kernel Upgrade')
             s.kernel_upgrade()
         else:
-            s.progress('Dist Upgrade')
             s.dist_upgrade()
         s.mainline_firmware_hack()
 
         if s.debs is not None:
-            s.progress('Install custom debs')
             s.install_custom_debs()
 
         # We want to reboot to pick up any new kernel that we would have installed due
