@@ -1,3 +1,3 @@
 #!/bin/sh
 flock -nx /tmp/kmsgq-ircbot.lck -c "$HOME/shankbot/kernel-testing/kmsgq-ircbot kernel-irc"
-$HOME/bin/dashboard-status kmsgq-ircbot 'Kernel MsgQueue Ircbot' 5m 30m
+$HOME/bin/dashboard-status kmsgq-ircbot 'Kernel Testing' 'Kernel MsgQueue Ircbot' 5m 30m
