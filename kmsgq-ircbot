@@ -149,7 +149,7 @@ class TheApp():
         '''
         '''
         s.args = args
-        s.queue_name = 'kernel-irc'
+        s.queue_name = 'kernel-irc-bjf'
 
         s.channel_map = {
             'kernel.publish'         : ['#kmsgq', 'published'],
@@ -179,8 +179,8 @@ class TheApp():
             #
             who = payload['who']
             if not who:
-                who = 'kernel'
-            content += who + ', ' + what + ': '
+                who = ['kernel']
+            content += ','.join(who) + ', ' + what + ': '
 
             if payload['hwe']:
                 series = 'lts-' + payload['series-name']

@@ -82,7 +82,7 @@ class TheApp():
             # who
             #
             if args.who:
-                cdebug('who: ' + args.who)
+                cdebug('who: ' + ','.join(args.who))
                 msg['who'] = args.who
             #print(json.dumps(msg, sort_keys=True, indent=4))
 
@@ -288,7 +288,7 @@ Print out a lot of messages about what is going on.\
     parser.add_argument('--tests',    required=False,                                       help=help_tests)
     parser.add_argument('--url',      required=False,                                       help=help_url)
     parser.add_argument('--ppa',      required=False,                                       help=help_ppa)
-    parser.add_argument('--who',      required=False,                                       help="")
+    parser.add_argument('--who',      required=False, nargs='*',                            help="")
     parser.add_argument('--op',       required=False,                                       help="")
     parser.add_argument('--local',    action='store_true', default=False,                   help='Assume we have an ssh tunnel setup to the MQ server.')
     args = parser.parse_args()
@@ -303,6 +303,7 @@ Print out a lot of messages about what is going on.\
     else:
         basicConfig(level=INFO, format=log_format)
 
+    print(args.who)
     exit(TheApp().main(args))
 
 

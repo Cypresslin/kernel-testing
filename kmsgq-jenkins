@@ -101,7 +101,7 @@ class TheApp():
         retval += '_%s__using_%s' % (arch, system)
 
         if jd['who'] is not None:
-            retval += '__for_%s' % jd['who']
+            retval += '__for_%s' % '_'.join(jd['who'])
 
         cleave('TheApp::job_name')
         return retval
