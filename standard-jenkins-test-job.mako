@@ -41,7 +41,7 @@ if 'debs' in data:
 if data['hwe']:
     provision += ' --sut-hwe'
 
-if 'ppa' in data:
+if data['ppa']:
     provision += ' --ppa=%s' % data['ppa']
 %>
     # Provision the hardware.
