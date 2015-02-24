@@ -89,7 +89,7 @@ TestProfiles = {
     'ubuntu_kvm_unit_tests' : {
         'packages' : {
             'common' : [
-                'qemu-kvm'
+                'qemu-kvm', 'gdb',
                 ],
             },
         'series-blacklist' : [
@@ -103,7 +103,7 @@ TestProfiles = {
     'ubuntu_lxc' : {
         'packages' : {
             'common' : [
-                'lxc-tests'
+                'lxc-tests', 'gdb',
                 ],
             },
         'series-blacklist' : [
@@ -121,7 +121,7 @@ TestProfiles = {
     'network_WiFiCaps' : {
         'packages' : {
             'common' : [
-                'iw', 'pkg-config', 'libnl-dev'
+                'iw', 'pkg-config', 'libnl-dev', 'gdb',
                 ],
             },
         },
@@ -207,7 +207,7 @@ TestProfiles = {
 
     'ubuntu_leap_seconds' : {
         'packages' : {
-            'common' : [],
+            'common' : ['gdb',],
             },
         },
 
@@ -299,13 +299,13 @@ TestProfiles = {
 
     'ltp' : {
         'packages' : {
-            'common' : ['gdb', 'flex'],
+            'common' : ['gdb', 'flex', 'build-essential', 'gcc-multilib', 'git'],
             },
         },
 
     'stress' : {
         'packages' : {
-            'common' : [],
+            'common' : ['gdb'],
             },
         },
 
