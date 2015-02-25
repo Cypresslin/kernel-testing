@@ -299,7 +299,9 @@ TestProfiles = {
 
     'ltp' : {
         'packages' : {
-            'common' : ['gdb', 'flex', 'build-essential', 'gcc-multilib', 'git'],
+            'common' : [
+                'gdb', 'flex', 'build-essential', 'gcc-multilib', 'git', 'automake'
+                ],
             },
         },
 
