@@ -67,7 +67,7 @@ TestProfiles = {
     'ubuntu_stress_btrfs' : {
         'packages' : {
             'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools',
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git',
                 ],
             },
         'series-blacklist' : [
