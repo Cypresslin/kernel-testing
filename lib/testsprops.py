@@ -73,6 +73,7 @@ TestProfiles = {
         'series-blacklist' : [
             'lucid', 'precise', 'quantal', 'saucy', 'trusty',
             ],
+        'scratch' : True,
         },
 
     'ubuntu_futex' : {
