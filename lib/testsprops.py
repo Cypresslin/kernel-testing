@@ -64,6 +64,17 @@ TestProfiles = {
             ],
         },
 
+    'ubuntu_stress_btrfs' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools',
+                ],
+            },
+        'series-blacklist' : [
+            'lucid', 'precise', 'quantal', 'saucy', 'trusty',
+            ],
+        },
+
     'ubuntu_futex' : {
         'packages' : {
             'common' : [
