@@ -349,6 +349,7 @@ Configuration = {
             'series-blacklist' : [
                 'lucid', 'precise',
                 ],
+            "scratch drive" : "/dev/sdb",
         },
         "dwalin" : {
             "arch" : ['amd64', 'i386'],
