@@ -74,6 +74,20 @@ TestProfiles = {
             'lucid', 'precise', 'quantal', 'saucy', 'trusty',
             ],
         'scratch' : True,
+        'atargs' : {}, # this gets filled in later, it's a hack
+        },
+
+    'ubuntu_stress_btrfs_cmd' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git',
+                ],
+            },
+        'series-blacklist' : [
+            'lucid', 'precise', 'quantal', 'saucy', 'trusty',
+            ],
+        'scratch' : True,
+        'atargs' : {}, # this gets filled in later, it's a hack
         },
 
     'ubuntu_futex' : {
