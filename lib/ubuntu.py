@@ -134,7 +134,7 @@ class Ubuntu:
         {
             'development' : True,        # This is the version that is currently under development
             'series_version' : '15.04',
-            'kernel'    : '3.16.0',
+            'kernel'    : '3.19.0',
             'name'      : 'vivid',
             'supported' : False,
             # adjust packages when this goes live
@@ -609,7 +609,7 @@ class Ubuntu:
     }
 
     index_by_kernel_version = {
-        '3.18.0'   : db['15.04'],
+        '3.19.0'   : db['15.04'],
         '3.16.0'   : db['14.10'],
         '3.13.0'   : db['14.04'],
         '3.11.0'   : db['13.10'],
