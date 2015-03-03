@@ -347,7 +347,8 @@ class TheApp():
             try:
                 if series in Configuration['systems'][system]['series-blacklist']: continue
             except KeyError:
-                retval.append(system)
+                pass
+            retval.append(system)
         return retval
 
     # create_test_jobs
@@ -395,7 +396,6 @@ class TheApp():
                 mq = MsgQueue(address='localhost', port=9123)
             else:
                 mq = MsgQueue()
-            #mq.listen('kernel-testing-requests', 'kernel.testing.test.request', s._handler)
             mq.listen('kernel-publishing-monitor', 'kernel.#', s._handler)
 
             retval = 0
