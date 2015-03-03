@@ -182,10 +182,7 @@ class TheApp():
                 who = ['kernel']
             content += ','.join(who) + ', ' + what + ': '
 
-            if payload['hwe']:
-                series = 'lts-' + payload['series-name']
-            else:
-                series = payload['series-name']
+            series = "%s  (%s)  " % (payload['series-name'], payload['package'])
 
             if 'test completed' == what:
                 content += '%s' % (series)
@@ -199,7 +196,6 @@ class TheApp():
 
                 if 'results' in payload:
                     r = payload['results']
-                    #content += '; test suites: %d,  tests ran: %3d,  tests failed: %d,  results: %s' % (r['suites'], r['ran'], r['failed'], r['url'])
                     content = '        tests ran: %3d, failed: %d;  %s' % (r['ran'], r['failed'], r['url'])
                     retval.append(content)
 
