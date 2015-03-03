@@ -74,6 +74,16 @@ class TheApp():
 
         s.job_template = s.load_template('standard-jenkins-test-job.mako')
 
+        # A list of the packages that we don't test.
+        #
+        s.package_blacklist = [
+            'linux-keystone',
+            'linux-armadaxp',
+            'linux-ec2',
+            'linux-exynos5',
+            'linux-ti-omap4',
+        ]
+
     # job_name
     #
     def job_name(s, jd, arch, system):
@@ -204,6 +214,9 @@ class TheApp():
         job_data['test']     = test
         job_data['description'] = json.dumps(job_data, sort_keys=True, indent=4)
 
+        if '-lts-' in job_data['package']:
+            job_data['hwe'] = True
+
         try:
             job_xml = s.job_template.render(data=job_data)
 
@@ -315,7 +328,8 @@ class TheApp():
             # This *is* a notification from shankbot that a new kernel is available for testing.
             #
             if 'proposed' in jd['pocket']:
-                s.handle_kernel_publish(jd)
+                if jd['package'] not in s.package_blacklist:
+                    s.handle_kernel_publish(jd)
         else:
             # Just ignore any payload keys we don't recognize. kernel.testing.kernel.completed is
             # an example.
