@@ -182,7 +182,7 @@ class TheApp():
                 who = ['kernel']
             content += ','.join(who) + ', ' + what + ': '
 
-            series = "%s  (%s)  " % (payload['series-name'], payload['package'])
+            series = "%s  %s " % (payload['series-name'], payload['package'])
 
             if 'test completed' == what:
                 content += '%s' % (series)
