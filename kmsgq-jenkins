@@ -161,6 +161,9 @@ class TheApp():
     def generate_jobs(s, test, systems, jd):
         center('TheApp::generate_jobs')
 
+        if '-lts-' in jd['package']:
+            jd['hwe'] = True
+
         for system in systems:
             cdebug('system: %s' % system, 'blue')
             for arch in jd['arches']:
@@ -213,9 +216,6 @@ class TheApp():
         job_data['sut-name'] = system
         job_data['test']     = test
         job_data['description'] = json.dumps(job_data, sort_keys=True, indent=4)
-
-        if '-lts-' in job_data['package']:
-            job_data['hwe'] = True
 
         try:
             job_xml = s.job_template.render(data=job_data)
