@@ -53,7 +53,7 @@ Configuration = {
                 },
             ],
             "scratch drive" : "/dev/sdb",
-            "role" : "SRU Testing",
+            "role" : "none",
             "locked" : False,
         },
         "pepe" : {
@@ -224,7 +224,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : "SRU Testing",
             "locked" : False,
         },
         "onibi" : {
