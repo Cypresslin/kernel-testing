@@ -71,7 +71,7 @@ TestProfiles = {
                 ],
             },
         'series-blacklist' : [
-            'lucid', 'precise', 'quantal', 'saucy', 'trusty',
+            'lucid', 'precise', 'quantal', 'saucy',
             ],
         'scratch' : False,
         'atargs' : {}, # this gets filled in later, it's a hack
@@ -84,7 +84,7 @@ TestProfiles = {
                 ],
             },
         'series-blacklist' : [
-            'lucid', 'precise', 'quantal', 'saucy', 'trusty',
+            'lucid', 'precise', 'quantal', 'saucy',
             ],
         'scratch' : True,
         'atargs' : {}, # this gets filled in later, it's a hack
@@ -97,7 +97,7 @@ TestProfiles = {
                 ],
             },
         'series-blacklist' : [
-            'lucid', 'precise', 'quantal', 'saucy', 'trusty',
+            'lucid', 'precise', 'quantal', 'saucy',
             ],
         'scratch' : True,
         'atargs' : {}, # this gets filled in later, it's a hack
