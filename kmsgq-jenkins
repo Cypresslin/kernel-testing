@@ -161,7 +161,7 @@ class TheApp():
     def generate_jobs(s, test, systems, jd):
         center('TheApp::generate_jobs')
 
-        if 'linux-lts-' in jd['package']:
+        if 'package' in jd and 'linux-lts-' in jd['package']:
             jd['series-name'] = jd['package'].replace('linux-lts-','')
             jd['hwe'] = True
 
