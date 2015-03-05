@@ -64,6 +64,19 @@ TestProfiles = {
             ],
         },
 
+    'ubuntu_btrfs_kernel_fixes' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git',
+                ],
+            },
+        'series-blacklist' : [
+            'lucid', 'precise', 'quantal', 'saucy', 'trusty',
+            ],
+        'scratch' : False,
+        'atargs' : {}, # this gets filled in later, it's a hack
+        },
+
     'ubuntu_stress_btrfs' : {
         'packages' : {
             'common' : [
