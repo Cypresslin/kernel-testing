@@ -208,7 +208,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "Personal Testing",
+            "role" : "none",
             "locked" : False,
         },
         "onza" : {
