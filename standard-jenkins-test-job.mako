@@ -43,10 +43,12 @@ if data['hwe']:
 
 if data['ppa']:
     provision += ' --ppa=%s' % data['ppa']
+
+provision += ' --debug --nc'
 %>
     # Provision the hardware.
     #
-    ${provision}
+    ${provision} || (cat provisioning.log;exit -1)
 
 % if 'no-test' not in data:
     # Kick off testing on the newly provisioned SUT
