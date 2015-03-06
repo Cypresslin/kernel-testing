@@ -168,8 +168,9 @@ class TheApp():
         for system in systems:
             cdebug('system: %s' % system, 'blue')
             for arch in jd['arches']:
-                cdebug('arch: %s' % arch, 'blue')
-                s.generate_individual_job(test, arch, system, jd)
+                if arch in Configuration['systems'][system]['arch']:
+                    cdebug('arch: %s' % arch, 'blue')
+                    s.generate_individual_job(test, arch, system, jd)
 
         cleave('TheApp::generate_jobs')
 
