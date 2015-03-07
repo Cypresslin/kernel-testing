@@ -79,7 +79,7 @@ class Runner():
                 # drive is the 'b' device with that same device root.
                 #
                 node = platform.node()
-                if 'scratch drive' in Configuration['systems'][node]:
+                if 'scratch drive' in Configuration['systems'][node] and Configuration['systems'][node]['scratch drive']:
                     valid_tests.append(t)
                     self.__scratch_needed = True
             else:
