@@ -73,7 +73,6 @@ TestProfiles = {
         'series-blacklist' : [
             'lucid', 'precise', 'quantal', 'saucy',
             ],
-        'scratch' : False,
         'atargs' : {}, # this gets filled in later, it's a hack
         },
 
