@@ -375,6 +375,7 @@ if __name__ == '__main__':
         LOGLEVEL = DEBUG
     else:
         LOGLEVEL = WARNING
+    LOGLEVEL = DEBUG
     basicConfig(level=LOGLEVEL, format="%(levelname)s - %(message)s")
 
     app_description = '''
