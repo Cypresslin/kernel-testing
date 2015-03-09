@@ -236,15 +236,19 @@ class Runner():
                 if 'common' in TestProfiles[t]['packages']:
                     for pkg in TestProfiles[t]['packages']['common']:
                         if self.arch == 'ppc64le':
-                            deps.append(pkg.replace('-multilib', ''))
+                            if pkg.replace('-multilib', '') not in deps:
+                                deps.append(pkg.replace('-multilib', ''))
                         else:
-                            deps.append(pkg)
+                            if pkg not in deps:
+                                deps.append(pkg)
                 if self.release_name in TestProfiles[t]['packages']:
                     for pkg in TestProfiles[t]['packages'][self.release_name]:
                         if self.arch == 'ppc64le':
-                            deps.append(pkg.replace('-multilib', ''))
+                            if pkg.replace('-multilib', '') not in deps:
+                                deps.append(pkg.replace('-multilib', ''))
                         else:
-                            deps.append(pkg)
+                            if pkg not in deps:
+                                deps.append(pkg)
             else:
                 debug('No package dependencies for \'%s\'' % t)
 
