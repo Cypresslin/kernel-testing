@@ -177,8 +177,9 @@ class TheApp():
         if what != 'unknown':
             # Make pretty content.
             #
-            who = payload['who']
-            if not who:
+            try:
+                who = payload['who']
+            except KeyError:
                 who = ['kernel']
             content += ','.join(who) + ', ' + what + ': '
 
