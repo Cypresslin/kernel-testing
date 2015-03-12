@@ -377,6 +377,14 @@ TestProfiles = {
             ],
         },
 
+    'ubuntu_kernel_selftests' : {
+        'packages' : {
+            'common' : ['build-essential', 'gcc-multilib', 'gdb', 'git']
+            },
+        'series-blacklist': [
+            'lucid', 'precise', 'quantal', 'saucy', 'trusty',
+            ],
+        },
 }
 
 # Test Collections may be defined, and will run the list of autotest tests in them
