@@ -443,7 +443,8 @@ TestCollections = {
              'qa',
              'ubuntu_leap_seconds',
              'xfstests',
-             'ubuntu_cts_kernel'
+             'ubuntu_cts_kernel',
+             'ubuntu_kernel_selftests',
         ],
 
     # A set of test cases that came from CTS and are regression tests for things
