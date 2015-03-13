@@ -181,6 +181,8 @@ class TheApp():
                 who = payload['who']
             except KeyError:
                 who = ['kernel']
+            if not who:
+                who = ['kernel']
             content += ','.join(who) + ', ' + what + ': '
 
             if 'package' in payload:
