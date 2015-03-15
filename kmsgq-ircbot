@@ -225,16 +225,6 @@ class TheApp():
                     content += ' with %s' % (','.join(payload['tests']))
                 retval.append(content)
 
-        else:
-            # We don't recognize this payload. Dump our some information that would help
-            # us understand it.
-            #
-            if 'key' in payload:
-                content += 'unknown key: %s' % payload['key']
-            else:
-                content += 'unrecognized payload with no \'key\': %s' % json.dumps(payload, sort_keys=True, indent=4)
-            retval.append(content)
-
         cleave('TheApp::decode_payload')
         return retval
 
