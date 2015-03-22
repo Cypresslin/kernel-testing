@@ -120,7 +120,7 @@ TestProfiles = {
                 ],
             },
         'series-blacklist' : [
-            'lucid', 'precise', 'quantal', 'saucy',
+            'lucid', 'precise', 'quantal', 'saucy', 'trusty',
             ],
         },
 
@@ -445,6 +445,8 @@ TestCollections = {
              'xfstests',
              'ubuntu_cts_kernel',
              'ubuntu_kernel_selftests',
+             'ubuntu_unionmount_overlayfs_suite',
+             'ubuntu_btrfs_kernel_fixes',
         ],
 
     # A set of test cases that came from CTS and are regression tests for things
