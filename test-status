@@ -1,0 +1,152 @@
+#!/usr/bin/env python
+#
+
+# Status:
+#     created
+#     started
+#     provision complete successful
+#     provision complete unsuccessful
+#     testing started
+#     testing completed
+
+import sys
+import os
+from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from datetime                           import datetime
+from logging                            import basicConfig, WARNING, info, warning, DEBUG
+from lib.log                            import cdebug, center, cleave
+from lib.msgq                           import MsgQueue
+import json
+
+from lib.utils                          import date_to_string
+from lib.jenkins                        import Jenkins
+
+# Exit
+#
+class Exit():
+    """
+    If an error message has already been displayed and we want to just exit the app, this
+    exception is raised.
+    """
+    pass
+
+# TheApp
+#
+class TheApp():
+    '''
+    This class is just the engine that makes everything go.
+    '''
+
+    # __init__
+    #
+    def __init__(s, args):
+        '''
+        '''
+        s.args = args
+        s.jenkins_url_default = "http://kernel-jenkins.kernel:8080"
+        s.jenkins = Jenkins(s.jenkins_url_default)
+
+    # fetch_job_details
+    #
+    def fetch_job_details(s, job_name):
+        job_info = s.jenkins.get_job_info(job_name)
+        return json.loads(job_info['description'])
+
+    # dump
+    #
+    def _dump(s, d, title=None):
+        if s.args.debug:
+            if title:
+                cdebug(title)
+                cdebug('-------------------------------------------------------------------------------------------')
+            cdebug('    {')
+            for k in d:
+                cdebug('        %s : %s,' % (k, d[k]))
+            cdebug('    }')
+
+    # main
+    #
+    def main(s):
+        '''
+        '''
+        center('TheApp::main')
+        retval = 1
+
+        try:
+            details = s.fetch_job_details(s.args.job)
+            s._dump(details, 'Jenkins Job Details')
+
+            # Status:
+            #     created
+            #     started
+            #     provision complete successful
+            #     provision complete unsuccessful
+            #     testing started
+            #     testing completed
+
+            details['timestamp'] = date_to_string(datetime.utcnow())
+            details['key'] = 'kernel.testing.status'
+            details['op']  = 'testing-completed'
+            status = json.loads(s.args.status)
+            for k in status:
+                details[k] = status[k]
+
+            # Submit the message to the Message Queue
+            #
+            if s.args.local:
+                mq = MsgQueue(address='localhost', port=9123)
+            else:
+                mq = MsgQueue()
+
+            mq.publish(details['key'], details)
+
+            retval = 0
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            warning("Aborting ...")
+
+        except Exit:
+            print("")
+            print("Due to the above error(s), this script is unable to continue and is terminating.")
+            print("")
+
+        cleave('TheApp::main')
+        return retval
+
+if __name__ == '__main__':
+    # Command line argument setup and initial processing
+    #
+    app_description = '''
+I'm a application skeleton, your job is to make me into something useful.
+    '''
+    app_epilog = '''
+examples:
+    jc --help
+    '''
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--debug', action='store_true', default=False, help='Print out a lot of messages about what is going on.')
+    parser.add_argument('--local', action='store_true', default=False, help='Assume we have sshuttle setup to the MQ server.')
+    parser.add_argument('job', help='Name of the job')
+    parser.add_argument('status', help='A json string that is merged with the message and contains whatever status information is desired.')
+
+    args = parser.parse_args()
+
+    # If logging parameters were set on the command line, handle them
+    # here.
+    #
+    log_format = "%(levelname)s - %(message)s"
+    if args.debug:
+        basicConfig(level=DEBUG, format=log_format)
+    else:
+        basicConfig(level=WARNING, format=log_format)
+
+    try:
+        app = TheApp(args)
+        exit(app.main())
+    except Exit:
+        pass
+
+# vi:set ts=4 sw=4 expandtab:
+
