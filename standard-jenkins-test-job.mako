@@ -28,6 +28,9 @@ ${data['description']}
         <hudson.tasks.Shell>
             <command>
     KT=/var/lib/jenkins/kernel-testing
+
+    $KT/test-status $JOB_NAME '{"op":"job.started"}'
+
     SSH_OPTIONS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet"
     SUT=${data['sut-name']}
 
@@ -48,12 +51,15 @@ provision += ' --debug --nc'
 %>
     # Provision the hardware.
     #
-    ${provision} || (cat provisioning.log;exit -1)
+    ${provision} || (cat provisioning.log;$KT/test-status $JOB_NAME '{"op":"provisioning.failed"}';exit -1)
+    $KT/test-status $JOB_NAME '{"op":"provisioning.succeeded"}'
 
 % if 'no-test' not in data:
+    $KT/test-status $JOB_NAME '{"op":"testing.started"}'
     # Kick off testing on the newly provisioned SUT
     #
     $KT/remote ubuntu@$SUT --kernel-test-list="${data['test']}"
+    $KT/test-status $JOB_NAME '{"op":"testing.completed"}'
 
     ARCHIVE=$JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_ID/archive
     scp $SSH_OPTIONS -r ubuntu@$SUT:kernel-test-results $ARCHIVE
@@ -62,6 +68,8 @@ provision += ' --debug --nc'
     # Don't need the HW any longer, it can be powered off.
     #
     $KT/release $SUT
+
+    $KT/test-status $JOB_NAME '{"op":"job.completed"}'
 
     # Publish the results. This *MUST* always be the very last thing the job does.
     #
