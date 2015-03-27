@@ -51,7 +51,7 @@ provision += ' --debug --nc'
 %>
     # Provision the hardware.
     #
-    ${provision} || (cat provisioning.log;$KT/test-status $JOB_NAME '{"op":"provisioning.failed"}';exit -1)
+    ${provision} || (cat provisioning.log;$KT/test-status $JOB_NAME '{"op":"provisioning.failed"}';exit 1)
     $KT/test-status $JOB_NAME '{"op":"provisioning.succeeded"}'
 
 % if 'no-test' not in data:
