@@ -120,7 +120,7 @@ TestProfiles = {
                 ],
             },
         'series-blacklist' : [
-            'lucid', 'precise', 'quantal', 'saucy', 'trusty',
+            'lucid', 'precise', 'quantal', 'saucy', 'trusty', 'utopic',
             ],
         },
 
