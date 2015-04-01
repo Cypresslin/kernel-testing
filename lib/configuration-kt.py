@@ -53,7 +53,7 @@ Configuration = {
                 },
             ],
             "scratch drive" : "/dev/sdb",
-            "role" : "none",
+            "role" : "SRU Testing",
             "locked" : False,
         },
         "pepe" : {
@@ -83,7 +83,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : "SRU Testing",
             "locked" : False,
         },
         "nori" : {
@@ -239,7 +239,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : "SRU Testing",
             "locked" : False,
         },
         "rainier" : {
