@@ -299,7 +299,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "SRU Testing",
+            "role" : "none",
             "locked" : False,
         },
         "larsen" : {
