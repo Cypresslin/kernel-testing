@@ -82,5 +82,7 @@ rsync -e "ssh $SSH_OPTIONS" -ar --exclude=.git $HOME/autotest-client-tests/* $SU
 rsync -e "ssh $SSH_OPTIONS" -ar --exclude=.git $HOME/autotest-client-virt-tests/* $SUT:autotest/client/tests/virt/
 rsync -e "ssh $SSH_OPTIONS" -ar --exclude=.git $HOME/kernel-testing/ $SUT:./kernel-testing/
 
-export TIMESTAMP="\"`date +'%A, %e. %B %Y %H:%M %Z'`\""
+export TIMESTAMP="\"`date +'%A, %e. %B %Y %H:%M %Z'`\"" # Need the time reported in a specific format for final reporting
+export NOW="\"`date`\""                                 # Set the date on the SUT to the same as jenkins
+ssh $SSH_OPTIONS $SUT sudo date -s "$NOW"
 ssh $SSH_OPTIONS $SUT _TS_="$TIMESTAMP" JOB_NAME=$JOB_NAME KERNEL_TEST_OPTIONS=$KERNEL_TEST_OPTIONS python kernel-testing/runner $KERNEL_TEST_LIST
