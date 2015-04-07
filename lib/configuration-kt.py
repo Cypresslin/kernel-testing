@@ -360,11 +360,12 @@ Configuration = {
                     "type" : "ipmi",
                     "address" : "10.245.80.225",
                     "username" : "maas",
-                    "password" : "fyN0VY2BS9vX"
+                    "password" : "odkBlXo1HVRYsxS"
                 },
             ],
-            "role" : "arges",
+            "role" : "",
             "locked" : False,
+            "scratch drive" : "/dev/sdb",
         },
 
         "etnyre" : {
