@@ -5,6 +5,7 @@ import sys
 import os
 import copy
 from time                               import sleep
+from datetime                           import datetime
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import basicConfig, info, warning, DEBUG, INFO
 from lib.msgq                           import MsgQueue
@@ -12,6 +13,7 @@ from lib.configuration                  import Configuration
 from lib.testsprops                     import SRU_TestsList
 from lib.shell                          import sh
 from lib.log                            import cdebug, center, cleave
+from lib.utils                          import date_to_string
 import json
 
 from mako.template                      import Template
@@ -144,15 +146,20 @@ class TheApp():
     def from_tests_generate_jobs(s, jd):
         center('TheApp::from_tests_generate_jobs')
 
+        jd['jobs'] = []
+
         for test in jd['tests']:
             cdebug('test: %s' % test, 'blue')
-            s.generate_jobs(test, jd['systems'], jd)
+            jd = s.generate_jobs(test, jd['systems'], jd)
 
         if jd['fs-benchmarks']:
             jd['tests'] = ['ubuntu_fs_fio_perf']
             for test in jd['tests']:
                 cdebug('test: %s' % test, 'blue')
-                s.generate_jobs(test, s.valid_systems('Filesystem Benchmarking', jd['series-name']), jd)
+                jobs = s.generate_jobs(test, s.valid_systems('Filesystem Benchmarking', jd['series-name']), jd)
+
+        jd['key'] = 'kernel.testing.jobs'
+        s.mq.publish(jd['key'], jd)
 
         cleave('TheApp::from_tests_generate_jobs')
 
@@ -170,9 +177,17 @@ class TheApp():
             for arch in jd['arches']:
                 if arch in Configuration['systems'][system]['arch']:
                     cdebug('arch: %s' % arch, 'blue')
-                    s.generate_individual_job(test, arch, system, jd)
+                    job = s.generate_individual_job(test, arch, system, jd)
+                    jd['jobs'].append({
+                        'system'    : system,
+                        'arch'      : arch,
+                        'test'      : test,
+                        'name'      : job['job-name'],
+                        'timestamp' : job['timestamp'],
+                        })
 
         cleave('TheApp::generate_jobs')
+        return jd
 
     # load_template
     #
@@ -218,6 +233,7 @@ class TheApp():
         job_data['sut-name'] = system
         job_data['test']     = test
         job_data['description'] = json.dumps(job_data, sort_keys=True, indent=4)
+        job_data['timestamp'] = date_to_string(datetime.utcnow())
 
         try:
             job_xml = s.job_template.render(data=job_data)
@@ -242,8 +258,9 @@ class TheApp():
         s.jenkins.create_job(job_name, job_xml)
         sleep(10)
         s.jenkins.build_job(job_name)
-        warning('created jenkins job: %s' % job_name)
+        cdebug('created jenkins job: %s' % job_name)
         cleave('TheApp::generate_individual_job')
+        return job_data
 
     # dump
     #
@@ -268,7 +285,6 @@ class TheApp():
                 valid_key = True
                 break
         if not valid_key:
-            info("Ignoring : %s" % payload['key'])
             cleave('TheApp::_handler')
             return
 
@@ -394,10 +410,10 @@ class TheApp():
 
         try:
             if args.local:
-                mq = MsgQueue(address='localhost', port=9123)
+                s.mq = MsgQueue(address='localhost', port=9123)
             else:
-                mq = MsgQueue()
-            mq.listen('kernel-publishing-monitor', 'kernel.#', s._handler)
+                s.mq = MsgQueue()
+            s.mq.listen('kernel-publishing-monitor', 'kernel.#', s._handler)
 
             retval = 0
 
