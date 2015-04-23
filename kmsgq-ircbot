@@ -9,6 +9,7 @@ import Queue
 from lib.log                            import cdebug, center, cleave
 import ssl
 from lib.msgq                           import MsgQueue
+from lib.utils                          import json_load, o2ascii
 import json
 
 class IrcClientCommand(object):
@@ -76,11 +77,11 @@ class IrcClient(threading.Thread):
                 elif sent_pong:
                     if not sent_join:
                         cdebug('sending JOIN')
-                        sent = s.client_ssl_socket.send('JOIN ' + s.cfg['channels'] + '\r\n')
+                        sent = s.client_ssl_socket.send('JOIN ' + s.cfg['channel'] + '\r\n')
                         sent_join = True
                         logged_in = True
 
-            cdebug('reading')
+            #cdebug('reading')
             try:
                 data = s.client_ssl_socket.recv(4096)
                 lines = data.split('\r\n')
@@ -91,8 +92,12 @@ class IrcClient(threading.Thread):
                         sent_pong = True
 
                     if ' JOIN :' in line:
-                        for chan in s.cfg['channels'].split(','):
-                            sent = s.client_ssl_socket.send('PRIVMSG %s :%s\r\n' % (chan, '\o/'))
+                            who = line.split('!')[0].replace(':', '')
+                            if who == s.cfg['nick']:
+                                cdebug('I just joined')
+                                sent = s.client_ssl_socket.send('JOIN ' + s.cfg['channel'] + '\r\n')
+                            else:
+                                cdebug('%s just joined' % who)
 
                     cdebug(line)
             except ssl.SSLError:
@@ -240,21 +245,21 @@ class TheApp():
 
     # main
     #
-    def main(s):
+    def main(s, cfg):
         '''
         '''
         retval = 1
 
         try:
             irc_cfg = {
-                'host'     : '91.189.94.183',
-                'port'     : 6697,
+                'host'     : cfg['server'],
+                'port'     : cfg['port'],
                 'ssl'      : True,
-                'user'     : 'bradf',
-                'password' : 'kthxbye',
-                'nick'     : 'kbot',
+                'user'     : o2ascii(cfg['user']),
+                'password' : o2ascii(cfg['passwd']),
+                'nick'     : o2ascii(cfg['nick']),
                 'name'     : 'Kernel Bot',
-                'channels' : '#kmsgq',
+                'channel'  : o2ascii(cfg['channel']),
             }
             s.irc = IrcClient(cfg=irc_cfg)
             s.irc.start()
@@ -287,6 +292,7 @@ examples:
     KernelMQ --help
     '''
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--config',  required=True,  type=str, help="Points at the configuration file")
     parser.add_argument('--debug', action='store_true', default=False, help='Print out a lot of messages about what is going on.')
     parser.add_argument('--local', action='store_true', default=False, help='Assume we have sshuttle setup to the MQ server.')
     parser.add_argument('queue', help='Name of the queue to use')
@@ -301,8 +307,10 @@ examples:
     else:
         basicConfig(level=WARNING, format=log_format)
 
+    cfg = json_load(args.config)
+
     app = TheApp(args)
-    exit(app.main())
+    exit(app.main(cfg))
 
 
 # vi:set ts=4 sw=4 expandtab:
