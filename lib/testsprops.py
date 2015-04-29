@@ -71,7 +71,7 @@ TestProfiles = {
                 ],
             },
         'series-blacklist' : [
-            'lucid', 'precise', 'quantal', 'saucy',
+            'lucid', 'precise', 'quantal', 'saucy', 'trusty',
             ],
         'atargs' : {}, # this gets filled in later, it's a hack
         },
@@ -258,6 +258,9 @@ TestProfiles = {
                 'libtool-bin'
                 ],
             },
+        'series-blacklist': [
+            'lucid', 'precise', 'quantal', 'saucy', 'trusty',
+            ],
         'command' : 'sudo mkdir -p /media/xfsmount ; sudo adduser --quiet --disabled-password -gecos "XFS test user,,," fsgqa || true',
         'atargs' : {}, # this gets filled in later, it's a hack
         'scratch' : True,
