@@ -16,7 +16,7 @@ except ImportError as e:
 
 from lib.log                            import cdebug, Clog, cerror
 from lib.shell                          import ShellError, ShellTimeoutError, sh, ssh, Shell
-from lib.provisioning                   import MetalProvisioner, VirtualProvisioner, Metal, PS
+from lib.provisioning                   import Metal
 from lib.exceptions                     import ErrorExit
 from lib.hwe                            import HWE
 
