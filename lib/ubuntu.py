@@ -130,13 +130,40 @@ class Ubuntu:
     # * sha1 XXX: doesn't seem to be used anymore
     # * md5 XXX: doesn't seem to be used anymore
     db = {
-        '15.04' :
+        '15.10' :
         {
             'development' : True,        # This is the version that is currently under development
+            'series_version' : '15.10',
+            'kernel'    : '4.0.0',
+            'name'      : 'wily',
+            'supported' : False,
+            # adjust packages when this goes live
+            'packages'  :
+            [
+                'linux',
+                'linux-meta',
+            ],
+            'dependent-packages' :
+            {
+                'linux' : {
+                    'meta'   : 'linux-meta',
+                    'signed' : 'linux-signed'
+                },
+            },
+            'derivative-packages' :
+            {
+                'linux' : []
+            },
+            'sha1' : '',
+            'md5' : ''
+        },
+        '15.04' :
+        {
+            'development' : False,        # This is the version that is currently under development
             'series_version' : '15.04',
             'kernel'    : '3.19.0',
             'name'      : 'vivid',
-            'supported' : False,
+            'supported' : True,
             # adjust packages when this goes live
             'packages'  :
             [
@@ -213,6 +240,10 @@ class Ubuntu:
                     'meta' : 'linux-meta-lts-utopic',
                     'signed' : 'linux-signed-lts-utopic'
                 },
+                'linux-lts-vivid' : {
+                    'meta' : 'linux-meta-lts-vivid',
+                    'signed' : 'linux-signed-lts-vivid'
+                },
                 'linux-keystone' : { 'meta' : 'linux-meta-keystone' },
             },
             'derivative-packages' :
@@ -222,6 +253,7 @@ class Ubuntu:
             'backport-packages' :
             {
                 'linux-lts-utopic' : [ 'linux', '14.10' ],
+                'linux-lts-vivid' : [ 'linux', '15.04' ],
             },
             'sha1' : '',
             'md5' : ''
@@ -371,12 +403,12 @@ class Ubuntu:
                     'signed' : 'linux-signed-lts-trusty'
                 },
                 'linux-ti-omap4' : { 'meta' : 'linux-meta-ti-omap4' },
-                'linux-armadaxp' : { 'meta' : 'linux-meta-armadaxp' },
-                'linux-lowlatency' : { 'meta' : 'linux-meta-lowlatency' }
+                'linux-armadaxp' : { 'meta' : 'linux-meta-armadaxp' }
+                #'linux-lowlatency' : { 'meta' : 'linux-meta-lowlatency' }
             },
             'derivative-packages' :
             {
-                'linux' : [ 'linux-ti-omap4', 'linux-armadaxp', 'linux-lowlatency' ]
+                'linux' : [ 'linux-ti-omap4', 'linux-armadaxp' ] # 'linux-lowlatency'
             },
             'backport-packages' :
             {
@@ -485,7 +517,7 @@ class Ubuntu:
             'series_version' : '10.04',
             'kernel' : '2.6.32',
             'name' : 'lucid',
-            'supported' : True,
+            'supported' : False,
             'packages' :
             [
                 'linux',
@@ -609,6 +641,7 @@ class Ubuntu:
     }
 
     index_by_kernel_version = {
+        '4.0.0'    : db['15.10'],
         '3.19.0'   : db['15.04'],
         '3.16.0'   : db['14.10'],
         '3.13.0'   : db['14.04'],
@@ -630,6 +663,7 @@ class Ubuntu:
     }
 
     index_by_series_name = {
+        'wily'     : db['15.10'],
         'vivid'    : db['15.04'],
         'utopic'   : db['14.10'],
         'trusty'   : db['14.04'],
