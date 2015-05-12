@@ -211,6 +211,9 @@ TestProfiles = {
                 'python-pexpect', 'apparmor', 'apparmor-utils', 'netcat', 'sudo', 'build-essential', 'libapparmor-dev',
                 'attr', 'apport', 'libpam-apparmor', 'libgtk2.0-dev', 'pyflakes', 'apparmor-profiles', 'quilt', 'libdbus-1-dev'
                 ],
+            'wily' : [
+                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby', 'apparmor-easyprof',
+                ],
             'vivid' : [
                 'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby', 'apparmor-easyprof',
                 ],
@@ -253,6 +256,9 @@ TestProfiles = {
         'packages' : {
             'common' : [
                 'build-essential', 'uuid-dev', 'xfslibs-dev', 'xfsdump', 'autoconf', 'kpartx', 'libtool', 'python-xattr', 'libacl1-dev', 'libaio-dev', 'quota', 'bc', 'libdm0-dev', 'btrfs-tools', 'attr', 'gdb',
+                ],
+            'wily' : [
+                'libtool-bin'
                 ],
             'vivid' : [
                 'libtool-bin'

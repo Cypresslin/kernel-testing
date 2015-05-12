@@ -32,6 +32,11 @@ HWE = {
             'package' : 'linux-generic-lts-utopic',
             'ppa' : True
         },
+        'wily' : {
+            'series' : 'trusty',
+            'package' : 'linux-generic-lts-wily',
+            'ppa' : True
+        },
 }
 
 # vi:set ts=4 sw=4 expandtab:
