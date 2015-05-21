@@ -64,6 +64,15 @@ TestProfiles = {
             ],
         },
 
+    'ubuntu_zfs' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git',
+                ],
+            },
+        'atargs' : {}, # this gets filled in later, it's a hack
+        },
+
     'ubuntu_btrfs_kernel_fixes' : {
         'packages' : {
             'common' : [
