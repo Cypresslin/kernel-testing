@@ -234,10 +234,12 @@ class Base(object):
             s.ssh('\'echo deb-src http://ports.ubuntu.com/ubuntu-ports/ %s restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
             s.ssh('\'echo deb-src http://ports.ubuntu.com/ubuntu-ports/ %s-updates restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
             s.ssh('\'echo deb-src http://ports.ubuntu.com/ubuntu-ports/ %s-security restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
+            s.ssh('\'echo deb-src http://ports.ubuntu.com/ubuntu-ports/ %s-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
         else:
             s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
             s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s-updates restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
             s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s-security restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
+            s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
         cleave('Base::enable_src')
 
     # enable_proposed
