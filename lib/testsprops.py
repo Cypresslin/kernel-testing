@@ -70,7 +70,14 @@ TestProfiles = {
                 'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git',
                 ],
             },
-        'atargs' : {}, # this gets filled in later, it's a hack
+        },
+
+    'ubuntu_zfs_xfs_generic' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git',
+                ],
+            },
         },
 
     'ubuntu_btrfs_kernel_fixes' : {
@@ -465,6 +472,7 @@ TestCollections = {
              'ubuntu_unionmount_overlayfs_suite',
              'ubuntu_btrfs_kernel_fixes',
              'ubuntu_zfs',
+             'ubuntu_zfs_xfs_generic',
         ],
 
     # A set of test cases that came from CTS and are regression tests for things
