@@ -464,6 +464,7 @@ TestCollections = {
              'ubuntu_kernel_selftests',
              'ubuntu_unionmount_overlayfs_suite',
              'ubuntu_btrfs_kernel_fixes',
+             'ubuntu_zfs',
         ],
 
     # A set of test cases that came from CTS and are regression tests for things
