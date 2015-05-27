@@ -78,6 +78,9 @@ TestProfiles = {
                 'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git',
                 ],
             },
+        'series-blacklist' : [
+            'lucid', 'precise', 'quantal', 'saucy', 'trusty', 'utopic',
+            ],
         },
 
     'ubuntu_btrfs_kernel_fixes' : {
