@@ -83,6 +83,17 @@ TestProfiles = {
             ],
         },
 
+    'ubuntu_zfs_stress' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git',
+                ],
+            },
+        'series-blacklist' : [
+            'lucid', 'precise',
+            ],
+        },
+
     'ubuntu_btrfs_kernel_fixes' : {
         'packages' : {
             'common' : [
@@ -476,6 +487,7 @@ TestCollections = {
              'ubuntu_btrfs_kernel_fixes',
              'ubuntu_zfs',
              'ubuntu_zfs_xfs_generic',
+             'ubuntu_zfs_stress',
         ],
 
     # A set of test cases that came from CTS and are regression tests for things
