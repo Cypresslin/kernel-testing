@@ -158,6 +158,14 @@ class Base(object):
 
         cleave('Base::wait_for_system_ex')
 
+    # disable_apt_periodic_updates
+    #
+    def disable_apt_periodic_updates(s):
+        center("Base::disable_apt_periodic_updates")
+        s.progress('Disabling Periodic APT Updates')
+        s.ssh(r'sudo sed -i \'s/s/APT::Periodic::Update-Package-Lists "1"/APT::Periodic::Update-Package-Lists "0"/\' /etc/apt/apt.conf.d/10periodic')
+        cleave('Base::disable_apt_periodic_updates')
+
     # install_hwe_kernel
     #
     def install_hwe_kernel(s):
@@ -541,6 +549,10 @@ class Metal(Base):
             cinfo("Target verification failed.")
             cleave('Metal::provision')
             return False
+
+        # Disable APT from periodicly running and trying to update the systems.
+        #
+        s.disable_apt_periodic_updates()
 
         # If we want an HWE kernel installed on the bare metal then at this point the correct
         # LTS kernel has been installed and it's time to install the HWE kernel.
