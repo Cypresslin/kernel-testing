@@ -161,7 +161,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : "SRU 2 Testing",
             "locked" : False,
         },
         "rukbah" : {
@@ -177,7 +177,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : "SRU 2 Testing",
             "locked" : False,
         },
         "zmeu" : {
