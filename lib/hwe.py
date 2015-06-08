@@ -29,7 +29,7 @@ HWE = {
         },
         'vivid' : {
             'series' : 'trusty',
-            'package' : 'linux-generic-lts-utopic',
+            'package' : 'linux-generic-lts-vivid',
             'ppa' : True
         },
         'wily' : {
