@@ -284,7 +284,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : "SRU 2 Testing",
             "locked" : False,
         },
         "cavac" : {
@@ -299,7 +299,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : "SRU 2 Testing",
             "locked" : False,
         },
         "larsen" : {
