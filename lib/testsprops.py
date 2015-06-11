@@ -492,7 +492,6 @@ TestCollections = {
              'ubuntu_cts_kernel',
              'ubuntu_kernel_selftests',
              'ubuntu_unionmount_overlayfs_suite',
-             'ubuntu_btrfs_kernel_fixes',
         ],
 
     'sru-2' : [
