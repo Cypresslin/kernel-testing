@@ -72,7 +72,7 @@ TestProfiles = {
             },
         },
 
-    'ubuntu_zfs_fststs' : {
+    'ubuntu_zfs_fstests' : {
         'packages' : {
             'common' : [
                 'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git',
