@@ -178,6 +178,7 @@ examples:
     parser.add_argument('--dry-run',  action='store_true', default=False, help='Don\'t do anything, just print out what would be done.')
     parser.add_argument('--quiet',  action='store_true', default=False, help='Do not print any progress information.')
     parser.add_argument('--debug', action='store_true', default=False, help='Print out lots of stuff.')
+    parser.add_argument('--nc', action='store_true', default=False, help='Debut output should not be colored.')
 
     parser.add_argument('--series',   required=True,  help='The series that is to be installed on the SUT. lts-hwe-<series> denotes that a lts-hwe kernel is to be run on the appropriate lts series.')
     parser.add_argument('--arch',     required=False, default='amd64', choices=['amd64', 'i386', 'arm64', 'ppc64el'], help='The architecture (amd64, i386, arm64 or ppc64el) that is to be installed on the SUT. (amd64 is the default)')
@@ -186,6 +187,8 @@ examples:
     parser.add_argument('--hwe',      required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
     parser.add_argument('--xen',      required=False, action='store_true', default=False, help='The bare-metal should be a Xen host.')
 
+    parser.add_argument('--nolog',        required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
+
     parser.add_argument('target', metavar='TARGET', type=str, nargs=1, help='The name of the system to be provisioned.')
 
     args = parser.parse_args()
@@ -193,9 +196,15 @@ examples:
     if args.debug:
         level = DEBUG
         Clog.dbg = True
+        Clog.color = not args.nc
     else:
         level = WARNING
-    basicConfig(filename=None, level=level, format="%(levelname)s - %(message)s")
+
+    if args.nolog:
+        basicConfig(filename=None, level=level, format="%(levelname)s - %(message)s")
+    else:
+        logfile = 'provisioning.log'
+        basicConfig(filename=logfile, level=level, format="%(levelname)s - %(message)s")
 
     # If the sut-name was not specified on the command line, use the
     # HW name.
