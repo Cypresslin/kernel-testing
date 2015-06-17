@@ -9,7 +9,7 @@
 from os                                 import path
 from logging                            import debug
 import json
-from lib.shell                          import sh, ssh
+from lib.maas_shell                     import sh, mssh
 from lib.log                            import cdebug
 from time                               import sleep
 from datetime                           import datetime, timedelta
@@ -39,8 +39,8 @@ class MAAS(object):
         mt = maas.node(s.target)
         mt.stop_and_release()
         mt.acquire()
-        mt.series(s.series)
         mt.arch(s.arch)
+        mt.series(s.series)
         mt.start()
         cdebug('        Leave MAAS::provision')
 
@@ -60,7 +60,8 @@ class MAASCore():
         # Log into the maas server
         #
         # maas login maas http://thorin.ubuntu-ci/MAAS/api/1.0  jg2XAHBWGK8yzUn84F:M47jVf8JFbDBad26HV:AA8xyn7paqXvZE9rPAdPFQnqfm9yYaME
-        ssh(s.server, 'maas login %s http://%s/MAAS/api/1.0 %s' % (s.profile, s.server, s.creds), quiet=True)
+        mssh(s.server, 'maas refresh', quiet=True)
+        mssh(s.server, 'maas login %s http://%s/MAAS/api/1.0 %s' % (s.profile, s.server, s.creds), quiet=True)
 
         s.__nodes = None
         s.__nodes_by_name = None
@@ -78,13 +79,13 @@ class MAASCore():
         s.previous_node_cmd = datetime.utcnow()
 
     def node_cmd(s, hostname, cmd, properties=None):
-        s.delay()
         if properties:
             cmd = '%s node %s %s %s' % (s.prefix, cmd, s.nodes_by_name[hostname]['system_id'], properties)
         else:
             cmd = '%s node %s %s' % (s.prefix, cmd, s.nodes_by_name[hostname]['system_id'])
         debug(cmd)
-        ssh(s.server, cmd, quiet=True)
+        mssh(s.server, cmd, quiet=True)
+        s.delay()
         s.__stale()
 
     @property
@@ -94,7 +95,7 @@ class MAASCore():
         '''
         if s.__nodes is None:
             s.__nodes_by_name = None
-            rc, ni = ssh(s.server, 'maas %s nodes list' % s.profile, quiet=True)
+            rc, ni = mssh(s.server, 'maas %s nodes list' % s.profile, quiet=True)
             ni = ' '.join(ni)
             s.__nodes = json.loads(ni)
         return s.__nodes
@@ -139,7 +140,7 @@ class MAASCore():
         '''
         cmd = '%s nodes acquire name=%s' % (s.prefix, s.nodes_by_name[hostname]['hostname'])
         debug(cmd)
-        ssh(s.server, cmd, quiet=True)
+        mssh(s.server, cmd, quiet=True)
         s.__stale()
 
     def status(s, hostname):
@@ -148,17 +149,36 @@ class MAASCore():
         '''
         return s.nodes_by_name[hostname]['status']
 
+    def arch(s, hostname):
+        '''
+        Return the status for a particular node.
+        '''
+        return s.nodes_by_name[hostname]['architecture']
+
+    def series(s, hostname):
+        '''
+        Return the status for a particular node.
+        '''
+        return s.nodes_by_name[hostname]['distro_series']
+
     def node(s, hostname):
         return MAASNode(s, hostname)
 
     def update_series(s, hostname, series):
         s.node_cmd(hostname, 'update', 'osystem=ubuntu distro_series=ubuntu/%s' % series)
+        s.__waitfor(hostname, 'distro_series', 'ubuntu/%s' % series)
 
     def update_arch(s, hostname, arch):
         s.node_cmd(hostname, 'update', 'osystem=ubuntu architecture=%s/generic' % arch)
+        s.__waitfor(hostname, 'architecture', '%s/generic' % arch)
 
     def update_series_and_arch(s, hostname, series, arch):
         s.node_cmd(hostname, 'update', 'osystem=ubuntu distro_series=ubuntu/%s architecture=%s/generic' % (series, arch))
+
+    def __waitfor(s, hostname, key, value):
+        sleep(10)
+        v = s.nodes_by_name[hostname][key]
+        debug("__waitfor: '%s' -> '%s' ('%s')" % (key, v, value))
 
     def __stale(s):
         s.__nodes = None
