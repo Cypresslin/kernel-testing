@@ -48,6 +48,7 @@ Configuration = {
                 }
             ],
             "role" : "testing",
+            "scratch drive" : "/dev/sdb",
             "locked" : False
         },
         "nuc2" : {
@@ -64,6 +65,7 @@ Configuration = {
                 }
             ],
             "role" : "testing",
+            "scratch drive" : "/dev/sdb",
             "locked" : False
         },
         "oin" : {
