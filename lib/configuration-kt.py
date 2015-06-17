@@ -20,6 +20,17 @@ Configuration = {
         "sut_user": "ubuntu",        # The user on the test system after it's been provisioned
     },
 
+    # We have 2 McDivitt chartridges on the hyperscale MAAS server.
+    #
+    "hyper-maas" : {
+        "server"  : "10.229.32.21",  # Hostname of this maas server.
+        "profile" : "kernel",        # When talking to the maas server use this profile.
+        "creds"   : "h4YzC6tfKwuWYzfHxG:U2pJj4UEVbHDdwmSD9:tNcn2qb5KnXpx3tTnZjGb2yVT95DmUbb",
+        "user"    : "kernel",        # When ssh'ing to the maas server use this user
+        "type"    : "maas",          # This _is_ a MAAS server (as opposed to a cobbler server)
+        "sut_user": "ubuntu",        # The user on the test system after it's been provisioned
+    },
+
     # Test systems section. This is a dictionary of all the test systems that are available
     # to me.
     #
@@ -479,7 +490,38 @@ Configuration = {
             "role" : "none",
             "locked" : False,
         },
-
+        "ms10-35-mcdivittB0" : {
+            "arch" : ['arm64'],
+            "provisioner" : "hyper-maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.229.65.1",
+                    "username" : "Administrator",
+                    "password" : "password",
+                    "node" : "c35n1"
+                },
+            ],
+            "role" : "SRU Testing",
+            "locked" : False,
+        },
+        "ms10-34-mcdivittB0" : {
+            "arch" : ['arm64'],
+            "provisioner" : "hyper-maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.229.65.1",
+                    "username" : "Administrator",
+                    "password" : "password",
+                    "node" : "c34n1"
+                },
+            ],
+            "role" : "SRU 2 Testing",
+            "locked" : False,
+        },
         # -----------------------------------------------------------------------------------------
         # The following systems are either dead or not working reliably enough to make use of.
         #
