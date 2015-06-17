@@ -38,9 +38,10 @@ class MAAS(object):
         maas = MAASCore(s.profile, s.server, s.creds)
         mt = maas.node(s.target)
         mt.stop_and_release()
+        mt.acquire()
         mt.series(s.series)
         mt.arch(s.arch)
-        mt.acquire_and_start()
+        mt.start()
         cdebug('        Leave MAAS::provision')
 
 # MAASCore
