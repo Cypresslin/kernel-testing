@@ -492,6 +492,7 @@ Configuration = {
         },
         "ms10-35-mcdivittB0" : {
             "arch" : ['arm64'],
+            "sub-arch" : "xgene-uboot",
             "provisioner" : "hyper-maas",
             "jenkins server" : "kernel-jenkins",
             "power" : [
@@ -503,11 +504,13 @@ Configuration = {
                     "node" : "c35n1"
                 },
             ],
-            "role" : "SRU Testing",
+            #"role" : "SRU Testing",
+            "role" : "none",
             "locked" : False,
         },
         "ms10-34-mcdivittB0" : {
             "arch" : ['arm64'],
+            "sub-arch" : "xgene-uboot",
             "provisioner" : "hyper-maas",
             "jenkins server" : "kernel-jenkins",
             "power" : [
@@ -519,7 +522,8 @@ Configuration = {
                     "node" : "c34n1"
                 },
             ],
-            "role" : "SRU 2 Testing",
+            #"role" : "SRU 2 Testing",
+            "role" : "none",
             "locked" : False,
         },
         # -----------------------------------------------------------------------------------------

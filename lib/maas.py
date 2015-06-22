@@ -19,7 +19,7 @@ from datetime                           import datetime, timedelta
 class MAAS(object):
     # __init__
     #
-    def __init__(s, profile, server, creds, target, series, arch):
+    def __init__(s, profile, server, creds, target, series, arch, sub_arch):
         cdebug('        Enter MAAS::__init__')
 
         s.profile = profile
@@ -168,12 +168,12 @@ class MAASCore():
         s.node_cmd(hostname, 'update', 'osystem=ubuntu distro_series=ubuntu/%s' % series)
         s.__waitfor(hostname, 'distro_series', 'ubuntu/%s' % series)
 
-    def update_arch(s, hostname, arch):
-        s.node_cmd(hostname, 'update', 'osystem=ubuntu architecture=%s/generic' % arch)
-        s.__waitfor(hostname, 'architecture', '%s/generic' % arch)
+    def update_arch(s, hostname, arch, sub_arch='generic'):
+        s.node_cmd(hostname, 'update', 'osystem=ubuntu architecture=%s/%s' % (arch, sub_arch))
+        s.__waitfor(hostname, 'architecture', '%s/%s' % (arch, sub_arch))
 
-    def update_series_and_arch(s, hostname, series, arch):
-        s.node_cmd(hostname, 'update', 'osystem=ubuntu distro_series=ubuntu/%s architecture=%s/generic' % (series, arch))
+    def update_series_and_arch(s, hostname, series, arch, sub_arch='generic'):
+        s.node_cmd(hostname, 'update', 'osystem=ubuntu distro_series=ubuntu/%s architecture=%s/%s' % (series, arch, sub_arch))
 
     def __waitfor(s, hostname, key, value):
         sleep(10)
@@ -231,15 +231,15 @@ class MAASNode():
         '''
         return s.__maas.update_series(s.__hostname, series)
 
-    def arch(s, arch):
+    def arch(s, arch, sub_arch='generic'):
         '''
         '''
-        return s.__maas.update_arch(s.__hostname, arch)
+        return s.__maas.update_arch(s.__hostname, arch, sub_arch)
 
-    def series_and_arch(s, series, arch):
+    def series_and_arch(s, series, arch, sub_arch):
         '''
         '''
-        return s.__maas.update_arch(s.__hostname, series, arch)
+        return s.__maas.update_arch(s.__hostname, series, arch, sub_arch)
 
     # acquire
     #

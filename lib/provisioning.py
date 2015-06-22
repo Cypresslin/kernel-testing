@@ -32,7 +32,11 @@ class PS(object):
             setattr(s, k, p[k])
 
         if s.type == "maas":
-            s.server = MAAS(s.profile, s.server, s.creds, target, series, arch)
+            # Some systems/arches require a non-'generic' sub-arch. That information is specified
+            # in the configuration information.
+            #
+            sub_arch = Configuration['systems'][target].get('sub_arch', 'generic')
+            s.server = MAAS(s.profile, s.server, s.creds, target, series, arch, sub_arch)
         else:
             s.server = None
         cleave("PS::__init__")
