@@ -19,11 +19,13 @@ from datetime                           import datetime, timedelta
 class MAAS(object):
     # __init__
     #
-    def __init__(s, profile, server, creds, target, series, arch, sub_arch):
+    #def __init__(s, maas_server, maas_server_user, maas_profile, maas_profile_creds, target, target_series, target_arch, target_sub_arch):
+    def __init__(s, profile, maas_server, maas_server_user, creds, target, series, arch, sub_arch):
         cdebug('        Enter MAAS::__init__')
 
         s.profile = profile
-        s.server  = server
+        s.maas_server  = maas_server
+        s.maas_server_user  = maas_server_user
         s.creds   = creds
         s.target  = target
         s.series  = series
@@ -35,7 +37,7 @@ class MAAS(object):
     #
     def provision(s):
         cdebug('        Enter MAAS::provision')
-        maas = MAASCore(s.profile, s.server, s.creds)
+        maas = MAASCore(s.maas_server, s.maas_server_user, s.profile, s.creds)
         mt = maas.node(s.target)
         mt.stop_and_release()
         mt.acquire()
@@ -50,18 +52,19 @@ class MAASCore():
 
     # __init__
     #
-    def __init__(s, profile, server, creds):
+    def __init__(s, maas_server, maas_server_user, profile, creds):
         debug('MAASCore::__init__')
 
+        s.maas_server       = maas_server
+        s.maas_server_user  = maas_server_user
         s.profile = profile
-        s.server  = server
         s.creds   = creds
 
         # Log into the maas server
         #
         # maas login maas http://thorin.ubuntu-ci/MAAS/api/1.0  jg2XAHBWGK8yzUn84F:M47jVf8JFbDBad26HV:AA8xyn7paqXvZE9rPAdPFQnqfm9yYaME
-        mssh(s.server, 'maas refresh', quiet=True)
-        mssh(s.server, 'maas login %s http://%s/MAAS/api/1.0 %s' % (s.profile, s.server, s.creds), quiet=True)
+        mssh(s.maas_server, 'maas refresh', user=s.maas_server_user, quiet=True)
+        mssh(s.maas_server, 'maas login %s http://%s/MAAS/api/1.0 %s' % (s.profile, s.maas_server, s.creds), user=s.maas_server_user, quiet=True)
 
         s.__nodes = None
         s.__nodes_by_name = None
@@ -84,7 +87,7 @@ class MAASCore():
         else:
             cmd = '%s node %s %s' % (s.prefix, cmd, s.nodes_by_name[hostname]['system_id'])
         debug(cmd)
-        mssh(s.server, cmd, quiet=True)
+        mssh(s.maas_server, cmd, user=s.maas_server_user, quiet=True)
         s.delay()
         s.__stale()
 
@@ -95,7 +98,7 @@ class MAASCore():
         '''
         if s.__nodes is None:
             s.__nodes_by_name = None
-            rc, ni = mssh(s.server, 'maas %s nodes list' % s.profile, quiet=True)
+            rc, ni = mssh(s.maas_server, 'maas %s nodes list' % s.profile, user=s.maas_server_user, quiet=True)
             ni = ' '.join(ni)
             s.__nodes = json.loads(ni)
         return s.__nodes
@@ -140,7 +143,7 @@ class MAASCore():
         '''
         cmd = '%s nodes acquire name=%s' % (s.prefix, s.nodes_by_name[hostname]['hostname'])
         debug(cmd)
-        mssh(s.server, cmd, quiet=True)
+        mssh(s.maas_server, cmd, user=s.maas_server_user, quiet=True)
         s.__stale()
 
     def status(s, hostname):

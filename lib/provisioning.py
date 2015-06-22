@@ -28,7 +28,7 @@ class PS(object):
         sp = Configuration['systems'][target]['provisioner']
         p = Configuration[sp]
         for k in p:
-            cdebug("%16s : %s" % (k, p[k]))
+            cdebug("++ %16s : %s" % (k, p[k]))
             setattr(s, k, p[k])
 
         if s.type == "maas":
@@ -36,7 +36,7 @@ class PS(object):
             # in the configuration information.
             #
             sub_arch = Configuration['systems'][target].get('sub_arch', 'generic')
-            s.server = MAAS(s.profile, s.server, s.creds, target, series, arch, sub_arch)
+            s.server = MAAS(s.profile, s.server, s.user, s.creds, target, series, arch, sub_arch)
         else:
             s.server = None
         cleave("PS::__init__")
