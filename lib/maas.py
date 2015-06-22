@@ -20,16 +20,17 @@ class MAAS(object):
     # __init__
     #
     #def __init__(s, maas_server, maas_server_user, maas_profile, maas_profile_creds, target, target_series, target_arch, target_sub_arch):
-    def __init__(s, profile, maas_server, maas_server_user, creds, target, series, arch, sub_arch):
+    def __init__(s, profile, maas_server, maas_server_user, creds, target, target_series, target_arch, target_sub_arch='generic'):
         cdebug('        Enter MAAS::__init__')
 
         s.profile = profile
-        s.maas_server  = maas_server
+        s.maas_server       = maas_server
         s.maas_server_user  = maas_server_user
         s.creds   = creds
         s.target  = target
-        s.series  = series
-        s.arch    = arch
+        s.target_series     = target_series
+        s.target_arch       = target_arch
+        s.target_sub_arch   = target_sub_arch
 
         cdebug('        Leave MAAS::__init__')
 
@@ -41,8 +42,8 @@ class MAAS(object):
         mt = maas.node(s.target)
         mt.stop_and_release()
         mt.acquire()
-        mt.arch(s.arch)
-        mt.series(s.series)
+        mt.arch(s.target_arch, s.target_sub_arch)
+        mt.series(s.target_series)
         mt.start()
         cdebug('        Leave MAAS::provision')
 

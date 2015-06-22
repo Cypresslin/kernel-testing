@@ -35,7 +35,7 @@ class PS(object):
             # Some systems/arches require a non-'generic' sub-arch. That information is specified
             # in the configuration information.
             #
-            sub_arch = Configuration['systems'][target].get('sub_arch', 'generic')
+            sub_arch = Configuration['systems'][target].get('sub-arch', 'generic')
             s.server = MAAS(s.profile, s.server, s.user, s.creds, target, series, arch, sub_arch)
         else:
             s.server = None
