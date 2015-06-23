@@ -396,6 +396,8 @@ class Metal(Base):
                     installed_arch = 'i386'
                 elif line == 'athlon':
                     installed_arch = 'i386'
+                elif line == 'aarch64':
+                    installed_arch = 'arm64'
                 else:
                     installed_arch = line
 
