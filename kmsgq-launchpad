@@ -64,8 +64,8 @@ class TheApp():
                 r = payload['results']
                 content += '        tests ran: %3d, failed: %d;\n  %s' % (r['ran'], r['failed'], r['url'])
 
-            subject = '%s (%s) - tests ran: %3d, failed: %d' % (payload['sut-name'], payload['sut-arch'], r['ran'], r['failed'])
-            bug.add_comment(content=content, subject=subject)
+                subject = '%s (%s) - tests ran: %3d, failed: %d' % (payload['sut-name'], payload['sut-arch'], r['ran'], r['failed'])
+                bug.add_comment(content=content, subject=subject)
 
         cleave('TheApp::_handler')
 
