@@ -94,7 +94,8 @@ class TheApp():
 
         # The job name starts with some form of the test name(s)
         #
-        if isinstance(tests, str):
+        cdebug('tests: %s (%s)' % (tests, type(tests)))
+        if isinstance(tests, str) or isinstance(tests, unicode):
             retval += tests
             retval += '__'
         else:
@@ -114,6 +115,7 @@ class TheApp():
         if jd['who'] is not None:
             retval += '__for_%s' % '_'.join(jd['who'])
 
+        cdebug('job name: %s' % (retval))
         cleave('TheApp::job_name')
         return retval
 
