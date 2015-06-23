@@ -28,7 +28,7 @@ class Release():
         try:
             c = Configuration[Configuration["systems"][s.args.target]["provisioner"]]
 
-            maas = MAASCore(c['profile'], c['server'], c['creds'])
+            maas = MAASCore(c['profile'], c['server'], c['user'], c['creds'])
             mt = maas.node(s.args.target)
             mt.stop_and_release()
 
