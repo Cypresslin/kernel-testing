@@ -235,7 +235,7 @@ class Runner():
             if 'packages' in TestProfiles[t]:
                 if 'common' in TestProfiles[t]['packages']:
                     for pkg in TestProfiles[t]['packages']['common']:
-                        if self.arch == 'ppc64le':
+                        if self.arch in ['ppc64le', 'aarch64']:
                             if pkg.replace('-multilib', '') not in deps:
                                 deps.append(pkg.replace('-multilib', ''))
                         else:
@@ -243,7 +243,7 @@ class Runner():
                                 deps.append(pkg)
                 if self.release_name in TestProfiles[t]['packages']:
                     for pkg in TestProfiles[t]['packages'][self.release_name]:
-                        if self.arch == 'ppc64le':
+                        if self.arch in ['ppc64le', 'aarch64']:
                             if pkg.replace('-multilib', '') not in deps:
                                 deps.append(pkg.replace('-multilib', ''))
                         else:
