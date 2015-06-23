@@ -218,9 +218,11 @@ class TheApp():
                 content += ' to -' + payload['pocket']
                 retval.append(content)
             elif 'requested' == what:
+                if 'systems' in payload:
+                    content += '%s with ' % (','.join(payload['system']))
                 content += '%s' % (series)
                 if 'arches' in payload:
-                    content += ' (%s)' % (','.join(payload['arches']))
+                    content += '(%s)' % (','.join(payload['arches']))
                 if 'debs' in payload:
                     content += ', debs: %s,' % payload['debs']
                 if 'ppa' in payload:
