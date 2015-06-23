@@ -219,7 +219,7 @@ class TheApp():
                 retval.append(content)
             elif 'requested' == what:
                 if 'systems' in payload:
-                    content += '%s with ' % (','.join(payload['system']))
+                    content += '%s with ' % (','.join(payload['systems']))
                 content += '%s' % (series)
                 if 'arches' in payload:
                     content += '(%s)' % (','.join(payload['arches']))
