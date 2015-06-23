@@ -102,10 +102,10 @@ class TheApp():
                 arches = s.__arg_list(args.arch)
 
                 for a in arches:
-                    if a not in ['amd64', 'i386', 'ppc64el']:
+                    if a not in ['amd64', 'i386', 'ppc64el', 'arm64']:
                         print('  *** Error: The arch specified (%s) is not valid. Supported arches' % a)
                         print('             are:')
-                        print('                 amd64  i386  ppc64el')
+                        print('                 amd64  i386  ppc64el  arm64')
                         raise Exit
 
                 msg['arches'] = arches
