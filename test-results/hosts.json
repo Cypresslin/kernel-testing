@@ -192,5 +192,18 @@
         "platform" : "Intel Grantley",
         "processors" : "2 x Intel xx-xxxx; 14 cores each; +hyper-threaded (56 effective processors)",
         "memory" : "32GB"
+    },
+
+    "ms10-34-mcdivittB0 : {
+        "platform" : "HP ARM64 McDivitt Cartridge",
+        "processors" : "8 cores",
+        "memory" : "64GB"
+    },
+
+    "ms10-34-mcdivittB0 : {
+        "platform" : "HP ARM64 McDivitt Cartridge",
+        "processors" : "8 cores",
+        "memory" : "64GB"
     }
+
 }
