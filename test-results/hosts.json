@@ -194,13 +194,13 @@
         "memory" : "32GB"
     },
 
-    "ms10-34-mcdivittB0 : {
+    "ms10-34-mcdivittB0" : {
         "platform" : "HP ARM64 McDivitt Cartridge",
         "processors" : "8 cores",
         "memory" : "64GB"
     },
 
-    "ms10-34-mcdivittB0 : {
+    "ms10-34-mcdivittB0" : {
         "platform" : "HP ARM64 McDivitt Cartridge",
         "processors" : "8 cores",
         "memory" : "64GB"
