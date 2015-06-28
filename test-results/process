@@ -134,7 +134,6 @@ class TheApp():
 
                 for test_run in data['sru'][series][kver]:
                     attributes = test_run['attributes']
-                    #dump(attributes)
 
                     # decode the arch
                     #
@@ -203,7 +202,6 @@ class TheApp():
                 cdebug('        kver: %s' % kver)
                 for test_run in data['sru'][series][kver]:
                     attributes = test_run['attributes']
-                    #dump(attributes)
 
                     # decode the arch
                     #
@@ -254,7 +252,6 @@ class TheApp():
 
                         sr[suite][kver][arch][ts][hostname]['timestamp'] = attributes['timestamp']
 
-        #dump(sr)
 
         for suite in sr:
             cdebug('suite: %s' % suite)
@@ -265,7 +262,6 @@ class TheApp():
 
                     xs = suite.replace('autotest.', '').replace('ubuntu_', '')
                     fname = '%s-%s-%s-index.html' % (suite.replace('autotest.', '').replace('ubuntu_', ''), kver, arch)
-                    dump(sr[suite][kver][arch])
                     # Generate the testing, index page.
                     #
                     try:
@@ -300,7 +296,6 @@ class TheApp():
                     error(e.msg)
                     continue
 
-                #dump(results['attributes'])
                 cdebug("Processing: %s" % (tr), 'green')
                 cdebug("    kernel: %s" % (results['attributes']['kernel']))
 
@@ -339,7 +334,6 @@ class TheApp():
                     data[who][series][k] = []
                 data[who][series][k].append(results)
 
-            #dump(data)
 
             self.generate_hybrid_results_index(data)
             self.generate_per_suite_indexes(data)
