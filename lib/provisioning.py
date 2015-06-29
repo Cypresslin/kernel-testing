@@ -242,16 +242,7 @@ class Base(object):
         '''
         center('Base::enable_src')
         s.progress('Enabling Src')
-        if s.arch == 'ppc64el': # This really should be a generic 'if s.arch in s.ports:'
-            s.ssh('\'echo deb-src http://ports.ubuntu.com/ubuntu-ports/ %s restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
-            s.ssh('\'echo deb-src http://ports.ubuntu.com/ubuntu-ports/ %s-updates restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
-            s.ssh('\'echo deb-src http://ports.ubuntu.com/ubuntu-ports/ %s-security restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
-            s.ssh('\'echo deb-src http://ports.ubuntu.com/ubuntu-ports/ %s-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
-        else:
-            s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
-            s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s-updates restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
-            s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s-security restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
-            s.ssh('\'echo deb-src http://us.archive.ubuntu.com/ubuntu/ %s-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
+        s.ssh('\'cat /etc/apt/sources.list | sed s/deb/deb-src/ | sudo tee -a /etc/apt/sources.list\'')
         cleave('Base::enable_src')
 
     # enable_proposed
@@ -263,10 +254,7 @@ class Base(object):
         '''
         center('Base::enable_proposed')
         s.progress('Enabling Proposed')
-        if s.arch == 'ppc64el': # This really should be a generic 'if s.arch in s.ports:'
-            s.ssh('\'echo deb http://ports.ubuntu.com/ubuntu-ports/ %s-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
-        else:
-            s.ssh('\'echo deb http://us.archive.ubuntu.com/ubuntu/ %s-proposed restricted main multiverse universe | sudo tee -a /etc/apt/sources.list\'' % (s.series))
+        s.ssh('\'grep %s /etc/apt/sources.list | sed s/%s/%s-proposed/ | sudo tee -a /etc/apt/sources.list\'' % (s.series, s.series, s.series))
         cleave('Base::enable_proposed')
 
     # enable_ppa
@@ -582,9 +570,9 @@ class Metal(Base):
         # Once the initial installation has completed, we continue to install and update
         # packages so that we are testing the latest kernel, which is what we want.
         #
-        s.enable_src()
         if not Ubuntu().is_development_series(s.series):
             s.enable_proposed()
+        s.enable_src()
         if s.ppa is not None:
             s.enable_ppa()
         if Ubuntu().is_development_series(s.series):
