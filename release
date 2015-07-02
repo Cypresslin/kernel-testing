@@ -69,9 +69,15 @@ if __name__ == '__main__':
 
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
     parser.add_argument('target', metavar='TARGET', type=str, nargs=1, help='The name of the system to be provisioned.')
+    parser.add_argument('--debug', action='store_true', default=False, help='Print out lots of stuff.')
 
     args = parser.parse_args()
     args.target = args.target[0]
+
+    if args.debug:
+        level = DEBUG
+    else:
+        level = WARNING
 
     app = Release(args)
     exit(app.main())
