@@ -79,6 +79,13 @@ class TheApp():
             msg['date'] = str(datetime.utcnow())
 
             # ----------------------------------------------------------------------
+            # root
+            #
+            if args.root:
+                cdebug('root: ' + args.who)
+                msg['root'] = args.who
+
+            # ----------------------------------------------------------------------
             # who
             #
             if args.who:
@@ -279,6 +286,12 @@ Print out a lot of messages about what is going on.\
 
     '''
 
+    help_root = '''\
+First, make sure you know what you are doing if you use this option. This option specifies
+the directory on the jenkins server that contains the kernel-testing and all autotest-*
+directories. This is usefull if you are debugging changes to the kernel-testing code.
+    '''
+
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawTextHelpFormatter)
     parser.add_argument('--debug',    action='store_true', default=False,                   help=help_debug)
     parser.add_argument('--series',   required=True,                                        help=help_series)
@@ -290,6 +303,7 @@ Print out a lot of messages about what is going on.\
     parser.add_argument('--ppa',      required=False,                                       help=help_ppa)
     parser.add_argument('--who',      required=False, nargs='*',                            help="")
     parser.add_argument('--op',       required=False,                                       help="")
+    parser.add_argument('--root',     required=False, type=str,                             help=help_root)
     parser.add_argument('--local',    action='store_true', default=False,                   help='Assume we have an ssh tunnel setup to the MQ server.')
     args = parser.parse_args()
 
