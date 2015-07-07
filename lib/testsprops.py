@@ -72,7 +72,7 @@ TestProfiles = {
             },
         },
 
-    'ubuntu_zfs_fstests' : {
+    'ubuntu_zfs_fstest' : {
         'packages' : {
             'common' : [
                 'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git',
@@ -497,7 +497,7 @@ TestCollections = {
     'sru-2' : [
              'ubuntu_btrfs_kernel_fixes',
              'ubuntu_zfs',
-             'ubuntu_zfs_fstests',
+             'ubuntu_zfs_fstest',
              'ubuntu_zfs_xfs_generic',
              'ubuntu_zfs_stress',
         ],
