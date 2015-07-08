@@ -1,4 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
+
+<%
+if 'root' in data:
+    kt_root = data['root']
+else:
+    kt_root = '/var/lib/jenkins'
+%>
+
 <project>
     <actions/>
     <description>
@@ -27,9 +35,14 @@ ${data['description']}
     <builders>
         <hudson.tasks.Shell>
             <command>
-    KT=/var/lib/jenkins/kernel-testing
+    export KT_ROOT=${kt_root}
+    KT=$KT_ROOT/kernel-testing
 
-    $KT/test-status $JOB_NAME '{"op":"job.started"}'
+    status () {
+        $KT/test-status $JOB_NAME '{"op":"'$1'"}'
+    }
+
+    status job.started
 
     SSH_OPTIONS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet"
     SUT=${data['sut-name']}
@@ -51,15 +64,15 @@ provision += ' --debug --nc'
 %>
     # Provision the hardware.
     #
-    ${provision} || (cat provisioning.log;$KT/test-status $JOB_NAME '{"op":"provisioning.failed"}';exit 1)
-    $KT/test-status $JOB_NAME '{"op":"provisioning.succeeded"}'
+    ${provision} || (cat provisioning.log;status provisioning.failed;exit 1)
+    status provisioning.succeeded
 
 % if 'no-test' not in data:
-    $KT/test-status $JOB_NAME '{"op":"testing.started"}'
+    status testing.started
     # Kick off testing on the newly provisioned SUT
     #
     $KT/remote ubuntu@$SUT --kernel-test-list="${data['test']}"
-    $KT/test-status $JOB_NAME '{"op":"testing.completed"}'
+    status testing.completed
 
     ARCHIVE=$JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_ID/archive
     scp $SSH_OPTIONS -r ubuntu@$SUT:kernel-test-results $ARCHIVE
@@ -69,7 +82,7 @@ provision += ' --debug --nc'
     #
     $KT/release $SUT
 
-    $KT/test-status $JOB_NAME '{"op":"job.completed"}'
+    status job.completed
 
     # Publish the results. This *MUST* always be the very last thing the job does.
     #
