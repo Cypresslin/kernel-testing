@@ -2,13 +2,13 @@
 #
 
 from os                                 import getenv
-from logging                            import debug, error, info, basicConfig, INFO, DEBUG, WARNING, getLevelName
-from time                               import sleep
+from logging                            import error, basicConfig, DEBUG, WARNING, INFO
 
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 from lib.configuration                  import Configuration
-from lib.shell                          import sh, ssh, ShellError, ShellTimeoutError
+from lib.shell                          import ShellError, ShellTimeoutError
 from lib.maas                           import MAASCore
+from lib.log                            import Clog, center, cleave
 
 # Release
 #
@@ -24,11 +24,12 @@ class Release():
     # main
     #
     def main(s):
+        center('Release::main')
         retval = 1
         try:
             c = Configuration[Configuration["systems"][s.args.target]["provisioner"]]
 
-            maas = MAASCore(c['profile'], c['server'], c['user'], c['creds'])
+            maas = MAASCore(c['server'], c['user'], c['profile'], c['creds'])
             mt = maas.node(s.args.target)
             mt.stop_and_release()
 
@@ -52,15 +53,10 @@ class Release():
             error("Due to the above error(s), this script is unable to continue and is terminating.")
             error("")
 
+        cleave('Release::main')
         return retval
 
 if __name__ == '__main__':
-    if getenv('DEBUG'):
-        LOGLEVEL = DEBUG
-    else:
-        LOGLEVEL = INFO
-    basicConfig(level=LOGLEVEL, format="%(levelname)s - %(message)s")
-
     app_description = '''
     '''
 
@@ -70,14 +66,19 @@ if __name__ == '__main__':
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
     parser.add_argument('target', metavar='TARGET', type=str, nargs=1, help='The name of the system to be provisioned.')
     parser.add_argument('--debug', action='store_true', default=False, help='Print out lots of stuff.')
+    parser.add_argument('--nc', action='store_true', default=False, help='Debut output should not be colored.')
 
     args = parser.parse_args()
     args.target = args.target[0]
 
     if args.debug:
         level = DEBUG
+        Clog.dbg = True
+        Clog.color = not args.nc
     else:
         level = WARNING
+
+    basicConfig(level=level, format="%(levelname)s - %(message)s")
 
     app = Release(args)
     exit(app.main())
