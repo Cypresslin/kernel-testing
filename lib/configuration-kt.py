@@ -64,7 +64,8 @@ Configuration = {
                 },
             ],
             "scratch drive" : "/dev/sdb",
-            "role" : "SRU Testing",
+            #"role" : "SRU Testing",
+            "role" : "debug",
             "locked" : False,
         },
         "pepe" : {
@@ -490,6 +491,51 @@ Configuration = {
             "role" : "none",
             "locked" : False,
         },
+        "haase" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.81.143",
+                    "username" : "root",
+                    "password" : "insecure"
+                },
+            ],
+            "role" : "none",
+            "locked" : False,
+        },
+        "balboa" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.81.142",
+                    "username" : "root",
+                    "password" : "insecure"
+                },
+            ],
+            "role" : "none",
+            "locked" : False,
+        },
+        "sayers" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.81.144",
+                    "username" : "root",
+                    "password" : "insecure"
+                },
+            ],
+            "role" : "none",
+            "locked" : False,
+        },
         "ms10-35-mcdivittB0" : {
             "arch" : ['arm64'],
             "sub-arch" : "xgene-uboot",
@@ -504,8 +550,7 @@ Configuration = {
                     "node" : "c35n1"
                 },
             ],
-            #"role" : "SRU Testing",
-            "role" : "none",
+            "role" : "SRU Testing",
             "locked" : False,
         },
         "ms10-34-mcdivittB0" : {
