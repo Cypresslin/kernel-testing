@@ -380,38 +380,6 @@ class TheApp():
             retval.append(system)
         return retval
 
-    # DEAD CODE # create_test_jobs
-    # DEAD CODE #
-    # DEAD CODE def create_test_jobs(s, series, arches, systems, url=None, user=None, tests='default', series_decoration=None, hwe=False, ppa=None):
-    # DEAD CODE     retval = None
-    # DEAD CODE     for arch in arches:
-    # DEAD CODE         for system in systems:
-    # DEAD CODE             if 'ubuntu_fs_fio_perf' == tests:
-    # DEAD CODE                 if 'scratch drive' not in Configuration['systems'][system]:
-    # DEAD CODE                     continue
-    # DEAD CODE             if arch not in Configuration['systems'][system]['arch']: continue
-
-    # DEAD CODE             cmd = s.jjc + ' --sut=real --hw=%s --sut-arch=%s --sut-series=%s --jenkins-url=%s --test=%s' % (system, arch, series, s.jenkins_url_default, tests)
-    # DEAD CODE             if series_decoration is not None:
-    # DEAD CODE                 cmd += ' --sut-series-decoration=%s' % series_decoration
-    # DEAD CODE             if url is not None:
-    # DEAD CODE                 cmd += ' --debs=%s' % (url)
-    # DEAD CODE             if user is not None:
-    # DEAD CODE                 cmd += ' --user=%s' % (user)
-    # DEAD CODE             if hwe:
-    # DEAD CODE                 cmd += ' --sut-hwe'
-    # DEAD CODE             if ppa:
-    # DEAD CODE                 cmd += ' --ppa=%s' % (ppa)
-    # DEAD CODE             (return_code, output) = sh(cmd, quiet=False)
-    # DEAD CODE             if retval is None: retval = []
-    # DEAD CODE             for line in output:
-    # DEAD CODE                 line = line.strip()
-    # DEAD CODE                 if 'created jenkins job:' in line:
-    # DEAD CODE                     (x, job) = line.split('job:', 1)
-    # DEAD CODE                     retval.append(job.strip())
-
-    # DEAD CODE     return retval
-
     # main
     #
     def main(s):
