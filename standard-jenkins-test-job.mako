@@ -76,7 +76,8 @@ provision += ' --debug --nc'
 
     ARCHIVE=$JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_ID/archive
     scp $SSH_OPTIONS -r ubuntu@$SUT:kernel-test-results $ARCHIVE
-    $JENKINS_HOME/autotest/client/tools/glue_testsuites $ARCHIVE/*.xml > $WORKSPACE/kernel-results.xml
+    $JENKINS_HOME/autotest/client/tools/glue_testsuites $ARCHIVE/*.xml > $WORKSPACE/kernel-results-unfiltered.xml
+    $KT/unicode-filter $WORKSPACE/kernel-results-unfiltered.xml > $WORKSPACE/kernel-results.xml
 
     # Don't need the HW any longer, it can be powered off.
     #
