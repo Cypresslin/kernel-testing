@@ -9,7 +9,6 @@ from datetime                           import datetime
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import basicConfig, info, warning, DEBUG, INFO
 from lib.msgq                           import MsgQueue
-from lib.configuration                  import Configuration
 from lib.testsprops                     import SRU_TestsList
 from lib.shell                          import sh
 from lib.log                            import cdebug, center, cleave
@@ -56,25 +55,8 @@ class TheApp():
             'fs-benchmarks'  : None,
         }
 
-        # Create a dictionary of the lab HW keyed by role.
-        #
-        s.sut_pool = {}
-        for sut in Configuration['systems']:
-            role = Configuration['systems'][sut]['role']
-
-            try:
-                s.sut_pool[role].append(sut)
-            except:
-                s.sut_pool[role] = []
-                s.sut_pool[role].append(sut)
-
         s.jjc = os.path.dirname(sys.argv[0])
         s.jjc = os.path.join(s.jjc, 'jenkins-job-creator', 'jjc')
-
-        if s.args.debug:
-            cdebug(json.dumps(s.sut_pool, sort_keys=True, indent=4))
-
-        s.job_template = s.load_template('standard-jenkins-test-job.mako')
 
         # A list of the packages that we don't test.
         #
@@ -85,6 +67,38 @@ class TheApp():
             'linux-exynos5',
             'linux-ti-omap4',
         ]
+
+    # dyno
+    #
+    def dyno(s):
+        '''
+        There are some things that need to be more dynamic. Changes to
+        lib/configuration.py or the standard-jenkins-test-job.mako files
+        shouldn't require killing the running kmsgq-jenkins job.
+        '''
+        center('TheApp::dyno')
+
+        import lib.configuration
+        s.configuration = lib.configuration.Configuration
+
+        # Create a dictionary of the lab HW keyed by role.
+        #
+        s.sut_pool = {}
+        for sut in s.configuration['systems']:
+            role = s.configuration['systems'][sut]['role']
+
+            try:
+                s.sut_pool[role].append(sut)
+            except:
+                s.sut_pool[role] = []
+                s.sut_pool[role].append(sut)
+
+        if s.args.debug:
+            cdebug(json.dumps(s.sut_pool, sort_keys=True, indent=4))
+
+        s.job_template = s.load_template('standard-jenkins-test-job.mako')
+
+        cleave('TheApp::dyno')
 
     # job_name
     #
@@ -187,7 +201,7 @@ class TheApp():
         for system in systems:
             cdebug('system: %s' % system, 'blue')
             for arch in jd['arches']:
-                if arch in Configuration['systems'][system]['arch']:
+                if arch in s.configuration['systems'][system]['arch']:
                     cdebug('arch: %s' % arch, 'blue')
                     job = s.generate_individual_job(test, arch, system, jd)
                     jd['jobs'].append({
@@ -291,6 +305,8 @@ class TheApp():
     def _handler(s, payload):
         center('TheApp::_handler')
 
+        s.dyno() # Reload the configuration and any other relevant files
+
         valid_key = False
         for key in ['kernel.testing.request', 'kernel.publish']:
             if payload['key'].startswith(key):
@@ -316,7 +332,7 @@ class TheApp():
                 if 'arches' == k:
                     jd['arches'] = []
                     for sys in jd['systems']:
-                        for a in Configuration['systems'][sys]['arch']:
+                        for a in s.configuration['systems'][sys]['arch']:
                             if a not in jd['arches']:
                                 jd['arches'].append(a)
                                 cdebug('appending : %s' % a)
@@ -374,7 +390,7 @@ class TheApp():
         retval = []
         for system in s.sut_pool[key]:
             try:
-                if series in Configuration['systems'][system]['series-blacklist']: continue
+                if series in s.configuration['systems'][system]['series-blacklist']: continue
             except KeyError:
                 pass
             retval.append(system)
