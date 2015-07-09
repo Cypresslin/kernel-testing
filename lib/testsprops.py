@@ -172,7 +172,7 @@ TestProfiles = {
             'lucid', 'precise', 'quantal', 'saucy',
             ],
         'arch-blacklist' : [
-            'ppc64le',
+            'ppc64le', 'aarch64',
             ],
         },
 
