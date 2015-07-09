@@ -7,7 +7,7 @@ class MsgQueue():
 
     # __init__
     #
-    def __init__(s, address='162.213.32.100', port=5672, exchange='brad'):
+    def __init__(s, address='162.213.33.247', port=5672, exchange='kernel'):
         s.exchange_name = exchange
 
         params = pika.ConnectionParameters(address, port, connection_attempts=3)
