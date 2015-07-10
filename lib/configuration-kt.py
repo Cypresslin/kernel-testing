@@ -551,6 +551,9 @@ Configuration = {
                 },
             ],
             "role" : "SRU Testing",
+            'series-blacklist' : [
+                'lucid', 'precise',
+                ],
             "locked" : False,
         },
         "ms10-34-mcdivittB0" : {
@@ -568,6 +571,9 @@ Configuration = {
                 },
             ],
             #"role" : "SRU 2 Testing",
+            'series-blacklist' : [
+                'lucid', 'precise',
+                ],
             "role" : "none",
             "locked" : False,
         },
