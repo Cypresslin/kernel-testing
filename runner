@@ -51,7 +51,6 @@ class Runner():
         # The list of tests or the group(s) of tests that we are to
         # run is passed in on the command line.
         #
-        debug('Expanding test list')
         self.tests_list = self.args.tests
         fully_expanded = False
         while not fully_expanded:
@@ -86,7 +85,10 @@ class Runner():
                 valid_tests.append(t)
         self.tests_list = valid_tests
 
-        debug('    test list: %s' % self.tests_list)
+        if len(self.tests_list) > 0:
+            debug('Expanded test list:')
+            for t in self.tests_list:
+                debug('    %s' % t)
 
     def blacklisted_by_series(self, profile):
         retval = False
@@ -105,6 +107,8 @@ class Runner():
     # tests_list_verify
     #
     def tests_list_verify(self):
+        debug('Enter tests_list_verify')
+
         errors = False
 
         # Verify that all the tests in the list are ones that
@@ -119,12 +123,15 @@ class Runner():
         # that we are currently running.
         #
         valid_tests = []
+        debug('    blacklist checking (%s) (%s)' % (self.release_name, self.arch))
         for t in self.tests_list:
+            debug('        \'%s\'' % t)
             if self.blacklisted_by_series(TestProfiles[t]):
                 error('Test \'%s\' has been blacklisted for this series (%s)' % (t, self.release_name))
             elif self.blacklisted_by_arch(TestProfiles[t]):
                 error('Test \'%s\' has been blacklisted for this arch (%s)' % (t, self.arch))
             else:
+                debug('            valid')
                 valid_tests.append(t)
 
         self.tests_list = valid_tests
@@ -143,6 +150,13 @@ class Runner():
         if errors:
             self.tests_list = None
             raise ErrorExit()
+
+        if len(self.tests_list) > 0:
+            debug('Verified test list:')
+            for t in self.tests_list:
+                debug('    %s' % t)
+
+        debug('Leave tests_list_verify')
 
     # release_name
     #
