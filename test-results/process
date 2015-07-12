@@ -224,7 +224,7 @@ class TheApp():
 
                     results = test_run['results']
                     for k in results['suites']:
-                        suite = k['name'].replace('autotest.', '').replace('ubuntu_', '')
+                        suite = k['name'].replace('autotest.', '')
 
                         if suite not in sr:
                             sr[suite] = {}
@@ -260,8 +260,8 @@ class TheApp():
                 for arch in sr[suite][kver]:
                     cdebug('    arch: %s' % arch)
 
-                    xs = suite.replace('autotest.', '').replace('ubuntu_', '')
-                    fname = '%s-%s-%s-index.html' % (suite.replace('autotest.', '').replace('ubuntu_', ''), kver, arch)
+                    xs = suite.replace('autotest.', '')
+                    fname = '%s-%s-%s-index.html' % (suite.replace('autotest.', ''), kver, arch)
                     # Generate the testing, index page.
                     #
                     try:
