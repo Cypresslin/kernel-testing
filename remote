@@ -77,10 +77,10 @@ export SSH_OPTIONS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null 
 #
 ssh $SSH_OPTIONS $SUT sudo rm -rf autotest kernel-testing
 
-rsync -e "ssh $SSH_OPTIONS" -ar --exclude=.git $HOME/autotest/ $SUT:autotest/
-rsync -e "ssh $SSH_OPTIONS" -ar --exclude=.git $HOME/autotest-client-tests/* $SUT:autotest/client/tests/
-rsync -e "ssh $SSH_OPTIONS" -ar --exclude=.git $HOME/autotest-client-virt-tests/* $SUT:autotest/client/tests/virt/
-rsync -e "ssh $SSH_OPTIONS" -ar --exclude=.git $HOME/kernel-testing/ $SUT:./kernel-testing/
+rsync -e "ssh $SSH_OPTIONS" -ar --exclude=.git $KT_ROOT/autotest/ $SUT:autotest/
+rsync -e "ssh $SSH_OPTIONS" -ar --exclude=.git $KT_ROOT/autotest-client-tests/* $SUT:autotest/client/tests/
+rsync -e "ssh $SSH_OPTIONS" -ar --exclude=.git $KT_ROOT/autotest-client-virt-tests/* $SUT:autotest/client/tests/virt/
+rsync -e "ssh $SSH_OPTIONS" -ar --exclude=.git $KT_ROOT/kernel-testing/ $SUT:./kernel-testing/
 
 export TIMESTAMP="\"`date +'%A, %e. %B %Y %H:%M %Z'`\"" # Need the time reported in a specific format for final reporting
 export NOW="\"`date`\""                                 # Set the date on the SUT to the same as jenkins
