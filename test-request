@@ -82,8 +82,8 @@ class TheApp():
             # root
             #
             if args.root:
-                cdebug('root: ' + args.who)
-                msg['root'] = args.who
+                cdebug('root: ' + args.root)
+                msg['root'] = args.root
 
             # ----------------------------------------------------------------------
             # who
