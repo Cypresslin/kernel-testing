@@ -67,7 +67,7 @@ TestProfiles = {
     'ubuntu_zfs' : {
         'packages' : {
             'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git',
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl',
                 ],
             },
         },
@@ -75,7 +75,7 @@ TestProfiles = {
     'ubuntu_zfs_fstest' : {
         'packages' : {
             'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git',
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl',
                 ],
             },
         },
@@ -83,7 +83,7 @@ TestProfiles = {
     'ubuntu_zfs_xfs_generic' : {
         'packages' : {
             'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git',
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl',
                 ],
             },
         'series-blacklist' : [
@@ -94,7 +94,7 @@ TestProfiles = {
     'ubuntu_zfs_stress' : {
         'packages' : {
             'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git',
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl',
                 ],
             },
         'series-blacklist' : [
@@ -105,7 +105,7 @@ TestProfiles = {
     'ubuntu_btrfs_kernel_fixes' : {
         'packages' : {
             'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git',
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git', 'acl',
                 ],
             },
         'series-blacklist' : [
@@ -117,7 +117,7 @@ TestProfiles = {
     'ubuntu_stress_btrfs' : {
         'packages' : {
             'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git',
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git', 'acl',
                 ],
             },
         'series-blacklist' : [
@@ -130,7 +130,7 @@ TestProfiles = {
     'ubuntu_stress_btrfs_cmd' : {
         'packages' : {
             'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git',
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git', 'acl',
                 ],
             },
         'series-blacklist' : [
