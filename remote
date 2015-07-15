@@ -85,4 +85,10 @@ rsync -e "ssh $SSH_OPTIONS" -ar --exclude=.git $KT_ROOT/kernel-testing/ $SUT:./k
 export TIMESTAMP="\"`date +'%A, %e. %B %Y %H:%M %Z'`\"" # Need the time reported in a specific format for final reporting
 export NOW="\"`date`\""                                 # Set the date on the SUT to the same as jenkins
 ssh $SSH_OPTIONS $SUT sudo date -s "$NOW"
+
+# The following is a HACK to get the btrfs tests working for Wily. Colin
+# filed a bug to get this fixed for real.
+#
+ssh $SSH_OPTIONS $SUT sudo ln -s  /bin/mkfs.btrfs /sbin/mkfs.btrfs
+
 ssh $SSH_OPTIONS $SUT _TS_="$TIMESTAMP" JOB_NAME=$JOB_NAME KERNEL_TEST_OPTIONS=$KERNEL_TEST_OPTIONS python kernel-testing/runner $KERNEL_TEST_LIST
