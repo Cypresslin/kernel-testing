@@ -94,7 +94,7 @@ TestProfiles = {
     'ubuntu_zfs_stress' : {
         'packages' : {
             'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl',
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl', 'libattr1-dev',
                 ],
             },
         'series-blacklist' : [
