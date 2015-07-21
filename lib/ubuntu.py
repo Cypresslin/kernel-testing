@@ -134,7 +134,7 @@ class Ubuntu:
         {
             'development' : True,        # This is the version that is currently under development
             'series_version' : '15.10',
-            'kernel'    : '4.0.0',
+            'kernel'    : '4.1.0',
             'name'      : 'wily',
             'supported' : False,
             # adjust packages when this goes live
