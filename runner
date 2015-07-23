@@ -273,11 +273,31 @@ class Runner():
             debug('Installing: \'%s\'' % dep)
             sh('sudo apt-get install -fy %s' % dep)
 
+    # proxy_check
+    #
+    def proxy_check(self):
+        '''
+        Try to determine if we need to use a proxy in order to get to the 'internet'. Set
+        the appropriate environment variables if we do.
+        '''
+        try:
+            result, output = sh('echo "" | nc -w 2 squid.internal 3128 > /dev/null 2>&1')
+            environ['http_proxy']  = 'http://squid.internal:3128'
+            environ['https_proxy'] = 'https://squid.internal:3128'
+        except ShellError as e:
+            try:
+                result, output = sh('echo "" | nc -w 2 10.245.64.1 3128 > /dev/null 2>&1')
+                environ['http_proxy']  = 'http://10.245.64.1:3128'
+                environ['https_proxy'] = 'https://10.245.64.1:3128'
+            except ShellError as e:
+                pass
+
     # autotest
     #
     def autotest(self, test):
         '''
         '''
+        self.proxy_check()
 
         # Build up the shell command that we are going to run.
         #
