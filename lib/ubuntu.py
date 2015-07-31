@@ -190,7 +190,7 @@ class Ubuntu:
             'series_version' : '14.10',
             'kernel'    : '3.16.0',
             'name'      : 'utopic',
-            'supported' : True,
+            'supported' : False,
             # adjust packages when this goes live
             'packages'  :
             [
