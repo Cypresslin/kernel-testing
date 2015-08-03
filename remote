@@ -89,6 +89,6 @@ ssh $SSH_OPTIONS $SUT sudo date -s "$NOW"
 # The following is a HACK to get the btrfs tests working for Wily. Colin
 # filed a bug to get this fixed for real.
 #
-ssh $SSH_OPTIONS $SUT sudo ln -s  /bin/mkfs.btrfs /sbin/mkfs.btrfs
+ssh $SSH_OPTIONS $SUT sudo ln -fs  /bin/mkfs.btrfs /sbin/mkfs.btrfs
 
 ssh $SSH_OPTIONS $SUT _TS_="$TIMESTAMP" JOB_NAME=$JOB_NAME KERNEL_TEST_OPTIONS=$KERNEL_TEST_OPTIONS python kernel-testing/runner $KERNEL_TEST_LIST
