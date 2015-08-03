@@ -290,6 +290,12 @@ TestProfiles = {
             },
         },
 
+    'ubuntu_32_on_64' : {
+        'packages' : {
+            'common' : ['gdb', 'gcc-multilib'],
+            },
+        },
+
     'xfstests' : {
         'packages' : {
             'common' : [
@@ -460,6 +466,7 @@ TestCollections = {
             'ubuntu_seccomp',
             'ubuntu_kvm_unit_tests',
             'ubuntu_leap_seconds',
+            'ubuntu_32_on_64',
         ],
 
     # This is the set of tests that will run if no KERNEL_TEST_LIST variable is set.
