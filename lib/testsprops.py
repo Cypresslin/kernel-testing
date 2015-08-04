@@ -294,6 +294,9 @@ TestProfiles = {
         'packages' : {
             'common' : ['gdb', 'gcc-multilib'],
             },
+        'arch-blacklist' : [
+            'i386', 'i686', 'athlon', 'ppc64el', 'arm64', 'ppc64le', 'aarch64',
+            ],
         },
 
     'xfstests' : {
