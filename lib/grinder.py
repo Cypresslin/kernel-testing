@@ -351,12 +351,12 @@ class TestResultsRepository():
 
         data = {}
         data['results'] = jtr.results
-        data['attributes'] = jtr.attributes
+        attributes = data['attributes'] = jtr.attributes
 
         # Name of the directory where we will be storing the results
         #
-        ts = string_to_date(data['attributes']['timestamp']).strftime('%Y-%m-%d_%H-%M-%S')
-        tr_dest = "%s__%s__%s" % (data['attributes']['platform']['hostname'], data['attributes']['kernel'], ts)
+        ts = string_to_date(attributes['timestamp']).strftime('%Y-%m-%d_%H-%M-%S')
+        tr_dest = "%s/%s__%s__%s" % (attributes['kernel'], attributes['platform']['hostname'], attributes['kernel'], ts)
         dest = self.initialize_results_dir(tr_dest)
         for n in listdir(jtr.archive):
             if path.isdir(path.join(jtr.archive, n)):
