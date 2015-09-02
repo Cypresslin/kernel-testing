@@ -6,7 +6,7 @@ from argparse                           import ArgumentParser, RawDescriptionHel
 from logging                            import basicConfig, INFO, DEBUG, info
 from lib.log                            import cdebug, Clog, cerror
 from datetime                           import datetime
-from os                                 import path
+from os                                 import path, makedirs
 
 from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
@@ -76,7 +76,7 @@ class TheApp():
                 m = Debian.version_rc.match(kv)
                 if m:
                     for s in Ubuntu.index_by_series_name:
-                        cdebug("        series: " + s)
+                        #cdebug("        series: " + s)
                         if s in kv:
                             cdebug("            is backport kernel", 'blue')
                             # If the series is in the kernel version string, it is most likely
@@ -157,7 +157,7 @@ class TheApp():
                     for k in results['suites']:
                         suite = k['name'].replace('autotest.', '')
 
-                        link = '%s-%s-%s-index.html' % (suite, kver, arch)
+                        link = '%s/%s-%s-%s-index.html' % (kver, suite, kver, arch)
 
                         if suite not in hybrid[series][kver][arch]:
                             if suite == 'qrt_apparmor':
@@ -179,7 +179,7 @@ class TheApp():
         try:
             cdebug('Generating: hybrid-index.html')
             template = self.alt_index_template.render(data = hybrid, timestamp = datetime.utcnow())
-            dest = path.join(self.trr.cfg['repository_root'], 'alt-index.html')
+            dest = path.join(self.trr.cfg['repository_root'], 'index.html')
             with open(dest, 'w') as f:
                 f.write(template)
 
@@ -265,9 +265,13 @@ class TheApp():
                     # Generate the testing, index page.
                     #
                     try:
-                        cdebug('Generating: hybrid-index.html')
+                        cdebug('Generating: %s' % fname)
+                        p = path.join(self.trr.cfg['repository_root'], kver)
+                        if not path.exists(p):
+                            makedirs(p)
+
                         template = self.suite_index_template.render(suite=xs, kver=kver, arch=arch, data=sr[suite][kver][arch], timestamp = datetime.utcnow())
-                        dest = path.join(self.trr.cfg['repository_root'], fname)
+                        dest = path.join(self.trr.cfg['repository_root'], kver, fname)
                         with open(dest, 'w') as f:
                             f.write(template)
 
@@ -291,6 +295,7 @@ class TheApp():
             data = {}
             for tr in self.trr.test_runs:
                 try:
+                    cdebug('tr: %s' % tr)
                     results = self.trr.results(tr)
                 except TestResultsRepositoryError as e:
                     error(e.msg)
@@ -343,7 +348,7 @@ class TheApp():
             try:
                 cdebug('Generating: index.html')
                 template = self.index_template.render(data = data['sru'], timestamp = datetime.utcnow())
-                dest = path.join(self.trr.cfg['repository_root'], 'index.html')
+                dest = path.join(self.trr.cfg['repository_root'], 'clasic-index.html')
                 with open(dest, 'w') as f:
                     f.write(template)
 
