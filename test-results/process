@@ -247,7 +247,7 @@ class TheApp():
                         sr[suite][kver][arch][ts][hostname]['ran']     = k['tests run']
                         sr[suite][kver][arch][ts][hostname]['passed']  = k['tests run'] - k['tests failed']
 
-                        link = "http://kernel.ubuntu.com/testing/%s__%s__%s/%s-test-suite.html" % (hostname, kver, ts, suite)
+                        link = "http://kernel.ubuntu.com/testing/%s/%s__%s__%s/%s-test-suite.html" % (kver, hostname, kver, ts, suite)
                         sr[suite][kver][arch][ts][hostname]['link'] = link
 
                         sr[suite][kver][arch][ts][hostname]['timestamp'] = attributes['timestamp']
