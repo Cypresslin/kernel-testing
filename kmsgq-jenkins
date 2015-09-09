@@ -97,6 +97,7 @@ class TheApp():
             cdebug(json.dumps(s.sut_pool, sort_keys=True, indent=4))
 
         s.job_template = s.load_template('standard-jenkins-test-job.mako')
+        s.maas_daily_image_test_template = s.load_template('maas-daily-image-test-job.mako')
 
         cleave('TheApp::dyno')
 
@@ -155,6 +156,54 @@ class TheApp():
         s.from_tests_generate_jobs(jd)
 
         cleave('TheApp::handle_kernel_publish')
+
+    # handle_maas_daily_image_test
+    #
+    def handle_maas_daily_image_test(s, jd):
+        center('TheApp::handle_maas_daily_image_test')
+
+        arch = jd['arches'][0]
+        system = jd['systems'][0]
+        try:
+            job_data = copy.deepcopy(jd)
+            job_name = s.job_name(job_data, arch, system, 'maas-daily-image')
+
+            job_data['job-name'] = job_name
+            job_data['sut-arch'] = arch
+            job_data['sut-name'] = system
+            job_data['description'] = json.dumps(job_data, sort_keys=True, indent=4)
+            job_data['timestamp'] = date_to_string(datetime.utcnow())
+
+            try:
+                job_xml = s.maas_daily_image_test_template.render(data=job_data)
+
+                with open('/tmp/jenkins.xml', 'w') as f:
+                    f.write(job_xml)
+
+            except:
+                traceback = RichTraceback()
+                for (filename, lineno, function, line) in traceback.traceback:
+                    print("File %s, line %s, in %s" % (filename, lineno, function))
+                    for s in line:
+                        sys.stdout.write(s)
+                print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
+                raise
+
+            try:
+                s.jenkins.delete_job(job_name)
+            except:
+                pass
+
+            s.jenkins.create_job(job_name, job_xml)
+            sleep(10)
+            s.jenkins.build_job(job_name)
+            cdebug('created jenkins job: %s' % job_name)
+        except:
+            # Don't blow up due to bad message.
+            #
+            print('Caught exception while processing the maas-daily-image test request.')
+
+        cleave('TheApp::handle_maas_daily_image_test')
 
     # from_tests_generate_jobs
     #
@@ -308,7 +357,7 @@ class TheApp():
         s.dyno() # Reload the configuration and any other relevant files
 
         valid_key = False
-        for key in ['kernel.testing.request', 'kernel.publish']:
+        for key in ['kernel.testing.request', 'kernel.publish', 'kernel.maas.daily']:
             if payload['key'].startswith(key):
                 valid_key = True
                 break
@@ -376,6 +425,10 @@ class TheApp():
             if 'proposed' in jd['pocket']:
                 if jd['package'] not in s.package_blacklist:
                     s.handle_kernel_publish(jd)
+        elif jd['key'].startswith('kernel.maas.daily'):
+            # This is a request to test the maas daily images
+            #
+            s.handle_maas_daily_image_test(jd)
         else:
             # Just ignore any payload keys we don't recognize. kernel.testing.kernel.completed is
             # an example.
