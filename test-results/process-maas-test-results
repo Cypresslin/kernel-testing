@@ -1,11 +1,16 @@
 #!/usr/bin/env python
 #
 
-from os                                 import makedirs, path
+from os                                 import makedirs, path, listdir
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import basicConfig, DEBUG, WARNING
 from lib.log                            import cdebug, center, cleave
-from lib.msgq                           import MsgQueue
+from datetime                           import datetime
+
+from lib.grinder                        import load_template
+from mako.template                      import Template
+from mako.exceptions                    import RichTraceback
+
 import json
 
 # TheApp
@@ -22,13 +27,6 @@ class TheApp():
         '''
         s.args = args
 
-    # _handler
-    #
-    def _handler(s, payload):
-        fname = '%s.%s.json' % (payload['series-name'], payload['sut-arch'])
-        p = path.join(s.args.root, fname)
-        with open(p, 'w') as f:
-            f.write(json.dumps(payload, sort_keys=True, indent=4))
 
     # main
     #
@@ -38,26 +36,29 @@ class TheApp():
         center("TheApp::main")
         retval = 1
 
+        maas_template = Template(load_template('maas-daily-status.mako'))
+
+        data = {}
+        for fid in listdir(s.args.root):
+            if not fid.endswith('.json'):
+                continue
+
+            with open('%s/%s' % (s.args.root, fid), 'r') as f:
+                tmp = json.load(f)
+
+            key = '%s.%s.%s' % (tmp['series-name'], tmp['sut-arch'], tmp['sut-name'])
+            data[key] = tmp
+
         try:
-            makedirs(s.args.root)
+            template = maas_template.render(data=data, title='MAAS Daily Image Status', timestamp=datetime.utcnow())
+            with open('%s/index.html' % (s.args.root), 'w') as f:
+                f.write(template)
         except:
-            pass
-        queue = 'kernel-maas-status-monitor'
-        key = 'kernel.maas.job.status'
-        try:
-            if args.local:
-                mq = MsgQueue(address='localhost', port=9123)
-            else:
-                mq = MsgQueue()
-            mq.listen(queue, key, s._handler)
-
-            print("done")
-            retval = 0
-
-        # Handle the user presses <ctrl-C>.
-        #
-        except KeyboardInterrupt:
-            print("Aborting ...")
+            traceback = RichTraceback()
+            for (filename, lineno, function, line) in traceback.traceback:
+                print("File %s, line %s, in %s" % (filename, lineno, function))
+                print(line, "\n")
+            print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
 
         cleave("TheApp::main")
         return retval
