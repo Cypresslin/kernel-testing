@@ -39,7 +39,7 @@ ${data['description']}
     KT=$KT_ROOT/kernel-testing
 
     status () {
-        $KT/test-status $JOB_NAME '{"op":"'$1'"}'
+        $KT/test-status $JOB_NAME '{"key":"'kernel.testing.job.status'", "op":"'$1'"}'
     }
 
     status job.started
