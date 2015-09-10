@@ -1,0 +1,8 @@
+#!/bin/sh
+# Start the daemon in the background.
+flock -nx /tmp/kmsgq-maas -c "$HOME/kernel-testing/kmsgq-maas-daily-image-status $HOME/metrics/maas-daily-status &"
+
+# Attempt to re-grab an exclusive lock, if this succeeds
+# then the daemon has failed to start.  Timeout after 5s.
+flock -w 5 -x /tmp/kmsgq-jenkins -c "exit 0" || \
+    $HOME/bin/dashboard-status shiv 'Kernel Testing' 'Kernel MsgQueue Maas Image Testing Status' 5m 30m
