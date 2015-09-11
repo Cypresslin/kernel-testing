@@ -71,13 +71,6 @@ provision += ' --debug --nc'
         </hudson.tasks.Shell>
 
     </builders>
-    <publishers>
-        <hudson.tasks.junit.JUnitResultArchiver>
-            <testResults>kernel-results.xml</testResults>
-            <keepLongStdio>true</keepLongStdio>
-            <testDataPublishers/>
-        </hudson.tasks.junit.JUnitResultArchiver>
-    </publishers>
     <buildWrappers/>
 </project>
 <!-- vi:set ts=4 sw=4 syntax=mako expandtab: -->
