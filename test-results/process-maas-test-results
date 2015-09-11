@@ -47,9 +47,9 @@ class TheApp():
                 tmp = json.load(f)
 
             if tmp['op'] == 'provisioning.succeeded':
-                tmp['status'] = 'Passed'
+                tmp['status'] = '<td style="color: green">Passed</td>'
             else:
-                tmp['status'] = 'Failed'
+                tmp['status'] = '<td style="color: red">Failed</td>'
             key = '%s.%s.%s' % (tmp['series-name'], tmp['sut-arch'], tmp['sut-name'])
             data[key] = tmp
 
