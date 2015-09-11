@@ -160,6 +160,7 @@ class TheApp():
             'kernel.publish'         : ['#kmsgq', 'published'],
             'kernel.testing.kernel'  : ['#kmsgq', 'test completed'],
             'kernel.testing.request' : ['#kmsgq', 'requested'],
+            'kernel.maas.job.status' : ['#kmsgq', 'maas daily live image'],
         }
 
     # decode_payload
@@ -230,6 +231,17 @@ class TheApp():
                 content += ' be tested'
                 if 'tests' in payload:
                     content += ' with %s' % (','.join(payload['tests']))
+                retval.append(content)
+
+            elif 'maas daily live image' == what:
+                who = ['bjf']
+                content += ','.join(who) + ', ' + what + ': '
+                if 'series-name' in payload:
+                    content += payload['series-name']
+                if 'sut-arch' in payload:
+                    content += ' ' + payload['sut-arch']
+                if 'status' in payload:
+                    content += ' ' + payload['status']
                 retval.append(content)
 
         cleave('TheApp::decode_payload')
