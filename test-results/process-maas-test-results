@@ -46,6 +46,10 @@ class TheApp():
             with open('%s/%s' % (s.args.root, fid), 'r') as f:
                 tmp = json.load(f)
 
+            if tmp['op'] == 'provisioning.succeeded':
+                tmp['status'] = 'Passed'
+            else:
+                tmp['status'] = 'Failed'
             key = '%s.%s.%s' % (tmp['series-name'], tmp['sut-arch'], tmp['sut-name'])
             data[key] = tmp
 

@@ -69,7 +69,7 @@ from datetime     import timedelta
                                 <td align="center">${ data[k]['sut-arch'] }</td>
                                 <td align="center">${ data[k]['sut-name'] }</td>
                                 <td align="center">${ data[k]['timestamp'] }</td>
-                                <td align="center">${ data[k]['op'] }</td>
+                                <td align="center">${ data[k]['status'] }</td>
                             </tr>
                             % endfor
                         </table>
