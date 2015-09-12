@@ -234,15 +234,17 @@ class TheApp():
                 retval.append(content)
 
             elif 'maas daily live image' == what:
-                who = ['bjf']
-                content = ','.join(who) + ', ' + what + ': '
-                if 'series-name' in payload:
-                    content += payload['series-name']
-                if 'sut-arch' in payload:
-                    content += ' ' + payload['sut-arch']
-                if 'op' in payload:
-                    content += ' passed' if payload['op'] == 'provisioning.succeeded' else ' failed'
-                retval.append(content)
+                if payload['op'] == 'provisioning.failed':
+                    who = ['bjf']
+                    content = ','.join(who) + ', ' + what + ': '
+                    if 'series-name' in payload:
+                        content += payload['series-name']
+                    if 'sut-arch' in payload:
+                        content += ' ' + payload['sut-arch']
+                    if 'op' in payload:
+                        content += ' passed' if payload['op'] == 'provisioning.succeeded' else ' FAILED'
+
+                    retval.append(content)
 
         cleave('TheApp::decode_payload')
         return retval
