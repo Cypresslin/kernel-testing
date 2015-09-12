@@ -91,7 +91,7 @@ class TheApp():
             attributes = jtr.attributes
             ts = string_to_date(attributes['timestamp']).strftime('%Y-%m-%d_%H-%M-%S')
             tr_dest = "%s__%s__%s" % (attributes['platform']['hostname'], attributes['kernel'], ts)
-            url = 'http://kernel.ubuntu.com/testing/%s/results-index.html' % tr_dest
+            url = 'http://kernel.ubuntu.com/testing/%s/%s/results-index.html' % (attributes['kernel'], tr_dest)
             cdebug(url)
 
             details = s.fetch_job_details(s.args.job)
