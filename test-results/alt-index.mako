@@ -129,6 +129,11 @@
                     <div class="index-bottom-section">
                         <table width="100%"> <!-- The section is one big table -->
                             <tr>
+                                <td align="left" colspan="5">
+                                    ${ timestamp }
+                                </td>
+                            </tr>
+                            <tr>
                                 <td align="left" valign="bottom" colspan="5">
                                   <span style="font-size: 10px; color: #aea79f !important">(c) 2012 Canonical Ltd. Ubuntu and Canonical are registered trademarks of Canonical Ltd.</span>
                                 </td>
