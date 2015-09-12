@@ -241,7 +241,7 @@ class TheApp():
                 if 'sut-arch' in payload:
                     content += ' ' + payload['sut-arch']
                 if 'op' in payload:
-                    content += ' ' + 'passed' if payload['op'] == 'provisioning.succeeded' else 'failed'
+                    content += ' passed' if payload['op'] == 'provisioning.succeeded' else ' failed'
                 retval.append(content)
 
         cleave('TheApp::decode_payload')
