@@ -235,12 +235,12 @@ class TheApp():
 
             elif 'maas daily live image' == what:
                 who = ['bjf']
-                content += ','.join(who) + ', ' + what + ': '
+                content = ','.join(who) + ', ' + what + ': '
                 if 'series-name' in payload:
                     content += payload['series-name']
                 if 'sut-arch' in payload:
                     content += ' ' + payload['sut-arch']
-                if 'status' in payload:
+                if 'op' in payload:
                     content += ' ' + 'passed' if payload['op'] == 'provisioning.succeeded' else 'failed'
                 retval.append(content)
 
