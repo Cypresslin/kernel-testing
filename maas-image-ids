@@ -54,7 +54,7 @@ def main():
         for s in data['sets'].values():
             if args.series in data['name']:
                 if '%s/hwe-%s' % (args.arch, args.series[0]) in data['architecture']:
-                    print('"maas-image-version" : "%s", "maas-image-label" : "%s", "maas-image-complete" : "%s"' % (s['version'], s['label'], s['complete']))
+                    print('"maas-image-version":"%s","maas-image-label":"%s","maas-image-complete":"%s"' % (s['version'], s['label'], s['complete']))
                     found = True
         if found:
             break
