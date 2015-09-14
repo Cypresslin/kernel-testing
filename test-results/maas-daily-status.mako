@@ -57,19 +57,21 @@ from datetime     import timedelta
                     <div class="dash-section">
                         <table width="100%" border="0" style="font-size: 1.0em">
                             <tr>
-                                <th width="80" align="center">Series</th>
-                                <th width="80" align="center">Arch</th>
+                                <th width="50" align="center">Series</th>
+                                <th width="50" align="center">Arch</th>
+                                <th width="100" align="center">MAAS Image</th>
+                                <th width="50" align="center">Status</th>
                                 <th width="100" align="center">System</th>
                                 <th width="200" align="center">Timestamp</th>
-                                <th width="100" align="center">Status</th>
                             </tr>
-                            % for k in data:
+                            % for k in sorted(data):
                             <tr>
                                 <td align="center">${ data[k]['series-name'] }</td>
                                 <td align="center">${ data[k]['sut-arch'] }</td>
+                                <td align="center">${ data[k]['maas-image-version'] } : ${ data[k]['maas-image-label'] } : ${ data[k]['maas-image-complete'] }</td>
+                                ${ data[k]['status'] }
                                 <td align="center">${ data[k]['sut-name'] }</td>
                                 <td align="center">${ data[k]['timestamp'] }</td>
-                                ${ data[k]['status'] }
                             </tr>
                             % endfor
                         </table>
