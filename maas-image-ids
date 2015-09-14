@@ -47,13 +47,17 @@ def main():
         sys.stderr.write(e.message + "\n")
         sys.exit(1)
 
+    found = False
     boot_resources = client.get("boot-resources/")
     for resource in boot_resources:
         data = client.get(resource['resource_uri'])
         for s in data['sets'].values():
             if args.series in data['name']:
                 if '%s/hwe-%s' % (args.arch, args.series[0]) in data['architecture']:
-                    print("%s %s %s" % (s['version'], s['label'], s['complete']))
+                    print('"maas-image-version" : "%s", "maas-image-label" : "%s", "maas-image-complete" : "%s"' % (s['version'], s['label'], s['complete']))
+                    found = True
+        if found:
+            break
 
 if __name__ == '__main__':
     main()
