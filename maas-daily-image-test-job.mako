@@ -42,7 +42,13 @@ ${data['description']}
         $KT/test-status $JOB_NAME '{"key":"'kernel.maas.job.status'", "op":"'$1'", '$2'}'
     }
 
-    MAAS=$($KT/maas-image-ids $KT/lab.yaml ${data['series-name']} ${data['sut-arch']})
+<%
+    if data['sut-arch'] in ['arm64']:
+        YAML = '$KT/hyper.yaml'
+    else:
+        YAML = '$KT/lab.yaml'
+%>
+    MAAS=$($KT/maas-image-ids ${YAML} ${data['series-name']} ${data['sut-arch']})
     status job.started $MAAS
 
     SSH_OPTIONS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet"
