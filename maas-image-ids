@@ -1,0 +1,61 @@
+#!/usr/bin/python
+
+# based on answer
+#  http://askubuntu.com/questions/581444/how-to-query-maas-api-with-curl
+# no python3 libs filed  http://pad.lv/1495636
+
+import argparse
+import json
+import sys
+from apiclient import maas_client
+import yaml
+
+class Client(object):
+    def __init__(self, name, url, creds):
+        self.name = name
+        self.url = url
+        self.creds = creds
+        auth = maas_client.MAASOAuth(*creds)
+        self.client = maas_client.MAASClient(auth, maas_client.MAASDispatcher(), url)
+
+    def __repr__(self):
+        return "Client(name=%s, url=%s, creds=...)" % (self.name, self.url)
+
+    def get(self, path):
+        if isinstance(path, str):
+            path = path.decode('utf-8')
+
+        pre = b"/MAAS/api/1.0/"
+        if path.startswith(pre):
+            path = path[len(pre):]
+        return json.loads(self.client.get(path).read())
+
+def main():
+    parser = argparse.ArgumentParser(description="dump information about boot resources in maas")
+    parser.add_argument('config',  type=str, help='The configuration information for the MAAS server.')
+    parser.add_argument('series',  type=str, help='The series which we are interested in.')
+    parser.add_argument('arch',  type=str,   help='The architecture which we are interested in.')
+    args = parser.parse_args()
+
+    cfg = None
+    with open(args.config, 'r') as stream:
+        cfg = yaml.safe_load(stream)
+
+    try:
+        client = Client('maas', 'http://%s/MAAS/api/1.0/' % cfg['maas']['ip'], cfg['maas']['creds'].split(':'))
+    except KeyError as e:
+        sys.stderr.write(e.message + "\n")
+        sys.exit(1)
+
+    boot_resources = client.get("boot-resources/")
+    for resource in boot_resources:
+        data = client.get(resource['resource_uri'])
+        for s in data['sets'].values():
+            if args.series in data['name']:
+                if '%s/hwe-%s' % (args.arch, args.series[0]) in data['architecture']:
+                    print("%s %s %s" % (s['version'], s['label'], s['complete']))
+
+if __name__ == '__main__':
+    main()
+
+# vi: ts=4 expandtab syntax=python
