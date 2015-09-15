@@ -504,14 +504,6 @@ TestCollections = {
              'ubuntu_unionmount_overlayfs_suite',
         ],
 
-    'sru-2' : [
-             'ubuntu_btrfs_kernel_fixes',
-             'ubuntu_zfs',
-             'ubuntu_zfs_fstest',
-             'ubuntu_zfs_xfs_generic',
-             'ubuntu_zfs_stress',
-        ],
-
     # A set of test cases that came from CTS and are regression tests for things
     # that have been fixed.
     #
@@ -522,6 +514,13 @@ TestCollections = {
 # A list of the tests that is used to create test jobs when the mail handler
 # is processing SRU email.
 #
-SRU_TestsList = ['sru', 'sru-2']
+SRU_TestsList = [
+    'sru',
+    'ubuntu_btrfs_kernel_fixes',
+    'ubuntu_zfs',
+    'ubuntu_zfs_fstest',
+    'ubuntu_zfs_xfs_generic',
+    'ubuntu_zfs_stress',
+]
 
 # vi:set ts=4 sw=4 expandtab syntax=python:

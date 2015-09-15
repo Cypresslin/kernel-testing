@@ -222,7 +222,7 @@ class TheApp():
             if 'sru' == jd['op']:
                 if test == 'sru':
                     jd['systems'] = s.valid_systems('SRU Testing', jd['series-name'])
-                elif test.startswith('sru-'):
+                else:
                     jd['systems'] = s.valid_systems('SRU 2 Testing', jd['series-name'])
 
             jd = s.generate_jobs(test, jd['systems'], jd)
