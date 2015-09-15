@@ -56,7 +56,7 @@ TestProfiles = {
     'ubuntu_stress_ng' : {
         'packages' : {
             'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'git', 'libattr1-dev',
+                'build-essential', 'gcc-multilib', 'gdb', 'git', 'libattr1-dev', 'libkeyutils-dev',
                 ],
             },
         'series-blacklist' : [
@@ -94,7 +94,7 @@ TestProfiles = {
     'ubuntu_zfs_stress' : {
         'packages' : {
             'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl', 'libattr1-dev',
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl', 'libattr1-dev', 'libkeyutils-dev',
                 ],
             },
         'series-blacklist' : [
@@ -117,7 +117,7 @@ TestProfiles = {
     'ubuntu_stress_btrfs' : {
         'packages' : {
             'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git', 'acl', 'libattr1-dev',
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git', 'acl', 'libattr1-dev', 'libkeyutils-dev',
                 ],
             },
         'series-blacklist' : [
