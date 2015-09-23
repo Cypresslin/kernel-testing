@@ -25,7 +25,7 @@ Configuration = {
     "hyper-maas" : {
         "server"  : "10.229.32.21",  # Hostname of this maas server.
         "profile" : "kernel",        # When talking to the maas server use this profile.
-        "creds"   : "h4YzC6tfKwuWYzfHxG:U2pJj4UEVbHDdwmSD9:tNcn2qb5KnXpx3tTnZjGb2yVT95DmUbb",
+        "creds"   : "AVA8xetuqP8aYvGC7r:9AESbkWkA4f7YTZh6B:zDg39AsXkuamcQcazpCn8mDJsaL2Gnnk",
         "user"    : "kernel",        # When ssh'ing to the maas server use this user
         "type"    : "maas",          # This _is_ a MAAS server (as opposed to a cobbler server)
         "sut_user": "ubuntu",        # The user on the test system after it's been provisioned
