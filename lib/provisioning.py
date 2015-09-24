@@ -297,6 +297,17 @@ class Base(object):
         s.ssh('sudo apt-get --yes install linux-image-generic linux-headers-generic')
         cleave('Base::kernel_upgrade')
 
+    # install_python_minimal
+    #
+    def install_python_minimal(s):
+        '''
+        From Wily onward, python 2 is no longer installed.
+        '''
+        center('Base::install_python_minimal')
+        s.progress('Installing python-minimal')
+        s.ssh('sudo apt-get --yes install python-minimal', ignore_result=True)
+        cleave('Base::install_python_minimal')
+
     # install_custom_debs
     #
     def install_custom_debs(s):
@@ -582,6 +593,8 @@ class Metal(Base):
 
         if s.debs is not None:
             s.install_custom_debs()
+
+        s.install_python_minimal()
 
         # We want to reboot to pick up any new kernel that we would have installed due
         # to either the dist-upgrade that was performed, or the install of the hwe
