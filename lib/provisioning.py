@@ -51,7 +51,7 @@ class PS(object):
 class Base(object):
     # __init__
     #
-    def __init__(s, target, series, arch, hwe=False, xen=False, debs=None, ppa=None, dry_run=False):
+    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False):
         center("Base::__init__")
 
         # If we are installing a HWE kernel, we want to install the correct series first.
@@ -68,6 +68,7 @@ class Base(object):
         s.xen = xen
         s.debs = debs
         s.ppa  = ppa
+        s.kernel = kernel
         s.dry_run = dry_run
         s.progress_dots = 0
         s.progress_msg = ''
@@ -343,10 +344,10 @@ class Base(object):
 class Metal(Base):
     # __init__
     #
-    def __init__(s, target, series, arch, hwe=False, xen=False, debs=None, ppa=None, dry_run=False):
+    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False):
         center("Metal::__init__")
 
-        Base.__init__(s, target, series, arch, hwe=hwe, xen=xen, debs=debs, ppa=ppa, dry_run=dry_run)
+        Base.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, xen=xen, debs=debs, ppa=ppa, dry_run=dry_run)
 
         cleave("Metal::__init__")
 
@@ -432,23 +433,39 @@ class Metal(Base):
                     kv = m.group(1)
                 cdebug('kernel version : ' + kv)
 
-            print('         kernel: ' + kv)
-            retval = True
-            #if kv is not None:
-            #    installed_series = Ubuntu().lookup(kv)['name']
+                m = re.search('(\d+.\d+.\d+-\d+)-.* #(\d+)-Ubuntu.*', line)
+                if m:
+                    installed_kernel = '%s.%s' % (m.group(1), m.group(2))
+                cdebug('installed kernel version : ' + installed_kernel)
 
-            #    if installed_series == s.series:
-            #        retval = True
-            #    else:
-            #        error("")
-            #        error("*** ERROR:")
-            #        error("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, installed_series))
-            #        error("")
-            #else:
-            #    error("")
-            #    error("*** ERROR:")
-            #    error("    Unable to find the kernel version in any line.")
-            #    error("")
+            print('         kernel: ' + installed_kernel)
+            retval = True
+            if kv is not None:
+                installed_series = Ubuntu().lookup(kv)['name']
+
+                if installed_series == s.series:
+                    retval = True
+                else:
+                    error("")
+                    error("*** ERROR:")
+                    error("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, installed_series))
+                    error("")
+            else:
+                error("")
+                error("*** ERROR:")
+                error("    Unable to find the kernel version in any line.")
+                error("")
+
+            if s.kernel is not None:
+                if installed_kernel == s.kernel:
+                    retval = True
+                else:
+                    retval = False
+                    error("")
+                    error("*** ERROR:")
+                    error("    Was expecting the target kernel version to be (%s) but found it to be (%s) instead." % (s.kernel, installed_kernel))
+                    error("")
+
 
         cleave('Metal::verify_target (%s)' % retval)
         return retval
