@@ -48,19 +48,19 @@ ${data['description']}
     SUT=${data['sut-name']}
 
 <%
-provision = '$KT/provision $SUT'
-provision += ' --sut=real --sut-series=%s --sut-arch=%s' % (data['series-name'], data['sut-arch'])
+provision = '$KT/metal --debug --nc'
+provision += ' --series=%s --arch=%s' % (data['series-name'], data['sut-arch'])
 
 if 'debs' in data:
-    provision += ' --sut-debs-url=%s' % data['debs']
+    provision += ' --debs-url=%s' % data['debs']
 
 if data['hwe']:
-    provision += ' --sut-hwe'
+    provision += ' --hwe'
 
 if data['ppa']:
     provision += ' --ppa=%s' % data['ppa']
 
-provision += ' --debug --nc'
+provision += ' $SUT'
 %>
     # Provision the hardware.
     #
