@@ -281,7 +281,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "Personal Testing",
+            "role" : "SRU Testing",
             "locked" : False,
         },
         "dagmar" : {
@@ -341,7 +341,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : "SRU Testing",
             "locked" : False,
         },
         "modoc" : {
@@ -392,23 +392,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
-            "locked" : False,
-        },
-
-        "etnyre" : {
-            "arch" : ['amd64', 'i386'],
-            "provisioner" : "maas",
-            "jenkins server" : "kernel-jenkins",
-            "power" : [
-                {
-                    "type" : "ipmi",
-                    "address" : "192.168.228.84",
-                    "username" : "Administrator",
-                    "password" : "insecure"
-                },
-            ],
-            "role" : "none",
+            "role" : "SRU Testing",
             "locked" : False,
         },
 
