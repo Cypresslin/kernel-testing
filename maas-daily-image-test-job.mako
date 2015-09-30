@@ -55,9 +55,9 @@ ${data['description']}
     SUT=${data['sut-name']}
 
 <%
-provision = '$KT/provision $SUT'
-provision += ' --sut=real --sut-series=%s --sut-arch=%s' % (data['series-name'], data['sut-arch'])
-provision += ' --debug --nc'
+provision = '$KT/metal --debug --nc'
+provision += ' --series=%s --arch=%s' % (data['series-name'], data['sut-arch'])
+provision += ' $SUT'
 %>
     # Provision the hardware.
     #
