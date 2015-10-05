@@ -125,7 +125,7 @@ Configuration = {
                     "password" : "kodw6gcl"
                 },
             ],
-            "role" : "none",
+            "role" : "SRU 2 Testing",
             "locked" : False,
         },
         "tarf" : {
@@ -173,7 +173,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "SRU 2 Testing",
+            "role" : "none",
             "locked" : False,
         },
         "rukbah" : {
@@ -189,7 +189,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "SRU 2 Testing",
+            "role" : "none",
             "locked" : False,
         },
         "zmeu" : {
@@ -296,7 +296,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "SRU 2 Testing",
+            "role" : "none",
             "locked" : False,
         },
         "cavac" : {
@@ -311,7 +311,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "SRU 2 Testing",
+            "role" : "none",
             "locked" : False,
         },
         "larsen" : {
