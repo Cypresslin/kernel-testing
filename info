@@ -49,8 +49,7 @@ class Info():
             p(colored('            Arches: ', 'cyan') + ' '.join(cfg['arch']))
             p(colored('       Povisioning: ', 'cyan') + Configuration[cfg['provisioner']]['type'])
             p(colored('    Jenkins Server: ', 'cyan') + Configuration[cfg['jenkins server']]['server_url'])
-            p(colored('       Mac Address: ', 'cyan') + cfg['mac address'])
-            p(colored('              Role: ', 'cyan') + cfg['role'])
+            p(colored('              Role: ', 'cyan') + ','.join(cfg['role']))
             p(colored('            Locked: ', 'cyan') + str(cfg['locked']).title())
             p(colored('             Power: ', 'cyan'))
             for pow in cfg['power']:
