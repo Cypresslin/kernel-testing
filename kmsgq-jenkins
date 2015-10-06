@@ -85,13 +85,12 @@ class TheApp():
         #
         s.sut_pool = {}
         for sut in s.configuration['systems']:
-            role = s.configuration['systems'][sut]['role']
-
-            try:
-                s.sut_pool[role].append(sut)
-            except:
-                s.sut_pool[role] = []
-                s.sut_pool[role].append(sut)
+            for role in s.configuration['systems'][sut]['role']:
+                try:
+                    s.sut_pool[role].append(sut)
+                except:
+                    s.sut_pool[role] = []
+                    s.sut_pool[role].append(sut)
 
         if s.args.debug:
             cdebug(json.dumps(s.sut_pool, sort_keys=True, indent=4))
@@ -215,15 +214,12 @@ class TheApp():
         for test in jd['tests']:
             cdebug('test: %s' % test, 'blue')
 
-            # Handle 'sru*' tests differently than other tests. We have started running into
-            # the problem that our tests are taking too long to finish so they need to be
-            # broken into groups that are run on different collections of test systems.
+            # See if there are lab system which have been specifically identified for the
+            # given test. If so, use those systems and only those systems.
             #
-            if 'sru' == jd['op']:
-                if test == 'sru':
-                    jd['systems'] = s.valid_systems('SRU Testing', jd['series-name'])
-                else:
-                    jd['systems'] = s.valid_systems('SRU 2 Testing', jd['series-name'])
+            jd['systems'] = s.valid_systems(test, jd['series-name'])
+            if len(jd['systems']) == 0:
+                jd['systems'] = s.valid_systems('SRU 2 Testing', jd['series-name'])
 
             jd = s.generate_jobs(test, jd['systems'], jd)
 

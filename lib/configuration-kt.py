@@ -48,7 +48,7 @@ Configuration = {
                 },
             ],
             "scratch drive" : "/dev/sdb",
-            "role" : "Filesystem Benchmarking",
+            "role" : ["Filesystem Benchmarking"],
             "locked" : False,
         },
         "rizzo" : {
@@ -64,8 +64,7 @@ Configuration = {
                 },
             ],
             "scratch drive" : "/dev/sdb",
-            #"role" : "SRU Testing",
-            "role" : "debug",
+            "role" : ["debug"],
             "locked" : False,
         },
         "pepe" : {
@@ -80,7 +79,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "Personal Testing",
+            "role" : ["Personal Testing"],
             "locked" : False,
         },
         "fozzie" : {
@@ -95,7 +94,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "SRU Testing",
+            "role" : ["sru"],
             "locked" : False,
         },
         "nori" : {
@@ -110,7 +109,7 @@ Configuration = {
                     "password" : "SeqjBEPS6FeZaW"
                 },
             ],
-            "role" : "none",
+            "role" : ["arges"],
             "locked" : False,
         },
         "kili" : {
@@ -125,7 +124,7 @@ Configuration = {
                     "password" : "kodw6gcl"
                 },
             ],
-            "role" : "SRU 2 Testing",
+            "role" : ["ubuntu_zfs", "ubuntu_zfs_stress"],
             "locked" : False,
         },
         "tarf" : {
@@ -141,7 +140,7 @@ Configuration = {
                     "password" : "mBZpvBcB8sQeo"
                 },
             ],
-            "role" : "SRU Testing",
+            "role" : ["sru",]
             "locked" : False,
         },
         "alkaid" : {
@@ -157,7 +156,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "Personal Testing",
+            "role" : ["Personal Testing"],
             "locked" : False,
         },
         "phact" : {
@@ -173,7 +172,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : [],
             "locked" : False,
         },
         "rukbah" : {
@@ -189,7 +188,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : [],
             "locked" : False,
         },
         "zmeu" : {
@@ -205,7 +204,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : [],
             "locked" : False,
         },
         "zuijin" : {
@@ -220,7 +219,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : [],
             "locked" : False,
         },
         "onza" : {
@@ -236,7 +235,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "SRU Testing",
+            "role" : ["sru"],
             "locked" : False,
         },
         "onibi" : {
@@ -251,7 +250,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "SRU Testing",
+            "role" : ["sru"],
             "locked" : False,
         },
         "rainier" : {
@@ -266,7 +265,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "SRU Testing",
+            "role" : ["sru"],
             "locked" : False,
         },
         "fuller" : {
@@ -281,7 +280,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "SRU Testing",
+            "role" : ["sru"],
             "locked" : False,
         },
         "dagmar" : {
@@ -296,7 +295,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : [],
             "locked" : False,
         },
         "cavac" : {
@@ -311,7 +310,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : [],
             "locked" : False,
         },
         "larsen" : {
@@ -326,7 +325,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "SRU Testing",
+            "role" : ["sru"],
             "locked" : False,
         },
         "bantam" : {
@@ -341,7 +340,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "SRU Testing",
+            "role" : ["sru"],
             "locked" : False,
         },
         "modoc" : {
@@ -356,7 +355,7 @@ Configuration = {
                     "password" : "admin"
                 },
             ],
-            "role" : "SRU Testing",
+            "role" : ["sru"],
             "locked" : False,
             'series-blacklist' : [
                 'lucid', 'precise',
@@ -375,7 +374,7 @@ Configuration = {
                     "password" : "odkBlXo1HVRYsxS"
                 },
             ],
-            "role" : "",
+            "role" : ["ubuntu_zfs_fstest", "ubuntu_zfs_xfs_generic"],
             "locked" : False,
             "scratch drive" : "/dev/sdb",
         },
@@ -392,7 +391,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "SRU Testing",
+            "role" : ["sru"],
             "locked" : False,
         },
 
@@ -411,7 +410,7 @@ Configuration = {
                     "password" : "K3rn3!",
                 }
             ],
-            "role" : "unknown",
+            "role" : ["unknown"],
             "locked" : True,
         },
         "statler" : {
@@ -434,7 +433,7 @@ Configuration = {
                     "password" : "K3rn3!",
                 }
             ],
-            "role" : "unknown",                 # This system has a raid controler that is a pita
+            "role" : ["unknown"],                 # This system has a raid controler that is a pita
             "locked" : True,
         },
         "gloin" : {
@@ -457,7 +456,7 @@ Configuration = {
                     "password" : "K3rn3!",
                 }
             ],
-            "role" : "none",
+            "role" : [],
             "locked" : True,                      # This is used as a kernel-team build system
         },
         "fili" : {
@@ -472,7 +471,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : [],
             "locked" : False,
         },
         "haase" : {
@@ -487,7 +486,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : [],
             "locked" : False,
         },
         "balboa" : {
@@ -502,7 +501,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : [],
             "locked" : False,
         },
         "sayers" : {
@@ -517,7 +516,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "none",
+            "role" : [],
             "locked" : False,
         },
         "ms10-35-mcdivittB0" : {
@@ -534,7 +533,7 @@ Configuration = {
                     "node" : "c35n1"
                 },
             ],
-            "role" : "SRU Testing",
+            "role" : ["sru"],
             'series-blacklist' : [
                 'lucid', 'precise',
                 ],
@@ -558,7 +557,7 @@ Configuration = {
             'series-blacklist' : [
                 'lucid', 'precise',
                 ],
-            "role" : "none",
+            "role" : [],
             "locked" : False,
         },
         # -----------------------------------------------------------------------------------------
@@ -577,7 +576,7 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : "dead",
+            "role" : ["dead"],
             "locked" : False,
         },
         "dori" : {
@@ -600,7 +599,7 @@ Configuration = {
                     "password" : "K3rn3!",
                 }
             ],
-            "role" : "dead",
+            "role" : ["dead"],
             "locked" : False,
         },
         "bofur" : {
@@ -623,7 +622,7 @@ Configuration = {
                     "password" : "K3rn3!",
                 }
             ],
-            "role" : "busted",
+            "role" : ["busted"],
             "locked" : False,
         },
         "gimli" : {
@@ -646,7 +645,7 @@ Configuration = {
                     "password" : "K3rn3!",
                 }
             ],
-            "role" : "none",
+            "role" : [],
             "locked" : False,
         },
         "floyd" : {
@@ -669,7 +668,7 @@ Configuration = {
                     "password" : "K3rn3!",
                 }
             ],
-            "role" : "down",
+            "role" : ["down"],
             "locked" : False,
         },
         "janice" : {
@@ -692,7 +691,7 @@ Configuration = {
                     "password" : "K3rn3!",
                 }
             ],
-            "role" : "down",
+            "role" : ["down"],
             "locked" : False,
         },
         "pops" : {
@@ -715,7 +714,7 @@ Configuration = {
                     "password" : "K3rn3!",
                 }
             ],
-            "role" : "openstack",
+            "role" : ["openstack"],
             "locked" : False,
         },
         "zoot" : {
@@ -738,7 +737,7 @@ Configuration = {
                     "password" : "K3rn3!",
                 }
             ],
-            "role" : "openstack",
+            "role" : ["openstack"],
             "locked" : False,
         },
     }
