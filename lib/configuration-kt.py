@@ -126,6 +126,7 @@ Configuration = {
             ],
             "role" : ["ubuntu_zfs", "ubuntu_zfs_stress"],
             "locked" : False,
+            "scratch drive" : "/dev/sdb",
         },
         "tarf" : {
             "arch" : ['amd64', 'i386'],
@@ -140,7 +141,7 @@ Configuration = {
                     "password" : "mBZpvBcB8sQeo"
                 },
             ],
-            "role" : ["sru",]
+            "role" : ["sru"],
             "locked" : False,
         },
         "alkaid" : {
@@ -184,37 +185,6 @@ Configuration = {
                 {
                     "type" : "ipmi",
                     "address" : "10.245.80.206",
-                    "username" : "admin",
-                    "password" : "insecure"
-                },
-            ],
-            "role" : [],
-            "locked" : False,
-        },
-        "zmeu" : {
-            "arch" : ['amd64', 'i386'],
-            "scratch drive" : "/dev/sdb",
-            "provisioner" : "maas",
-            "jenkins server" : "kernel-jenkins",
-            "power" : [
-                {
-                    "type" : "ipmi",
-                    "address" : "10.245.80.202",
-                    "username" : "admin",
-                    "password" : "insecure"
-                },
-            ],
-            "role" : [],
-            "locked" : False,
-        },
-        "zuijin" : {
-            "arch" : ['amd64', 'i386'],
-            "provisioner" : "maas",
-            "jenkins server" : "kernel-jenkins",
-            "power" : [
-                {
-                    "type" : "ipmi",
-                    "address" : "10.245.80.223",
                     "username" : "admin",
                     "password" : "insecure"
                 },
@@ -313,21 +283,6 @@ Configuration = {
             "role" : [],
             "locked" : False,
         },
-        "larsen" : {
-            "arch" : ['amd64', 'i386'],
-            "provisioner" : "maas",
-            "jenkins server" : "kernel-jenkins",
-            "power" : [
-                {
-                    "type" : "ipmi",
-                    "address" : "192.168.228.90",
-                    "username" : "Administrator",
-                    "password" : "insecure"
-                },
-            ],
-            "role" : ["sru"],
-            "locked" : False,
-        },
         "bantam" : {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
@@ -394,48 +349,40 @@ Configuration = {
             "role" : ["sru"],
             "locked" : False,
         },
+        "statler" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.81.158",
+                    "username" : "maas",
+                    "password" : "j23x8zWbrPT"
+                },
+            ],
+            "role" : [],
+            "locked" : False,
+            "scratch drive" : "",
+        },
+        "fili" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.98.5.226",
+                    "username" : "maas",
+                    "password" : "gEktYeGpC"
+                },
+            ],
+            "role" : [],
+            "locked" : False,
+        },
 
         # ----------------
 
-        "waldorf" : {
-            "arch" : ['amd64', 'i386'],
-            "provisioner" : "cobbler",
-            "jenkins server" : "kernel-jenkins",
-            "power" : [
-                {
-                    "type" : "cdu",
-                    "address" : "10.98.4.30",
-                    "port" : "waldorf_ps1",
-                    "username"     : "kernel",
-                    "password" : "K3rn3!",
-                }
-            ],
-            "role" : ["unknown"],
-            "locked" : True,
-        },
-        "statler" : {
-            "arch" : ['amd64', 'i386'],
-            "provisioner" : "cobbler",
-            "jenkins server" : "kernel-jenkins",
-            "power" : [
-                {
-                    "type" : "cdu",
-                    "address" : "10.98.4.30",
-                    "port" : "statler_ps1",
-                    "username"     : "kernel",
-                    "password" : "K3rn3!",
-                },
-                {
-                    "type" : "cdu",
-                    "address" : "10.98.4.31",
-                    "port" : "statler_ps2",
-                    "username"     : "kernel",
-                    "password" : "K3rn3!",
-                }
-            ],
-            "role" : ["unknown"],                 # This system has a raid controler that is a pita
-            "locked" : True,
-        },
         "gloin" : {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
@@ -458,21 +405,6 @@ Configuration = {
             ],
             "role" : [],
             "locked" : True,                      # This is used as a kernel-team build system
-        },
-        "fili" : {
-            "arch" : ['amd64', 'i386'],
-            "provisioner" : "maas",
-            "jenkins server" : "kernel-jenkins",
-            "power" : [
-                {
-                    "type" : "ipmi",
-                    "address" : "10.98.5.85",
-                    "username" : "root",
-                    "password" : "insecure"
-                },
-            ],
-            "role" : [],
-            "locked" : False,
         },
         "haase" : {
             "arch" : ['amd64', 'i386'],
@@ -564,6 +496,68 @@ Configuration = {
         # The following systems are either dead or not working reliably enough to make use of.
         #
 
+        "zuijin" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.80.223",
+                    "username" : "admin",
+                    "password" : "insecure"
+                },
+            ],
+            "role" : [],
+            "locked" : False,
+        },
+        "zmeu" : {
+            "arch" : ['amd64', 'i386'],
+            "scratch drive" : "/dev/sdb",
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "10.245.80.202",
+                    "username" : "admin",
+                    "password" : "insecure"
+                },
+            ],
+            "role" : [],
+            "locked" : False,
+        },
+        "larsen" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "maas",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "ipmi",
+                    "address" : "192.168.228.90",
+                    "username" : "Administrator",
+                    "password" : "insecure"
+                },
+            ],
+            "role" : [],
+            "locked" : False,
+        },
+        "waldorf" : {
+            "arch" : ['amd64', 'i386'],
+            "provisioner" : "cobbler",
+            "jenkins server" : "kernel-jenkins",
+            "power" : [
+                {
+                    "type" : "cdu",
+                    "address" : "10.98.4.30",
+                    "port" : "waldorf_ps1",
+                    "username"     : "kernel",
+                    "password" : "K3rn3!",
+                }
+            ],
+            "role" : ["gone"],
+            "locked" : True,
+        },
         "bifur" : {
             "arch" : ['amd64', 'i386'],
             "provisioner" : "maas",
