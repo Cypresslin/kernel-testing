@@ -175,6 +175,7 @@ Configuration = {
             ],
             "role" : [],
             "locked" : False,
+            "scratch drive" : "/dev/sdb",
         },
         "rukbah" : {
             "arch" : ['amd64', 'i386'],
@@ -189,8 +190,9 @@ Configuration = {
                     "password" : "insecure"
                 },
             ],
-            "role" : [],
+            "role" : ['ubuntu_btrfs_kernel_fixes'],
             "locked" : False,
+            "scratch drive" : "/dev/sdb",
         },
         "onza" : {
             "arch" : ['amd64', 'i386'],
