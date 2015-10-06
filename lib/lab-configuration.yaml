@@ -1,0 +1,706 @@
+---
+    # The Jenkins server section. My Jenkins server is named 'jenkins'.
+    #
+    kernel-jenkins:
+        server_url: "http://10.245.80.50:8080"
+
+    # We have 2 McDivitt chartridges on the hyperscale MAAS server.
+    #
+    hyper-maas:
+        server   : "10.229.32.21" # Hostname/address of the MAAS server
+        profile  : "kernel"       # The MAAS profile to use
+        creds    : "AVA8xetuqP8aYvGC7r:9AESbkWkA4f7YTZh6B:zDg39AsXkuamcQcazpCn8mDJsaL2Gnnk"
+        user     : "kernel"       # When ssh'ing to the MAAS server, use this user
+        type     : "maas"         # This _is_ a MAAS server (as opposed to a cobbler server)
+        sut_user : "ubuntu"       # The user on the test system after it's been provisioned
+
+    # The Kernel Team's MAAS server
+    #
+    maas:
+        server   : "kernel-maas"  # Hostname/address of the MAAS server
+        profile  : "jenkins"      # The MAAS profile to use
+        creds    : "q6TPsE3AJBcVAvMqvB:uj8JPvENCh8hjdubmy:XcRLhdXxjdckFm6DQEpUKGQzMDe7VnXY"
+        user     : "jenkins"      # When ssh'ing to the MAAS server, use this user
+        type     : "maas"         # This _is_ a MAAS server (as opposed to a cobbler server)
+        sut_user : "ubuntu"       # The user on the test system after it's been provisioned
+
+    # Test systems section. This is a dictionary of all the test systems that are available
+    # to me.
+    #
+    systems:
+        alkaid:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.219"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "Personal Testing"
+            scratch drive: "/dev/sdb"
+        balboa:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.81.142"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "root"
+            role: []
+        bantam:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.89"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role:
+                - "sru"
+        cavac:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.83"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role: []
+        dagmar:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.88"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role: []
+        dwalin:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.225"
+                    password : "odkBlXo1HVRYsxS"
+                    type     : "ipmi"
+                    username : "maas"
+            role:
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+            scratch drive: "/dev/sdb"
+        etnyre:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.84"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role:
+                - "sru"
+        fili:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.98.5.226"
+                    password : "gEktYeGpC"
+                    type     : "ipmi"
+                    username : "maas"
+            role: []
+        fozzie:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.211"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "sru"
+        fuller:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.87"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role:
+                - "sru"
+        gloin:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: true
+            power:
+                -
+                    address  : "10.98.4.30"
+                    password : "K3rn3!"
+                    port     : "gloin_ps1"
+                    type     : "cdu"
+                    username : "kernel"
+                -
+                    address  : "10.98.4.31"
+                    password : "K3rn3!"
+                    port     : "gloin_ps2"
+                    type     : "cdu"
+                    username : "kernel"
+            role: []
+        gonzo:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.227"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "Filesystem Benchmarking"
+            scratch drive: "/dev/sdb"
+        haase:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.81.143"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "root"
+            role: []
+        kili:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.209"
+                    password : "kodw6gcl"
+                    type     : "ipmi"
+                    username : "maas"
+            role:
+                - "ubuntu_zfs"
+                - "ubuntu_zfs_stress"
+            scratch drive: "/dev/sdb"
+        modoc:
+            arch:
+                - "ppc64el"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.20"
+                    password : "admin"
+                    type     : "ipmi"
+                    username : ""
+            role:
+                - "sru"
+            scratch drive: "/dev/sdb"
+            series-blacklist:
+                - "lucid"
+                - "precise"
+        ms10-34-mcdivittB0:
+            arch:
+                - "arm64"
+            sub-arch: "xgene-uboot"
+            provisioner: "hyper-maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.229.65.1"
+                    node: "c34n1"
+                    password : "password"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role: []
+            series-blacklist:
+                - "lucid"
+                - "precise"
+        ms10-35-mcdivittB0:
+            arch:
+                - "arm64"
+            sub-arch: "xgene-uboot"
+            provisioner: "hyper-maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.229.65.1"
+                    node: "c35n1"
+                    password : "password"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role:
+                - "sru"
+            series-blacklist:
+                - "lucid"
+                - "precise"
+        nori:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.212"
+                    password : "SeqjBEPS6FeZaW"
+                    type     : "ipmi"
+                    username : "maas"
+            role:
+                - "arges"
+        onibi:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.205"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "sru"
+        onza:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.207"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "sru"
+            scratch drive: "/dev/sdb"
+        pepe:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.213"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "Personal Testing"
+        phact:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.224"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role: []
+            scratch drive: "/dev/sdb"
+        rainier:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.91"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role:
+                - "sru"
+        rizzo:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.210"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "debug"
+            scratch drive: "/dev/sdb"
+        rukbah:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.206"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "ubuntu_btrfs_kernel_fixes"
+            scratch drive: "/dev/sdb"
+        sayers:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.81.144"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "root"
+            role: []
+        statler:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.81.158"
+                    password : "j23x8zWbrPT"
+                    type     : "ipmi"
+                    username : "maas"
+            role: []
+            scratch drive: ""
+        tarf:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.222"
+                    password : "mBZpvBcB8sQeo"
+                    type     : "ipmi"
+                    username : "maas"
+            role:
+                - "sru"
+            scratch drive: "/dev/sdb"
+        # -----------------------------------------------------------------------------------------
+        # The following systems are either dead or not working reliably enough to make use of.
+        #
+        zmeu:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.202"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "dead"
+            scratch drive: "/dev/sdb"
+        zuijin:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.223"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "dead"
+        larsen:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.90"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role:
+                - "dead"
+        waldorf:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: true
+            power:
+                -
+                    address  : "10.98.4.30"
+                    password : "K3rn3!"
+                    port     : "waldorf_ps1"
+                    type     : "cdu"
+                    username : "kernel"
+            role:
+                - "dead"
+        bifur:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.98.5.73"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "root"
+            role:
+                - "dead"
+        dori:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.98.4.32"
+                    password : "K3rn3!"
+                    port     : "dori_ps1"
+                    type     : "cdu"
+                    username : "kernel"
+                -
+                    address  : "10.98.4.33"
+                    password : "K3rn3!"
+                    port     : "dori_ps2"
+                    type     : "cdu"
+                    username : "kernel"
+            role:
+                - "dead"
+        bofur:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.98.4.30"
+                    password : "K3rn3!"
+                    port     : "bofur_ps1"
+                    type     : "cdu"
+                    username : "kernel"
+                -
+                    address  : "10.98.4.31"
+                    password : "K3rn3!"
+                    port     : "bofur_ps2"
+                    type     : "cdu"
+                    username : "kernel"
+            role:
+                - "dead"
+        gimli:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.98.4.30"
+                    password : "K3rn3!"
+                    port     : "gimli_ps1"
+                    type     : "cdu"
+                    username : "kernel"
+                -
+                    address  : "10.98.4.31"
+                    password : "K3rn3!"
+                    port     : "gimli_ps2"
+                    type     : "cdu"
+                    username : "kernel"
+            role:
+                - "dead"
+        floyd:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.98.4.32"
+                    password : "K3rn3!"
+                    port     : "floyd_ps1"
+                    type     : "cdu"
+                    username : "kernel"
+                -
+                    address  : "10.98.4.33"
+                    password : "K3rn3!"
+                    port     : "floyd_ps2"
+                    type     : "cdu"
+                    username : "kernel"
+            role:
+                - "dead"
+        janice:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.98.4.32"
+                    password : "K3rn3!"
+                    port     : "janice_ps1"
+                    type     : "cdu"
+                    username : "kernel"
+                -
+                    address  : "10.98.4.33"
+                    password : "K3rn3!"
+                    port     : "janice_ps2"
+                    type     : "cdu"
+                    username : "kernel"
+            role:
+                - "dead"
+        pops:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.98.4.30"
+                    password : "K3rn3!"
+                    port     : "pops_ps1"
+                    type     : "cdu"
+                    username : "kernel"
+                -
+                    address  : "10.98.4.31"
+                    password : "K3rn3!"
+                    port     : "pops_ps2"
+                    type     : "cdu"
+                    username : "kernel"
+            role:
+                - "dead"
+        zoot:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.98.4.30"
+                    password : "K3rn3!"
+                    port     : "zoot_ps1"
+                    type     : "cdu"
+                    username : "kernel"
+                -
+                    address  : "10.98.4.31"
+                    password : "K3rn3!"
+                    port     : "zoot_ps2"
+                    type     : "cdu"
+                    username : "kernel"
+            role:
+                - "dead"
+
+# vi:set ts=4 sw=4 expandtab syntax=yaml:
