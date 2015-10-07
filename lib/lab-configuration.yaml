@@ -1,7 +1,7 @@
 ---
     # The Jenkins server section. My Jenkins server is named 'jenkins'.
     #
-    kernel-jenkins:
+    jenkins:
         server_url: "http://10.245.80.50:8080"
 
     # We have 2 McDivitt chartridges on the hyperscale MAAS server.
