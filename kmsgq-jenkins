@@ -384,7 +384,7 @@ class TheApp():
 
                 if 'systems' == k:
                     if 'sru' == jd['op']:
-                        jd['systems'] = s.valid_systems('SRU Testing', jd['series-name'])
+                        jd['systems'] = s.valid_systems(jd['op'], jd['series-name'])
                         if 'ubuntu_fs_fio_perf' in jd['tests']:
                             for system in s.valid_systems('Filesystem Benchmarking', jd['series-name']):
                                 jd['systems'].append(system)
