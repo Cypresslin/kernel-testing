@@ -171,6 +171,18 @@ class Base(object):
         s.ssh(r'sudo sed -i \'s/s/APT::Periodic::Update-Package-Lists "1"/APT::Periodic::Update-Package-Lists "0"/\' /etc/apt/apt.conf.d/10periodic')
         cleave('Base::disable_apt_periodic_updates')
 
+    # install_required_pkgs
+    #
+    def install_required_pkgs(s):
+        '''
+        '''
+        center("Base::install_required_pkgs")
+        s.progress('Installing Required Packages')
+
+        s.ssh('sudo apt-get install --yes python-yaml')
+
+        cleave("Base::install_required_pkgs")
+
     # install_hwe_kernel
     #
     def install_hwe_kernel(s):
@@ -612,6 +624,7 @@ class Metal(Base):
             s.install_custom_debs()
 
         s.install_python_minimal()
+        s.install_required_pkgs()
 
         # We want to reboot to pick up any new kernel that we would have installed due
         # to either the dist-upgrade that was performed, or the install of the hwe
