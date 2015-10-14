@@ -49,7 +49,7 @@ TestProfiles = {
             'lucid', 'precise', 'quantal', 'saucy',
             ],
         'arch-blacklist' : [
-            'i386', 'i686', 'athlon',
+            'i386', 'i686', 'athlon', 'arm64', 'ppc64el',
             ],
         },
 
