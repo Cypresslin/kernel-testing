@@ -259,6 +259,10 @@
                     username : ""
             role:
                 - "sru"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "ubuntu_zfs"
+                - "ubuntu_zfs_stress"
             scratch drive: "/dev/sdb"
             series-blacklist:
                 - "lucid"
@@ -297,6 +301,10 @@
                     username : "Administrator"
             role:
                 - "sru"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "ubuntu_zfs"
+                - "ubuntu_zfs_stress"
             series-blacklist:
                 - "lucid"
                 - "precise"
