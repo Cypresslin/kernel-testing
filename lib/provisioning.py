@@ -394,6 +394,7 @@ class Metal(Base):
         cdebug('Verifying arch:')
         if retval:
             retval = False
+            installed_arch = 'unknown'
             result, processor = s.ssh(r'uname -p')
             for line in processor:
                 line = line.strip()
