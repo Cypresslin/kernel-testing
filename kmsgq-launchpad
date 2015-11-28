@@ -53,9 +53,9 @@ class TheApp():
         center('TheApp::_handler')
         s._dump(payload)
 
-        if 'bug id' in payload:
+        if 'bug-id' in payload:
             lp = LaunchpadService({'launchpad_client_name': 'kernel-team-sru-workflow-manager' })
-            bug = lp.get_bug(payload['bug id'])
+            bug = lp.get_bug(payload['bug-id'])
             cdebug(bug.title)
 
             content = ''
