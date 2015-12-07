@@ -100,7 +100,8 @@
                     password : "insecure"
                     type     : "ipmi"
                     username : "Administrator"
-            role: []
+            role:
+                - "sru"
         dwalin:
             arch:
                 - "amd64"
@@ -176,7 +177,7 @@
                     type     : "ipmi"
                     username : "Administrator"
             role:
-                - "sru"
+                - "dead"
         gloin:
             arch:
                 - "amd64"
@@ -398,7 +399,7 @@
                     type     : "ipmi"
                     username : "Administrator"
             role:
-                - "sru"
+                - "dead"
         rizzo:
             arch:
                 - "amd64"
