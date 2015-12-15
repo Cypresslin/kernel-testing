@@ -1,7 +1,7 @@
 
 Msg = {
     "key"         : "kernel.maas.daily",
-    'systems'     : ['ms10-34-mcdivittB0'],
+    'systems'     : ['ms10-34-mcdivittB0-kernel'],
     'arches'      : ['arm64'],
     'series-name' : 'vivid',
 }
