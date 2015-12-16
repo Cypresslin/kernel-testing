@@ -452,6 +452,26 @@ TestProfiles = {
 # Test Collections may be defined, and will run the list of autotest tests in them
 #
 TestCollections = {
+    # CPC
+    #
+    'cpc' : [
+            'ubuntu_qrt_kernel_hardening',
+            'ubuntu_qrt_kernel_panic',
+            'ubuntu_qrt_kernel_security',
+            'ubuntu_qrt_kernel_aslr_collisions',
+            'ubuntu_lxc',
+            'ubuntu_kernel_selftests',
+        ],
+
+    # zsystem specific tests
+    #
+    'ibm' : [
+            'ubuntu_qrt_kernel_hardening',
+            'ubuntu_qrt_kernel_panic',
+            'ubuntu_qrt_kernel_security',
+            'ubuntu_qrt_kernel_aslr_collisions',
+        ],
+
     # These are the tests that get run as DEP8 tests
     #
     'dep8' : [
