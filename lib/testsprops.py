@@ -70,6 +70,9 @@ TestProfiles = {
                 'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl', 'libattr1-dev',
                 ],
             },
+        'series-blacklist' : [
+            'lucid', 'precise', 'vivid', 'utopic',
+            ],
         },
 
     'ubuntu_zfs_fstest' : {
@@ -78,6 +81,9 @@ TestProfiles = {
                 'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl', 'libattr1-dev',
                 ],
             },
+        'series-blacklist' : [
+            'lucid', 'precise', 'vivid', 'utopic',
+            ],
         },
 
     'ubuntu_zfs_xfs_generic' : {
@@ -87,7 +93,7 @@ TestProfiles = {
                 ],
             },
         'series-blacklist' : [
-            'lucid', 'precise',
+            'lucid', 'precise', 'vivid', 'utopic',
             ],
         },
 
@@ -98,7 +104,7 @@ TestProfiles = {
                 ],
             },
         'series-blacklist' : [
-            'lucid', 'precise',
+            'lucid', 'precise', 'vivid', 'utopic',
             ],
         },
 
