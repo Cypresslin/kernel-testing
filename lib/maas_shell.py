@@ -6,6 +6,7 @@ from subprocess                         import Popen, PIPE, STDOUT
 from threading                          import Thread
 from time                               import sleep
 from logging                            import debug, info
+from .log                               import cdebug, cinfo, center, cleave
 import json
 
 try:
@@ -131,13 +132,13 @@ class MShell():
     #
     @classmethod
     def ssh(cls, target, cmd, user, additional_ssh_options='', quiet=False, ignore_result=False):
-        debug("Enter Shell::ssh")
-        debug('                    target : \'%s\'' % target)
-        debug('                       cmd : \'%s\'' % cmd)
-        debug('                      user : \'%s\'' % user)
-        debug('    additional_ssh_options : \'%s\'' % additional_ssh_options)
-        debug('                     quiet : %s' % quiet)
-        debug('             ignore_result : %s' % ignore_result)
+        center("Shell::ssh")
+        cdebug('                    target : \'%s\'' % target)
+        cdebug('                       cmd : \'%s\'' % cmd)
+        cdebug('                      user : \'%s\'' % user)
+        cdebug('    additional_ssh_options : \'%s\'' % additional_ssh_options)
+        cdebug('                     quiet : %s' % quiet)
+        cdebug('             ignore_result : %s' % ignore_result)
         ssh_options = cls.ssh_options + ' ' + additional_ssh_options
         if user:
             ssh_cmd = 'ssh %s %s@%s %s' % (ssh_options, user, target, cmd)
@@ -145,39 +146,34 @@ class MShell():
             ssh_cmd = 'ssh %s %s %s' % (ssh_options, target, cmd)
         result = 0
         output = ''
-        debug("                  ssh_cmd : '%s'" % ssh_cmd)
+        cdebug("                  ssh_cmd : '%s'" % ssh_cmd)
         if cls._dry_run:
-            debug('[dry-run] %s' % (ssh_cmd))
+            cdebug('[dry-run] %s' % (ssh_cmd))
         else:
             try:
                 result, output = sh(ssh_cmd, quiet=quiet, ignore_result=ignore_result)
                 if cmd.startswith('maas '):
                     if cmd.startswith('maas login') or cmd.startswith('maas refresh'):
                         for l in output:
-                            debug(l.strip())
+                            cdebug(l.strip())
                     else:
                         j = ' '.join(output)
                         o = json.loads(j)
                         for l in json.dumps(o, sort_keys=True, indent=4).split('\n'):
-                            debug(l.rstrip())
+                            cdebug(l.rstrip())
 
             except ShellError as e:
-                debug("+++ ShellError")
-                debug(output)
+                cdebug("+++ ShellError")
+                cdebug(output)
                 if result != 0 and not ignore_result:
                     # Wait for just a few seconds and try it again.
                     #
-                    debug(" **")
-                    debug(" ** retrying the last command")
-                    debug(" **")
-                    result, output = msh(ssh_cmd, quiet=quiet, ignore_result=ignore_result)
+                    result, output = sh(ssh_cmd, quiet=quiet, ignore_result=ignore_result)
                     if result != 0 and not ignore_result:
                         sleep(15)
                         raise ShellError(ssh_cmd, result, output)
-            #except:
-            #    debug("+++ Some other exception")
 
-        debug("Leave Shell::ssh")
+        cleave("Shell::ssh")
         return result, output
 
 # vi:set ts=4 sw=4 expandtab syntax=python:
