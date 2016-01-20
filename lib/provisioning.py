@@ -255,7 +255,7 @@ class Base(object):
         '''
         center('Base::enable_src')
         s.progress('Enabling Src')
-        s.ssh('\'cat /etc/apt/sources.list | sed s/deb/deb-src/ | sudo tee -a /etc/apt/sources.list\'')
+        s.ssh('\'cat /etc/apt/sources.list | sed "s/^deb /deb-src /" | sudo tee -a /etc/apt/sources.list\'')
         cleave('Base::enable_src')
 
     # enable_proposed
