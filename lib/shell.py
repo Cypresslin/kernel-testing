@@ -158,7 +158,7 @@ class Shell():
         else:
             try:
                 result, output = sh(ssh_cmd, quiet=quiet, ignore_result=ignore_result)
-                if type(output) is list:
+                if type(output) is list and len(output) > 0:
                     for l in output[0].split('\n'):
                         cdebug(l)
                 else:
