@@ -41,7 +41,10 @@ class TheApp():
         '''
         '''
         s.args = args
-        s.jenkins_url_default = "http://kernel-jenkins.kernel:8080"
+        if s.args.lkp:
+            s.jenkins_url_default = "http://localhost:8080"
+        else:
+            s.jenkins_url_default = "http://kernel-jenkins.kernel:8080"
         s.jenkins = Jenkins(s.jenkins_url_default)
         s.job_defaults = {
             'key'            : 'kernel.testing.request',
@@ -357,7 +360,10 @@ class TheApp():
         s.dyno() # Reload the configuration and any other relevant files
 
         valid_key = False
-        for key in ['kernel.testing.request', 'kernel.publish', 'kernel.maas.daily']:
+        valid_keys = ['kernel.testing.request', 'kernel.publish', 'kernel.maas.daily']
+        if s.args.lkp:
+            valid_keys.append('kernel.testing.livekernelpatching.request')
+        for key in valid_keys:
             if payload['key'].startswith(key):
                 valid_key = True
                 break
@@ -471,7 +477,11 @@ class TheApp():
                 s.mq = MsgQueue(address='localhost', port=9123)
             else:
                 s.mq = MsgQueue()
-            s.mq.listen('kernel-publishing-monitor', 'kernel.#', s._handler)
+            if s.args.lkp:
+                queue = 'lkp-monitor'
+            else:
+                queue = 'kernel-publishing-monitor'
+            s.mq.listen(queue, 'kernel.#', s._handler)
 
             retval = 0
 
