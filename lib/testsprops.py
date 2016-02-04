@@ -470,9 +470,9 @@ TestProfiles = {
 # Test Collections may be defined, and will run the list of autotest tests in them
 #
 TestCollections = {
-    # Kernel Live Patching
+    # Live Kernel Patching
     #
-    'klp' : [
+    'lkp' : [
             'ubuntu_cve_kernel',
         ],
 

@@ -401,7 +401,10 @@ class TheApp():
                     if 'sru' == jd['op']:
                         jd['tests'] = SRU_TestsList
                     else:
-                        jd['tests'] = ['default']
+                        if s.args.lkp:
+                            jd['tests'] = ['lkp']
+                        else:
+                            jd['tests'] = ['default']
 
                     # Filesystem benchmark tests are handled specially
                     #
