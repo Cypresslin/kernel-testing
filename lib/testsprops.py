@@ -39,6 +39,18 @@ TestProfiles = {
             ],
         },
 
+    'ubuntu_cve_kernel' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'gcc-multilib', 'gdb', 'git'
+                ],
+            },
+        'series-blacklist' : [
+            ],
+        'arch-blacklist' : [
+            ],
+        },
+
     'ubuntu_seccomp' : {
         'packages' : {
             'common' : [
@@ -450,7 +462,7 @@ TestProfiles = {
             'common' : ['build-essential', 'gcc-multilib', 'gdb', 'git']
             },
         'series-blacklist': [
-            'lucid', 'precise', 'quantal', 'saucy', 'trusty',
+            'lucid', 'precise', 'quantal', 'saucy', 'trusty', 'xenial',
             ],
         },
 }
@@ -458,6 +470,12 @@ TestProfiles = {
 # Test Collections may be defined, and will run the list of autotest tests in them
 #
 TestCollections = {
+    # Kernel Live Patching
+    #
+    'klp' : [
+            'ubuntu_cve_kernel',
+        ],
+
     # CPC
     #
     'cpc' : [
@@ -476,6 +494,9 @@ TestCollections = {
             'ubuntu_qrt_kernel_panic',
             'ubuntu_qrt_kernel_security',
             'ubuntu_qrt_kernel_aslr_collisions',
+            'ubuntu_lxc',
+            'ubuntu_qrt_apparmor',
+            'ubuntu_kernel_selftests',
         ],
 
     # These are the tests that get run as DEP8 tests
@@ -486,6 +507,7 @@ TestCollections = {
             'ubuntu_qrt_kernel_security',
             'ubuntu_qrt_kernel_aslr_collisions',
             'ubuntu_qrt_apparmor'
+            'ubuntu_kernel_selftests'
         ],
 
     # The set of tests that Ubuntu Engineering QA run.
