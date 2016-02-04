@@ -55,6 +55,9 @@ class TheApp():
                 'hwe'            : False,
             }
 
+            if args.lkp:
+                msg['key'] = 'livekernelpatching.testing.request'
+
             # ----------------------------------------------------------------------
             # series
             #
@@ -305,6 +308,7 @@ directories. This is usefull if you are debugging changes to the kernel-testing 
     parser.add_argument('--op',       required=False,                                       help="")
     parser.add_argument('--root',     required=False, type=str,                             help=help_root)
     parser.add_argument('--local',    action='store_true', default=False,                   help='Assume we have an ssh tunnel setup to the MQ server.')
+    parser.add_argument('--lkp',      action='store_true', default=False,                   help='This request is specific to Live Kernel Patching.')
     args = parser.parse_args()
 
     # If logging parameters were set on the command line, handle them
