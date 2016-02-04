@@ -414,7 +414,7 @@ class TheApp():
         cdebug('  tests: %s' % str(jd['tests']))
 
         if s.args.lkp:
-            if jd['key'] == 'livekernelpatching.testing.request':
+            if jd['key'] == 'kernel.testing.livekernelpatching.request':
                 # This is a test request from an individual, not from any part of the automated
                 # system (shankbot).
                 #

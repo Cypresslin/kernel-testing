@@ -56,7 +56,7 @@ class TheApp():
             }
 
             if args.lkp:
-                msg['key'] = 'livekernelpatching.testing.request'
+                msg['key'] = 'kernel.testing.livekernelpatching.request'
 
             # ----------------------------------------------------------------------
             # series
