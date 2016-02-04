@@ -55,6 +55,9 @@ class TheApp():
             'fs-benchmarks'  : None,
         }
 
+        if s.args.lkp:
+            s.job_defaults['key'] = 'livekernelpatching.testing.request'
+
         s.jjc = os.path.dirname(sys.argv[0])
         s.jjc = os.path.join(s.jjc, 'jenkins-job-creator', 'jjc')
 
@@ -410,27 +413,33 @@ class TheApp():
         cdebug('systems: %s' % str(jd['systems']))
         cdebug('  tests: %s' % str(jd['tests']))
 
-
-        if jd['key'] == 'kernel.testing.request':
-            # This is a test request from an individual, not from any part of the automated
-            # system (shankbot).
-            #
-            s.handle_request(jd)
-        elif jd['key'].startswith('kernel.publish'):
-            # This *is* a notification from shankbot that a new kernel is available for testing.
-            #
-            if 'proposed' in jd['pocket']:
-                if jd['package'] not in s.package_blacklist:
-                    s.handle_kernel_publish(jd)
-        elif jd['key'].startswith('kernel.maas.daily'):
-            # This is a request to test the maas daily images
-            #
-            s.handle_maas_daily_image_test(jd)
+        if s.args.lkp:
+            if jd['key'] == 'livekernelpatching.testing.request':
+                # This is a test request from an individual, not from any part of the automated
+                # system (shankbot).
+                #
+                s.handle_request(jd)
         else:
-            # Just ignore any payload keys we don't recognize. kernel.testing.kernel.completed is
-            # an example.
-            #
-            pass
+            if jd['key'] == 'kernel.testing.request':
+                # This is a test request from an individual, not from any part of the automated
+                # system (shankbot).
+                #
+                s.handle_request(jd)
+            elif jd['key'].startswith('kernel.publish'):
+                # This *is* a notification from shankbot that a new kernel is available for testing.
+                #
+                if 'proposed' in jd['pocket']:
+                    if jd['package'] not in s.package_blacklist:
+                        s.handle_kernel_publish(jd)
+            elif jd['key'].startswith('kernel.maas.daily'):
+                # This is a request to test the maas daily images
+                #
+                s.handle_maas_daily_image_test(jd)
+            else:
+                # Just ignore any payload keys we don't recognize. kernel.testing.kernel.completed is
+                # an example.
+                #
+                pass
 
         cleave('TheApp::_handler')
 
@@ -489,6 +498,7 @@ examples:
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
     parser.add_argument('--debug', action='store_true', default=False, help='Print out a lot of messages about what is going on.')
     parser.add_argument('--local', action='store_true', default=False, help='Assume we have sshuttle setup to the MQ server.')
+    parser.add_argument('--lkp',   action='store_true', default=False, help='Handle requests for live kernel patching testing.')
 
     args = parser.parse_args()
 
