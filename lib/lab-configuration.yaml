@@ -213,7 +213,7 @@
                     type     : "ipmi"
                     username : "admin"
             role:
-                - "Filesystem Benchmarking"
+                - "lkp"
             scratch drive: "/dev/sdb"
         haase:
             arch:
