@@ -56,7 +56,7 @@ class TheApp():
         }
 
         if s.args.lkp:
-            s.job_defaults['key'] = 'livekernelpatching.testing.request'
+            s.job_defaults['key'] = 'kernel.testing.livekernelpatching.request'
 
         s.jjc = os.path.dirname(sys.argv[0])
         s.jjc = os.path.join(s.jjc, 'jenkins-job-creator', 'jjc')
