@@ -42,7 +42,7 @@ TestProfiles = {
     'ubuntu_cve_kernel' : {
         'packages' : {
             'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'git'
+                'build-essential', 'gcc-multilib', 'gdb', 'git', 'libkeyutils-dev',
                 ],
             },
         'series-blacklist' : [
