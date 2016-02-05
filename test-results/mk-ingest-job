@@ -123,7 +123,7 @@ if __name__ == '__main__':
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
     parser.add_argument('--job-name', required=True,  help='The name of the job that generated the test results that this job will ingest.')
     parser.add_argument('--build-id', required=True,  help='The build id of the job that generated the test results.')
-    parser.add_argument('--jenkins-url',  required=False, default='http://kernel-jenkins:8080', help='URL to the jenkins host.')
+    parser.add_argument('--jenkins-url',  required=False, default='http://localhost:8080', help='URL to the jenkins host.')
     args = parser.parse_args()
 
     app = IngestJobsFactory(args)
