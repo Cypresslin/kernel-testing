@@ -3,7 +3,7 @@
 
 from os                                 import getenv, path
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
-from logging                            import error, info, basicConfig, DEBUG, WARNING, INFO
+from logging                            import error, basicConfig, DEBUG, WARNING
 
 try:
     from lib.configuration                  import Configuration
@@ -14,13 +14,14 @@ except ImportError as e:
     print("")
     exit(-1)
 
-from lib.log                            import cdebug, Clog, cerror
-from lib.shell                          import ShellError, ShellTimeoutError, sh, ssh, Shell
+from lib.log                            import cdebug, Clog
+from lib.shell                          import ShellError, ShellTimeoutError
 from lib.provisioning                   import Metal
 from lib.exceptions                     import ErrorExit
 from lib.hwe                            import HWE
 
 from lib.ubuntu                         import Ubuntu
+
 
 # MetalApp
 #
