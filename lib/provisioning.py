@@ -1,20 +1,20 @@
 #!/usr/bin/env python
 #
 from sys                                import stdout
-from os                                 import path
 from logging                            import error
 from datetime                           import datetime
 from time                               import sleep
 import re
 
-#from lib.infrastructure                 import Orchestra, LabHW, MAASConfig
 from lib.log                            import cdebug, cinfo, center, cleave
 from lib.hwe                            import HWE
-from lib.shell                          import sh, ShellError, ssh, Shell
+from lib.shell                          import ShellError, Shell
 from lib.ubuntu                         import Ubuntu
 from lib.exceptions                     import ErrorExit
 from lib.maas                           import MAAS
 from configuration                      import Configuration
+from .key_debs                          import KernelDebs
+
 
 # PS
 #
@@ -46,12 +46,13 @@ class PS(object):
     def provision(s):
         return s.server.provision()
 
+
 # Base
 #
 class Base(object):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False):
+    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False, lkp=False):
         center("Base::__init__")
 
         # If we are installing a HWE kernel, we want to install the correct series first.
@@ -68,6 +69,7 @@ class Base(object):
         s.xen = xen
         s.debs = debs
         s.ppa  = ppa
+        s.lkp = lkp
         s.kernel = kernel
         s.dry_run = dry_run
         s.progress_dots = 0
@@ -84,7 +86,6 @@ class Base(object):
         '''
         dots = '.'
         s.progress_dots += 1
-        prev_msg = s.progress_msg
         s.progress_msg = dots + ' ' + msg
         stdout.write(' ' + s.progress_msg + '\n')
         stdout.flush()
@@ -170,6 +171,39 @@ class Base(object):
         s.progress('Disabling Periodic APT Updates')
         s.ssh(r'sudo sed -i \'s/s/APT::Periodic::Update-Package-Lists "1"/APT::Periodic::Update-Package-Lists "0"/\' /etc/apt/apt.conf.d/10periodic')
         cleave('Base::disable_apt_periodic_updates')
+
+    # install_specific_kernel_version
+    #
+    def install_specific_kernel_version(s):
+        '''
+        '''
+        center("Base::install_specific_kernel_version")
+        s.progress('Installing Specific Kernel Version')
+
+        kd = KernelDebs(s.kernel, s.series, s.arch)
+        urls = kd.get_urls()
+        if urls:
+            pass
+            for url in urls:
+                # Pull them down
+                #
+                s.ssh('wget -r -A .deb -e robots=off -nv -l1 --no-directories %s' % url)
+
+            # Install them
+            #
+            s.ssh('sudo dpkg -i *.deb', ignore_result=True)
+
+        else:
+            raise ErrorExit('Failed to get the urls for the spcified kernel version (%s)' % s.kernel)
+
+        cleave("Base::install_specific_kernel_version")
+
+    # enable_live_kernel_patching
+    #
+    def enable_live_kernel_patching(s):
+        center("Base::enable_live_kernel_patching")
+        s.progress('Enabling Live Kernel Patching')
+        cleave('Base::enable_live_kernel_patching')
 
     # install_required_pkgs
     #
@@ -348,6 +382,7 @@ class Base(object):
         s.ssh('sudo ln -s /lib/firmware/\$\(uname -r\)/* /lib/firmware/', ignore_result=True)
         cleave('Base::mainline_firmware_hack')
 
+
 # Metal
 #
 # Every SUT has a 'bare-metal' component. Most of the time that _is_ the SUT and there
@@ -356,10 +391,10 @@ class Base(object):
 class Metal(Base):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False):
+    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False, lkp=False):
         center("Metal::__init__")
 
-        Base.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, xen=xen, debs=debs, ppa=ppa, dry_run=dry_run)
+        Base.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, xen=xen, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp)
 
         cleave("Metal::__init__")
 
@@ -380,11 +415,11 @@ class Metal(Base):
             line = line.strip()
             if line.startswith('Codename:'):
                 cdebug('lsb_release --codename : ' + line)
-                print('         series: ' + line.replace('Codename:','').strip())
+                print('         series: ' + line.replace('Codename:', '').strip())
                 if s.series not in line:
                     error("")
                     error("*** ERROR:")
-                    error("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, line.replace('Codename:\t','')))
+                    error("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, line.replace('Codename:\t', '')))
                     error("")
                 else:
                     retval = True
@@ -478,7 +513,6 @@ class Metal(Base):
                     error("*** ERROR:")
                     error("    Was expecting the target kernel version to be (%s) but found it to be (%s) instead." % (s.kernel, installed_kernel))
                     error("")
-
 
         cleave('Metal::verify_target (%s)' % retval)
         return retval
@@ -580,10 +614,17 @@ class Metal(Base):
             sleep(60 * 3) # Give it 3 minutes
             s.wait_for_target(progress='Coming up', timeout=60)
 
+        if s.kernel:
+            s.install_specific_kernel_version()
+            s.reboot(progress='Rebooting for Kernel version %s' % s.kernel)
+
         if not s.verify_target():
             cinfo("Target verification failed.")
             cleave('Metal::provision')
             return False
+
+        if s.lkp:
+            s.enable_live_kernel_patching()
 
         # Disable APT from periodicly running and trying to update the systems.
         #
