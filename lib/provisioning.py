@@ -641,18 +641,6 @@ class Metal(Base):
             s.enable_ppa()
         s.dist_upgrade()
 
-        if s.kernel:
-            s.install_specific_kernel_version()
-            s.reboot(progress='Rebooting for Kernel version %s' % s.kernel)
-
-        if not s.verify_target():
-            cinfo("Target verification failed.")
-            cleave('Metal::provision')
-            return False
-
-        if s.lkp:
-            s.enable_live_kernel_patching()
-
         # Disable APT from periodicly running and trying to update the systems.
         #
         s.disable_apt_periodic_updates()
@@ -662,7 +650,7 @@ class Metal(Base):
         #
         if s.hwe:
             s.install_hwe_kernel()
-            s.reboot(progress='Rebooting for HWE Kernel')
+            s.reboot(progress='Rebooting for HWE Kernel')                    # reboot
             if not s.verify_hwe_target():
                 cinfo("Target verification failed.")
                 cdebug('Leave Metal::provision')
@@ -670,18 +658,33 @@ class Metal(Base):
 
         if s.xen:
             s.install_xen()
-            s.reboot(progress='Rebooting for Xen Kernel')
+            s.reboot(progress='Rebooting for Xen Kernel')                    # reboot
             if not s.verify_xen_target():
                 cinfo("Target verification failed.")
                 cleave('Metal::provision')
                 return False
 
-        if Ubuntu().is_development_series(s.series):
-            s.kernel_upgrade()
-        s.mainline_firmware_hack()
-
         if s.debs is not None:
             s.install_custom_debs()
+            s.reboot(progress='Rebooting for custom dbes')                   # reboot
+
+        if s.kernel:
+            s.install_specific_kernel_version()
+            s.reboot(progress='Rebooting for Kernel version %s' % s.kernel)  # reboot
+
+        if Ubuntu().is_development_series(s.series):
+            s.kernel_upgrade()
+            s.reboot(progress='Rebooting for development series kernel')     # reboot
+        s.mainline_firmware_hack()
+
+        s.progress('Verifying the running kernel version')
+        if not s.verify_target():
+            cinfo("Target verification failed.")
+            cleave('Metal::provision')
+            return False
+
+        if s.lkp:
+            s.enable_live_kernel_patching()
 
         s.install_python_minimal()
         s.install_required_pkgs()
