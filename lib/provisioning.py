@@ -252,13 +252,6 @@ class Base(object):
         center("Base::install_hwe_kernel")
         s.progress('Installing HWE Kernel')
 
-        # We add the x-swat ppa so we can pick up the development HWE kernel
-        # if we want.
-        #
-        if 'ppa' in HWE[s.hwe_series]:
-            s.ssh('sudo apt-get install --yes python-software-properties')
-            s.ssh('sudo apt-add-repository ppa:ubuntu-x-swat/q-lts-backport')
-
         hwe_package = HWE[s.hwe_series]['package']
         s.ssh('sudo apt-get update', ignore_result=True)
         s.ssh('sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=1 apt-get install --yes %s' % (hwe_package))
