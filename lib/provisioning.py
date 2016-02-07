@@ -13,7 +13,7 @@ from lib.ubuntu                         import Ubuntu
 from lib.exceptions                     import ErrorExit
 from lib.maas                           import MAAS
 from configuration                      import Configuration
-from .key_debs                          import KernelDebs
+from .kernel_debs                       import KernelDebs
 
 
 # PS
