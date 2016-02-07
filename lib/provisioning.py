@@ -620,7 +620,7 @@ class Metal(Base):
 
         s.progress('Provisioner setup')
         s.ps.provision()
-        s.wait_for_target(progress='Installing', timeout=60) # Allow 30 minutes for network installation
+        s.wait_for_target(progress='Installing', timeout=60)  # Allow 30 minutes for network installation
 
         # If we are installing via maas we are likely using the fastpath installer. That does
         # it's own reboot after installation. There is a window where we could think the system
@@ -629,8 +629,17 @@ class Metal(Base):
         #
         if s.ps.type == 'maas':
             cinfo("Giving it 5 more minutes")
-            sleep(60 * 3) # Give it 3 minutes
+            sleep(60 * 3)  # Give it 3 minutes
             s.wait_for_target(progress='Coming up', timeout=60)
+
+        # The very first thing we need to do is make our changes to the apt sources and then dist-upgrade
+        # the system. Once we do this the kernels that we install should be the right one.
+        #
+        s.enable_proposed()
+        s.enable_src()
+        if s.ppa is not None:
+            s.enable_ppa()
+        s.dist_upgrade()
 
         if s.kernel:
             s.install_specific_kernel_version()
@@ -667,17 +676,8 @@ class Metal(Base):
                 cleave('Metal::provision')
                 return False
 
-        # Once the initial installation has completed, we continue to install and update
-        # packages so that we are testing the latest kernel, which is what we want.
-        #
-        s.enable_proposed()
-        s.enable_src()
-        if s.ppa is not None:
-            s.enable_ppa()
         if Ubuntu().is_development_series(s.series):
             s.kernel_upgrade()
-        else:
-            s.dist_upgrade()
         s.mainline_firmware_hack()
 
         if s.debs is not None:
