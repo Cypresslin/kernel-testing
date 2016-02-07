@@ -661,10 +661,10 @@ class Metal(Base):
         if s.hwe:
             s.install_hwe_kernel()
             s.reboot(progress='Rebooting for HWE Kernel')
-            #if not s.verify_hwe_target():
-            #    cinfo("Target verification failed.")
-            #    cdebug('Leave Metal::provision')
-            #    return False
+            if not s.verify_hwe_target():
+                cinfo("Target verification failed.")
+                cdebug('Leave Metal::provision')
+                return False
 
         if s.xen:
             s.install_xen()
