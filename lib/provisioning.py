@@ -183,8 +183,9 @@ class Base(object):
         kd = KernelDebs(s.kernel, s.series, s.arch)
         urls = kd.get_urls()
         if urls:
-            pass
             for url in urls:
+                cdebug(url, 'magenta')
+
                 # Pull them down
                 #
                 s.ssh('wget -r -A .deb -e robots=off -nv -l1 --no-directories %s' % url)
@@ -192,6 +193,26 @@ class Base(object):
             # Install them
             #
             s.ssh('sudo dpkg -i *.deb', ignore_result=True)
+
+            # Remove all other kernels
+            #
+            purge_list = []
+            target = '4.3.0-5.16'
+            result, output = s.ssh('dpkg -l \'linux-*\'', quiet=True)
+            for l in output:
+                if l.startswith('ii'):
+                    if 'linux-headers' in l or 'linux-image' in l:  # Only interested in kernel packages
+                        if target not in l:                         # Ignore lines that contain the kernel version we are specifically targeting
+                            info = l.split()
+                            package = info[1]
+                            if any(char.isdigit() for char in package):
+                                purge_list.append(package)
+
+            for p in purge_list:
+                cdebug(p)
+                s.ssh('sudo apt-get purge %s' % p, quiet=True)
+
+            s.ssh('sudo update-grub', quiet=True)
 
         else:
             raise ErrorExit('Failed to get the urls for the spcified kernel version (%s)' % s.kernel)
