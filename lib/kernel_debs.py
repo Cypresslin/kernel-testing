@@ -55,12 +55,13 @@ class KernelDebs:
         url = ''
         try:
             for fid in filenames:
-                url = self.get_binaries(self.version, filenames[0])[0]
+                url = self.get_binaries(self.version, fid)[0]
 
                 # Verify that we can fetch the url
                 #
                 urllib2.urlopen(url).headers.getheader('Content-Length')
 
+                cdebug('appending: "%s"' % url)
                 urls.append(url)
 
         except GetPublishedSourcesError as e:
