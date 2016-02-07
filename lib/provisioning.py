@@ -188,7 +188,7 @@ class Base(object):
 
                 # Pull them down
                 #
-                s.ssh('wget -r -A .deb -e robots=off -nv -l1 --no-directories %s' % url)
+                s.ssh('wget -r -A .deb -e robots=off -nv -l1 --no-directories %s' % url, quiet=True)
 
             # Install them
             #
@@ -197,8 +197,10 @@ class Base(object):
             # Remove all other kernels
             #
             purge_list = []
-            target = '4.3.0-5.16'
-            result, output = s.ssh('dpkg -l \'linux-*\'', quiet=True)
+            m = re.search('(\d+.\d+.\d+-\d+).*', s.kernel)
+            target = m.group(1)
+            cdebug('target: %s' % target, 'cyan')
+            result, output = s.ssh('dpkg -l \\\'linux-*\\\'', quiet=True)
             for l in output:
                 if l.startswith('ii'):
                     if 'linux-headers' in l or 'linux-image' in l:  # Only interested in kernel packages
@@ -208,12 +210,14 @@ class Base(object):
                             if any(char.isdigit() for char in package):
                                 purge_list.append(package)
 
+            cdebug('Kernel packages to be purged:')
             for p in purge_list:
-                cdebug(p)
-                s.ssh('sudo apt-get purge %s' % p, quiet=True)
+                cdebug('    %s' % p)
+
+            for p in purge_list:
+                s.ssh('sudo apt-get purge --yes %s' % p, quiet=True)
 
             s.ssh('sudo update-grub', quiet=True)
-
         else:
             raise ErrorExit('Failed to get the urls for the spcified kernel version (%s)' % s.kernel)
 
