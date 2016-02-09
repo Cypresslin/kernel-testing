@@ -8,11 +8,11 @@ import re
 
 from lib.log                            import cdebug, cinfo, center, cleave
 from lib.hwe                            import HWE
-from lib.shell                          import ShellError, Shell
+from lib3.shell                         import ShellError, Shell
 from lib.ubuntu                         import Ubuntu
 from lib.exceptions                     import ErrorExit
 from lib.maas                           import MAAS
-from configuration                      import Configuration
+from .configuration                     import Configuration
 from .kernel_debs                       import KernelDebs
 
 
@@ -36,7 +36,7 @@ class PS(object):
             # in the configuration information.
             #
             sub_arch = Configuration['systems'][target].get('sub-arch', 'generic')
-            s.server = MAAS(s.profile, s.server, s.user, s.creds, target, series, arch, sub_arch)
+            s.server = MAAS(s.server, s.creds, target, p['domain'], series, arch, sub_arch)
         else:
             s.server = None
         cleave("PS::__init__")
@@ -62,7 +62,11 @@ class Base(object):
             series = HWE[series]['series']
 
         s.ps = PS(target, series, arch)
-        s.target = target
+
+        sp = Configuration['systems'][target]['provisioner']
+        p = Configuration[sp]
+        s.target = '%s.%s' % (target, p['domain'])
+
         s.series = series
         s.arch = arch
         s.hwe = hwe
@@ -298,6 +302,23 @@ class Base(object):
         if wait:
             s.wait_for_target()
         cleave('Base::reboot')
+
+    # fixup_apt_sources
+    #
+    def fixup_apt_sources(s):
+        '''
+        '''
+        center('Base::fixup_apt_sources')
+        s.progress('Fixup /etc/apt/sources.list')
+
+        # Make sure we are using the us archive, it should be faster
+        #
+        s.ssh('\'cat /etc/apt/sources.list | sed "s/\/archive\./\/us.archive./" | sudo tee /etc/apt/sources.list\'')
+
+        # We don't use any multiverse packages
+        #
+        s.ssh('\'cat /etc/apt/sources.list | sed "s/multiverse//" | sudo tee /etc/apt/sources.list\'')
+        cleave('Base::fixup_apt_sources')
 
     # enable_src
     #
@@ -619,22 +640,24 @@ class Metal(Base):
         center("Enter Metal::provision")
 
         s.progress('Provisioner setup')
-        s.ps.provision()
-        s.wait_for_target(progress='Installing', timeout=60)  # Allow 30 minutes for network installation
+        if not s.ps.provision():
+            raise ErrorExit('Failed to provision the system')
+        # s.wait_for_target(progress='Installing', timeout=60)  # Allow 30 minutes for network installation
 
-        # If we are installing via maas we are likely using the fastpath installer. That does
-        # it's own reboot after installation. There is a window where we could think the system
-        # is up but it's not really. Wait for a bit and then check for the system to be up
-        # again.
-        #
-        if s.ps.type == 'maas':
-            cinfo("Giving it 5 more minutes")
-            sleep(60 * 3)  # Give it 3 minutes
-            s.wait_for_target(progress='Coming up', timeout=60)
+        # # If we are installing via maas we are likely using the fastpath installer. That does
+        # # it's own reboot after installation. There is a window where we could think the system
+        # # is up but it's not really. Wait for a bit and then check for the system to be up
+        # # again.
+        # #
+        # if s.ps.type == 'maas':
+        #     cinfo("Giving it 5 more minutes")
+        #     sleep(60 * 3)  # Give it 3 minutes
+        #     s.wait_for_target(progress='Coming up', timeout=60)
 
         # The very first thing we need to do is make our changes to the apt sources and then dist-upgrade
         # the system. Once we do this the kernels that we install should be the right one.
         #
+        s.fixup_apt_sources()
         s.enable_proposed()
         s.enable_src()
         if s.ppa is not None:
