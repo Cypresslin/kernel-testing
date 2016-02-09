@@ -6,256 +6,96 @@
 #             after the system comes up.
 #
 
-from os                                 import path
-from logging                            import debug
+from logging                                        import debug
 import json
-from lib.maas_shell                     import sh, mssh
-from lib.log                            import cdebug
-from time                               import sleep
-from datetime                           import datetime, timedelta
+from lib.maas_shell                                 import mssh
+from lib.log                                        import cdebug
+from time                                           import sleep
+from datetime                                       import datetime
+
+from maastk.client                                  import MaasClient
+from maastk.node                                    import NODE_STATUS
+
+
+def progress(msg):
+    print(msg)
+
 
 # MAAS
 #
 class MAAS(object):
     # __init__
     #
-    #def __init__(s, maas_server, maas_server_user, maas_profile, maas_profile_creds, target, target_series, target_arch, target_sub_arch):
-    def __init__(s, profile, maas_server, maas_server_user, creds, target, target_series, target_arch, target_sub_arch='generic'):
+    def __init__(s, maas_server, creds, target, target_domain, target_series, target_arch, target_sub_arch='generic'):
         cdebug('        Enter MAAS::__init__')
 
-        s.profile = profile
         s.maas_server       = maas_server
-        s.maas_server_user  = maas_server_user
-        s.creds   = creds
-        s.target  = target
+        s.creds             = creds
+        s.target            = target
+        s.target_domain     = target_domain
         s.target_series     = target_series
         s.target_arch       = target_arch
         s.target_sub_arch   = target_sub_arch
 
+        s._sysids = None
+        s._nodes = None
+
         cdebug('        Leave MAAS::__init__')
+
+    # nodes
+    #
+    @property
+    def nodes(s):
+        if s._nodes is None:
+            s._nodes = {}
+            nodes = s.mc.nodes()
+            for n in nodes:
+                s._nodes[n['hostname']] = n
+        return s._nodes
 
     # provision
     #
     def provision(s):
         cdebug('        Enter MAAS::provision')
-        maas = MAASCore(s.maas_server, s.maas_server_user, s.profile, s.creds)
-        mt = maas.node(s.target)
-        mt.stop_and_release()
-        mt.acquire()
-        mt.arch(s.target_arch, s.target_sub_arch)
-        mt.series(s.target_series)
-        mt.start()
+
+        progress('       Establishing connection to MAAS @ %s...' % s.maas_server)
+        s.mc = MaasClient(s.maas_server, s.creds)
+
+        name = '%s.%s' % (s.target, s.target_domain)
+        series = s.target_series
+        arch = '%s/%s' % (s.target_arch, s.target_sub_arch)
+        s.target = name
+
+        sut = s.nodes[name]
+        cdebug('\n')
+        cdebug('%s' % name)
+        cdebug('         sysid: %s' % sut.system_id)
+        cdebug('        status: %s' % sut.status)
+        cdebug('    sub-status: %s' % sut.substatus)
+        cdebug('          arch: %s' % sut.architecture)
+        cdebug('        series: %s' % sut.distro_series)
+
+        if sut.substatus != NODE_STATUS.READY:
+            progress('       Releasing...')
+            sut.release()
+            while sut.substatus != NODE_STATUS.READY:
+                sleep(5)
+
+        if sut.architecture != arch:
+            progress('       Changing arch')
+            sut.architecture = arch
+
+        progress('       Acquiring...')
+        sut.acquire()
+
+        progress('       Starting...')
+        sut.start(distro_series=series)
+
+        progress('       Deploying ...')
+        while sut.substatus == NODE_STATUS.DEPLOYING:
+            sleep(10)
+        progress('       Deployed     ')
         cdebug('        Leave MAAS::provision')
+        return True
 
-# MAASCore
-#
-class MAASCore():
-
-    # __init__
-    #
-    def __init__(s, maas_server, maas_server_user, profile, creds):
-        debug('MAASCore::__init__')
-
-        s.maas_server       = maas_server
-        s.maas_server_user  = maas_server_user
-        s.profile = profile
-        s.creds   = creds
-
-        # Log into the maas server
-        #
-        # maas login maas http://thorin.ubuntu-ci/MAAS/api/1.0  jg2XAHBWGK8yzUn84F:M47jVf8JFbDBad26HV:AA8xyn7paqXvZE9rPAdPFQnqfm9yYaME
-        mssh(s.maas_server, 'maas refresh', user=s.maas_server_user, quiet=True)
-        mssh(s.maas_server, 'maas login %s http://%s/MAAS/api/1.0 %s' % (s.profile, s.maas_server, s.creds), user=s.maas_server_user, quiet=True)
-
-        s.__nodes = None
-        s.__nodes_by_name = None
-        s.prefix = 'maas %s ' % s.profile
-        s.previous_node_cmd = datetime.utcnow()
-        s.cmd_delay = 60 * 3
-
-    def delay(s):
-        # MAAS can't handle commands comming in too quickly to the same node.
-        #
-        now = datetime.utcnow()
-        delta = now - s.previous_node_cmd
-        if delta.seconds < s.cmd_delay:
-            sleep(s.cmd_delay - delta.seconds)
-        s.previous_node_cmd = datetime.utcnow()
-
-    def node_cmd(s, hostname, cmd, properties=None):
-        if properties:
-            cmd = '%s node %s %s %s' % (s.prefix, cmd, s.nodes_by_name[hostname]['system_id'], properties)
-        else:
-            cmd = '%s node %s %s' % (s.prefix, cmd, s.nodes_by_name[hostname]['system_id'])
-        debug(cmd)
-        mssh(s.maas_server, cmd, user=s.maas_server_user, quiet=True)
-        s.delay()
-        s.__stale()
-
-    @property
-    def nodes(s):
-        '''
-        Build a dictionary of node information and return it.
-        '''
-        if s.__nodes is None:
-            s.__nodes_by_name = None
-            rc, ni = mssh(s.maas_server, 'maas %s nodes list' % s.profile, user=s.maas_server_user, quiet=True)
-            ni = ' '.join(ni)
-            s.__nodes = json.loads(ni)
-        return s.__nodes
-
-    @property
-    def nodes_by_name(s):
-        '''
-        Build an index of the node info using the hostname
-        '''
-        if s.__nodes_by_name is None:
-            for n in s.nodes:
-                if s.__nodes_by_name is None:
-                    s.__nodes_by_name = {}
-                hostname = n['hostname']
-                s.__nodes_by_name[hostname] = n
-                if '.' in hostname:
-                    h = hostname.split('.')
-                    s.__nodes_by_name[h[0]] = n
-        return s.__nodes_by_name
-
-    def stop(s, hostname):
-        '''
-        Perform a "node stop".
-        '''
-        s.node_cmd(hostname, 'stop')
-
-    def release(s, hostname):
-        '''
-        Perform a "node release".
-        '''
-        s.node_cmd(hostname, 'release')
-
-    def start(s, hostname):
-        '''
-        Perform a "node start".
-        '''
-        s.node_cmd(hostname, 'start')
-
-    def acquire(s, hostname):
-        '''
-        Perform a "nodes acquire".
-        '''
-        cmd = '%s nodes acquire name=%s' % (s.prefix, s.nodes_by_name[hostname]['hostname'])
-        debug(cmd)
-        mssh(s.maas_server, cmd, user=s.maas_server_user, quiet=True)
-        s.__stale()
-
-    def status(s, hostname):
-        '''
-        Return the status for a particular node.
-        '''
-        return s.nodes_by_name[hostname]['status']
-
-    def arch(s, hostname):
-        '''
-        Return the status for a particular node.
-        '''
-        return s.nodes_by_name[hostname]['architecture']
-
-    def series(s, hostname):
-        '''
-        Return the status for a particular node.
-        '''
-        return s.nodes_by_name[hostname]['distro_series']
-
-    def node(s, hostname):
-        return MAASNode(s, hostname)
-
-    def update_series(s, hostname, series):
-        s.node_cmd(hostname, 'update', 'osystem=ubuntu distro_series=ubuntu/%s' % series)
-        s.__waitfor(hostname, 'distro_series', 'ubuntu/%s' % series)
-
-    def update_arch(s, hostname, arch, sub_arch='generic'):
-        s.node_cmd(hostname, 'update', 'osystem=ubuntu architecture=%s/%s' % (arch, sub_arch))
-        s.__waitfor(hostname, 'architecture', '%s/%s' % (arch, sub_arch))
-
-    def update_series_and_arch(s, hostname, series, arch, sub_arch='generic'):
-        s.node_cmd(hostname, 'update', 'osystem=ubuntu distro_series=ubuntu/%s architecture=%s/%s' % (series, arch, sub_arch))
-
-    def __waitfor(s, hostname, key, value):
-        sleep(10)
-        v = s.nodes_by_name[hostname][key]
-        debug("__waitfor: '%s' -> '%s' ('%s')" % (key, v, value))
-
-    def __stale(s):
-        s.__nodes = None
-        s.__nodes_by_name = None
-
-# MAASNode
-#
-class MAASNode():
-    '''
-    '''
-
-    # __init__
-    #
-    def __init__(s, maas, hostname):
-        '''
-        '''
-
-        s.__maas  = maas
-        s.__hostname = hostname
-
-    def start(s):
-        '''
-        '''
-        s.__maas.start(s.__hostname)
-
-    def stop(s):
-        '''
-        '''
-        s.__maas.stop(s.__hostname)
-
-    def release(s):
-        '''
-        '''
-        s.__maas.release(s.__hostname)
-
-    def stop_and_release(s):
-        '''
-        '''
-        s.stop()
-        sleep(60)   # Pause for a bit while the stop completes.
-        s.release()
-
-    def status(s):
-        '''
-        '''
-        return s.__maas.status(s.__hostname)
-
-    def series(s, series):
-        '''
-        '''
-        return s.__maas.update_series(s.__hostname, series)
-
-    def arch(s, arch, sub_arch='generic'):
-        '''
-        '''
-        return s.__maas.update_arch(s.__hostname, arch, sub_arch)
-
-    def series_and_arch(s, series, arch, sub_arch):
-        '''
-        '''
-        return s.__maas.update_arch(s.__hostname, series, arch, sub_arch)
-
-    # acquire
-    #
-    # maas maas nodes acquire system_id=<system id>
-    def acquire(s):
-        '''
-        '''
-        return s.__maas.acquire(s.__hostname)
-
-    def acquire_and_start(s):
-        '''
-        '''
-        s.acquire()
-        s.start()
 
