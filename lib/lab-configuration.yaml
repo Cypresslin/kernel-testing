@@ -13,16 +13,18 @@
         user     : "kernel"       # When ssh'ing to the MAAS server, use this user
         type     : "maas"         # This _is_ a MAAS server (as opposed to a cobbler server)
         sut_user : "ubuntu"       # The user on the test system after it's been provisioned
+        domain   : "1ss"
 
     # The Kernel Team's MAAS server
     #
     maas:
-        server   : "kernel-maas"  # Hostname/address of the MAAS server
-        profile  : "jenkins"      # The MAAS profile to use
-        creds    : "q6TPsE3AJBcVAvMqvB:uj8JPvENCh8hjdubmy:XcRLhdXxjdckFm6DQEpUKGQzMDe7VnXY"
-        user     : "jenkins"      # When ssh'ing to the MAAS server, use this user
-        type     : "maas"         # This _is_ a MAAS server (as opposed to a cobbler server)
-        sut_user : "ubuntu"       # The user on the test system after it's been provisioned
+        server   : "kernel-maas.kernel"  # Hostname/address of the MAAS server
+        profile  : "jenkins"             # The MAAS profile to use
+        creds    : q6TPsE3AJBcVAvMqvB:uj8JPvENCh8hjdubmy:XcRLhdXxjdckFm6DQEpUKGQzMDe7VnXY
+        user     : "jenkins"             # When ssh'ing to the MAAS server, use this user
+        type     : "maas"                # This _is_ a MAAS server (as opposed to a cobbler server)
+        sut_user : "ubuntu"              # The user on the test system after it's been provisioned
+        domain   : "kernel"
 
     # Test systems section. This is a dictionary of all the test systems that are available
     # to me.
