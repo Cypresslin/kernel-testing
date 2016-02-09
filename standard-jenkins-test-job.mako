@@ -60,6 +60,12 @@ if data['hwe']:
 if data['ppa']:
     provision += ' --ppa=%s' % data['ppa']
 
+if data['lkp']:
+    provision += ' --lkp'
+
+if data['kernel']:
+    provision += ' --kernel=%s' % data['kernel']
+
 provision += ' $SUT'
 %>
     # Provision the hardware.
