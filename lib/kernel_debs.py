@@ -4,7 +4,7 @@
 #
 
 import sys
-import urllib2
+import urllib
 from launchpadlib.launchpad             import Launchpad
 from lib.log                            import cdebug
 
@@ -59,7 +59,7 @@ class KernelDebs:
 
                 # Verify that we can fetch the url
                 #
-                urllib2.urlopen(url).headers.getheader('Content-Length')
+                urllib.request.urlopen(url).headers.getheader('Content-Length')
 
                 cdebug('appending: "%s"' % url)
                 urls.append(url)
@@ -68,7 +68,7 @@ class KernelDebs:
             cdebug(e.message)
             urls = None
 
-        except urllib2.HTTPError:
+        except urllib.error.HTTPError:
             cdebug('Failed to get the http headers for %s' % url)
             urls = None
 
