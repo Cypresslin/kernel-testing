@@ -712,11 +712,6 @@ class Metal(Base):
         s.install_python_minimal()
         s.install_required_pkgs()
 
-        # We want to reboot to pick up any new kernel that we would have installed due
-        # to either the dist-upgrade that was performed, or the install of the hwe
-        # kernel.
-        #
-        s.reboot(s.target)
         s.progress('That\'s All Folks!')
 
         cleave("Metal::provision")
