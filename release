@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 #
 
-from os                                 import getenv
-from logging                            import error, basicConfig, DEBUG, WARNING, INFO
+from logging                            import error, basicConfig, DEBUG, WARNING
 
 from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
 from lib.configuration                  import Configuration
 from lib.shell                          import ShellError, ShellTimeoutError
-from lib.maas                           import MAASCore
+from lib.maas                           import MAAS
 from lib.log                            import Clog, center, cleave
+
 
 # Release
 #
@@ -29,9 +29,8 @@ class Release():
         try:
             c = Configuration[Configuration["systems"][s.args.target]["provisioner"]]
 
-            maas = MAASCore(c['server'], c['user'], c['profile'], c['creds'])
-            mt = maas.node(s.args.target)
-            mt.stop_and_release()
+            s.server = MAAS(c['server'], c['creds'], s.args.target, None, None, None, None)
+            s.server.release()
 
             retval = 0
 

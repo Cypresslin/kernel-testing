@@ -99,3 +99,13 @@ class MAAS(object):
         return True
 
 
+def release(s):
+        cdebug('        Enter MAAS::release')
+        name = '%s.%s' % (s.target, s.target_domain)
+        sut = s.nodes[name]
+        if sut.substatus != NODE_STATUS.READY:
+            progress('       Releasing...')
+            sut.release()
+            while sut.substatus != NODE_STATUS.READY:
+                sleep(5)
+        cdebug('        Leave MAAS::release')
