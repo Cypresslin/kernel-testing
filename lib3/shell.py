@@ -165,13 +165,14 @@ class Shell():
                     for l in output:
                         if '\n' in l:
                             for o in l.split('\n'):
-                                cdebug(l)
+                                cdebug(l.rstrip())
                         else:
-                            cdebug(l)
+                            cdebug(l.rstrip())
                 else:
                     cdebug(output)
 
             except ShellError as e:
+                cdebug('ShellError Raised', 'red')
                 cdebug(output)
                 if result != 0 and not ignore_result:
                     # Wait for just a few seconds and try it again.
