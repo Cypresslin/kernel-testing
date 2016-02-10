@@ -122,7 +122,7 @@ class Base(object):
 
     # wait_for_target
     #
-    def wait_for_target(s, progress=None, timeout=10):
+    def wait_for_target(s, progress=None, timeout=30):
         '''
         Wait for the remote system to come up far enough that we can start talking
         (ssh) to it.
