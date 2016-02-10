@@ -29,7 +29,7 @@ class Release():
         try:
             c = Configuration[Configuration["systems"][s.args.target]["provisioner"]]
 
-            s.server = MAAS(c['server'], c['creds'], s.args.target, None, None, None, None)
+            s.server = MAAS(c['server'], c['creds'], s.args.target, c['domain'], None, None, None)
             s.server.release()
 
             retval = 0
