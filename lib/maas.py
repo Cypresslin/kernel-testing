@@ -6,15 +6,13 @@
 #             after the system comes up.
 #
 
-from logging                                        import debug
-import json
-from lib.maas_shell                                 import mssh
 from lib.log                                        import cdebug
 from time                                           import sleep
-from datetime                                       import datetime
 
 from maastk.client                                  import MaasClient
 from maastk.node                                    import NODE_STATUS
+from maastk.error                                   import MaasTKStandardException
+from .pdu                                           import PDU
 
 
 def progress(msg):
@@ -39,6 +37,7 @@ class MAAS(object):
 
         s._sysids = None
         s._nodes = None
+        s._client = None
 
         cdebug('        Leave MAAS::__init__')
 
@@ -48,18 +47,55 @@ class MAAS(object):
     def nodes(s):
         if s._nodes is None:
             s._nodes = {}
-            nodes = s.mc.nodes()
+            nodes = s.client.nodes()
             for n in nodes:
                 s._nodes[n['hostname']] = n
         return s._nodes
+
+    # release
+    #
+    def release(s, sut):
+        if sut.substatus != NODE_STATUS.READY:
+            progress('       Releasing...')
+            sut.release()
+
+        while sut.substatus != NODE_STATUS.READY:
+            if sut.substatus == NODE_STATUS.FAILED_RELEASING:
+                # Try to get the current power state for the system. If this fails
+                # reset the PDU port for the system. This is actually powering off
+                # the outlets on the PDU and then powering them back on.
+                #
+                try:
+                    sut.power_state
+                except MaasTKStandardException as e:
+                    if e.status == 503:  # The call timed out
+                        pdu = PDU(s.target)
+                        progress('           resetting the pdu outlets')
+                        pdu.cycle()
+                        sleep(60)  # Give the BMC one minute to come back to life
+
+                        try:
+                            sut.power_state
+                        except MaasTKStandardException as e:
+                            progress('           unable to determine the power state')
+                break
+            else:
+                sleep(5)  # Wait for the system to be released
+
+    # client
+    #
+    @property
+    def client(s):
+        if s._client is None:
+            progress('       Establishing connection to MAAS @ %s...' % s.maas_server)
+            s._client = MaasClient(s.maas_server, s.creds)
+        return s._client
 
     # provision
     #
     def provision(s):
         cdebug('        Enter MAAS::provision')
-
-        progress('       Establishing connection to MAAS @ %s...' % s.maas_server)
-        s.mc = MaasClient(s.maas_server, s.creds)
+        retval = False
 
         name = '%s.%s' % (s.target, s.target_domain)
         series = s.target_series
@@ -75,28 +111,26 @@ class MAAS(object):
         cdebug('          arch: %s' % sut.architecture)
         cdebug('        series: %s' % sut.distro_series)
 
-        if sut.substatus != NODE_STATUS.READY:
-            progress('       Releasing...')
-            sut.release()
-            while sut.substatus != NODE_STATUS.READY:
-                sleep(5)
+        s.release(sut)
 
-        if sut.architecture != arch:
-            progress('       Changing arch')
-            sut.architecture = arch
+        if sut.substatus == NODE_STATUS.READY:
+            if sut.architecture != arch:
+                progress('       Changing arch')
+                sut.architecture = arch
 
-        progress('       Acquiring...')
-        sut.acquire()
+            progress('       Acquiring...')
+            sut.acquire()
 
-        progress('       Starting...')
-        sut.start(distro_series=series)
+            progress('       Starting...')
+            sut.start(distro_series=series)
 
-        progress('       Deploying ...')
-        while sut.substatus == NODE_STATUS.DEPLOYING:
-            sleep(10)
-        progress('       Deployed     ')
+            progress('       Deploying ...')
+            while sut.substatus == NODE_STATUS.DEPLOYING:
+                sleep(10)
+            progress('       Deployed     ')
+            retval = True
         cdebug('        Leave MAAS::provision')
-        return True
+        return retval
 
 
 def release(s):
