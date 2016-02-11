@@ -30,7 +30,7 @@ class Release():
             c = Configuration[Configuration["systems"][s.args.target]["provisioner"]]
 
             s.server = MAAS(c['server'], c['creds'], s.args.target, c['domain'], None, None, None)
-            s.server.release()
+            s.server.release(s.args.target)
 
             retval = 0
 
@@ -83,4 +83,3 @@ if __name__ == '__main__':
     exit(app.main())
 
 # vi:set ts=4 sw=4 expandtab syntax=python:
-
