@@ -101,7 +101,6 @@ class MAAS(object):
 
         fqdn = '%s.%s' % (s.target, s.target_domain)
         arch = '%s/%s' % (s.target_arch, s.target_sub_arch)
-        s.target = fqdn
 
         sut = s.nodes[fqdn]
         cdebug('\n')
