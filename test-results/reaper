@@ -33,7 +33,7 @@ class TestResultsReaper():
             try:
                 trr = TestResultsRepository()
                 for tr in trr.test_runs:
-                    termination = 20
+                    termination = 30
                     try:
                         results = trr.results(tr)
                     except:
@@ -79,6 +79,7 @@ class TestResultsReaper():
                             if self.cfg.dry_run:
                                 print('REAP: %s' % results_dir)
                             else:
+                                print('REAP: %s' % results_dir)
                                 rmtree(results_dir)
 
                 retval = 0
