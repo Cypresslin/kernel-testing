@@ -54,7 +54,9 @@ class MAAS(object):
 
     # release
     #
-    def release(s, sut):
+    def release(s, target):
+        fqdn = '%s.%s' % (s.target, s.target_domain)
+        sut = s.nodes[fqdn]
         if sut.substatus != NODE_STATUS.READY:
             progress('       Releasing...')
             sut.release()
@@ -97,21 +99,20 @@ class MAAS(object):
         cdebug('        Enter MAAS::provision')
         retval = False
 
-        name = '%s.%s' % (s.target, s.target_domain)
-        series = s.target_series
+        fqdn = '%s.%s' % (s.target, s.target_domain)
         arch = '%s/%s' % (s.target_arch, s.target_sub_arch)
-        s.target = name
+        s.target = fqdn
 
-        sut = s.nodes[name]
+        sut = s.nodes[fqdn]
         cdebug('\n')
-        cdebug('%s' % name)
+        cdebug('%s' % fqdn)
         cdebug('         sysid: %s' % sut.system_id)
         cdebug('        status: %s' % sut.status)
         cdebug('    sub-status: %s' % sut.substatus)
         cdebug('          arch: %s' % sut.architecture)
         cdebug('        series: %s' % sut.distro_series)
 
-        s.release(sut)
+        s.release(s.target)
 
         if sut.substatus == NODE_STATUS.READY:
             if sut.architecture != arch:
@@ -122,7 +123,7 @@ class MAAS(object):
             sut.acquire()
 
             progress('       Starting...')
-            sut.start(distro_series=series)
+            sut.start(distro_series=s.target_series)
 
             progress('       Deploying ...')
             while sut.substatus == NODE_STATUS.DEPLOYING:
@@ -131,15 +132,3 @@ class MAAS(object):
             retval = True
         cdebug('        Leave MAAS::provision')
         return retval
-
-
-def release(s):
-        cdebug('        Enter MAAS::release')
-        name = '%s.%s' % (s.target, s.target_domain)
-        sut = s.nodes[name]
-        if sut.substatus != NODE_STATUS.READY:
-            progress('       Releasing...')
-            sut.release()
-            while sut.substatus != NODE_STATUS.READY:
-                sleep(5)
-        cdebug('        Leave MAAS::release')
