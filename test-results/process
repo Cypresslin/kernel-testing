@@ -226,6 +226,10 @@ class TheApp():
                     version = '%s%s%s.%s%s' % (m.group(2), m.group(3), m.group(4), m.group(5), m.group(6))
                     versions.append(version)
 
+        for v in sorted(versions):
+            print(v)
+        print('------------------------------------------------------------------------------------')
+
         # Take the cumulative results dictionary and build a test-suite focused dictionary from
         # it.
         #
@@ -288,7 +292,7 @@ class TheApp():
         #
         try:
             cdebug('Generating: hybrid-index.html')
-            template = self.alt_index_template.render(data = hybrid, timestamp = datetime.utcnow(), versions=versions)
+            template = self.workflow_index_template.render(data = hybrid, timestamp = datetime.utcnow(), versions=versions)
             dest = path.join(self.trr.cfg['repository_root'], 'tracker-index.html')
             with open(dest, 'w') as f:
                 f.write(template)

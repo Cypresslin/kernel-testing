@@ -64,7 +64,11 @@
                                             <td width="100%">
                                                 <table id="" width="100%" border="0">
                                                     <tbody>
-                                                        % for kernel_version in sorted(versions, reverse=True):
+                                                        % for kernel_version in sorted(data[ubuntu_series], reverse=True):
+                                                            <%
+                                                            if kernel_version not in versions:
+                                                                continue
+                                                            %>
                                                         <tr>
                                                             <td align="left" width="150" colspan="7">${ kernel_version } </td> <td> </td>
                                                         </tr>
@@ -87,13 +91,13 @@
                                                                     <td width="100">&nbsp;</td>
                                                                     <% suite_row = 0 %>
                                                                     % for suite in sorted(data[ubuntu_series][kernel_version][arch]):
-                                                                            <%
-                                                                                suite_row += 1
-                                                                                r = data[ubuntu_series][kernel_version][arch][suite]
-                                                                                total = r['run']
-                                                                                passed = r['run'] - r['failed']
-                                                                                failed = r['failed']
-                                                                            %>
+                                                                        <%
+                                                                            suite_row += 1
+                                                                            r = data[ubuntu_series][kernel_version][arch][suite]
+                                                                            total = r['run']
+                                                                            passed = r['run'] - r['failed']
+                                                                            failed = r['failed']
+                                                                        %>
                                                                     <td align="left"  ><a href="${ r['link'] }">${ suite }</a></td>
                                                                     <td align="center"><a href="${ r['link'] }">${ passed }    </a></td>
                                                                     <td align="center"><a href="${ r['link'] }">${ failed }    </a></td>
