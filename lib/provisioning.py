@@ -713,7 +713,7 @@ class Metal(Base):
         if dist_upgrade:
             s.dist_upgrade()
             if not reboot:
-                reboot = 'For dist-upgrade'
+                reboot = 'Rebooting for dist-upgrade'
 
         if reboot:
             s.reboot(progress=reboot)
