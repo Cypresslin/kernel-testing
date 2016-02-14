@@ -318,6 +318,7 @@ class Base(object):
         # We don't use any multiverse packages
         #
         #s.ssh('\'cat /etc/apt/sources.list | sed "s/multiverse//" | sudo tee /etc/apt/sources.list\'')
+        s.ssh('sudo apt-get update', ignore_result=True)
         cleave('Base::fixup_apt_sources')
 
     # enable_src
@@ -329,6 +330,7 @@ class Base(object):
         center('Base::enable_src')
         s.progress('Enabling Src')
         s.ssh('\'cat /etc/apt/sources.list | sed "s/^deb /deb-src /" | sudo tee -a /etc/apt/sources.list\'')
+        s.ssh('sudo apt-get update', ignore_result=True)
         cleave('Base::enable_src')
 
     # enable_proposed
@@ -341,6 +343,7 @@ class Base(object):
         center('Base::enable_proposed')
         s.progress('Enabling Proposed')
         s.ssh('\'grep %s /etc/apt/sources.list | sed s/%s/%s-proposed/ | sudo tee -a /etc/apt/sources.list\'' % (s.series, s.series, s.series))
+        s.ssh('sudo apt-get update', ignore_result=True)
         cleave('Base::enable_proposed')
 
     # enable_ppa
@@ -357,6 +360,7 @@ class Base(object):
             s.ssh('\'sudo add-apt-repository -y %s\'' % (s.ppa))
         else:
             s.ssh('\'sudo add-apt-repository -y ppa:%s\'' % (s.ppa))
+        s.ssh('sudo apt-get update', ignore_result=True)
         cleave('Base::enable_ppa')
 
     # dist_upgrade
@@ -639,6 +643,9 @@ class Metal(Base):
     def provision(s):
         center("Enter Metal::provision")
 
+        dist_upgrade = None
+        reboot = None
+
         s.progress('Provisioner setup')
         if not s.ps.provision():
             raise ErrorExit('Failed to provision the system')
@@ -647,11 +654,8 @@ class Metal(Base):
         # the system. Once we do this the kernels that we install should be the right one.
         #
         s.fixup_apt_sources()
-        s.enable_proposed()
-        s.enable_src()
         if s.ppa is not None:
             s.enable_ppa()
-        s.dist_upgrade()
 
         # Disable APT from periodicly running and trying to update the systems.
         #
@@ -662,7 +666,7 @@ class Metal(Base):
         #
         if s.hwe:
             s.install_hwe_kernel()
-            s.reboot(progress='Rebooting for HWE Kernel')                    # reboot
+            reboot = 'Rebooting for HWE Kernel'
             if not s.verify_hwe_target():
                 cinfo("Target verification failed.")
                 cdebug('Leave Metal::provision')
@@ -670,7 +674,7 @@ class Metal(Base):
 
         if s.xen:
             s.install_xen()
-            s.reboot(progress='Rebooting for Xen Kernel')                    # reboot
+            reboot = 'Rebooting for Xen Kernel'
             if not s.verify_xen_target():
                 cinfo("Target verification failed.")
                 cleave('Metal::provision')
@@ -678,15 +682,20 @@ class Metal(Base):
 
         if s.debs is not None:
             s.install_custom_debs()
-            s.reboot(progress='Rebooting for custom dbes')                   # reboot
+            reboot = 'Rebooting for custom debs'
 
         if s.kernel:
             s.install_specific_kernel_version()
-            s.reboot(progress='Rebooting for Kernel version %s' % s.kernel)  # reboot
+            reboot = 'Rebooting for Kernel version %s' % s.kernel
 
         if Ubuntu().is_development_series(s.series):
             s.kernel_upgrade()
-            s.reboot(progress='Rebooting for development series kernel')     # reboot
+            reboot = 'Rebooting for development series kernel'
+        else:
+            s.enable_proposed()
+            s.enable_ppa()
+            dist_upgrade = True
+
         s.mainline_firmware_hack()
 
         s.progress('Verifying the running kernel version')
@@ -700,6 +709,14 @@ class Metal(Base):
 
         s.install_python_minimal()
         s.install_required_pkgs()
+
+        if dist_upgrade:
+            s.dist_upgrade()
+            if not reboot:
+                reboot = 'For dist-upgrade'
+
+        if reboot:
+            s.reboot(progress=reboot)
 
         s.progress('That\'s All Folks!')
 
