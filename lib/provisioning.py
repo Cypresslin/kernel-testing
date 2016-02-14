@@ -654,6 +654,7 @@ class Metal(Base):
         # the system. Once we do this the kernels that we install should be the right one.
         #
         s.fixup_apt_sources()
+        s.enable_src()
         if s.ppa is not None:
             s.enable_ppa()
 
@@ -693,7 +694,6 @@ class Metal(Base):
             reboot = 'Rebooting for development series kernel'
         else:
             s.enable_proposed()
-            s.enable_ppa()
             dist_upgrade = True
 
         s.mainline_firmware_hack()
