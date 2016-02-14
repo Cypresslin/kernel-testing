@@ -18,6 +18,10 @@ from lib.utils                          import error, dump, string_to_date, json
 from lib.ubuntu                         import Ubuntu
 from lib.debian                         import Debian
 
+import json
+import requests
+import re
+
 
 # TheApp
 #
@@ -47,6 +51,7 @@ class TheApp():
 
             self.index_template = Template(load_template('digest-index.mako'))
             self.alt_index_template = Template(load_template('alt-index.mako'))
+            self.workflow_index_template = Template(load_template('workflow-index.mako'))
             self.suite_index_template = Template(load_template('suite-index.mako'))
 
             self.hosts_info = json_load(path.join(path.dirname(argv[0]), 'hosts.json'))
@@ -191,6 +196,111 @@ class TheApp():
             print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
 
         cdebug("Leave Digest.generate_hybrid_results_index")
+
+    def generate_tracker_results_index(self, data):
+        '''
+        '''
+        cdebug("Enter Digest.generate_tracker_results_index")
+
+        #                              .- package name (group(1))
+        #                             /           .- kernel version (group(2))
+        #                            /           /          .- version/abi separator (group(3))
+        #                           /           /          /
+        ver_rc     = re.compile("(\S+): (\d+\.\d+\.\d+)([-\.])(\d+)\.(\d+)([~a-z\d.]*)")
+        #                                                       /      /       /
+        #                                                      /      /       .- backport extra (m.group(6))
+        #                                                     /      .- upload number (m.group(5))
+        #                                                    .- abi (group(4))
+
+        versions = []
+        r = requests.get('http://kernel.ubuntu.com/sru/kernel-sru-workflow.json')
+        trackers = json.loads(r.text)
+
+        for project in ['kernel-development-workflow', 'kernel-sru-workflow']:
+            for x in trackers['bug-collections'][project]['bugs']:
+                bug = trackers['bug-collections'][project]['bugs'][x]
+                title = bug['title']
+
+                m = ver_rc.search(title)
+                if m is not None:
+                    version = '%s%s%s.%s%s' % (m.group(2), m.group(3), m.group(4), m.group(5), m.group(6))
+                    versions.append(version)
+
+        # Take the cumulative results dictionary and build a test-suite focused dictionary from
+        # it.
+        #
+        cdebug('--------------------------------------------------')
+        hybrid = {} # suite results
+        cdebug('Building test-suite focused dictionary')
+        for series in data['sru']:
+            cdebug('    series: %s' % series)
+            if series not in hybrid:
+                hybrid[series] = {}
+
+            for kver in data['sru'][series]:
+                cdebug('        kver: %s' % kver)
+                if kver not in hybrid[series]:
+                    hybrid[series][kver] = {}
+
+                for test_run in data['sru'][series][kver]:
+                    attributes = test_run['attributes']
+
+                    # decode the arch
+                    #
+                    machine = attributes['platform']['machine']
+                    proc    = attributes['platform']['proc']
+                    if proc == 'x86_64':
+                        arch = 'amd64'
+                    elif proc == 'i686':
+                        arch = 'i386'
+                    elif proc == 'athlon':
+                        arch = 'i386'
+                    elif proc == 'aarch64':
+                        arch = 'arm64'
+                    else:
+                        arch = proc
+
+                    if arch not in hybrid[series][kver]:
+                        hybrid[series][kver][arch] = {}
+
+                    results = test_run['results']
+                    for k in results['suites']:
+                        suite = k['name'].replace('autotest.', '')
+
+                        link = '%s/%s-%s-%s-index.html' % (kver, suite, kver, arch)
+
+                        if suite not in hybrid[series][kver][arch]:
+                            if suite == 'qrt_apparmor':
+                                cdebug("            %s : new (%s); ran: %d; failed: %d" % (suite, arch, k['tests run'], k['tests failed']), 'green')
+                            hybrid[series][kver][arch][suite] = {}
+                            hybrid[series][kver][arch][suite]['link'] = link
+                            hybrid[series][kver][arch][suite]['failed']  = k['tests failed']
+                            hybrid[series][kver][arch][suite]['run']     = k['tests run']
+                            hybrid[series][kver][arch][suite]['skipped'] = k['tests skipped']
+                        else:
+                            if suite == 'qrt_apparmor':
+                                cdebug("            %s : adding (%s); ran: %d; failed: %d" % (suite, arch, k['tests run'], k['tests failed']), 'green')
+                            hybrid[series][kver][arch][suite]['failed']  += k['tests failed']
+                            hybrid[series][kver][arch][suite]['run']     += k['tests run']
+                            hybrid[series][kver][arch][suite]['skipped'] += k['tests skipped']
+
+        # Generate the testing, index page.
+        #
+        try:
+            cdebug('Generating: hybrid-index.html')
+            template = self.alt_index_template.render(data = hybrid, timestamp = datetime.utcnow(), versions=versions)
+            dest = path.join(self.trr.cfg['repository_root'], 'tracker-index.html')
+            with open(dest, 'w') as f:
+                f.write(template)
+
+        except:
+            traceback = RichTraceback()
+            for (filename, lineno, function, line) in traceback.traceback:
+                print("File %s, line %s, in %s" % (filename, lineno, function))
+                print(line, "\n")
+            print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
+
+        cdebug("Leave Digest.generate_tracker_results_index")
 
     def generate_per_suite_indexes(self, data):
         cdebug('--------------------------------------------------')
@@ -341,6 +451,7 @@ class TheApp():
 
 
             self.generate_hybrid_results_index(data)
+            self. generate_tracker_results_index(data)
             self.generate_per_suite_indexes(data)
 
             # Generate the testing, index page.
