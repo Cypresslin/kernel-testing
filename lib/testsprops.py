@@ -571,7 +571,6 @@ TestCollections = {
 SRU_TestsList = [
     'sru',
     'ubuntu_btrfs_kernel_fixes',
-    'ubuntu_zfs',
     'ubuntu_zfs_fstest',
     'ubuntu_zfs_xfs_generic',
     'ubuntu_zfs_stress',
