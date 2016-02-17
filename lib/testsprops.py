@@ -247,7 +247,7 @@ TestProfiles = {
     'ubuntu_qrt_kernel_panic' : {
         'packages' : {
             'common' : [
-                'build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev', 'gdb',
+                'build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev', 'gdb', 'libkeyutils-dev',
                 ],
             },
         },
@@ -463,6 +463,9 @@ TestProfiles = {
             },
         'series-blacklist': [
             'lucid', 'precise', 'quantal', 'saucy', 'trusty', 'xenial',
+            ],
+        'arch-blacklist' : [
+            'armv7l',
             ],
         },
 }
