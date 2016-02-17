@@ -6,7 +6,7 @@
 #             after the system comes up.
 #
 
-from lib.log                                        import cdebug
+from lib.log                                        import cdebug, center, cleave
 from time                                           import sleep
 
 from maastk.client                                  import MaasClient
@@ -45,16 +45,19 @@ class MAAS(object):
     #
     @property
     def nodes(s):
+        center('nodes')
         if s._nodes is None:
             s._nodes = {}
             nodes = s.client.nodes()
             for n in nodes:
                 s._nodes[n['hostname']] = n
+        cleave('nodes')
         return s._nodes
 
     # release
     #
     def release(s, target):
+        center('rlease')
         fqdn = '%s.%s' % (s.target, s.target_domain)
         sut = s.nodes[fqdn]
         if sut.substatus != NODE_STATUS.READY:
@@ -62,35 +65,45 @@ class MAAS(object):
             sut.release()
 
         while sut.substatus != NODE_STATUS.READY:
+            cdebug(sut.substatus)
             if sut.substatus == NODE_STATUS.FAILED_RELEASING:
                 # Try to get the current power state for the system. If this fails
                 # reset the PDU port for the system. This is actually powering off
                 # the outlets on the PDU and then powering them back on.
                 #
                 try:
+                    cdebug('querying power status')
                     sut.power_state
                 except MaasTKStandardException as e:
+                    cdebug('power_state exception thrown')
                     if e.status == 503:  # The call timed out
                         pdu = PDU(s.target)
+                        cdebug('           resetting the pdu outlets ------------------------------------------------------------------')
                         progress('           resetting the pdu outlets')
                         pdu.cycle()
+                        cdebug('cycled .. sleeping')
                         sleep(60)  # Give the BMC one minute to come back to life
 
                         try:
-                            sut.power_state
+                            cdebug('querying power status')
+                            cdebug(sut.power_state)
                         except MaasTKStandardException as e:
+                            cdebug('power_state exception thrown')
                             progress('           unable to determine the power state')
                 break
             else:
                 sleep(5)  # Wait for the system to be released
+        cleave('rlease')
 
     # client
     #
     @property
     def client(s):
+        center('client')
         if s._client is None:
             progress('       Establishing connection to MAAS @ %s...' % s.maas_server)
             s._client = MaasClient(s.maas_server, s.creds)
+        cleave('client')
         return s._client
 
     # provision
@@ -111,7 +124,9 @@ class MAAS(object):
         cdebug('          arch: %s' % sut.architecture)
         cdebug('        series: %s' % sut.distro_series)
 
+        cdebug('before: ' + str(sut.substatus))
         s.release(s.target)
+        cdebug(' after: ' + str(sut.substatus))
 
         if sut.substatus == NODE_STATUS.READY:
             if sut.architecture != arch:
@@ -127,7 +142,10 @@ class MAAS(object):
             progress('       Deploying ...')
             while sut.substatus == NODE_STATUS.DEPLOYING:
                 sleep(10)
-            progress('       Deployed     ')
-            retval = True
+            if sut.substatus == NODE_STATUS.DEPLOYED:
+                progress('       Deployed     ')
+                retval = True
+            else:
+                progress('       Failed Deployment')
         cdebug('        Leave MAAS::provision')
         return retval
