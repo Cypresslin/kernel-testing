@@ -689,20 +689,17 @@ class Metal(Base):
             s.install_specific_kernel_version()
             reboot = 'Rebooting for Kernel version %s' % s.kernel
 
+        # We *always* enable proposed. However, for development series kernels
+        # we only update the kernel packages.
+        #
+        s.enable_proposed()
         if Ubuntu().is_development_series(s.series):
             s.kernel_upgrade()
             reboot = 'Rebooting for development series kernel'
         else:
-            s.enable_proposed()
             dist_upgrade = True
 
         s.mainline_firmware_hack()
-
-        s.progress('Verifying the running kernel version')
-        if not s.verify_target():
-            cinfo("Target verification failed.")
-            cleave('Metal::provision')
-            return False
 
         if s.lkp:
             s.enable_live_kernel_patching()
@@ -717,6 +714,12 @@ class Metal(Base):
 
         if reboot:
             s.reboot(progress=reboot)
+
+        s.progress('Verifying the running kernel version')
+        if not s.verify_target():
+            cinfo("Target verification failed.")
+            cleave('Metal::provision')
+            return False
 
         s.progress('That\'s All Folks!')
 
