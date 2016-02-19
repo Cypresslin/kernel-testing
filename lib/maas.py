@@ -54,6 +54,20 @@ class MAAS(object):
         cleave('nodes')
         return s._nodes
 
+    def __release(s, sut):
+        center('__rlease')
+        retval = True
+        sut.release()
+        while sut.substatus != NODE_STATUS.READY:
+            cdebug(sut.substatus)
+            if sut.substatus == NODE_STATUS.FAILED_RELEASING:
+                retval = False
+                break
+            else:
+                sleep(5)  # Wait for the system to be released
+        cleave('__rlease')
+        return retval
+
     # release
     #
     def release(s, target):
@@ -62,11 +76,7 @@ class MAAS(object):
         sut = s.nodes[fqdn]
         if sut.substatus != NODE_STATUS.READY:
             progress('       Releasing...')
-            sut.release()
-
-        while sut.substatus != NODE_STATUS.READY:
-            cdebug(sut.substatus)
-            if sut.substatus == NODE_STATUS.FAILED_RELEASING:
+            if not s.__release(sut):
                 # Try to get the current power state for the system. If this fails
                 # reset the PDU port for the system. This is actually powering off
                 # the outlets on the PDU and then powering them back on.
@@ -87,12 +97,10 @@ class MAAS(object):
                         try:
                             cdebug('querying power status')
                             cdebug(sut.power_state)
+                            s.__release(sut)
                         except MaasTKStandardException as e:
                             cdebug('power_state exception thrown')
                             progress('           unable to determine the power state')
-                break
-            else:
-                sleep(5)  # Wait for the system to be released
         cleave('rlease')
 
     # client
