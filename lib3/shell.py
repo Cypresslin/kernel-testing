@@ -172,18 +172,21 @@ class Shell():
                     cdebug(output)
 
             except ShellError as e:
+                cdebug('---------------------------------------------------------------------------------------------------------', 'blue')
                 cdebug('ShellError Raised', 'red')
-                cdebug(output)
-                if result != 0 and not ignore_result:
-                    # Wait for just a few seconds and try it again.
-                    #
-                    #print(" **")
-                    #print(" ** retrying the last command")
-                    #print(" **")
-                    result, output = sh(ssh_cmd, quiet=quiet, ignore_result=ignore_result)
-                    if result != 0 and not ignore_result:
-                        sleep(15)
-                        raise ShellError(ssh_cmd, result, output)
+                for l in e.output:
+                    cdebug(l.rstrip())
+                cdebug('---------------------------------------------------------------------------------------------------------', 'blue')
+                #if result != 0 and not ignore_result:
+                #    # Wait for just a few seconds and try it again.
+                #    #
+                #    #print(" **")
+                #    #print(" ** retrying the last command")
+                #    #print(" **")
+                #    result, output = sh(ssh_cmd, quiet=quiet, ignore_result=ignore_result)
+                #    if result != 0 and not ignore_result:
+                #        sleep(15)
+                #        raise ShellError(ssh_cmd, result, output)
 
         cleave("Shell::ssh")
         return result, output
