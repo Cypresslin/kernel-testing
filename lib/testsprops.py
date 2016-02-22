@@ -509,7 +509,7 @@ TestCollections = {
             'ubuntu_qrt_kernel_panic',
             'ubuntu_qrt_kernel_security',
             'ubuntu_qrt_kernel_aslr_collisions',
-            'ubuntu_qrt_apparmor'
+            'ubuntu_qrt_apparmor',
             'ubuntu_kernel_selftests'
         ],
 
