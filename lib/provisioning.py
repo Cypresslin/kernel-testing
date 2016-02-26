@@ -173,7 +173,7 @@ class Base(object):
     def disable_apt_periodic_updates(s):
         center("Base::disable_apt_periodic_updates")
         s.progress('Disabling Periodic APT Updates')
-        s.ssh(r'sudo sed -i \'s/s/APT::Periodic::Update-Package-Lists "1"/APT::Periodic::Update-Package-Lists "0"/\' /etc/apt/apt.conf.d/10periodic')
+        s.ssh(r'sudo sed -i \'s/APT::Periodic::Update-Package-Lists "1"/APT::Periodic::Update-Package-Lists "0"/\' /etc/apt/apt.conf.d/10periodic')
         cleave('Base::disable_apt_periodic_updates')
 
     # install_specific_kernel_version
@@ -226,6 +226,21 @@ class Base(object):
             raise ErrorExit('Failed to get the urls for the spcified kernel version (%s)' % s.kernel)
 
         cleave("Base::install_specific_kernel_version")
+
+    # enable_snappy
+    #
+    def enable_snappy(s):
+        center("Base::enable_snappy")
+        s.progress('Enabling Snappy')
+
+        s.ssh('sudo apt-get install --yes ubuntu-snappy')
+        s.ssh('sudo snappy install ubuntu-core.canonical')
+
+        s.progress('Verifying Snappy')
+        s.ssh('sudo snappy install hello-world')
+        s.ssh('hello-world.echo')
+
+        cleave('Base::enable_snappy')
 
     # enable_live_kernel_patching
     #
@@ -645,6 +660,7 @@ class Metal(Base):
 
         dist_upgrade = None
         reboot = None
+        retval = False
 
         s.progress('Provisioner setup')
         if not s.ps.provision():
@@ -668,18 +684,10 @@ class Metal(Base):
         if s.hwe:
             s.install_hwe_kernel()
             reboot = 'Rebooting for HWE Kernel'
-            if not s.verify_hwe_target():
-                cinfo("Target verification failed.")
-                cdebug('Leave Metal::provision')
-                return False
 
         if s.xen:
             s.install_xen()
             reboot = 'Rebooting for Xen Kernel'
-            if not s.verify_xen_target():
-                cinfo("Target verification failed.")
-                cleave('Metal::provision')
-                return False
 
         if s.debs is not None:
             s.install_custom_debs()
@@ -715,15 +723,30 @@ class Metal(Base):
         if reboot:
             s.reboot(progress=reboot)
 
+        # For all installs of 16.04 and later we want to install snappy.
+        #
+        #s.enable_snappy()
+
         s.progress('Verifying the running kernel version')
-        if not s.verify_target():
-            cinfo("Target verification failed.")
-            cleave('Metal::provision')
-            return False
+        if s.hwe:
+            if not s.verify_hwe_target():
+                cinfo("Target verification failed.")
+            else:
+                retval = True
+        elif s.xen:
+            if not s.verify_xen_target():
+                cinfo("Target verification failed.")
+            else:
+                retval = True
+        else:
+            if not s.verify_target():
+                cinfo("Target verification failed.")
+            else:
+                retval = True
 
         s.progress('That\'s All Folks!')
 
-        cleave("Metal::provision")
-        return True
+        cleave("Metal::provision (%s)" % (retval))
+        return retval
 
 # vi:set ts=4 sw=4 expandtab syntax=python:
