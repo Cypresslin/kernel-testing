@@ -323,16 +323,16 @@ TestProfiles = {
     'xfstests' : {
         'packages' : {
             'common' : [
-                'build-essential', 'uuid-dev', 'xfslibs-dev', 'xfsdump', 'autoconf', 'kpartx', 'libtool', 'python-xattr', 'libacl1-dev', 'libaio-dev', 'quota', 'bc', 'libdm0-dev', 'btrfs-tools', 'attr', 'gdb',
+                'build-essential', 'uuid-dev', 'xfslibs-dev', 'xfsdump', 'autoconf', 'kpartx', 'libtool', 'python-xattr', 'libacl1-dev', 'libaio-dev', 'quota', 'bc', 'btrfs-tools', 'attr', 'gdb',
                 ],
             'xenial' : [
                 'libtool-bin'
                 ],
             'wily' : [
-                'libtool-bin'
+                'libtool-bin', 'libdm0-dev',
                 ],
             'vivid' : [
-                'libtool-bin'
+                'libtool-bin', 'libdm0-dev',
                 ],
             },
         'series-blacklist': [
