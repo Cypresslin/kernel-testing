@@ -37,6 +37,11 @@ HWE = {
             'package' : 'linux-generic-lts-wily',
             'ppa' : True
         },
+        'xenial' : {
+            'series' : 'trusty',
+            'package' : 'linux-generic-lts-xenial',
+            'ppa' : True
+        },
 }
 
 # vi:set ts=4 sw=4 expandtab:
