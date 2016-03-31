@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #
-from sys                                import stdout
+from sys                                import stdout, argv
+from os                                 import path
 from logging                            import error
 from datetime                           import datetime
 from time                               import sleep
@@ -247,6 +248,23 @@ class Base(object):
     def enable_live_kernel_patching(s):
         center("Base::enable_live_kernel_patching")
         s.progress('Enabling Live Kernel Patching')
+
+        s.ssh('sudo touch /etc/apt/sources.list.d/canonical-livepatch.list')
+        # FIXME: bjf - Need to use a kernel team config server for this
+        #
+        p = path.join(path.dirname(argv[0]), 'canonical-livepatch.list')
+        with open(p, 'r') as f:
+            for l in f.read().split('\n'):
+                s.ssh('\'echo \"%s\" | sudo tee -a /etc/apt/sources.list.d/canonical-livepatch.list\'' % l)
+
+        s.ssh('sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 74603F44')
+        s.ssh('sudo apt-get update')
+        s.ssh('sudo apt-get install canonical-livepatch')
+        sleep(60) # Give the livepatch daemon a minute to calm down
+
+        s.ssh(r'sudo sed -i \'s/1/48/\' /etc/defaults/canonical-livepatch')
+        s.ssh('sudo canonical-livepatch update')
+
         cleave('Base::enable_live_kernel_patching')
 
     # install_required_pkgs
@@ -709,9 +727,6 @@ class Metal(Base):
 
         s.mainline_firmware_hack()
 
-        if s.lkp:
-            s.enable_live_kernel_patching()
-
         s.install_python_minimal()
         s.install_required_pkgs()
 
@@ -722,6 +737,9 @@ class Metal(Base):
 
         if reboot:
             s.reboot(progress=reboot)
+
+        if s.lkp:
+            s.enable_live_kernel_patching()
 
         # For all installs of 16.04 and later we want to install snappy.
         #

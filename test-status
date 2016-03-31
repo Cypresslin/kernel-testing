@@ -43,7 +43,7 @@ class TheApp():
         '''
         '''
         s.args = args
-        s.jenkins_url_default = "http://kernel-jenkins.kernel:8080"
+        s.jenkins_url_default = "http://localhost:8080"
         s.jenkins = Jenkins(s.jenkins_url_default)
 
     # fetch_job_details

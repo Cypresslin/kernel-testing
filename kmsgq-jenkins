@@ -103,8 +103,8 @@ class TheApp():
                     s.sut_pool[role] = []
                     s.sut_pool[role].append(sut)
 
-        if s.args.debug:
-            cdebug(json.dumps(s.sut_pool, sort_keys=True, indent=4))
+        # if s.args.debug:
+        #     cdebug(json.dumps(s.sut_pool, sort_keys=True, indent=4))
 
         s.job_template = s.load_template('standard-jenkins-test-job.mako')
         s.maas_daily_image_test_template = s.load_template('maas-daily-image-test-job.mako')
@@ -120,15 +120,18 @@ class TheApp():
         # The job name starts with some form of the test name(s)
         #
         cdebug('tests: %s (%s)' % (tests, type(tests)))
-        if isinstance(tests, str) or isinstance(tests, unicode):
-            retval += tests
-            retval += '__'
+        if s.args.lkp:
+            retval += jd['package']
         else:
-            retval += '-'.join(tests)
-            retval = retval.replace('ubuntu', 'u')
-            retval += '__'
+            if isinstance(tests, str) or isinstance(tests, unicode):
+                retval += tests
+                retval += '__'
+            else:
+                retval += '-'.join(tests)
+                retval = retval.replace('ubuntu', 'u')
+                retval += '__'
 
-        retval += jd['series-name'].title()[0]  # Only want the first character
+            retval += jd['series-name'].title()[0]  # Only want the first character
         if jd['hwe']:
             retval += '-hwe'
 
@@ -367,6 +370,7 @@ class TheApp():
         valid_keys = ['kernel.testing.request', 'kernel.publish', 'kernel.maas.daily']
         if s.args.lkp:
             valid_keys.append('kernel.testing.livekernelpatching.request')
+            valid_keys.append('livepatch.publish')
         for key in valid_keys:
             if payload['key'].startswith(key):
                 valid_key = True
@@ -397,7 +401,7 @@ class TheApp():
                                 cdebug('appending : %s' % a)
 
                 if 'systems' == k:
-                    if 'sru' == jd['op']:
+                    if jd['op'] in ['sru', 'livepatch-regression-test']:
                         jd['systems'] = s.valid_systems(jd['op'], jd['series-name'])
                         if 'ubuntu_fs_fio_perf' in jd['tests']:
                             for system in s.valid_systems('Filesystem Benchmarking', jd['series-name']):
@@ -422,12 +426,8 @@ class TheApp():
                         jd['fs-benchmarks'] = True
                         jd['tests'].remove('ubuntu_fs_fio_perf')
 
-        cdebug(' arches: %s' % str(jd['arches']))
-        cdebug('systems: %s' % str(jd['systems']))
-        cdebug('  tests: %s' % str(jd['tests']))
-
         if s.args.lkp:
-            if jd['key'] == 'kernel.testing.livekernelpatching.request':
+            if jd['key'] == 'sru' or jd['key'].startswith('livepatch.'):
                 # This is a test request from an individual, not from any part of the automated
                 # system (shankbot).
                 #
@@ -483,10 +483,11 @@ class TheApp():
             else:
                 s.mq = MsgQueue()
             if s.args.lkp:
-                queue = 'lkp-monitor'
+                queue = 'livepatch-monitor'
+                s.mq.listen(queue, 'livepatch.#', s._handler)
             else:
                 queue = 'kernel-publishing-monitor'
-            s.mq.listen(queue, 'kernel.#', s._handler)
+                s.mq.listen(queue, 'kernel.#', s._handler)
 
             retval = 0
 
