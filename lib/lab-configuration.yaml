@@ -204,7 +204,6 @@
         gonzo:
             arch:
                 - "amd64"
-                - "i386"
             provisioner: "maas"
             jenkins server: "kernel-jenkins"
             locked: false
@@ -216,6 +215,7 @@
                     username : "admin"
             role:
                 - "lkp"
+                - "livepatch-regression-test"
             scratch drive: "/dev/sdb"
         haase:
             arch:
