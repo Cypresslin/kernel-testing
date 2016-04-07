@@ -204,6 +204,17 @@
         "platform" : "HP ARM64 McDivitt Cartridge",
         "processors" : "8 cores",
         "memory" : "64GB"
-    }
+    },
+    "bavor" : {
+        "platform" : "HP Proliant DL160 Gen9",
+        "processors" : "6 cores",
+        "memory" : "8GB"
+    },
+    "durin" : {
+        "platform" : "HP Proliant DL20 Gen9",
+        "processors" : "4 cores",
+        "memory" : "8GB"
+    },
+
 
 }
