@@ -109,6 +109,17 @@ TestProfiles = {
             ],
         },
 
+    'ubuntu_zfs_smoke_test' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl', 'libattr1-dev',
+                ],
+            },
+        'series-blacklist' : [
+            'lucid', 'precise', 'vivid', 'utopic',
+            ],
+        },
+
     'ubuntu_zfs_fstest' : {
         'packages' : {
             'common' : [
@@ -554,6 +565,7 @@ TestCollections = {
     'smoke' : [
             'ubuntu_aufs_smoke_test',
             'ubuntu_stress_smoke_test',
+            'ubuntu_zfs_smoke_test',
         ],
 
     # This is the set of tests that will run if no KERNEL_TEST_LIST variable is set.
@@ -581,6 +593,7 @@ TestCollections = {
     #'sru' : ['qa', 'iperf', 'ubuntu_leap_seconds', 'xfstests', 'ubuntu_cts_kernel', 'virt', 'ubuntu_kvm_unit_tests'],
     'sru' : [
              'qa',
+             'smoke',
              'ubuntu_leap_seconds',
              'xfstests',
              'ubuntu_cts_kernel',
