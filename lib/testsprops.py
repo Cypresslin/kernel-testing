@@ -76,40 +76,7 @@ TestProfiles = {
             ],
         },
 
-    'ubuntu_stress_smoke_test' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'git', 'libattr1-dev', 'libkeyutils-dev',
-                ],
-            },
-        'series-blacklist' : [
-            'lucid', 'precise', 'quantal', 'saucy',
-            ],
-        },
-
-    'ubuntu_aufs_smoke_test' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'git', 'libattr1-dev', 'libkeyutils-dev',
-                ],
-            },
-        'series-blacklist' : [
-            'lucid', 'precise', 'quantal', 'saucy',
-            ],
-        },
-
     'ubuntu_zfs' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl', 'libattr1-dev',
-                ],
-            },
-        'series-blacklist' : [
-            'lucid', 'precise', 'vivid', 'utopic',
-            ],
-        },
-
-    'ubuntu_zfs_smoke_test' : {
         'packages' : {
             'common' : [
                 'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl', 'libattr1-dev',
@@ -501,6 +468,51 @@ TestProfiles = {
             'armv7l',
             ],
         },
+
+    'ubuntu_stress_smoke_test' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'gcc-multilib', 'gdb', 'git', 'libattr1-dev', 'libkeyutils-dev',
+                ],
+            },
+        'series-blacklist' : [
+            'lucid', 'precise', 'trusty', 'utopic', 'vivid', 'wily',
+            ],
+        },
+
+    'ubuntu_aufs_smoke_test' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'gcc-multilib', 'gdb', 'git', 'libattr1-dev', 'libkeyutils-dev',
+                ],
+            },
+        'series-blacklist' : [
+            'lucid', 'precise', 'trusty', 'utopic', 'vivid', 'wily',
+            ],
+        },
+
+    'ubuntu_fan_smoke_test' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'gcc-multilib', 'gdb', 'git',
+                ],
+            },
+        'series-blacklist' : [
+            'lucid', 'precise', 'trusty', 'utopic', 'vivid', 'wily',
+            ],
+        },
+
+    'ubuntu_zfs_smoke_test' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl', 'libattr1-dev',
+                ],
+            },
+        'series-blacklist' : [
+            'lucid', 'precise', 'trusty', 'utopic', 'vivid', 'wily',
+            ],
+        },
+
 }
 
 # Test Collections may be defined, and will run the list of autotest tests in them
@@ -566,6 +578,7 @@ TestCollections = {
             'ubuntu_aufs_smoke_test',
             'ubuntu_stress_smoke_test',
             'ubuntu_zfs_smoke_test',
+            'ubuntu_fan_smoke_test',
         ],
 
     # This is the set of tests that will run if no KERNEL_TEST_LIST variable is set.
