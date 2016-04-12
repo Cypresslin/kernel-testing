@@ -75,6 +75,7 @@
                     username : "Administrator"
             role:
                 - "sru"
+                - "smoke"
         cavac:
             arch:
                 - "amd64"
@@ -104,6 +105,7 @@
                     username : "Administrator"
             role:
                 - "sru"
+                - "smoke"
         dwalin:
             arch:
                 - "amd64"
@@ -136,6 +138,7 @@
                     username : "Administrator"
             role:
                 - "sru"
+                - "smoke"
         fili:
             arch:
                 - "amd64"
@@ -165,6 +168,7 @@
                     username : "admin"
             role:
                 - "sru"
+                - "smoke"
         fuller:
             arch:
                 - "amd64"
@@ -266,6 +270,7 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "ubuntu_zfs"
                 - "ubuntu_zfs_stress"
+                - "smoke"
             scratch drive: "/dev/sdb"
             series-blacklist:
                 - "lucid"
@@ -304,6 +309,7 @@
                     username : "Administrator"
             role:
                 - "sru"
+                - "smoke"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
                 - "ubuntu_zfs"
@@ -341,6 +347,7 @@
                     username : "admin"
             role:
                 - "sru"
+                - "smoke"
         onza:
             arch:
                 - "amd64"
@@ -356,6 +363,7 @@
                     username : "admin"
             role:
                 - "sru"
+                - "smoke"
             scratch drive: "/dev/sdb"
         pepe:
             arch:
