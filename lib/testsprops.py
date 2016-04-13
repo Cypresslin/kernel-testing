@@ -513,6 +513,17 @@ TestProfiles = {
             ],
         },
 
+    'ubuntu_squashfs_smoke_test' : {
+        'packages' : {
+            'common' : [
+                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl', 'libattr1-dev',
+                ],
+            },
+        'series-blacklist' : [
+            'lucid', 'precise', 'trusty', 'utopic', 'vivid', 'wily',
+            ],
+        },
+
 }
 
 # Test Collections may be defined, and will run the list of autotest tests in them
@@ -579,6 +590,7 @@ TestCollections = {
             'ubuntu_stress_smoke_test',
             'ubuntu_zfs_smoke_test',
             'ubuntu_fan_smoke_test',
+            'ubuntu_squashfs_smoke_test',
         ],
 
     # This is the set of tests that will run if no KERNEL_TEST_LIST variable is set.
