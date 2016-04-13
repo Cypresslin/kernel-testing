@@ -214,7 +214,6 @@
         "platform" : "HP Proliant DL20 Gen9",
         "processors" : "4 cores",
         "memory" : "8GB"
-    },
-
+    }
 
 }
