@@ -556,6 +556,11 @@ TestCollections = {
             'ubuntu_lxc',
             'ubuntu_qrt_apparmor',
             'ubuntu_kernel_selftests',
+            'ubuntu_aufs_smoke_test',
+            'ubuntu_stress_smoke_test',
+            'ubuntu_zfs_smoke_test',
+            'ubuntu_fan_smoke_test',
+            'ubuntu_squashfs_smoke_test',
         ],
 
     # These are the tests that get run as DEP8 tests
@@ -619,7 +624,6 @@ TestCollections = {
     'sru' : [
              'qa',
              'smoke',
-             'ubuntu_leap_seconds',
              'xfstests',
              'ubuntu_cts_kernel',
              'ubuntu_kernel_selftests',
