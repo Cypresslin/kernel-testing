@@ -77,7 +77,7 @@
                 - "sru"
                 - "sru-1"
                 - "sru-2"
-                - "ubuntu_ecryptfs",
+                - "ubuntu_ecryptfs"
                 - "smoke"
         cavac:
             arch:
@@ -110,7 +110,7 @@
                 - "sru"
                 - "sru-1"
                 - "sru-2"
-                - "ubuntu_ecryptfs",
+                - "ubuntu_ecryptfs"
                 - "smoke"
         dwalin:
             arch:
@@ -146,7 +146,7 @@
                 - "sru"
                 - "sru-1"
                 - "sru-2"
-                - "ubuntu_ecryptfs",
+                - "ubuntu_ecryptfs"
                 - "smoke"
         fozzie:
             arch:
@@ -165,7 +165,7 @@
                 - "sru"
                 - "sru-1"
                 - "sru-2"
-                - "ubuntu_ecryptfs",
+                - "ubuntu_ecryptfs"
                 - "smoke"
         fuller:
             arch:
@@ -288,7 +288,7 @@
                 - "sru"
                 - "sru-1"
                 - "sru-2"
-                - "ubuntu_ecryptfs",
+                - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
                 - "ubuntu_zfs"
@@ -334,7 +334,7 @@
                 - "sru"
                 - "sru-1"
                 - "sru-2"
-                - "ubuntu_ecryptfs",
+                - "ubuntu_ecryptfs"
                 - "smoke"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
@@ -375,7 +375,7 @@
                 - "sru"
                 - "sru-1"
                 - "sru-2"
-                - "ubuntu_ecryptfs",
+                - "ubuntu_ecryptfs"
                 - "smoke"
         onza:
             arch:
@@ -394,7 +394,7 @@
                 - "sru"
                 - "sru-1"
                 - "sru-2"
-                - "ubuntu_ecryptfs",
+                - "ubuntu_ecryptfs"
                 - "smoke"
             scratch drive: "/dev/sdb"
         pepe:
