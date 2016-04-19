@@ -148,20 +148,6 @@
                 - "sru-2"
                 - "ubuntu_ecryptfs",
                 - "smoke"
-        fili:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.98.5.226"
-                    password : "gEktYeGpC"
-                    type     : "ipmi"
-                    username : "maas"
-            role: []
         fozzie:
             arch:
                 - "amd64"
@@ -217,22 +203,6 @@
                     type     : "cdu"
                     username : "kernel"
             role: []
-        gonzo:
-            arch:
-                - "amd64"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.227"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role:
-                - "lkp"
-                - "livepatch-regression-test"
-            scratch drive: "/dev/sdb"
         haase:
             arch:
                 - "amd64"
@@ -247,6 +217,42 @@
                     type     : "ipmi"
                     username : "root"
             role: []
+        gonzo:
+            arch:
+                - "amd64"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.227"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "lkp-1"
+                - "lkp-2"
+                - "lkp-3"
+                - "livepatch-regression-test"
+            scratch drive: "/dev/sdb"
+        fili:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.98.5.226"
+                    password : "gEktYeGpC"
+                    type     : "ipmi"
+                    username : "maas"
+            role: 
+                - "lkp-1"
+                - "lkp-2"
+                - "lkp-3"
+                - "livepatch-regression-test"
         kili:
             arch:
                 - "amd64"
@@ -261,8 +267,10 @@
                     type     : "ipmi"
                     username : "maas"
             role:
-                - "ubuntu_zfs"
-                - "ubuntu_zfs_stress"
+                - "lkp-1"
+                - "lkp-2"
+                - "lkp-3"
+                - "livepatch-regression-test"
             scratch drive: "/dev/sdb"
         modoc:
             arch:

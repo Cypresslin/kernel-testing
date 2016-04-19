@@ -416,7 +416,7 @@ class TheApp():
                         jd['tests'] = SRU_TestsList
                     else:
                         if s.args.lkp:
-                            jd['tests'] = ['lkp']
+                            jd['tests'] = LKP_TestsList
                         else:
                             jd['tests'] = ['default']
 

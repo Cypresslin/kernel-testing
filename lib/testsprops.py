@@ -535,6 +535,27 @@ TestCollections = {
             'ubuntu_cve_kernel',
         ],
 
+    'lkp-1' : [
+            'qrt',
+            'ubuntu_lxc',
+            'ubuntu_seccomp',
+            'ubuntu_kvm_unit_tests',
+            'ubuntu_leap_seconds',
+            'ubuntu_32_on_64',
+        ],
+
+    'lkp-2' : [
+             'smoke',
+             'xfstests',
+             'ubuntu_cts_kernel',
+             'ubuntu_kernel_selftests',
+             'ubuntu_unionmount_overlayfs_suite',
+        ],
+
+    'lkp-3' : [
+             'ubuntu_ecryptfs',
+        ],
+
     # CPC
     #
     'cpc' : [
@@ -639,6 +660,12 @@ SRU_TestsList = [
     'ubuntu_zfs_fstest',
     'ubuntu_zfs_xfs_generic',
     'ubuntu_zfs_stress',
+]
+
+LKP_TestsList = [
+    'lkp-1',
+    'lkp-2',
+    'lkp-3',
 ]
 
 # vi:set ts=4 sw=4 expandtab syntax=python:
