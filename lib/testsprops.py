@@ -556,11 +556,7 @@ TestCollections = {
             'ubuntu_lxc',
             'ubuntu_qrt_apparmor',
             'ubuntu_kernel_selftests',
-            'ubuntu_aufs_smoke_test',
-            'ubuntu_stress_smoke_test',
-            'ubuntu_zfs_smoke_test',
-            'ubuntu_fan_smoke_test',
-            'ubuntu_squashfs_smoke_test',
+            'smoke',
         ],
 
     # These are the tests that get run as DEP8 tests
@@ -576,18 +572,12 @@ TestCollections = {
 
     # The set of tests that Ubuntu Engineering QA run.
     #
-    'qa' : [
-            'ubuntu_ecryptfs',
+    'qrt' : [
             'ubuntu_qrt_kernel_hardening',
             'ubuntu_qrt_kernel_panic',
             'ubuntu_qrt_kernel_security',
             'ubuntu_qrt_kernel_aslr_collisions',
             'ubuntu_qrt_apparmor',
-            'ubuntu_lxc',
-            'ubuntu_seccomp',
-            'ubuntu_kvm_unit_tests',
-            'ubuntu_leap_seconds',
-            'ubuntu_32_on_64',
         ],
 
     'smoke' : [
@@ -608,21 +598,27 @@ TestCollections = {
     #
     'kernel' : ['qa', 'iperf', 'ubuntu_leap_seconds', 'stress', 'ltp', 'ubuntu_cts_kernel', 'virt', 'ubuntu_kvm_unit_tests'],
 
-    # This is the set of tests for measuring power consumption.
-    'power' : ['power_consumption'],
-
-    # This is the set of tests for measuring power consumption.
-    'wakeup_events' : ['wakeup_events'],
-
     # The set of tests that mainline kernels run
     #
     'mainline' : ['stress'],
 
     # The set of tests that SRU kernels run
     #
-    #'sru' : ['qa', 'iperf', 'ubuntu_leap_seconds', 'xfstests', 'ubuntu_cts_kernel', 'virt', 'ubuntu_kvm_unit_tests'],
     'sru' : [
-             'qa',
+             'sru-1',
+             'sru-2',
+        ],
+
+    'sru-1' : [
+            'qrt',
+            'ubuntu_lxc',
+            'ubuntu_seccomp',
+            'ubuntu_kvm_unit_tests',
+            'ubuntu_leap_seconds',
+            'ubuntu_32_on_64',
+        ],
+
+    'sru-2' : [
              'smoke',
              'xfstests',
              'ubuntu_cts_kernel',
@@ -630,18 +626,15 @@ TestCollections = {
              'ubuntu_unionmount_overlayfs_suite',
         ],
 
-    # A set of test cases that came from CTS and are regression tests for things
-    # that have been fixed.
-    #
-    'cts' : ['ubuntu_cts_kernel'],
-
 }
 
 # A list of the tests that is used to create test jobs when the mail handler
 # is processing SRU email.
 #
 SRU_TestsList = [
-    'sru',
+    'sru-1',
+    'sru-2',
+    'ubuntu_ecryptfs',
     'ubuntu_btrfs_kernel_fixes',
     'ubuntu_zfs_fstest',
     'ubuntu_zfs_xfs_generic',
