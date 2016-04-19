@@ -9,7 +9,7 @@ from datetime                           import datetime
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import basicConfig, warning, DEBUG, INFO
 from lib.msgq                           import MsgQueue
-from lib.testsprops                     import SRU_TestsList
+from lib.testsprops                     import SRU_TestsList, LKP_TestsList
 from lib.log                            import cdebug, center, cleave
 from lib.utils                          import date_to_string
 import json
@@ -120,17 +120,17 @@ class TheApp():
         # The job name starts with some form of the test name(s)
         #
         cdebug('tests: %s (%s)' % (tests, type(tests)))
+        if isinstance(tests, str) or isinstance(tests, unicode):
+            retval += tests
+            retval += '__'
+        else:
+            retval += '-'.join(tests)
+            retval = retval.replace('ubuntu', 'u')
+            retval += '__'
+
         if s.args.lkp:
             retval += jd['package']
         else:
-            if isinstance(tests, str) or isinstance(tests, unicode):
-                retval += tests
-                retval += '__'
-            else:
-                retval += '-'.join(tests)
-                retval = retval.replace('ubuntu', 'u')
-                retval += '__'
-
             retval += jd['series-name'].title()[0]  # Only want the first character
         if jd['hwe']:
             retval += '-hwe'
