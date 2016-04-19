@@ -238,7 +238,6 @@
         fili:
             arch:
                 - "amd64"
-                - "i386"
             provisioner: "maas"
             jenkins server: "kernel-jenkins"
             locked: false
@@ -250,13 +249,11 @@
                     username : "maas"
             role: 
                 - "lkp-1"
-                - "lkp-2"
                 - "lkp-3"
                 - "livepatch-regression-test"
         kili:
             arch:
                 - "amd64"
-                - "i386"
             provisioner: "maas"
             jenkins server: "kernel-jenkins"
             locked: false
@@ -267,9 +264,7 @@
                     type     : "ipmi"
                     username : "maas"
             role:
-                - "lkp-1"
                 - "lkp-2"
-                - "lkp-3"
                 - "livepatch-regression-test"
             scratch drive: "/dev/sdb"
         modoc:
