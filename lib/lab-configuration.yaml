@@ -75,6 +75,9 @@
                     username : "Administrator"
             role:
                 - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "ubuntu_ecryptfs",
                 - "smoke"
         cavac:
             arch:
@@ -105,6 +108,9 @@
                     username : "Administrator"
             role:
                 - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "ubuntu_ecryptfs",
                 - "smoke"
         dwalin:
             arch:
@@ -138,6 +144,9 @@
                     username : "Administrator"
             role:
                 - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "ubuntu_ecryptfs",
                 - "smoke"
         fili:
             arch:
@@ -168,6 +177,9 @@
                     username : "admin"
             role:
                 - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "ubuntu_ecryptfs",
                 - "smoke"
         fuller:
             arch:
@@ -266,6 +278,9 @@
                     username : ""
             role:
                 - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "ubuntu_ecryptfs",
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
                 - "ubuntu_zfs"
@@ -309,6 +324,9 @@
                     username : "Administrator"
             role:
                 - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "ubuntu_ecryptfs",
                 - "smoke"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
@@ -347,6 +365,9 @@
                     username : "admin"
             role:
                 - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "ubuntu_ecryptfs",
                 - "smoke"
         onza:
             arch:
@@ -363,6 +384,9 @@
                     username : "admin"
             role:
                 - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "ubuntu_ecryptfs",
                 - "smoke"
             scratch drive: "/dev/sdb"
         pepe:
