@@ -77,6 +77,7 @@
                 - "sru"
                 - "sru-1"
                 - "sru-2"
+                - "xfstests"
                 - "ubuntu_ecryptfs"
                 - "smoke"
         cavac:
@@ -110,6 +111,7 @@
                 - "sru"
                 - "sru-1"
                 - "sru-2"
+                - "xfstests"
                 - "ubuntu_ecryptfs"
                 - "smoke"
         dwalin:
@@ -146,6 +148,7 @@
                 - "sru"
                 - "sru-1"
                 - "sru-2"
+                - "xfstests"
                 - "ubuntu_ecryptfs"
                 - "smoke"
         fozzie:
@@ -165,6 +168,7 @@
                 - "sru"
                 - "sru-1"
                 - "sru-2"
+                - "xfstests"
                 - "ubuntu_ecryptfs"
                 - "smoke"
         fuller:
@@ -249,7 +253,7 @@
                     username : "maas"
             role: 
                 - "lkp-1"
-                - "lkp-3"
+                - "lkp-ecryptfs"
                 - "livepatch-regression-test"
         kili:
             arch:
@@ -265,6 +269,7 @@
                     username : "maas"
             role:
                 - "lkp-2"
+                - "lkp-xfstests"
                 - "livepatch-regression-test"
             scratch drive: "/dev/sdb"
         modoc:
@@ -283,6 +288,7 @@
                 - "sru"
                 - "sru-1"
                 - "sru-2"
+                - "xfstests"
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
@@ -329,6 +335,7 @@
                 - "sru"
                 - "sru-1"
                 - "sru-2"
+                - "xfstests"
                 - "ubuntu_ecryptfs"
                 - "smoke"
                 - "ubuntu_zfs_fstest"
@@ -370,6 +377,7 @@
                 - "sru"
                 - "sru-1"
                 - "sru-2"
+                - "xfstests"
                 - "ubuntu_ecryptfs"
                 - "smoke"
         onza:
@@ -389,6 +397,7 @@
                 - "sru"
                 - "sru-1"
                 - "sru-2"
+                - "xfstests"
                 - "ubuntu_ecryptfs"
                 - "smoke"
             scratch drive: "/dev/sdb"

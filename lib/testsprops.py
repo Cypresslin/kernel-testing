@@ -546,14 +546,17 @@ TestCollections = {
 
     'lkp-2' : [
              'smoke',
-             'xfstests',
              'ubuntu_cts_kernel',
              'ubuntu_kernel_selftests',
              'ubuntu_unionmount_overlayfs_suite',
         ],
 
-    'lkp-3' : [
+    'lkp-ecryptfs' : [
              'ubuntu_ecryptfs',
+        ],
+
+    'lkp-xfstests' : [
+             'xfstests',
         ],
 
     # CPC
@@ -665,7 +668,8 @@ SRU_TestsList = [
 LKP_TestsList = [
     'lkp-1',
     'lkp-2',
-    'lkp-3',
+    'lkp-ecryptfs',
+    'lkp-xfstests',
 ]
 
 # vi:set ts=4 sw=4 expandtab syntax=python:
