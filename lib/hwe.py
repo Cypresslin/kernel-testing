@@ -5,43 +5,40 @@
 # series to the LTS series it 'enables'.
 #
 HWE = {
-        'lucid' : {
-            'series' : None,
-        },
-        'precise' : {
-            'series' : None,
-        },
-        'quantal' : {
-            'series' : 'precise',
-            'package' : 'linux-generic-lts-quantal',
-        },
-        'saucy' : {
-            'series' : 'precise',
-            'package' : 'linux-generic-lts-saucy',
-        },
-        'trusty' : {
-            'series' : 'precise',
-            'package' : 'linux-generic-lts-trusty',
-        },
-        'utopic' : {
-            'series' : 'trusty',
-            'package' : 'linux-generic-lts-utopic',
-        },
-        'vivid' : {
-            'series' : 'trusty',
-            'package' : 'linux-generic-lts-vivid',
-            'ppa' : True
-        },
-        'wily' : {
-            'series' : 'trusty',
-            'package' : 'linux-generic-lts-wily',
-            'ppa' : True
-        },
-        'xenial' : {
-            'series' : 'trusty',
-            'package' : 'linux-generic-lts-xenial',
-            'ppa' : True
-        },
+    'lucid' : {
+        'series' : None,
+    },
+    'precise' : {
+        'series' : None,
+    },
+    'trusty' : {
+        'series' : 'precise',
+        'package' : 'linux-generic-lts-trusty',
+    },
+    'utopic' : {
+        'series' : 'trusty',
+        'package' : 'linux-generic-lts-utopic',
+    },
+    'vivid' : {
+        'series' : 'trusty',
+        'package' : 'linux-generic-lts-vivid',
+        'ppa' : True
+    },
+    'wily' : {
+        'series' : 'trusty',
+        'package' : 'linux-generic-lts-wily',
+        'ppa' : True
+    },
+    'xenial' : {
+        'series' : 'trusty',
+        'package' : 'linux-generic-lts-xenial',
+        'ppa' : True
+    },
+    'yakkety' : {
+        'series' : 'xenial',
+        'package' : 'linux-generic-lts-yakkety',
+        'ppa' : True
+    },
 }
 
 # vi:set ts=4 sw=4 expandtab:

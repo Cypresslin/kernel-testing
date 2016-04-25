@@ -130,20 +130,54 @@ class Ubuntu:
     # * sha1 XXX: doesn't seem to be used anymore
     # * md5 XXX: doesn't seem to be used anymore
     db = {
-        '16.04' :
+        '16.10' :
         {
-            'development' : True,        # This is the version that is currently under development
-            'series_version' : '16.04',
-            'kernel'    : '4.4.0',
-            'name'      : 'xenial',
+            'development' : True,
+            'series_version' : '16.10',
+            'kernel'    : '4.6.0',
+            'name'      : 'yakkety',
             'supported' : False,
-            # adjust packages when this goes live
             'packages'  :
             [
                 'linux',
                 'linux-meta',
                 'linux-raspi2',
                 'linux-meta-raspi2',
+                'linux-snapdragon',
+                'linux-meta-snapdragon',
+            ],
+            'dependent-packages' :
+            {
+                'linux' : {
+                    'meta'   : 'linux-meta',
+                    'signed' : 'linux-signed'
+                },
+                'linux-raspi2' :     {'meta' : 'linux-meta-raspi2' },
+                'linux-snapdragon' : {'meta' : 'linux-meta-snapdragon' },
+            },
+            'derivative-packages' :
+            {
+                'linux' : ['linux-raspi2'],
+                'linux' : ['linux-snapdragon']
+            },
+            'sha1' : '',
+            'md5' : ''
+        },
+        '16.04' :
+        {
+            'development' : True,
+            'series_version' : '16.04',
+            'kernel'    : '4.4.0',
+            'name'      : 'xenial',
+            'supported' : False,
+            'packages'  :
+            [
+                'linux',
+                'linux-meta',
+                'linux-raspi2',
+                'linux-meta-raspi2',
+                'linux-snapdragon',
+                'linux-meta-snapdragon',
             ],
             'dependent-packages' :
             {
@@ -152,22 +186,23 @@ class Ubuntu:
                     'signed' : 'linux-signed'
                 },
                 'linux-raspi2' : { 'meta' : 'linux-meta-raspi2' },
+                'linux-snapdragon' : { 'meta' : 'linux-meta-snapdragon' },
             },
             'derivative-packages' :
             {
-                'linux' : [ 'linux-raspi2' ]
+                'linux' : [ 'linux-raspi2' ],
+                'linux' : [ 'linux-snapdragon' ]
             },
             'sha1' : '',
             'md5' : ''
         },
         '15.10' :
         {
-            'development' : False,        # This is the version that is currently under development
+            'development' : False,
             'series_version' : '15.10',
             'kernel'    : '4.2.0',
             'name'      : 'wily',
             'supported' : True,
-            # adjust packages when this goes live
             'packages'  :
             [
                 'linux',
@@ -192,12 +227,11 @@ class Ubuntu:
         },
         '15.04' :
         {
-            'development' : False,        # This is the version that is currently under development
+            'development' : False,
             'series_version' : '15.04',
             'kernel'    : '3.19.0',
             'name'      : 'vivid',
             'supported' : True,
-            # adjust packages when this goes live
             'packages'  :
             [
                 'linux',
@@ -219,12 +253,11 @@ class Ubuntu:
         },
         '14.10' :
         {
-            'development' : False,        # This is the version that is currently under development
+            'development' : False,
             'series_version' : '14.10',
             'kernel'    : '3.16.0',
             'name'      : 'utopic',
             'supported' : False,
-            # adjust packages when this goes live
             'packages'  :
             [
                 'linux',
@@ -246,12 +279,11 @@ class Ubuntu:
         },
         '14.04' :
         {
-            'development' : False,        # This is the version that is currently under development
+            'development' : False,
             'series_version' : '14.04',
             'kernel'    : '3.13.0',
             'name'      : 'trusty',
             'supported' : True,
-            # adjust packages when this goes live
             'packages'  :
             [
                 'linux',
@@ -265,6 +297,12 @@ class Ubuntu:
                 'linux-lts-vivid',
                 'linux-meta-lts-vivid',
                 'linux-signed-lts-vivid',
+                'linux-lts-wily',
+                'linux-meta-lts-wily',
+                'linux-signed-lts-wily',
+                'linux-lts-xenial',
+                'linux-meta-lts-xenial',
+                'linux-signed-lts-xenial',
             ],
             'dependent-packages' :
             {
@@ -280,6 +318,14 @@ class Ubuntu:
                     'meta' : 'linux-meta-lts-vivid',
                     'signed' : 'linux-signed-lts-vivid'
                 },
+                'linux-lts-wily' : {
+                    'meta' : 'linux-meta-lts-wily',
+                    'signed' : 'linux-signed-lts-wily'
+                },
+                'linux-lts-xenial' : {
+                    'meta' : 'linux-meta-lts-xenial',
+                    'signed' : 'linux-signed-lts-xenial'
+                },
                 'linux-keystone' : { 'meta' : 'linux-meta-keystone' },
             },
             'derivative-packages' :
@@ -291,6 +337,7 @@ class Ubuntu:
                 'linux-lts-utopic' : [ 'linux', '14.10' ],
                 'linux-lts-vivid' : [ 'linux', '15.04' ],
                 'linux-lts-wily' : [ 'linux', '15.10' ],
+                'linux-lts-xenial' : [ 'linux', '16.04' ],
             },
             'sha1' : '',
             'md5' : ''
@@ -302,7 +349,6 @@ class Ubuntu:
             'kernel'    : '3.11.0',
             'name'      : 'saucy',
             'supported' : False,
-            # adjust packages when this goes live
             'packages'  :
             [
                 'linux',
@@ -332,7 +378,6 @@ class Ubuntu:
             'kernel'    : '3.8.0',
             'name'      : 'raring',
             'supported' : False,
-            # adjust packages when this goes live
             'packages'  :
             [
                 'linux',
@@ -361,7 +406,6 @@ class Ubuntu:
             'kernel'    : '3.5.0',
             'name'      : 'quantal',
             'supported' : False,
-            # adjust packages when this goes live
             'packages'  :
             [
                 'linux',
@@ -395,7 +439,6 @@ class Ubuntu:
             'kernel'    : '3.2.0',
             'name'      : 'precise',
             'supported' : True,
-            # adjust packages when this goes live
             'packages'  :
             [
                 'linux',
@@ -463,7 +506,6 @@ class Ubuntu:
             'kernel'    : '3.0.0',
             'name'      : 'oneiric',
             'supported' : False,
-            # adjust packages when this goes live
             'packages'  :
             [
                 'linux',
@@ -678,6 +720,7 @@ class Ubuntu:
     }
 
     index_by_kernel_version = {
+        '4.6.0'    : db['16.10'],
         '4.4.0'    : db['16.04'],
         '4.2.0'    : db['15.10'],
         '4.0.0'    : db['15.10'],
@@ -702,6 +745,7 @@ class Ubuntu:
     }
 
     index_by_series_name = {
+        'yakkety'  : db['16.10'],
         'xenial'   : db['16.04'],
         'wily'     : db['15.10'],
         'vivid'    : db['15.04'],
@@ -728,6 +772,8 @@ class Ubuntu:
         'linux',
         'linux-raspi2',
         'linux-meta-raspi2',
+        'linux-snapdragon',
+        'linux-meta-snapdragon',
         'linux-ti-omap4', # maverick, natty
         'linux-armadaxp', # precise, quantal
         'linux-exynos5',
@@ -827,6 +873,26 @@ class Ubuntu:
 
         return retval
 
+    # last_release
+    #
+    @property
+    def last_release(self):
+        """
+        Return the series name for the last release, i.e. development_series - 1
+        """
+        devel_series = self.development_series
+        devel_version = self.lookup(devel_series)['series_version']
+        (y, m) = devel_version.split('.')
+        if m == '10':
+            m = '04'
+        else:
+            y = str(int(y) - 1)
+            m = '10'
+        release_version = "%s.%s" % (y, m)
+        release_series = self.lookup(release_version)['name']
+
+        return release_series
+
     # supported_series
     #
     @property
@@ -863,12 +929,10 @@ class Ubuntu:
         """
         Return the series name where that package-version is found
         """
-        Dbg.enter('series_name')
         retval = None
 
         if package.startswith('linux-lts-'):
-            Dbg.verbose('package condition 2\n')
-            for entry in self.db.itervalues():
+            for entry in self.db.values():
                 # starting with trusty, the lts packages now include the series
                 # version instead of the series name, e.g: 3.16.0-23.31~14.04.2
                 # instead of 3.16.0-23.31~trusty1
@@ -876,20 +940,15 @@ class Ubuntu:
                 if re.match(expected, version):
                     retval = entry['name']
         else:
-            Dbg.verbose('package condition 1\n')
-            for entry in self.db.itervalues():
+            for entry in self.db.values():
                 if version.startswith(entry['kernel']):
                     retval = entry['name']
 
-        Dbg.leave('series_name (%s)' % retval)
         return retval
 
 if __name__ == '__main__':
     ubuntu = Ubuntu()
     db = ubuntu.db
-
-    #for record in db:
-    #    print db[record]
 
     print(ubuntu.lookup('2.6.32'))
     print(ubuntu.lookup('lucid'))
