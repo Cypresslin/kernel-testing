@@ -217,6 +217,8 @@ class TheApp():
         trackers = json.loads(r.text)
 
         for project in ['kernel-development-workflow', 'kernel-sru-workflow']:
+            if project not in trackers['bug-collections']:
+                continue
             for x in trackers['bug-collections'][project]['bugs']:
                 bug = trackers['bug-collections'][project]['bugs'][x]
                 title = bug['title']
