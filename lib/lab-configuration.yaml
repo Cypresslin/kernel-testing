@@ -73,13 +73,7 @@
                     password : "insecure"
                     type     : "ipmi"
                     username : "Administrator"
-            role:
-                - "sru"
-                - "sru-1"
-                - "sru-2"
-                - "xfstests"
-                - "ubuntu_ecryptfs"
-                - "smoke"
+            role: [] # Too many problems with this system
         cavac:
             arch:
                 - "amd64"
