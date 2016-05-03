@@ -300,7 +300,7 @@ TestProfiles = {
     'ubuntu_ecryptfs' : {
         'packages' : {
             'common' : [
-                'libglib2.0-dev', 'intltool', 'keyutils', 'libkeyutils-dev', 'libpam0g-dev', 'libnss3-dev', 'libtool', 'acl', 'xfsprogs', 'btrfs-tools', 'gdb', 'libattr1-dev'
+                'build-essential', 'libglib2.0-dev', 'intltool', 'keyutils', 'libkeyutils-dev', 'libpam0g-dev', 'libnss3-dev', 'libtool', 'acl', 'xfsprogs', 'btrfs-tools', 'gdb', 'libattr1-dev'
                 ],
             },
         },
@@ -546,6 +546,7 @@ TestCollections = {
 
     'lkp-2' : [
              'smoke',
+             'ubuntu_cve_kernel',
              'ubuntu_cts_kernel',
              'ubuntu_kernel_selftests',
              'ubuntu_unionmount_overlayfs_suite',
