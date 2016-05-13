@@ -5,11 +5,13 @@ from sys                                import argv
 from os                                 import environ, path
 import platform
 import re
+import yaml
 from  subprocess                        import Popen, PIPE
 from datetime                           import datetime
 
 from lib.dbg                            import Dbg
 from lib.utils                          import date_to_string
+from lib.shell                          import sh, ShellError
 
 # TestAttributes
 #
@@ -68,6 +70,20 @@ class TestAttributes():
                 retval = '%s%s' % (m.group(1), m.group(2))
         return retval
 
+    def livepatch_package_version(self):
+        retval = '0.0'
+        try:
+            result, output = sh('sudo canonical-livepatch status', quiet=True)
+            status = yaml.safe_load(''.join(output))
+            for k in status:
+                if k['livepatch']['installed'] is True:
+                    retval = k['livepatch']['version']
+        except ShellError:
+            # For whatever reason it failed (probably not present) just ignore the failure.
+            #
+            pass
+        return retval
+
     # gather
     #
     def gather(self):
@@ -124,6 +140,8 @@ class TestAttributes():
         data['kernel'] = self.kernel_version()
         data['distro-release'] = self.distro_release()
         data['distro-release-name'] = self.distro_release_name()
+
+        data['livepatch-package-version'] = self.livepatch_package_version()
 
         Dbg.leave("TestAttributes.main")
         return data
