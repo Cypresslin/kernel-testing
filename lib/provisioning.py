@@ -234,7 +234,8 @@ class Base(object):
         center("Base::enable_snappy")
         s.progress('Enabling Snappy')
 
-        s.ssh('sudo apt-get install --yes ubuntu-snappy-cli')
+        s.ssh('sudo apt-get update')
+        s.ssh('sudo apt-get install --yes ubuntu-snappy')
         s.ssh('sudo snappy install ubuntu-core.canonical')
 
         s.progress('Verifying Snappy')
