@@ -649,6 +649,7 @@ LKP_TestsList = [
     'lkp-3',
     'lkp-ecryptfs',
     'lkp-xfstests',
+    'ubuntu_load_livepatch_modules',
 ]
 
 # vi:set ts=4 sw=4 expandtab syntax=python:

@@ -232,6 +232,7 @@
                 - "lkp-2"
                 - "lkp-3"
                 - "livepatch-regression-test"
+                - "ubuntu_load_livepatch_modules"
             scratch drive: "/dev/sdb"
         fili:
             arch:
