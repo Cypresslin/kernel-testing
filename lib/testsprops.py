@@ -489,6 +489,12 @@ TestProfiles = {
             ],
         },
 
+    'ubuntu_load_livepatch_modules' : {
+        'packages' : {
+            'common' : [
+                ],
+            },
+        },
 }
 
 # Test Collections may be defined, and will run the list of autotest tests in them
@@ -536,6 +542,7 @@ TestCollections = {
     'lkp-xfstests' : [
              'xfstests',
         ],
+
 
     # CPC
     #
