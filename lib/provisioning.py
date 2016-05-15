@@ -377,7 +377,7 @@ class Base(object):
         '''
         center('Base::enable_proposed')
         s.progress('Enabling Proposed')
-        s.ssh('\'grep %s /etc/apt/sources.list | sed s/%s/%s-proposed/ | sudo tee -a /etc/apt/sources.list\'' % (s.series, s.series, s.series))
+        s.ssh('\'grep "%s main" /etc/apt/sources.list | sed s/\ %s\ /\ %s-proposed\ / | sudo tee -a /etc/apt/sources.list\'' % (s.series, s.series, s.series))
         s.ssh('sudo apt-get update', ignore_result=True)
         cleave('Base::enable_proposed')
 
@@ -690,6 +690,7 @@ class Metal(Base):
         # the system. Once we do this the kernels that we install should be the right one.
         #
         s.fixup_apt_sources()
+        s.enable_proposed()
         s.enable_src()
         if s.ppa is not None:
             s.enable_ppa()
@@ -716,7 +717,6 @@ class Metal(Base):
         # We *always* enable proposed. However, for development series kernels
         # we only update the kernel packages.
         #
-        s.enable_proposed()
         if Ubuntu().is_development_series(s.series):
             s.kernel_upgrade()
             reboot = 'Rebooting for development series kernel'
