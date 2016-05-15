@@ -345,13 +345,14 @@ class Base(object):
         center('Base::fixup_apt_sources')
         s.progress('Fixup /etc/apt/sources.list')
 
+        # Don't use the proxy that MAAS sets up.
+        #
+        s.ssh('sudo rm -f /etc/apt/apt.conf.d/90curtin-aptproxy', quiet=False)
+
         # Make sure we are using the us archive, it should be faster
         #
         s.ssh('\'cat /etc/apt/sources.list | sed "s/\/archive\./\/us.archive./" | sudo tee /etc/apt/sources.list\'')
 
-        # We don't use any multiverse packages
-        #
-        #s.ssh('\'cat /etc/apt/sources.list | sed "s/multiverse//" | sudo tee /etc/apt/sources.list\'')
         s.ssh('sudo apt-get update', ignore_result=True)
         cleave('Base::fixup_apt_sources')
 
