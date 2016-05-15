@@ -263,7 +263,7 @@ class Base(object):
         s.ssh('sudo apt-get install canonical-livepatch')
         sleep(60) # Give the livepatch daemon a minute to calm down
 
-        s.ssh(r'sudo sed -i \'s/1/48/\' /etc/defaults/canonical-livepatch')
+        s.ssh(r'sudo sed -i \'s/1/48/\' /etc/default/canonical-livepatch')
         s.ssh('sudo canonical-livepatch update')
 
         cleave('Base::enable_live_kernel_patching')
