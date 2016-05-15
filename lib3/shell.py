@@ -72,7 +72,7 @@ def enqueue_output(out, queue, quiet=False):
     for line in iter(out.readline, b''):
         queue.put(line)
         if not quiet:
-            stdout.write(line)
+            stdout.write(line.decode('utf-8'))
             stdout.flush()
     out.close()
 
