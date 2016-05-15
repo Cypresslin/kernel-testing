@@ -223,7 +223,6 @@ TestProfiles = {
     'ubuntu_qrt_kernel' : {
         'packages' : {
             'common' : [
-                'build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev', 'gdb',
                 ],
             },
         },
@@ -231,7 +230,6 @@ TestProfiles = {
     'ubuntu_qrt_kernel_aslr_collisions' : {
         'packages' : {
             'common' : [
-                'build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev', 'gdb',
                 ],
             },
         },
@@ -239,7 +237,6 @@ TestProfiles = {
     'ubuntu_qrt_kernel_hardening' : {
         'packages' : {
             'common' : [
-                'build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev', 'gdb',
                 ],
             },
         },
@@ -247,7 +244,6 @@ TestProfiles = {
     'ubuntu_qrt_kernel_panic' : {
         'packages' : {
             'common' : [
-                'build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev', 'gdb', 'libkeyutils-dev',
                 ],
             },
         },
@@ -255,7 +251,6 @@ TestProfiles = {
     'ubuntu_qrt_kernel_security' : {
         'packages' : {
             'common' : [
-                'build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev', 'gdb',
                 ],
             },
         },
@@ -263,36 +258,6 @@ TestProfiles = {
     'ubuntu_qrt_apparmor' : {
         'packages' : {
             'common' : [
-                'build-essential', 'libcap2-bin', 'gcc-multilib', 'gdb', 'gawk', 'execstack', 'exim4', 'libcap-dev', 'gdb',
-                'python-pexpect', 'apparmor', 'apparmor-utils', 'netcat', 'sudo', 'build-essential', 'libapparmor-dev',
-                'attr', 'apport', 'libpam-apparmor', 'libgtk2.0-dev', 'pyflakes', 'apparmor-profiles', 'quilt', 'libdbus-1-dev'
-                ],
-            'xenial' : [
-                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby', 'apparmor-easyprof',
-                ],
-            'wily' : [
-                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby', 'apparmor-easyprof',
-                ],
-            'vivid' : [
-                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby', 'apparmor-easyprof',
-                ],
-            'utopic' : [
-                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby', 'apparmor-easyprof',
-                ],
-            'trusty' : [
-                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby', 'apparmor-easyprof',
-                ],
-            'saucy' : [
-                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby1.8', 'apparmor-easyprof',
-                ],
-            'raring' : [
-                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby1.8', 'apparmor-easyprof',
-                ],
-            'quantal' : [
-                'python3-libapparmor', 'python-libapparmor', 'python3', 'python3-all-dev', 'ruby1.8',
-                ],
-            'precise' : [
-                'python-libapparmor', 'python3', 'python3-all-dev', 'ruby1.8',
                 ],
             },
         },
@@ -552,6 +517,18 @@ TestCollections = {
              'ubuntu_unionmount_overlayfs_suite',
         ],
 
+    'lkp-3' : [
+             'smoke',
+             'ubuntu_cve_kernel',
+             'ubuntu_cts_kernel',
+             'ubuntu_kernel_selftests',
+             'ubuntu_unionmount_overlayfs_suite',
+        ],
+
+    'lkp-apparmor' : [
+            'ubuntu_qrt_apparmor'
+        ],
+
     'lkp-ecryptfs' : [
              'ubuntu_ecryptfs',
         ],
@@ -669,6 +646,7 @@ SRU_TestsList = [
 LKP_TestsList = [
     'lkp-1',
     'lkp-2',
+    'lkp-3',
     'lkp-ecryptfs',
     'lkp-xfstests',
 ]
