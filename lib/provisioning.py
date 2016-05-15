@@ -276,7 +276,11 @@ class Base(object):
         center("Base::install_required_pkgs")
         s.progress('Installing Required Packages')
 
-        s.ssh('sudo apt-get install --yes python-yaml')
+        pkgs = [
+            'python-yaml',
+            'gdb',
+        ]
+        s.ssh('sudo apt-get install --yes %s' % ' '.join(pkgs))
 
         cleave("Base::install_required_pkgs")
 
