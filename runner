@@ -207,6 +207,26 @@ class Runner():
             error('Unable to find any control file for the autotest test (%s).' % t)
             raise ErrorExit()
 
+    # determine_required_packages
+    #
+    def determine_required_packages(self):
+        for t in self.tests_list:
+            debug("Determining correct setup file for test: %s" % t)
+
+            fid = path.join(self.autotest_tests_root, t, 'required-pkgs')
+            if path.exists(fid):
+                print('FOUND! setup file: %s' % fid)
+                TestProfiles[t]['setup file'] = fid
+                debug("    using: %s" % fid)
+
+                try:
+                    result, output = sh(fid, quiet=True)
+                    TestProfiles[t]['packages'] = {}
+                    TestProfiles[t]['packages']['common'] = output[0].strip().split()
+                    print('>> %s <<' % TestProfiles[t]['packages'])
+                except ShellError:
+                    print('Failed to execute the \'required-pkgs\' file (%s)' % (fid))
+
     # per_test_setup
     #
     def per_test_setup(self, test):
@@ -270,9 +290,7 @@ class Runner():
         debug('%s' % str(deps))
         sh('sudo apt-get update', ignore_result=True)
         sh('sudo apt-get -fy install -fy')
-        for dep in deps:
-            debug('Installing: \'%s\'' % dep)
-            sh('sudo apt-get install -fy %s' % dep)
+        sh('sudo apt-get install -fy %s' % ' '.join(deps))
 
     # proxy_check
     #
@@ -363,6 +381,7 @@ class Runner():
             self.gather_test_attributes()
 
             self.test_list_determine_control_files()
+            self.determine_required_packages()
 
             self.install_required_packages()
 
