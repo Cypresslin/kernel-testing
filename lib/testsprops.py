@@ -14,6 +14,37 @@
 #
 TestProfiles = {
 
+    'connectathon' : {
+    },
+    'flail' : {
+    },
+    'synctest' : {
+    },
+    'signaltest' : {
+    },
+    'iosched_bugs' : {
+    },
+    'aiostress' : {
+    },
+    'aio_dio_bugs' : {
+    },
+    'ebizzy' : {
+    },
+    'libhugetlbfs' : {
+    },
+    'fsx' : {
+    },
+    'fsstress' : {
+    },
+    'rtc' : {
+    },
+    'hwclock' : {
+    },
+    'isic' : {
+    },
+    'scrashme' : {
+    },
+
     'virt' : {
         'packages' : {
             'common' : [
@@ -633,6 +664,24 @@ TestCollections = {
              'ubuntu_cts_kernel',
              'ubuntu_kernel_selftests',
              'ubuntu_unionmount_overlayfs_suite',
+        ],
+
+    'sru-3' : [
+            'connectathon',
+            'flail',
+            'synctest',
+            'signaltest',
+            'iosched_bugs',
+            'aiostress',
+            'aio_dio_bugs',
+            'ebizzy',
+            'libhugetlbfs',
+            'fsx',
+            'fsstress',
+            'rtc',
+            'hwclock',
+            'isic',
+            'scrashme',
         ],
 
 }
