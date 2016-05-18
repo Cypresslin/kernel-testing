@@ -71,273 +71,135 @@ TestProfiles = {
         },
 
     'ubuntu_cve_kernel' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'git', 'libkeyutils-dev',
-                ],
-            },
-        'series-blacklist' : [
-            ],
-        'arch-blacklist' : [
-            ],
-        },
+    },
 
     'ubuntu_seccomp' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'git'
-                ],
-            },
         'series-blacklist' : [
-            'lucid', 'precise', 'quantal', 'saucy',
-            ],
+            'precise'
+        ],
         'arch-blacklist' : [
             'i386', 'i686', 'athlon', 'arm64', 'ppc64el',
-            ],
-        },
-
-    'ubuntu_stress_ng' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'git', 'libattr1-dev', 'libkeyutils-dev',
-                ],
-            },
-        'series-blacklist' : [
-            'lucid', 'precise', 'quantal', 'saucy',
-            ],
-        },
+        ],
+    },
 
     'ubuntu_zfs' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl', 'libattr1-dev',
-                ],
-            },
         'series-blacklist' : [
             'lucid', 'precise', 'vivid', 'utopic',
-            ],
-        },
+        ],
+    },
 
     'ubuntu_zfs_fstest' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl', 'libattr1-dev',
-                ],
-            },
         'series-blacklist' : [
             'lucid', 'precise', 'vivid', 'utopic',
-            ],
-        },
+        ],
+    },
 
     'ubuntu_zfs_xfs_generic' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl', 'libattr1-dev',
-                ],
-            },
         'series-blacklist' : [
             'lucid', 'precise', 'vivid', 'utopic',
-            ],
-        },
+        ],
+    },
 
     'ubuntu_zfs_stress' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl', 'libattr1-dev', 'libkeyutils-dev',
-                ],
-            },
         'series-blacklist' : [
             'lucid', 'precise', 'vivid', 'utopic',
-            ],
-        },
+        ],
+    },
 
     'ubuntu_btrfs_kernel_fixes' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git', 'acl', 'libattr1-dev',
-                ],
-            },
         'series-blacklist' : [
             'lucid', 'precise', 'quantal', 'saucy', 'trusty',
-            ],
+        ],
         'atargs' : {}, # this gets filled in later, it's a hack
-        },
+    },
 
     'ubuntu_stress_btrfs' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git', 'acl', 'libattr1-dev', 'libkeyutils-dev',
-                ],
-            },
         'series-blacklist' : [
             'lucid', 'precise', 'quantal', 'saucy',
-            ],
+        ],
         'scratch' : True,
         'atargs' : {}, # this gets filled in later, it's a hack
-        },
+    },
 
     'ubuntu_stress_btrfs_cmd' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'btrfs-tools', 'git', 'acl', 'libattr1-dev',
-                ],
-            },
         'series-blacklist' : [
             'lucid', 'precise', 'quantal', 'saucy',
-            ],
+        ],
         'scratch' : True,
         'atargs' : {}, # this gets filled in later, it's a hack
-        },
+    },
 
     'ubuntu_futex' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'git'
-                ],
-            },
         'series-blacklist' : [
             'lucid', 'precise', 'quantal', 'saucy',
-            ],
-        },
+        ],
+    },
 
     'ubuntu_unionmount_overlayfs_suite' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'git'
-                ],
-            },
         'series-blacklist' : [
             'lucid', 'precise', 'quantal', 'saucy', 'trusty', 'utopic',
-            ],
-        },
+        ],
+    },
 
     'ubuntu_kvm_unit_tests' : {
-        'packages' : {
-            'common' : [
-                'qemu-kvm', 'gdb',
-                ],
-            },
         'series-blacklist' : [
             'lucid', 'precise', 'quantal', 'saucy',
-            ],
+        ],
         'arch-blacklist' : [
             'ppc64le', 'aarch64',
-            ],
-        },
+        ],
+    },
 
     'ubuntu_lxc' : {
-        'packages' : {
-            'common' : [
-                'lxc-tests', 'gdb',
-                ],
-            },
         'series-blacklist' : [
             'lucid', 'precise', 'quantal', 'saucy',
-            ],
-        },
+        ],
+    },
 
     'ubuntu_WiFi_SimpleConnection' : {
-        'packages' : {
-            'common' : [
-                ],
-            },
-        },
+    },
 
     'network_WiFiCaps' : {
-        'packages' : {
-            'common' : [
-                'iw', 'pkg-config', 'libnl-dev', 'gdb',
-                ],
-            },
-        },
+    },
 
     'ubuntu_qrt_kernel' : {
-        'packages' : {
-            'common' : [
-                ],
-            },
-        },
+    },
 
     'ubuntu_qrt_kernel_aslr_collisions' : {
-        'packages' : {
-            'common' : [
-                ],
-            },
-        },
+    },
 
     'ubuntu_qrt_kernel_hardening' : {
-        'packages' : {
-            'common' : [
-                ],
-            },
-        },
+    },
 
     'ubuntu_qrt_kernel_panic' : {
-        'packages' : {
-            'common' : [
-                ],
-            },
-        },
+    },
 
     'ubuntu_qrt_kernel_security' : {
-        'packages' : {
-            'common' : [
-                ],
-            },
-        },
+    },
 
     'ubuntu_qrt_apparmor' : {
-        'packages' : {
-            'common' : [
-                ],
-            },
-        },
+    },
 
     'ubuntu_ecryptfs' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'libglib2.0-dev', 'intltool', 'keyutils', 'libkeyutils-dev', 'libpam0g-dev', 'libnss3-dev', 'libtool', 'acl', 'xfsprogs', 'btrfs-tools', 'gdb', 'libattr1-dev'
-                ],
-            },
-        },
+    },
 
     'ubuntu_leap_seconds' : {
-        'packages' : {
-            'common' : ['gdb',],
-            },
-        },
+    },
 
     'ubuntu_32_on_64' : {
-        'packages' : {
-            'common' : ['gdb', 'gcc-multilib'],
-            },
         'arch-blacklist' : [
             'i386', 'i686', 'athlon', 'ppc64el', 'arm64', 'ppc64le', 'aarch64',
-            ],
-        },
+        ],
+    },
 
     'xfstests' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'uuid-dev', 'xfslibs-dev', 'xfsdump', 'autoconf', 'kpartx', 'libtool', 'python-xattr', 'libacl1-dev', 'libaio-dev', 'quota', 'bc', 'btrfs-tools', 'attr', 'gdb',
-                ],
-            'xenial' : [
-                'libtool-bin'
-                ],
-            'wily' : [
-                'libtool-bin', 'libdm0-dev',
-                ],
-            'vivid' : [
-                'libtool-bin', 'libdm0-dev',
-                ],
-            },
         'series-blacklist': [
             'lucid', 'precise', 'quantal', 'saucy', 'trusty',
-            ],
+        ],
         'command' : 'sudo mkdir -p /media/xfsmount ; sudo adduser --quiet --disabled-password -gecos "XFS test user,,," fsgqa || true',
         'atargs' : {}, # this gets filled in later, it's a hack
         'scratch' : True,
-        },
+    },
 
     'ubuntu_fs_fio_perf' : {
         'packages' : {
@@ -412,120 +274,68 @@ TestProfiles = {
         },
 
     'ltp' : {
-        'packages' : {
-            'common' : [
-                'gdb', 'flex', 'build-essential', 'gcc-multilib', 'git', 'automake'
-                ],
-            },
-        },
+    },
 
     'stress' : {
-        'packages' : {
-            'common' : ['gdb'],
-            },
-        },
+    },
 
     'dbench' : {
-        'packages' : {
-            'common' : [],
-            },
-        },
+    },
 
     'power_consumption' : {
-        'packages' : {
-           'common' : ['gdb', 'stress'],
-            },
-        'atargs' : {'METER_ADDR':'10.97.4.49', 'METER_PORT':'3490', 'METER_TAGPORT':'9999'},
-        },
+        'atargs' : {'METER_ADDR': '10.97.4.49', 'METER_PORT': '3490', 'METER_TAGPORT': '9999'},
+    },
 
     'wakeup_events' : {
-        'packages' : {
-            'common' : [],
-            },
-        },
+    },
 
     'ubuntu_cts_kernel' : {
-        'packages' : {
-            'common' : ['gdb', 'coreutils', 'apparmor', 'linux-tools-`uname -r`', 'iproute2', 'openvswitch-switch'],
-            },
         'series-blacklist': [
             'lucid', 'precise', 'quantal', 'saucy',
-            ],
-        },
+        ],
+    },
 
     'ubuntu_kernel_selftests' : {
-        'packages' : {
-            'common' : ['build-essential', 'gcc-multilib', 'gdb', 'git']
-            },
         'series-blacklist': [
             'lucid', 'precise', 'quantal', 'saucy', 'trusty', 'xenial',
-            ],
+        ],
         'arch-blacklist' : [
             'armv7l',
-            ],
-        },
+        ],
+    },
 
     'ubuntu_stress_smoke_test' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'git', 'libattr1-dev', 'libkeyutils-dev',
-                ],
-            },
         'series-blacklist' : [
             'lucid', 'precise', 'trusty', 'utopic', 'vivid', 'wily',
-            ],
-        },
+        ],
+    },
 
     'ubuntu_aufs_smoke_test' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'git', 'libattr1-dev', 'libkeyutils-dev',
-                ],
-            },
         'series-blacklist' : [
             'lucid', 'precise', 'trusty', 'utopic', 'vivid', 'wily',
-            ],
-        },
+        ],
+    },
 
     'ubuntu_fan_smoke_test' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'git',
-                ],
-            },
         'series-blacklist' : [
             'lucid', 'precise', 'trusty', 'utopic', 'vivid', 'wily',
-            ],
-        },
+        ],
+    },
 
     'ubuntu_zfs_smoke_test' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl', 'libattr1-dev',
-                ],
-            },
         'series-blacklist' : [
             'lucid', 'precise', 'trusty', 'utopic', 'vivid', 'wily',
-            ],
-        },
+        ],
+    },
 
     'ubuntu_squashfs_smoke_test' : {
-        'packages' : {
-            'common' : [
-                'build-essential', 'gcc-multilib', 'gdb', 'xfsprogs', 'git', 'acl', 'libattr1-dev',
-                ],
-            },
         'series-blacklist' : [
             'lucid', 'precise', 'trusty', 'utopic', 'vivid', 'wily',
-            ],
-        },
+        ],
+    },
 
     'ubuntu_load_livepatch_modules' : {
-        'packages' : {
-            'common' : [
-                ],
-            },
-        },
+    },
 }
 
 # Test Collections may be defined, and will run the list of autotest tests in them
@@ -538,29 +348,38 @@ TestCollections = {
         ],
 
     'lkp-1' : [
-            'qrt',
-            'ubuntu_lxc',
-            'ubuntu_seccomp',
-            'ubuntu_kvm_unit_tests',
-            'ubuntu_leap_seconds',
-            'ubuntu_32_on_64',
-        ],
+        'qrt',
+        'ubuntu_lxc',
+        'ubuntu_seccomp',
+        'ubuntu_kvm_unit_tests',
+        'ubuntu_leap_seconds',
+        'ubuntu_32_on_64',
+    ],
 
     'lkp-2' : [
-             'smoke',
-             'ubuntu_cve_kernel',
-             'ubuntu_cts_kernel',
-             'ubuntu_kernel_selftests',
-             'ubuntu_unionmount_overlayfs_suite',
-        ],
+        'smoke',
+        'ubuntu_cve_kernel',
+        'ubuntu_cts_kernel',
+        'ubuntu_kernel_selftests',
+        'ubuntu_unionmount_overlayfs_suite',
+    ],
 
     'lkp-3' : [
-             'smoke',
-             'ubuntu_cve_kernel',
-             'ubuntu_cts_kernel',
-             'ubuntu_kernel_selftests',
-             'ubuntu_unionmount_overlayfs_suite',
-        ],
+        'connectathon',
+        'synctest',
+        'signaltest',
+        'iosched_bugs',
+        'aiostress',
+        'aio_dio_bugs',
+        'ebizzy',
+        'libhugetlbfs',
+        'fsx',
+        'fsstress',
+        'rtc',
+        'hwclock',
+        'isic',
+        'scrashme',
+    ],
 
     'lkp-apparmor' : [
             'ubuntu_qrt_apparmor'
@@ -645,44 +464,44 @@ TestCollections = {
     # The set of tests that SRU kernels run
     #
     'sru' : [
-             'sru-1',
-             'sru-2',
-        ],
+        'sru-1',
+        'sru-2',
+        'sru-3',
+    ],
 
     'sru-1' : [
-            'qrt',
-            'ubuntu_lxc',
-            'ubuntu_seccomp',
-            'ubuntu_kvm_unit_tests',
-            'ubuntu_leap_seconds',
-            'ubuntu_32_on_64',
-        ],
+        'qrt',
+        'ubuntu_lxc',
+        'ubuntu_seccomp',
+        'ubuntu_kvm_unit_tests',
+        'ubuntu_leap_seconds',
+        'ubuntu_32_on_64',
+    ],
 
     'sru-2' : [
-             'smoke',
-             'xfstests',
-             'ubuntu_cts_kernel',
-             'ubuntu_kernel_selftests',
-             'ubuntu_unionmount_overlayfs_suite',
-        ],
+        'smoke',
+        'xfstests',
+        'ubuntu_cts_kernel',
+        'ubuntu_kernel_selftests',
+        'ubuntu_unionmount_overlayfs_suite',
+    ],
 
     'sru-3' : [
-            'connectathon',
-            'flail',
-            'synctest',
-            'signaltest',
-            'iosched_bugs',
-            'aiostress',
-            'aio_dio_bugs',
-            'ebizzy',
-            'libhugetlbfs',
-            'fsx',
-            'fsstress',
-            'rtc',
-            'hwclock',
-            'isic',
-            'scrashme',
-        ],
+        'connectathon',
+        'synctest',
+        'signaltest',
+        'iosched_bugs',
+        'aiostress',
+        'aio_dio_bugs',
+        'ebizzy',
+        'libhugetlbfs',
+        'fsx',
+        'fsstress',
+        'rtc',
+        'hwclock',
+        'isic',
+        'scrashme',
+    ],
 
 }
 
@@ -692,6 +511,7 @@ TestCollections = {
 SRU_TestsList = [
     'sru-1',
     'sru-2',
+    'sru-3',
     'ubuntu_ecryptfs',
     'ubuntu_btrfs_kernel_fixes',
     'ubuntu_zfs_fstest',
