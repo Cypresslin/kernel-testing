@@ -452,6 +452,7 @@ class Base(object):
         # Install everything
         #
         s.ssh('sudo dpkg -i *_all.deb *_%s.deb' % s.arch, ignore_result=True) # best effort
+        s.ssh('sudo apt-get -f install --yes --force-yes', ignore_result=True)
         cleave('Base::install_custom_debs')
 
     # mainline_firmware_hack
