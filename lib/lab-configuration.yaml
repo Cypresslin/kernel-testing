@@ -308,7 +308,13 @@
                     password : "password"
                     type     : "ipmi"
                     username : "Administrator"
-            role: []
+            role:
+                - "sru"
+                - "sru-2"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_xfs_generic"
+                - "ubuntu_zfs_stress"
             series-blacklist:
                 - "lucid"
                 - "precise"
@@ -327,16 +333,12 @@
                     type     : "ipmi"
                     username : "Administrator"
             role:
-                - "sru"
                 - "sru-1"
-                - "sru-2"
+                - "sru-3"
                 - "xfstests"
-                - "ubuntu_ecryptfs"
                 - "smoke"
                 - "ubuntu_zfs_fstest"
-                - "ubuntu_zfs_xfs_generic"
                 - "ubuntu_zfs"
-                - "ubuntu_zfs_stress"
             series-blacklist:
                 - "lucid"
                 - "precise"
