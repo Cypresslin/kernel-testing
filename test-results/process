@@ -46,13 +46,6 @@ class TheApp():
             self.trr = TestResultsRepository(rc='test-results.rc')
             self.ubuntu = Ubuntu()
 
-            self.host_template = Template(load_template('host.mako'))
-
-            self.index_template = Template(load_template('digest-index.mako'))
-            self.alt_index_template = Template(load_template('alt-index.mako'))
-            self.workflow_index_template = Template(load_template('workflow-index.mako'))
-            self.suite_index_template = Template(load_template('suite-index.mako'))
-
             self.hosts_info = json_load(path.join(path.dirname(argv[0]), 'hosts.json'))
 
         except TestResultsRepositoryError as e:
@@ -182,7 +175,8 @@ class TheApp():
         #
         try:
             cdebug('Generating: hybrid-index.html')
-            template = self.alt_index_template.render(data=hybrid, timestamp=datetime.utcnow())
+            alt_index_template = Template(load_template('alt-index.mako'))
+            template = alt_index_template.render(data=hybrid, timestamp=datetime.utcnow())
             dest = path.join(self.trr.cfg['repository_root'], 'index.html')
             with open(dest, 'w') as f:
                 f.write(template)
@@ -279,7 +273,8 @@ class TheApp():
         #
         try:
             cdebug('Generating: hybrid-index.html')
-            template = self.workflow_index_template.render(data=hybrid, timestamp=datetime.utcnow(), versions=versions)
+            workflow_index_template = Template(load_template('workflow-index.mako'))
+            template = workflow_index_template.render(data=hybrid, timestamp=datetime.utcnow(), versions=versions)
             dest = path.join(self.trr.cfg['repository_root'], 'tracker-index.html')
             with open(dest, 'w') as f:
                 f.write(template)
@@ -358,7 +353,8 @@ class TheApp():
                         if not path.exists(p):
                             makedirs(p)
 
-                        template = self.suite_index_template.render(suite=xs, kver=kver, arch=arch, data=sr[suite][kver][arch], timestamp=datetime.utcnow())
+                        suite_index_template = Template(load_template('suite-index.mako'))
+                        template = suite_index_template.render(suite=xs, kver=kver, arch=arch, data=sr[suite][kver][arch], timestamp=datetime.utcnow())
                         dest = path.join(self.trr.cfg['repository_root'], kver, fname)
                         with open(dest, 'w') as f:
                             f.write(template)
@@ -456,20 +452,22 @@ class TheApp():
             #
             try:
                 cdebug('Generating: index.html')
-                template = self.index_template.render(data=data['sru'], timestamp=datetime.utcnow())
+                index_template = Template(load_template('digest-index.mako'))
+                template = index_template.render(data=data['sru'], timestamp=datetime.utcnow())
                 dest = path.join(self.trr.cfg['repository_root'], 'clasic-index.html')
                 with open(dest, 'w') as f:
                     f.write(template)
 
                 for k in data:
                     cdebug('Generating: %s-index.html' % k)
-                    template = self.index_template.render(data=data[k], timestamp=datetime.utcnow())
+                    template = index_template.render(data=data[k], timestamp=datetime.utcnow())
                     dest = path.join(self.trr.cfg['repository_root'], '%s-index.html' % k)
                     with open(dest, 'w') as f:
                         f.write(template)
 
                 for host in self.hosts_info:
-                    template = self.host_template.render(data=self.hosts_info[host], title=host, timestamp=datetime.utcnow())
+                    host_template = Template(load_template('host.mako'))
+                    template = host_template.render(data=self.hosts_info[host], title=host, timestamp=datetime.utcnow())
                     dest = path.join(self.trr.cfg['repository_root'], '%s.html' % host)
                     with open(dest, 'w') as f:
                         f.write(template)
