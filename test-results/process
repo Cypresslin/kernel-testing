@@ -122,31 +122,32 @@ class TheApp():
             arch = proc
         return arch
 
-    def generate_hybrid_results_index(self, data):
-        cdebug("Enter Digest.generate_hybrid_results_index")
-
+    def per_suite_results(self, data):
         # Take the cumulative results dictionary and build a test-suite focused dictionary from
         # it.
         #
         cdebug('--------------------------------------------------')
-        hybrid = {} # suite results
+        retval = {} # suite results
         cdebug('Building test-suite focused dictionary')
         for series in data['sru']:
             cdebug('    series: %s' % series)
-            if series not in hybrid:
-                hybrid[series] = {}
+            if series not in retval:
+                retval[series] = {}
 
             for kver in data['sru'][series]:
                 cdebug('        kver: %s' % kver)
-                if kver not in hybrid[series]:
-                    hybrid[series][kver] = {}
+                if kver not in retval[series]:
+                    retval[series][kver] = {}
 
                 for test_run in data['sru'][series][kver]:
                     attributes = test_run['attributes']
 
+                    # decode the arch
+                    #
                     arch = self.arch_from_proc(attributes['platform']['proc'])
-                    if arch not in hybrid[series][kver]:
-                        hybrid[series][kver][arch] = {}
+
+                    if arch not in retval[series][kver]:
+                        retval[series][kver][arch] = {}
 
                     results = test_run['results']
                     for k in results['suites']:
@@ -154,20 +155,26 @@ class TheApp():
 
                         link = '%s/%s-%s-%s-index.html' % (kver, suite, kver, arch)
 
-                        if suite not in hybrid[series][kver][arch]:
+                        if suite not in retval[series][kver][arch]:
                             if suite == 'qrt_apparmor':
                                 cdebug("            %s : new (%s); ran: %d; failed: %d" % (suite, arch, k['tests run'], k['tests failed']), 'green')
-                            hybrid[series][kver][arch][suite] = {}
-                            hybrid[series][kver][arch][suite]['link'] = link
-                            hybrid[series][kver][arch][suite]['failed']  = k['tests failed']
-                            hybrid[series][kver][arch][suite]['run']     = k['tests run']
-                            hybrid[series][kver][arch][suite]['skipped'] = k['tests skipped']
+                            retval[series][kver][arch][suite] = {}
+                            retval[series][kver][arch][suite]['link'] = link
+                            retval[series][kver][arch][suite]['failed']  = k['tests failed']
+                            retval[series][kver][arch][suite]['run']     = k['tests run']
+                            retval[series][kver][arch][suite]['skipped'] = k['tests skipped']
                         else:
                             if suite == 'qrt_apparmor':
                                 cdebug("            %s : adding (%s); ran: %d; failed: %d" % (suite, arch, k['tests run'], k['tests failed']), 'green')
-                            hybrid[series][kver][arch][suite]['failed']  += k['tests failed']
-                            hybrid[series][kver][arch][suite]['run']     += k['tests run']
-                            hybrid[series][kver][arch][suite]['skipped'] += k['tests skipped']
+                            retval[series][kver][arch][suite]['failed']  += k['tests failed']
+                            retval[series][kver][arch][suite]['run']     += k['tests run']
+                            retval[series][kver][arch][suite]['skipped'] += k['tests skipped']
+        return retval
+
+    def generate_hybrid_results_index(self, data):
+        cdebug("Enter Digest.generate_hybrid_results_index")
+
+        hybrid = self.per_suite_results(data)
 
         # Generate the testing, index page.
         #
@@ -219,53 +226,7 @@ class TheApp():
                     version = '%s%s%s.%s%s' % (m.group(2), m.group(3), m.group(4), m.group(5), m.group(6))
                     versions.append(version)
 
-        for v in sorted(versions):
-            print(v)
-        print('------------------------------------------------------------------------------------')
-
-        # Take the cumulative results dictionary and build a test-suite focused dictionary from
-        # it.
-        #
-        cdebug('--------------------------------------------------')
-        hybrid = {} # suite results
-        cdebug('Building test-suite focused dictionary')
-        for series in data['sru']:
-            cdebug('    series: %s' % series)
-            if series not in hybrid:
-                hybrid[series] = {}
-
-            for kver in data['sru'][series]:
-                cdebug('        kver: %s' % kver)
-                if kver not in hybrid[series]:
-                    hybrid[series][kver] = {}
-
-                for test_run in data['sru'][series][kver]:
-                    attributes = test_run['attributes']
-
-                    arch = self.arch_from_proc(attributes['platform']['proc'])
-                    if arch not in hybrid[series][kver]:
-                        hybrid[series][kver][arch] = {}
-
-                    results = test_run['results']
-                    for k in results['suites']:
-                        suite = k['name'].replace('autotest.', '')
-
-                        link = '%s/%s-%s-%s-index.html' % (kver, suite, kver, arch)
-
-                        if suite not in hybrid[series][kver][arch]:
-                            if suite == 'qrt_apparmor':
-                                cdebug("            %s : new (%s); ran: %d; failed: %d" % (suite, arch, k['tests run'], k['tests failed']), 'green')
-                            hybrid[series][kver][arch][suite] = {}
-                            hybrid[series][kver][arch][suite]['link'] = link
-                            hybrid[series][kver][arch][suite]['failed']  = k['tests failed']
-                            hybrid[series][kver][arch][suite]['run']     = k['tests run']
-                            hybrid[series][kver][arch][suite]['skipped'] = k['tests skipped']
-                        else:
-                            if suite == 'qrt_apparmor':
-                                cdebug("            %s : adding (%s); ran: %d; failed: %d" % (suite, arch, k['tests run'], k['tests failed']), 'green')
-                            hybrid[series][kver][arch][suite]['failed']  += k['tests failed']
-                            hybrid[series][kver][arch][suite]['run']     += k['tests run']
-                            hybrid[series][kver][arch][suite]['skipped'] += k['tests skipped']
+        hybrid = self.per_suite_results(data)
 
         # Generate the testing, index page.
         #
