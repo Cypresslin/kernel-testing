@@ -46,8 +46,6 @@ class TheApp():
             self.trr = TestResultsRepository(rc='test-results.rc')
             self.ubuntu = Ubuntu()
 
-            self.hosts_info = json_load(path.join(path.dirname(argv[0]), 'hosts.json'))
-
         except TestResultsRepositoryError as e:
             error(e.msg)
             cdebug("Leave Digest.initialize")
@@ -465,9 +463,10 @@ class TheApp():
                     with open(dest, 'w') as f:
                         f.write(template)
 
-                for host in self.hosts_info:
-                    host_template = Template(load_template('host.mako'))
-                    template = host_template.render(data=self.hosts_info[host], title=host, timestamp=datetime.utcnow())
+                host_template = Template(load_template('host.mako'))
+                hosts_info = json_load(path.join(path.dirname(argv[0]), 'hosts.json'))
+                for host in hosts_info:
+                    template = host_template.render(data=hosts_info[host], title=host, timestamp=datetime.utcnow())
                     dest = path.join(self.trr.cfg['repository_root'], '%s.html' % host)
                     with open(dest, 'w') as f:
                         f.write(template)
