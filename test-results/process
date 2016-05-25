@@ -81,7 +81,6 @@ class TheApp():
                 m = Debian.version_rc.match(kv)
                 if m:
                     for s in Ubuntu.index_by_series_name:
-                        #cdebug("        series: " + s)
                         if s in kv:
                             cdebug("            is backport kernel", 'blue')
                             # If the series is in the kernel version string, it is most likely
@@ -183,7 +182,7 @@ class TheApp():
         #
         try:
             cdebug('Generating: hybrid-index.html')
-            template = self.alt_index_template.render(data = hybrid, timestamp = datetime.utcnow())
+            template = self.alt_index_template.render(data=hybrid, timestamp=datetime.utcnow())
             dest = path.join(self.trr.cfg['repository_root'], 'index.html')
             with open(dest, 'w') as f:
                 f.write(template)
@@ -294,7 +293,7 @@ class TheApp():
         #
         try:
             cdebug('Generating: hybrid-index.html')
-            template = self.workflow_index_template.render(data = hybrid, timestamp = datetime.utcnow(), versions=versions)
+            template = self.workflow_index_template.render(data=hybrid, timestamp=datetime.utcnow(), versions=versions)
             dest = path.join(self.trr.cfg['repository_root'], 'tracker-index.html')
             with open(dest, 'w') as f:
                 f.write(template)
@@ -356,7 +355,6 @@ class TheApp():
 
                         if suite == 'qrt_apparmor':
                             cdebug("            New: %s %s %s %s %s" % (suite, kver, arch, ts, hostname), 'green')
-                            #cdebug("            %s : new (%s); ran: %d; failed: %d" % (suite, arch, k['tests run'], k['tests failed']), 'green')
 
                         sr[suite][kver][arch][ts][hostname] = {}
                         sr[suite][kver][arch][ts][hostname]['failed']  = k['tests failed']
@@ -367,7 +365,6 @@ class TheApp():
                         sr[suite][kver][arch][ts][hostname]['link'] = link
 
                         sr[suite][kver][arch][ts][hostname]['timestamp'] = attributes['timestamp']
-
 
         for suite in sr:
             cdebug('suite: %s' % suite)
@@ -386,7 +383,7 @@ class TheApp():
                         if not path.exists(p):
                             makedirs(p)
 
-                        template = self.suite_index_template.render(suite=xs, kver=kver, arch=arch, data=sr[suite][kver][arch], timestamp = datetime.utcnow())
+                        template = self.suite_index_template.render(suite=xs, kver=kver, arch=arch, data=sr[suite][kver][arch], timestamp=datetime.utcnow())
                         dest = path.join(self.trr.cfg['repository_root'], kver, fname)
                         with open(dest, 'w') as f:
                             f.write(template)
@@ -455,9 +452,10 @@ class TheApp():
             # The secondary key for 'data' is the kernel version.
             #
             k = results['attributes']['kernel']
-            if 'livepatch-package-version' in results['attributes']:
-                live = results['attributes']['livepatch-package-version']
-                k = '%s - %s' % (k, live)
+            if False:
+                if 'livepatch-package-version' in results['attributes']:
+                    live = results['attributes']['livepatch-package-version']
+                    k = '%s - %s' % (k, live)
             if k not in data[who][series]:
                 data[who][series][k] = []
             data[who][series][k].append(results)
@@ -483,20 +481,20 @@ class TheApp():
             #
             try:
                 cdebug('Generating: index.html')
-                template = self.index_template.render(data = data['sru'], timestamp = datetime.utcnow())
+                template = self.index_template.render(data=data['sru'], timestamp=datetime.utcnow())
                 dest = path.join(self.trr.cfg['repository_root'], 'clasic-index.html')
                 with open(dest, 'w') as f:
                     f.write(template)
 
                 for k in data:
                     cdebug('Generating: %s-index.html' % k)
-                    template = self.index_template.render(data = data[k], timestamp = datetime.utcnow())
+                    template = self.index_template.render(data=data[k], timestamp=datetime.utcnow())
                     dest = path.join(self.trr.cfg['repository_root'], '%s-index.html' % k)
                     with open(dest, 'w') as f:
                         f.write(template)
 
                 for host in self.hosts_info:
-                    template = self.host_template.render(data = self.hosts_info[host], title = host, timestamp = datetime.utcnow())
+                    template = self.host_template.render(data=self.hosts_info[host], title=host, timestamp=datetime.utcnow())
                     dest = path.join(self.trr.cfg['repository_root'], '%s.html' % host)
                     with open(dest, 'w') as f:
                         f.write(template)
