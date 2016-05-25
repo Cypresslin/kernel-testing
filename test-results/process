@@ -3,8 +3,8 @@
 
 from sys                                import argv
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
-from logging                            import basicConfig, INFO, DEBUG, info
-from lib.log                            import cdebug, Clog, cerror
+from logging                            import basicConfig, INFO, DEBUG
+from lib.log                            import cdebug, Clog
 from datetime                           import datetime
 from os                                 import path, makedirs
 
@@ -12,8 +12,7 @@ from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
 
 from lib.grinder                        import Exit, TestResultsRepository, TestResultsRepositoryError, load_template
-from lib.dbg                            import Dbg
-from lib.utils                          import error, dump, string_to_date, json_load
+from lib.utils                          import error, string_to_date, json_load
 
 from lib.ubuntu                         import Ubuntu
 from lib.debian                         import Debian
@@ -141,7 +140,6 @@ class TheApp():
 
                     # decode the arch
                     #
-                    machine = attributes['platform']['machine']
                     proc    = attributes['platform']['proc']
                     if proc == 'x86_64':
                         arch = 'amd64'
@@ -252,7 +250,6 @@ class TheApp():
 
                     # decode the arch
                     #
-                    machine = attributes['platform']['machine']
                     proc    = attributes['platform']['proc']
                     if proc == 'x86_64':
                         arch = 'amd64'
@@ -321,7 +318,6 @@ class TheApp():
                     # decode the arch
                     #
                     hostname = attributes['platform']['hostname']
-                    machine  = attributes['platform']['machine']
                     proc     = attributes['platform']['proc']
                     if proc == 'x86_64':
                         arch = 'amd64'
@@ -551,6 +547,4 @@ examples:
     app = TheApp(args)
     exit(app.main())
 
-
 # vi:set ts=4 sw=4 expandtab:
-
