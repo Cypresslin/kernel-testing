@@ -398,6 +398,71 @@ class TheApp():
                             print(line, "\n")
                         print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
 
+    # collect_results
+    #
+    def collect_results(self):
+        '''
+        Build a dictionary of all of the test results.
+
+        dict:
+            who:
+                series:
+                    kernel-version:
+                        test results
+        '''
+        data = {}
+        for tr in self.trr.test_runs:
+            try:
+                cdebug('tr: %s' % tr)
+                results = self.trr.results(tr)
+            except TestResultsRepositoryError as e:
+                error(e.msg)
+                continue
+
+            cdebug("Processing: %s" % (tr), 'green')
+            cdebug("    kernel: %s" % (results['attributes']['kernel']))
+
+            # If the kernel used was a "custom" kernel, one that someone on the kernel
+            # team built themselves or a mainline build kernel, we want that information
+            #
+            job = results['attributes']['environ']['JOB_NAME']
+            who = None
+            if '_for_' in job:
+                (junk, who) = job.split('_for_')
+                cdebug("       who: %s" % (who))
+            else:
+                who = 'sru' # 'sru' is just a general 'catch all' this lumps everything
+                # that wasn't done by someone specifically into a single
+                # bucket.
+
+            if who not in data:
+                data[who] = {}
+
+            series = self.series(results)
+            results['attributes']['series'] = series
+            cdebug("    series: %s" % (series))
+
+            # "Fixup" the timestamp to be what we want it to look like on the web page
+            #
+            ts = string_to_date(results['attributes']['timestamp'])
+            results['attributes']['timestamp'] = ts.strftime("%Y-%m-%d %H:%M")
+
+            # The primary key is the series.
+            #
+            if series not in data[who]:
+                data[who][series] = {}
+
+            # The secondary key for 'data' is the kernel version.
+            #
+            k = results['attributes']['kernel']
+            if 'livepatch-package-version' in results['attributes']:
+                live = results['attributes']['livepatch-package-version']
+                k = '%s - %s' % (k, live)
+            if k not in data[who][series]:
+                data[who][series][k] = []
+            data[who][series][k].append(results)
+        return data
+
     # main
     #
     def main(self):
@@ -408,56 +473,7 @@ class TheApp():
 
             # Build the data dictionary that will be passed into the mako template renderer.
             #
-            data = {}
-            for tr in self.trr.test_runs:
-                try:
-                    cdebug('tr: %s' % tr)
-                    results = self.trr.results(tr)
-                except TestResultsRepositoryError as e:
-                    error(e.msg)
-                    continue
-
-                cdebug("Processing: %s" % (tr), 'green')
-                cdebug("    kernel: %s" % (results['attributes']['kernel']))
-
-                # If the kernel used was a "custom" kernel, one that someone on the kernel
-                # team built themselves or a mainline build kernel, we want that information
-                #
-                job = results['attributes']['environ']['JOB_NAME']
-                who = None
-                if '_for_' in job:
-                    (junk, who) = job.split('_for_')
-                    cdebug("       who: %s" % (who))
-                else:
-                    who = 'sru'
-
-                if who not in data:
-                    data[who] = {}
-
-                series = self.series(results)
-                results['attributes']['series'] = series
-                cdebug("    series: %s" % (series))
-
-                # "Fixup" the timestamp to be what we want it to look like on the web page
-                #
-                ts = string_to_date(results['attributes']['timestamp'])
-                results['attributes']['timestamp'] = ts.strftime("%Y-%m-%d %H:%M")
-
-                # The primary key is the series.
-                #
-                if series not in data[who]:
-                    data[who][series] = {}
-
-                # The secondary key for 'data' is the kernel version.
-                #
-                k = results['attributes']['kernel']
-                if 'livepatch-package-version' in results['attributes']:
-                    live = results['attributes']['livepatch-package-version']
-                    k = '%s - %s' % (k, live)
-                if k not in data[who][series]:
-                    data[who][series][k] = []
-                data[who][series][k].append(results)
-
+            data = self.collect_results()
 
             self.generate_hybrid_results_index(data)
             self.generate_tracker_results_index(data)
