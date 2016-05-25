@@ -116,6 +116,21 @@ class TheApp():
         cdebug("    Leave Digest.series (%s)" % retval)
         return retval
 
+    # arch_from_proc
+    #
+    def arch_from_proc(s, proc):
+        if proc == 'x86_64':
+            arch = 'amd64'
+        elif proc == 'i686':
+            arch = 'i386'
+        elif proc == 'athlon':
+            arch = 'i386'
+        elif proc == 'aarch64':
+            arch = 'arm64'
+        else:
+            arch = proc
+        return arch
+
     def generate_hybrid_results_index(self, data):
         cdebug("Enter Digest.generate_hybrid_results_index")
 
@@ -138,20 +153,7 @@ class TheApp():
                 for test_run in data['sru'][series][kver]:
                     attributes = test_run['attributes']
 
-                    # decode the arch
-                    #
-                    proc    = attributes['platform']['proc']
-                    if proc == 'x86_64':
-                        arch = 'amd64'
-                    elif proc == 'i686':
-                        arch = 'i386'
-                    elif proc == 'athlon':
-                        arch = 'i386'
-                    elif proc == 'aarch64':
-                        arch = 'arm64'
-                    else:
-                        arch = proc
-
+                    arch = self.arch_from_proc(attributes['platform']['proc'])
                     if arch not in hybrid[series][kver]:
                         hybrid[series][kver][arch] = {}
 
@@ -248,20 +250,7 @@ class TheApp():
                 for test_run in data['sru'][series][kver]:
                     attributes = test_run['attributes']
 
-                    # decode the arch
-                    #
-                    proc    = attributes['platform']['proc']
-                    if proc == 'x86_64':
-                        arch = 'amd64'
-                    elif proc == 'i686':
-                        arch = 'i386'
-                    elif proc == 'athlon':
-                        arch = 'i386'
-                    elif proc == 'aarch64':
-                        arch = 'arm64'
-                    else:
-                        arch = proc
-
+                    arch = self.arch_from_proc(attributes['platform']['proc'])
                     if arch not in hybrid[series][kver]:
                         hybrid[series][kver][arch] = {}
 
@@ -318,17 +307,7 @@ class TheApp():
                     # decode the arch
                     #
                     hostname = attributes['platform']['hostname']
-                    proc     = attributes['platform']['proc']
-                    if proc == 'x86_64':
-                        arch = 'amd64'
-                    elif proc == 'i686':
-                        arch = 'i386'
-                    elif proc == 'athlon':
-                        arch = 'i386'
-                    elif proc == 'aarch64':
-                        arch = 'arm64'
-                    else:
-                        arch = proc
+                    arch = self.arch_from_proc(attributes['platform']['proc'])
 
                     dt = datetime.strptime(attributes['timestamp'], '%Y-%m-%d %H:%M')
                     ts = dt.strftime('%Y-%m-%d_%H-%M-%S')
