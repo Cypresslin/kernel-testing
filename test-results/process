@@ -122,24 +122,24 @@ class TheApp():
             arch = proc
         return arch
 
-    def per_suite_results(self, data):
+    def per_suite_results(self, data, who='sru'):
         # Take the cumulative results dictionary and build a test-suite focused dictionary from
         # it.
         #
         cdebug('--------------------------------------------------')
         retval = {} # suite results
         cdebug('Building test-suite focused dictionary')
-        for series in data['sru']:
+        for series in data[who]:
             cdebug('    series: %s' % series)
             if series not in retval:
                 retval[series] = {}
 
-            for kver in data['sru'][series]:
+            for kver in data[who][series]:
                 cdebug('        kver: %s' % kver)
                 if kver not in retval[series]:
                     retval[series][kver] = {}
 
-                for test_run in data['sru'][series][kver]:
+                for test_run in data[who][series][kver]:
                     attributes = test_run['attributes']
 
                     # decode the arch
@@ -171,10 +171,10 @@ class TheApp():
                             retval[series][kver][arch][suite]['skipped'] += k['tests skipped']
         return retval
 
-    def generate_hybrid_results_index(self, data):
+    def generate_hybrid_results_index(self, data, who='sru', filename='index.html'):
         cdebug("Enter Digest.generate_hybrid_results_index")
 
-        hybrid = self.per_suite_results(data)
+        hybrid = self.per_suite_results(data, who)
 
         # Generate the testing, index page.
         #
@@ -182,7 +182,7 @@ class TheApp():
             cdebug('Generating: hybrid-index.html')
             alt_index_template = Template(load_template('alt-index.mako'))
             template = alt_index_template.render(data=hybrid, timestamp=datetime.utcnow())
-            dest = path.join(self.trr.cfg['repository_root'], 'index.html')
+            dest = path.join(self.trr.cfg['repository_root'], filename)
             with open(dest, 'w') as f:
                 f.write(template)
 
@@ -419,10 +419,7 @@ class TheApp():
 
                 for k in data:
                     cdebug('Generating: %s-index.html' % k)
-                    template = index_template.render(data=data[k], timestamp=datetime.utcnow())
-                    dest = path.join(self.trr.cfg['repository_root'], '%s-index.html' % k)
-                    with open(dest, 'w') as f:
-                        f.write(template)
+                    self.generate_hybrid_results_index(data, k, '%s-index.html' % k)
 
                 host_template = Template(load_template('host.mako'))
                 hosts_info = json_load(path.join(path.dirname(argv[0]), 'hosts.json'))
