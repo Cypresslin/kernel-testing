@@ -229,12 +229,8 @@ class TheApp():
         for test in jd['tests']:
             cdebug('test: %s' % test, 'blue')
 
-            # See if there are lab system which have been specifically identified for the
-            # given test. If so, use those systems and only those systems.
-            #
-            jd['systems'] = s.valid_systems(test, jd['series-name'])
-            if len(jd['systems']) == 0:
-                jd['systems'] = s.valid_systems('SRU 2 Testing', jd['series-name'])
+            # Note: jd['systems'] should never be empty when we get here. If it is then _handler isn't doing
+            #       it's job.
 
             jd = s.generate_jobs(test, jd['systems'], jd)
 
