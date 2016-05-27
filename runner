@@ -280,6 +280,10 @@ class Runner():
         '''
         self.proxy_check()
 
+        print('update  --  update  --  update  --  update')
+        sh('sudo apt-get update', ignore_result=True)
+        print('update  --  update  --  update  --  update')
+
         # Build up the shell command that we are going to run.
         #
         cmd = 'AUTOTEST_PATH=%s sudo -E %s' % (path.join(path.expanduser('~'), 'autotest'), self.autotest_exe_path)
