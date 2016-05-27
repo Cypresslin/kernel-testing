@@ -356,10 +356,7 @@ class TestResultsRepository():
         # Name of the directory where we will be storing the results
         #
         ts = string_to_date(attributes['timestamp']).strftime('%Y-%m-%d_%H-%M-%S')
-        if 'livepatch-package-version' in attributes:
-            tr_dest = "%s - %s/%s__%s - %s__%s" % (attributes['kernel'], attributes['livepatch-package-version'], attributes['platform']['hostname'], attributes['kernel'], attributes['livepatch-package-version'], ts)
-        else:
-            tr_dest = "%s/%s__%s__%s" % (attributes['kernel'], attributes['platform']['hostname'], attributes['kernel'], ts)
+        tr_dest = "%s/%s__%s__%s" % (attributes['kernel'], attributes['platform']['hostname'], attributes['kernel'], ts)
         dest = self.initialize_results_dir(tr_dest)
         for n in listdir(jtr.archive):
             if path.isdir(path.join(jtr.archive, n)):
