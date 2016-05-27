@@ -1,0 +1,4 @@
+#!/bin/sh
+# Start the daemon in the background.
+flock -nx /tmp/kmsgq-lkp-jenkins.lck -c "$HOME/kernel-testing/kmsgq-jenkins --dev&"
+
