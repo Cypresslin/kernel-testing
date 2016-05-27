@@ -60,6 +60,12 @@ class TheApp():
             if args.lkp:
                 msg['key'] = 'kernel.testing.livekernelpatching.request'
 
+            if args.dev:
+                if args.lkp:
+                    msg['key'] = 'kernel-dev.testing.livekernelpatching.request'
+                else:
+                    msg['key'] = 'kernel-dev.testing.request',
+
             # ----------------------------------------------------------------------
             # series
             #
@@ -309,6 +315,7 @@ directories. This is usefull if you are debugging changes to the kernel-testing 
     parser.add_argument('--root',     required=False, type=str,                             help=help_root)
     parser.add_argument('--local',    action='store_true', default=False,                   help='Assume we have an ssh tunnel setup to the MQ server.')
     parser.add_argument('--lkp',      action='store_true', default=False,                   help='This request is specific to Live Kernel Patching.')
+    parser.add_argument('--dev',      action='store_true', default=False,                   help='This request is specific developemnt and will be handled on the dev-jenkins.kernel server.')
     parser.add_argument('--kernel',   required=False, type=str,                             help='The specific kernel version to be installed')
     args = parser.parse_args()
 
