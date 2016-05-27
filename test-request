@@ -62,9 +62,9 @@ class TheApp():
 
             if args.dev:
                 if args.lkp:
-                    msg['key'] = 'kernel-dev.testing.livekernelpatching.request'
+                    msg['key'] = 'kdev.testing.livekernelpatching.request'
                 else:
-                    msg['key'] = 'kernel-dev.testing.request',
+                    msg['key'] = 'kdev.testing.request'
 
             # ----------------------------------------------------------------------
             # series

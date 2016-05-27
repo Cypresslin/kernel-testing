@@ -483,8 +483,8 @@ class TheApp():
                 queue = 'livepatch-monitor'
                 s.mq.listen(queue, 'livepatch.#', s._handler)
             elif s.args.dev:
-                queue = 'kernel-dev-publishing-monitor'
-                s.mq.listen(queue, 'kernel-dev.#', s._handler)
+                queue = 'kdev-publishing-monitor'
+                s.mq.listen(queue, 'kdev.#', s._handler)
             else:
                 queue = 'kernel-publishing-monitor'
                 s.mq.listen(queue, 'kernel.#', s._handler)
