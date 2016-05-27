@@ -90,18 +90,11 @@ class Runner():
             for t in self.tests_list:
                 debug('    %s' % t)
 
-    def blacklisted_by_series(self, profile):
+    def blacklisted(self, test, value):
         retval = False
-        if 'series-blacklist' in profile:
-            if self.release_name in profile['series-blacklist']:
-                retval = True
-        return retval
-
-    def blacklisted_by_arch(self, profile):
-        retval = False
-        if 'arch-blacklist' in profile:
-            if self.arch in profile['arch-blacklist']:
-                retval = True
+        bl = path.join(self.autotest_tests_root, test, 'blacklist.%s' % value)
+        if path.exists(bl):
+            retval = True
         return retval
 
     # tests_list_verify
@@ -126,9 +119,9 @@ class Runner():
         debug('    blacklist checking (%s) (%s)' % (self.release_name, self.arch))
         for t in self.tests_list:
             debug('        \'%s\'' % t)
-            if self.blacklisted_by_series(TestProfiles[t]):
+            if self.blacklisted(t, self.release_name):
                 error('Test \'%s\' has been blacklisted for this series (%s)' % (t, self.release_name))
-            elif self.blacklisted_by_arch(TestProfiles[t]):
+            elif self.blacklisted(t, self.arch):
                 error('Test \'%s\' has been blacklisted for this arch (%s)' % (t, self.arch))
             else:
                 debug('            valid')
