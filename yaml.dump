@@ -1,0 +1,22 @@
+#!/usr/bin/python
+
+import argparse
+import json
+import yaml
+import json
+
+def main():
+    parser = argparse.ArgumentParser(description="dump information about boot resources in maas")
+    parser.add_argument('config',  type=str, help='The configuration information for the MAAS server.')
+    args = parser.parse_args()
+
+    cfg = None
+    with open(args.config, 'r') as stream:
+        cfg = yaml.safe_load(stream)
+
+    print(json.dumps(cfg, sort_keys=True, indent=4))
+
+if __name__ == '__main__':
+    main()
+
+# vi: ts=4 expandtab syntax=python
