@@ -307,6 +307,27 @@ class Runner():
 
         return result
 
+    # no_tests
+    #
+    def no_tests(self):
+        print('')
+        print('******************************************************************************************')
+        print('** Notice:')
+        print('**')
+        print('**     No tests were run.')
+        print('******************************************************************************************')
+        print('')
+        with open(path.join(self.saved_results_root, 'kernel-results.xml'), 'w') as f:
+            f.write('<testsuites>\n')
+            f.write('    <testsuite tests="1" errors="0" name="Runner" timestamp="2012-01-01" hostname="hostname" time="0" failures="0">\n')
+            f.write('        <properties/>\n')
+            f.write('        <testcase classname="Runner.No-Tests" name="runner" time="0.0">\n')
+            f.write('        </testcase>\n')
+            f.write('    </testsuite>\n')
+            f.write('</testsuites>\n')
+        with open(path.join(self.saved_results_root, 'no-tests'), 'w') as f:
+            f.write('No tests were run\n')
+
     # gather_test_attributes
     #
     def gather_test_attributes(self):
@@ -351,6 +372,7 @@ class Runner():
 
             # Run the tests
             #
+            t = None
             for t in self.tests_list:
                 self.per_test_setup(t)
 
@@ -367,6 +389,9 @@ class Runner():
 
                 # 4. Gather post-test log files
                 self.gather_posttest_information(t)
+
+            if t is None:
+                self.no_tests()
 
             retval = 0
 

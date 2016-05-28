@@ -93,7 +93,9 @@ provision += ' $SUT'
 
     # Publish the results. This *MUST* always be the very last thing the job does.
     #
-    $KT/test-results/mk-ingest-job --job-name=$JOB_NAME --build-id=$BUILD_ID
+    if [ ! -e $ARCHIVE/no-tests ]; then
+        $KT/test-results/mk-ingest-job --job-name=$JOB_NAME --build-id=$BUILD_ID
+    fi
 % endif
             </command>
         </hudson.tasks.Shell>
