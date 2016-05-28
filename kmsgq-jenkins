@@ -42,10 +42,7 @@ class TheApp():
         '''
         '''
         s.args = args
-        if s.args.lkp:
-            s.jenkins_url_default = "http://localhost:8080"
-        else:
-            s.jenkins_url_default = "http://kernel-jenkins.kernel:8080"
+        s.jenkins_url_default = "http://kernel-jenkins.kernel:8080"
         s.jenkins = Jenkins(s.jenkins_url_default)
         s.job_defaults = {
             'key'            : 'kernel.testing.request',
