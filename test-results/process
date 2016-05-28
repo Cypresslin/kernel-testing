@@ -403,19 +403,21 @@ class TheApp():
             #
             data = self.collect_results()
 
-            self.generate_hybrid_results_index(data)
-            self.generate_tracker_results_index(data)
-            self.generate_per_suite_indexes(data)
+            if 'sru' in data:
+                self.generate_hybrid_results_index(data)
+                self.generate_tracker_results_index(data)
+                self.generate_per_suite_indexes(data)
 
             # Generate the testing, index page.
             #
             try:
                 cdebug('Generating: index.html')
-                index_template = Template(load_template('digest-index.mako'))
-                template = index_template.render(data=data['sru'], timestamp=datetime.utcnow())
-                dest = path.join(self.trr.cfg['repository_root'], 'clasic-index.html')
-                with open(dest, 'w') as f:
-                    f.write(template)
+                if 'sru' in data:
+                    index_template = Template(load_template('digest-index.mako'))
+                    template = index_template.render(data=data['sru'], timestamp=datetime.utcnow())
+                    dest = path.join(self.trr.cfg['repository_root'], 'clasic-index.html')
+                    with open(dest, 'w') as f:
+                        f.write(template)
 
                 for k in data:
                     cdebug('Generating: %s-index.html' % k)
