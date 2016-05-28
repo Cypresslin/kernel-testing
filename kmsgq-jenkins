@@ -42,7 +42,7 @@ class TheApp():
         '''
         '''
         s.args = args
-        s.jenkins_url_default = "http://kernel-jenkins.kernel:8080"
+        s.jenkins_url_default = "http://localhost:8080"
         s.jenkins = Jenkins(s.jenkins_url_default)
         s.job_defaults = {
             'key'            : 'kernel.testing.request',
@@ -365,6 +365,9 @@ class TheApp():
         if s.args.lkp:
             valid_keys.append('kernel.testing.livekernelpatching.request')
             valid_keys.append('livepatch.publish')
+        elif s.args.dev:
+            valid_keys.append('kdev.testing.request')
+            valid_keys.append('kdev.testing.livekernelpatching.request')
         for key in valid_keys:
             if payload['key'].startswith(key):
                 valid_key = True
@@ -427,7 +430,7 @@ class TheApp():
                 #
                 s.handle_request(jd)
         else:
-            if jd['key'] == 'kernel.testing.request':
+            if jd['key'] == 'kernel.testing.request' or jd['key'].startswith('kdev'):
                 # This is a test request from an individual, not from any part of the automated
                 # system (shankbot).
                 #
