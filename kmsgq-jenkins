@@ -237,9 +237,6 @@ class TheApp():
                 cdebug('test: %s' % test, 'blue')
                 s.generate_jobs(test, s.valid_systems('Filesystem Benchmarking', jd['series-name']), jd)
 
-        jd['key'] = 'kernel.testing.jobs'
-        s.mq.publish(jd['key'], jd)
-
         cleave('TheApp::from_tests_generate_jobs')
 
     # generate_jobs
