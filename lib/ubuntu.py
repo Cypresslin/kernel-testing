@@ -157,19 +157,18 @@ class Ubuntu:
             },
             'derivative-packages' :
             {
-                'linux' : ['linux-raspi2'],
-                'linux' : ['linux-snapdragon']
+                'linux' : [ 'linux-raspi2', 'linux-snapdragon' ],
             },
             'sha1' : '',
             'md5' : ''
         },
         '16.04' :
         {
-            'development' : True,
+            'development' : False,
             'series_version' : '16.04',
             'kernel'    : '4.4.0',
             'name'      : 'xenial',
-            'supported' : False,
+            'supported' : True,
             'packages'  :
             [
                 'linux',
@@ -190,8 +189,7 @@ class Ubuntu:
             },
             'derivative-packages' :
             {
-                'linux' : [ 'linux-raspi2' ],
-                'linux' : [ 'linux-snapdragon' ]
+                'linux' : [ 'linux-raspi2', 'linux-snapdragon' ],
             },
             'sha1' : '',
             'md5' : ''
@@ -439,6 +437,7 @@ class Ubuntu:
             'kernel'    : '3.2.0',
             'name'      : 'precise',
             'supported' : True,
+            # adjust packages when this goes live
             'packages'  :
             [
                 'linux',
