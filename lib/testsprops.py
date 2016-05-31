@@ -354,13 +354,13 @@ TestCollections = {
     # The set of tests that SRU kernels run
     #
     'sru' : [
+        'qrt',
         'sru-1',
         'sru-2',
         'sru-3',
     ],
 
     'sru-1' : [
-        'qrt',
         'ubuntu_lxc',
         'ubuntu_seccomp',
         'ubuntu_kvm_unit_tests',
@@ -377,20 +377,29 @@ TestCollections = {
     ],
 
     'sru-3' : [
-        'connectathon',
-        'synctest',
-        'signaltest',
-        'iosched_bugs',
         'aiostress',
-        'aio_dio_bugs',
+        'dma_memtest',
         'ebizzy',
-        'libhugetlbfs',
+        'fs_mark',
         'fsx',
-        'fsstress',
-        'rtc',
         'hwclock',
+        'iosched_bugs',
+        'iperf',
+        'ipv6connect',
         'isic',
+        'libhugetlbfs',
+        'monotonic_time',
+        'perfmon',
+        'posixtest',
+        'regression',
+        'rmaptest',
+        'rtc',
         'scrashme',
+        'signaltest',
+        'synctest',
+        'wb_kupdate',
+        'xmtest',
+        'aio_dio_bugs',
     ],
 
 }
@@ -399,6 +408,7 @@ TestCollections = {
 # is processing SRU email.
 #
 SRU_TestsList = [
+    'qrt',
     'sru-1',
     'sru-2',
     'sru-3',
