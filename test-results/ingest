@@ -12,14 +12,15 @@ from datetime                           import timedelta, datetime
 from os                                 import path, rename, environ
 from shutil                             import rmtree
 from distutils.dir_util                 import copy_tree
+from logging                            import basicConfig, DEBUG
 
 
 from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
 
 from lib.grinder                        import CmdlineError, Exit, TestResultsRepository, TestResultsRepositoryError, JenkinsTestResultsTree, JenkinsTestResultsTreeError, load_template
-from lib.dbg                            import Dbg
 from lib.utils                          import error, stdo, dump
+from lib.log                            import center, cleave, cdebug, Clog
 
 # Cmdline
 #
@@ -74,7 +75,7 @@ class Cmdline:
             cfg = defaults
 
             optsShort = ''
-            optsLong  = ['help', 'debug=']
+            optsLong  = ['help', 'debug']
             opts, args = getopt(argv[1:], optsShort, optsLong)
 
             for opt, val in opts:
@@ -82,10 +83,9 @@ class Cmdline:
                     raise CmdlineError('')
 
                 elif opt in ('--debug'):
-                    cfg['debug'] = val.split(',')
-                    for level in cfg['debug']:
-                        if level not in Dbg.levels:
-                            Dbg.levels.append(level)
+                    log_format = "%(levelname)s - %(message)s"
+                    basicConfig(level=DEBUG, format=log_format)
+                    Clog.dbg = True
 
             if result: # No errors yet
                 # There might be some bugs listed on the command line.
@@ -113,18 +113,18 @@ class Ingest():
     # __init__
     #
     def __init__(self, cfg):
-        Dbg.enter("Ingest.__init__")
+        center("Ingest.__init__")
 
         self.cfg = cfg
         self.cfg['index template'] = 'ingest-index.mako'
         self.cfg['suite template'] = 'ingest-suite.mako'
 
-        Dbg.leave("Ingest.__init__")
+        cleave("Ingest.__init__")
 
     # initialize
     #
     def initialize(self):
-        Dbg.enter("Ingest.initialize")
+        center("Ingest.initialize")
 
         try:
             self.trr = TestResultsRepository()
@@ -135,19 +135,19 @@ class Ingest():
 
         except TestResultsRepositoryError as e:
             error(e.msg)
-            Dbg.leave("Ingest.initialize")
+            cleave("Ingest.initialize")
             raise Exit()
 
         except JenkinsTestResultsTreeError as e:
             error(e.msg)
             raise Exit()
 
-        Dbg.leave("Ingest.initialize")
+        cleave("Ingest.initialize")
 
     # main
     #
     def main(self):
-        Dbg.enter("Ingest.main")
+        center("Ingest.main")
 
         try:
             self.initialize()
@@ -165,6 +165,19 @@ class Ingest():
                     f.write(template)
 
                 for suite in data['results']['suites']:
+                    cdebug('suite: %s' % suite['name'], 'blue')
+
+                    name = suite['name'].replace('autotest.', '')
+                    for case in suite['cases']:
+                        cdebug('    case: %s' % case['name'], 'blue')
+
+                        tp = path.join(self.trr.results_dir, name, 'results', '%s.%s' % (name, case['name']))
+                        if path.exists(tp):
+                            case['error_link'] = "%s/results/%s.%s/debug/%s.%s.DEBUG.html" % (name, name, case['name'], name, case['name'])
+                        else:
+                            case['error_link'] = "%s/results/%s/debug/%s.DEBUG.html" % (name, case['name'], case['name'])
+                        cdebug('        link: %s' % case['error_link'], 'yellow')
+
                     name = suite['name'].replace('autotest.', '')
                     file_name = "%s-test-suite.html" % name
 
@@ -210,7 +223,7 @@ class Ingest():
         except Exit:
             pass
 
-        Dbg.leave("Ingest.main")
+        cleave("Ingest.main")
         return
 
 
