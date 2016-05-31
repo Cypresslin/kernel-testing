@@ -44,36 +44,9 @@
                     type     : "ipmi"
                     username : "admin"
             role:
-                - "Personal Testing"
+                - "smoke"
+                - "qrt"
             scratch drive: "/dev/sdb"
-        balboa:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.81.142"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "root"
-            role: []
-        bantam:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "192.168.228.89"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "Administrator"
-            role: [] # Too many problems with this system
         cavac:
             arch:
                 - "amd64"
@@ -88,12 +61,8 @@
                     type     : "ipmi"
                     username : "Administrator"
             role:
-                - "sru"
-                - "sru-1"
-                - "sru-2"
-                - "xfstests"
-                - "ubuntu_ecryptfs"
                 - "smoke"
+                - "qrt"
         dagmar:
             arch:
                 - "amd64"
@@ -108,12 +77,8 @@
                     type     : "ipmi"
                     username : "Administrator"
             role:
-                - "sru"
-                - "sru-1"
-                - "sru-2"
-                - "xfstests"
-                - "ubuntu_ecryptfs"
                 - "smoke"
+                - "qrt"
         dwalin:
             arch:
                 - "amd64"
@@ -128,34 +93,9 @@
                     type     : "ipmi"
                     username : "maas"
             role:
-                - "sru"
                 - "sru-1"
                 - "sru-2"
-                - "ubuntu_ecryptfs"
-                - "smoke"
-                - "ubuntu_zfs_fstest"
-                - "ubuntu_zfs_xfs_generic"
             scratch drive: "/dev/sdb"
-        etnyre:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "192.168.228.84"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "Administrator"
-            role:
-                - "sru"
-                - "sru-1"
-                - "sru-2"
-                - "xfstests"
-                - "ubuntu_ecryptfs"
-                - "smoke"
         fozzie:
             arch:
                 - "amd64"
@@ -170,49 +110,160 @@
                     type     : "ipmi"
                     username : "admin"
             role:
+        onibi:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.205"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "sru-1"
+                - "sru-2"
+        onza:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.207"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "sru-1"
+                - "sru-2"
+            scratch drive: "/dev/sdb"
+        phact:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.224"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+            scratch drive: "/dev/sdb"
+        rukbah:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.206"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+            scratch drive: "/dev/sdb"
+        modoc:
+            arch:
+                - "ppc64el"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.20"
+                    password : "admin"
+                    type     : "ipmi"
+                    username : ""
+            role:
+                - "qrt"
+                - "smoke"
                 - "sru"
                 - "sru-1"
                 - "sru-2"
+                - "sru-3"
                 - "xfstests"
                 - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
                 - "smoke"
-        fuller:
+            scratch drive: "/dev/sdb"
+            series-blacklist:
+                - "lucid"
+                - "precise"
+        ms10-34-mcdivittB0-kernel:
             arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
+                - "arm64"
+            sub-arch: "xgene-uboot"
+            provisioner: "hyper-maas"
             jenkins server: "kernel-jenkins"
             locked: false
             power:
                 -
-                    address  : "192.168.228.87"
-                    password : "insecure"
+                    address  : "10.229.65.1"
+                    node: "c34n1"
+                    password : "password"
                     type     : "ipmi"
                     username : "Administrator"
             role:
-                - "dead"
-        gloin:
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-2"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_xfs_generic"
+            series-blacklist:
+                - "lucid"
+                - "precise"
+        ms10-35-mcdivittB0-kernel:
             arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
+                - "arm64"
+            sub-arch: "xgene-uboot"
+            provisioner: "hyper-maas"
             jenkins server: "kernel-jenkins"
-            locked: true
+            locked: false
             power:
                 -
-                    address  : "10.98.4.30"
-                    password : "K3rn3!"
-                    port     : "gloin_ps1"
-                    type     : "cdu"
-                    username : "kernel"
-                -
-                    address  : "10.98.4.31"
-                    password : "K3rn3!"
-                    port     : "gloin_ps2"
-                    type     : "cdu"
-                    username : "kernel"
-            role: []
-        haase:
+                    address  : "10.229.65.1"
+                    node: "c35n1"
+                    password : "password"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role:
+                - "sru-1"
+                - "sru-3"
+                - "xfstests"
+                - "smoke"
+                - "ubuntu_zfs_fstest"
+            series-blacklist:
+                - "lucid"
+                - "precise"
+
+        # --------------------------------------------------------------------------
+        # Testing Development
+        #
+        pepe:
             arch:
                 - "amd64"
                 - "i386"
@@ -221,11 +272,32 @@
             locked: false
             power:
                 -
-                    address  : "10.245.81.143"
+                    address  : "10.245.80.213"
                     password : "insecure"
                     type     : "ipmi"
-                    username : "root"
-            role: []
+                    username : "admin"
+            role:
+                - "Personal Testing"
+        rizzo:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.210"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "debug"
+            scratch drive: "/dev/sdb"
+
+        # --------------------------------------------------------------------------
+        # Livepatch testing
+        #
         gonzo:
             arch:
                 - "amd64"
@@ -278,208 +350,10 @@
                 - "lkp-xfstests"
                 - "livepatch-regression-test"
             scratch drive: "/dev/sdb"
-        modoc:
-            arch:
-                - "ppc64el"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "192.168.228.20"
-                    password : "admin"
-                    type     : "ipmi"
-                    username : ""
-            role:
-                - "sru"
-                - "sru-1"
-                - "sru-2"
-                - "xfstests"
-                - "ubuntu_ecryptfs"
-                - "ubuntu_zfs_fstest"
-                - "ubuntu_zfs_xfs_generic"
-                - "ubuntu_zfs"
-                - "ubuntu_zfs_stress"
-                - "smoke"
-            scratch drive: "/dev/sdb"
-            series-blacklist:
-                - "lucid"
-                - "precise"
-        ms10-34-mcdivittB0-kernel:
-            arch:
-                - "arm64"
-            sub-arch: "xgene-uboot"
-            provisioner: "hyper-maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.229.65.1"
-                    node: "c34n1"
-                    password : "password"
-                    type     : "ipmi"
-                    username : "Administrator"
-            role:
-                - "sru"
-                - "sru-2"
-                - "xfstests"
-                - "ubuntu_ecryptfs"
-                - "ubuntu_zfs_xfs_generic"
-                - "ubuntu_zfs_stress"
-            series-blacklist:
-                - "lucid"
-                - "precise"
-        ms10-35-mcdivittB0-kernel:
-            arch:
-                - "arm64"
-            sub-arch: "xgene-uboot"
-            provisioner: "hyper-maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.229.65.1"
-                    node: "c35n1"
-                    password : "password"
-                    type     : "ipmi"
-                    username : "Administrator"
-            role:
-                - "sru-1"
-                - "sru-3"
-                - "xfstests"
-                - "smoke"
-                - "ubuntu_zfs_fstest"
-                - "ubuntu_zfs"
-            series-blacklist:
-                - "lucid"
-                - "precise"
-        onibi:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.205"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role:
-                - "sru"
-                - "sru-1"
-                - "sru-2"
-                - "xfstests"
-                - "ubuntu_ecryptfs"
-                - "smoke"
-        onza:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.207"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role:
-                - "sru"
-                - "sru-1"
-                - "sru-2"
-                - "xfstests"
-                - "ubuntu_ecryptfs"
-                - "smoke"
-            scratch drive: "/dev/sdb"
-        pepe:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.213"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role:
-                - "Personal Testing"
-        phact:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.224"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role: 
-                - "sru"
-                - "sru-1"
-                - "sru-2"
-                - "sru-3"
-                - "smoke"
-            scratch drive: "/dev/sdb"
-        rainier:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "192.168.228.91"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "Administrator"
-            role:
-                - "dead"
-        rizzo:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.210"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role:
-                - "debug"
-            scratch drive: "/dev/sdb"
-        rukbah:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.206"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role:
-                - "sru"
-                - "sru-1"
-                - "sru-2"
-                - "sru-3"
-                - "smoke"
-            scratch drive: "/dev/sdb"
+
+        # --------------------------------------------------------------------------
+        # Not useable
+        #
         sayers:
             arch:
                 - "amd64"
@@ -510,6 +384,77 @@
             role:
                 - "dead"
             scratch drive: "/dev/sdb"
+        balboa:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.81.142"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "root"
+            role: []
+        bantam:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.89"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role: [] # Too many problems with this system
+        etnyre:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.84"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role: []
+        haase:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.81.143"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "root"
+            role: []
+        rainier:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.91"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role:
+                - "dead"
 
     reserved-systems:
         # livepatch developers system
@@ -546,5 +491,26 @@
                     username : "maas"
             role: []
             scratch drive: ""
+        gloin:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: true
+            power:
+                -
+                    address  : "10.98.4.30"
+                    password : "K3rn3!"
+                    port     : "gloin_ps1"
+                    type     : "cdu"
+                    username : "kernel"
+                -
+                    address  : "10.98.4.31"
+                    password : "K3rn3!"
+                    port     : "gloin_ps2"
+                    type     : "cdu"
+                    username : "kernel"
+            role: []
 
 # vi:set ts=4 sw=4 expandtab syntax=yaml:
