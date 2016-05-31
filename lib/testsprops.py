@@ -46,114 +46,53 @@ TestProfiles = {
     },
 
     'virt' : {
-        'packages' : {
-            'common' : [
-                'p7zip-full', 'tcpdump', 'iproute2', 'libvirt-bin', 'virtinst', 'fakeroot', 'attr', 'git', 'iputils-arping',
-                'gcc', 'python-support', 'python-dev', 'qemu-kvm', 'cpu-checker', 'policycoreutils', 'python-gst-1.0',
-                'python-imaging', 'nfs-kernel-server', 'openvswitch-switch', 'genisoimage', 'python-all-dev', 'gnuplot-nox',
-                'gdb', 'tgt', 'numactl', 'python-libguestfs', 'linux-tools-`uname -r`', 'valgrind',
-                ],
-            },
-        'series-blacklist': [
-            'lucid', 'precise', 'quantal', 'saucy',
-            ],
-        },
+    },
 
     'docker' : {
-        'packages' : {
-            'common' : [
-                'docker.io', 'gdb'
-                ],
-            },
-        'series-blacklist' : [
-            'lucid', 'precise', 'quantal', 'saucy',
-            ],
-        },
+    },
 
     'ubuntu_cve_kernel' : {
     },
 
     'ubuntu_seccomp' : {
-        'series-blacklist' : [
-            'precise'
-        ],
-        'arch-blacklist' : [
-            'i386', 'i686', 'athlon', 'arm64', 'ppc64el',
-        ],
     },
 
     'ubuntu_zfs' : {
-        'series-blacklist' : [
-            'lucid', 'precise', 'vivid', 'utopic',
-        ],
     },
 
     'ubuntu_zfs_fstest' : {
-        'series-blacklist' : [
-            'lucid', 'precise', 'vivid', 'utopic',
-        ],
     },
 
     'ubuntu_zfs_xfs_generic' : {
-        'series-blacklist' : [
-            'lucid', 'precise', 'vivid', 'utopic',
-        ],
     },
 
     'ubuntu_zfs_stress' : {
-        'series-blacklist' : [
-            'lucid', 'precise', 'vivid', 'utopic',
-        ],
     },
 
     'ubuntu_btrfs_kernel_fixes' : {
-        'series-blacklist' : [
-            'lucid', 'precise', 'quantal', 'saucy', 'trusty',
-        ],
         'atargs' : {}, # this gets filled in later, it's a hack
     },
 
     'ubuntu_stress_btrfs' : {
-        'series-blacklist' : [
-            'lucid', 'precise', 'quantal', 'saucy',
-        ],
         'scratch' : True,
         'atargs' : {}, # this gets filled in later, it's a hack
     },
 
     'ubuntu_stress_btrfs_cmd' : {
-        'series-blacklist' : [
-            'lucid', 'precise', 'quantal', 'saucy',
-        ],
         'scratch' : True,
         'atargs' : {}, # this gets filled in later, it's a hack
     },
 
     'ubuntu_futex' : {
-        'series-blacklist' : [
-            'lucid', 'precise', 'quantal', 'saucy',
-        ],
     },
 
     'ubuntu_unionmount_overlayfs_suite' : {
-        'series-blacklist' : [
-            'lucid', 'precise', 'quantal', 'saucy', 'trusty', 'utopic',
-        ],
     },
 
     'ubuntu_kvm_unit_tests' : {
-        'series-blacklist' : [
-            'lucid', 'precise', 'quantal', 'saucy',
-        ],
-        'arch-blacklist' : [
-            'ppc64le', 'aarch64',
-        ],
     },
 
     'ubuntu_lxc' : {
-        'series-blacklist' : [
-            'lucid', 'precise', 'quantal', 'saucy',
-        ],
     },
 
     'ubuntu_WiFi_SimpleConnection' : {
@@ -187,91 +126,52 @@ TestProfiles = {
     },
 
     'ubuntu_32_on_64' : {
-        'arch-blacklist' : [
-            'i386', 'i686', 'athlon', 'ppc64el', 'arm64', 'ppc64le', 'aarch64',
-        ],
     },
 
     'xfstests' : {
-        'series-blacklist': [
-            'lucid', 'precise', 'quantal', 'saucy', 'trusty',
-        ],
         'command' : 'sudo mkdir -p /media/xfsmount ; sudo adduser --quiet --disabled-password -gecos "XFS test user,,," fsgqa || true',
         'atargs' : {}, # this gets filled in later, it's a hack
         'scratch' : True,
     },
 
     'ubuntu_fs_fio_perf' : {
-        'packages' : {
-            'common' : [
-                 'build-essential', 'git-core', 'fio', 'libaio-dev', 'xfsdump', 'xfsprogs', 'btrfs-tools', 'gdb',
-                ],
-            },
         'env' : {('BENCHMARKS', 'true')},
         'atargs' : {}, # this gets filled in later, it's a hack
         'scratch' : True,
-        },
+    },
 
     'iozone' : {
-        'packages' : {
-            'common' : [
-                'gnuplot', 'xfsdump', 'xfsprogs', 'btrfs-tools', 'gdb',
-                ],
-            },
         'command' : 'sudo mkdir -p /media/iozonemount',
         'atargs' : {}, # this gets filled in later, it's a hack
         'scratch' : True,
-        },
+    },
 
     'iozone-fsync' : {
-        'packages' : {
-            'common' : [
-                'gnuplot', 'xfsdump', 'xfsprogs', 'btrfs-tools', 'gdb',
-                ],
-            },
         'command' : 'sudo mkdir -p /media/iozonemount',
         'atargs' : {}, # this gets filled in later, it's a hack
         'scratch' : True,
-        },
+    },
 
     'iozone-nolazy' : {
-        'packages' : {
-            'common' : [
-                'gnuplot', 'xfsdump', 'xfsprogs', 'btrfs-tools', 'gdb',
-                ],
-            },
         'command' : 'sudo mkdir -p /media/iozonemount',
         'atargs' : {}, # this gets filled in later, it's a hack
         'scratch' : True,
-        },
+    },
 
     'iozone-ioscheduler-xfs' : {
-        'packages' : {
-            'common' : [
-                'gnuplot', 'xfsdump', 'xfsprogs', 'gdb',
-                ],
-            },
         'command' : 'sudo mkdir -p /media/iozonemount',
         'atargs' : {}, # this gets filled in later, it's a hack
         'scratch' : True,
-        },
+    },
 
     'tiobench' : {
-        'packages' : {
-            'common' : [
-                'gnuplot', 'xfsdump', 'xfsprogs', 'btrfs-tools', 'gdb',
-                ],
-            },
         'command' : 'sudo mkdir -p /media/testmount',
         'atargs' : {}, # this gets filled in later, it's a hack
         'scratch' : True,
-        },
+    },
 
     'iperf' : {
-        'packages' : {
-            'common' : ['sysstat', 'gdb'],
-            },
-        },
+    },
 
     'ltp' : {
     },
@@ -290,48 +190,24 @@ TestProfiles = {
     },
 
     'ubuntu_cts_kernel' : {
-        'series-blacklist': [
-            'lucid', 'precise', 'quantal', 'saucy',
-        ],
     },
 
     'ubuntu_kernel_selftests' : {
-        'series-blacklist': [
-            'lucid', 'precise', 'quantal', 'saucy', 'trusty', 'xenial',
-        ],
-        'arch-blacklist' : [
-            'armv7l',
-        ],
     },
 
     'ubuntu_stress_smoke_test' : {
-        'series-blacklist' : [
-            'lucid', 'precise', 'trusty', 'utopic', 'vivid', 'wily',
-        ],
     },
 
     'ubuntu_aufs_smoke_test' : {
-        'series-blacklist' : [
-            'lucid', 'precise', 'trusty', 'utopic', 'vivid', 'wily',
-        ],
     },
 
     'ubuntu_fan_smoke_test' : {
-        'series-blacklist' : [
-            'lucid', 'precise', 'trusty', 'utopic', 'vivid', 'wily',
-        ],
     },
 
     'ubuntu_zfs_smoke_test' : {
-        'series-blacklist' : [
-            'lucid', 'precise', 'trusty', 'utopic', 'vivid', 'wily',
-        ],
     },
 
     'ubuntu_squashfs_smoke_test' : {
-        'series-blacklist' : [
-            'lucid', 'precise', 'trusty', 'utopic', 'vivid', 'wily',
-        ],
     },
 
     'ubuntu_load_livepatch_modules' : {
@@ -344,8 +220,8 @@ TestCollections = {
     # Live Kernel Patching
     #
     'lkp' : [
-            'ubuntu_cve_kernel',
-        ],
+        'ubuntu_cve_kernel',
+    ],
 
     'lkp-1' : [
         'qrt',
@@ -382,70 +258,84 @@ TestCollections = {
     ],
 
     'lkp-apparmor' : [
-            'ubuntu_qrt_apparmor'
-        ],
+        'ubuntu_qrt_apparmor'
+    ],
 
     'lkp-ecryptfs' : [
-             'ubuntu_ecryptfs',
-        ],
+        'ubuntu_ecryptfs',
+    ],
 
     'lkp-xfstests' : [
-             'xfstests',
-        ],
+        'xfstests',
+    ],
 
 
     # CPC
     #
     'cpc' : [
-            'ubuntu_qrt_kernel_hardening',
-            'ubuntu_qrt_kernel_panic',
-            'ubuntu_qrt_kernel_security',
-            'ubuntu_qrt_kernel_aslr_collisions',
-            'ubuntu_lxc',
-            'ubuntu_kernel_selftests',
-        ],
+        'ubuntu_qrt_kernel_hardening',
+        'ubuntu_qrt_kernel_panic',
+        'ubuntu_qrt_kernel_security',
+        'ubuntu_qrt_kernel_aslr_collisions',
+        'ubuntu_lxc',
+        'ubuntu_kernel_selftests',
+    ],
 
     # zsystem specific tests
     #
     'ibm' : [
-            'ubuntu_qrt_kernel_hardening',
-            'ubuntu_qrt_kernel_panic',
-            'ubuntu_qrt_kernel_security',
-            'ubuntu_qrt_kernel_aslr_collisions',
-            'ubuntu_lxc',
-            'ubuntu_qrt_apparmor',
-            'ubuntu_kernel_selftests',
-            'smoke',
-        ],
+        'qrt',
+        'ubuntu_lxc',
+        'ubuntu_kernel_selftests',
+        'ubuntu_leap_seconds',
+        'smoke',
+        'ubuntu_cts_kernel',
+        'ubuntu_kernel_selftests',
+        'ubuntu_unionmount_overlayfs_suite',
+        'connectathon',
+        'synctest',
+        'signaltest',
+        'iosched_bugs',
+        'aiostress',
+        'aio_dio_bugs',
+        'ebizzy',
+        'libhugetlbfs',
+        'fsx',
+        'fsstress',
+        'rtc',
+        'hwclock',
+        'isic',
+        'scrashme',
+    ],
 
     # These are the tests that get run as DEP8 tests
     #
     'dep8' : [
-            'ubuntu_qrt_kernel_hardening',
-            'ubuntu_qrt_kernel_panic',
-            'ubuntu_qrt_kernel_security',
-            'ubuntu_qrt_kernel_aslr_collisions',
-            'ubuntu_qrt_apparmor',
-            'ubuntu_kernel_selftests'
-        ],
+        'ubuntu_qrt_kernel_hardening',
+        'ubuntu_qrt_kernel_panic',
+        'ubuntu_qrt_kernel_security',
+        'ubuntu_qrt_kernel_aslr_collisions',
+        'ubuntu_qrt_apparmor',
+        'ubuntu_kernel_selftests'
+    ],
 
     # The set of tests that Ubuntu Engineering QA run.
     #
     'qrt' : [
-            'ubuntu_qrt_kernel_hardening',
-            'ubuntu_qrt_kernel_panic',
-            'ubuntu_qrt_kernel_security',
-            'ubuntu_qrt_kernel_aslr_collisions',
-            'ubuntu_qrt_apparmor',
-        ],
+        'ubuntu_qrt_kernel_hardening',
+        'ubuntu_qrt_kernel_panic',
+        'ubuntu_qrt_kernel_security',
+        'ubuntu_qrt_kernel_aslr_collisions',
+        'ubuntu_qrt_apparmor',
+    ],
 
     'smoke' : [
-            'ubuntu_aufs_smoke_test',
-            'ubuntu_stress_smoke_test',
-            'ubuntu_zfs_smoke_test',
-            'ubuntu_fan_smoke_test',
-            'ubuntu_squashfs_smoke_test',
-        ],
+        'ubuntu_aufs_smoke_test',
+        'ubuntu_stress_smoke_test',
+        'ubuntu_zfs_smoke_test',
+        'ubuntu_fan_smoke_test',
+        'ubuntu_squashfs_smoke_test',
+    ],
 
     # This is the set of tests that will run if no KERNEL_TEST_LIST variable is set.
     # (QA runs this set)
@@ -516,7 +406,6 @@ SRU_TestsList = [
     'ubuntu_btrfs_kernel_fixes',
     'ubuntu_zfs_fstest',
     'ubuntu_zfs_xfs_generic',
-    'ubuntu_zfs_stress',
 ]
 
 LKP_TestsList = [
