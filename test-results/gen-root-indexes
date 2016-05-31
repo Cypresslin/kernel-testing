@@ -1,0 +1,158 @@
+#!/usr/bin/env python
+#
+
+from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import basicConfig, INFO, DEBUG
+from lib.log                            import cdebug, Clog
+from datetime                           import datetime
+from os                                 import path
+import json
+import requests
+import re
+
+from mako.template                      import Template
+from mako.exceptions                    import RichTraceback
+
+from lib.grinder                        import Exit, load_template
+
+from test_results                       import TestResults
+
+# TheApp
+#
+class TheApp():
+    '''
+    '''
+    def generate_root_indexes(self, filename='index.html'):
+        cdebug("Enter Digest.generate_root_indexes")
+
+        test_results = TestResults()
+        data = test_results.collect_results()
+
+        for who in data.keys():
+            results = test_results.per_suite_results(data, who)
+
+            # Generate the testing, index page.
+            #
+            try:
+                alt_index_template = Template(load_template('root-index.mako'))
+                template = alt_index_template.render(data=results, timestamp=datetime.utcnow())
+                if who == 'sru':
+                    dest = path.join(test_results.trr.cfg['repository_root'], filename)
+                else:
+                    dest = path.join(test_results.trr.cfg['repository_root'], '%s-%s' % (who, filename))
+                with open(dest, 'w') as f:
+                    f.write(template)
+
+            except:
+                traceback = RichTraceback()
+                for (filename, lineno, function, line) in traceback.traceback:
+                    print("File %s, line %s, in %s" % (filename, lineno, function))
+                    print(line, "\n")
+                print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
+
+        cdebug("Leave Digest.generate_root_indexes")
+
+    def generate_root_sru_tracker_results_index(self):
+        '''
+        '''
+        cdebug("Enter Digest.generate_root_sru_tracker_results_index")
+
+        #                              .- package name (group(1))
+        #                             /           .- kernel version (group(2))
+        #                            /           /          .- version/abi separator (group(3))
+        #                           /           /          /
+        ver_rc     = re.compile("(\S+): (\d+\.\d+\.\d+)([-\.])(\d+)\.(\d+)([~a-z\d.]*)")
+        #                                                       /      /       /
+        #                                                      /      /       .- backport extra (m.group(6))
+        #                                                     /      .- upload number (m.group(5))
+        #                                                    .- abi (group(4))
+
+        versions = []
+        r = requests.get('http://kernel.ubuntu.com/sru/kernel-sru-workflow.json')
+        trackers = json.loads(r.text)
+
+        for project in ['kernel-development-workflow', 'kernel-sru-workflow']:
+            if project not in trackers['bug-collections']:
+                continue
+            for x in trackers['bug-collections'][project]['bugs']:
+                bug = trackers['bug-collections'][project]['bugs'][x]
+                title = bug['title']
+
+                m = ver_rc.search(title)
+                if m is not None:
+                    version = '%s%s%s.%s%s' % (m.group(2), m.group(3), m.group(4), m.group(5), m.group(6))
+                    versions.append(version)
+
+        test_results = TestResults()
+        data = test_results.collect_results()
+        results = test_results.per_suite_results(data)
+
+        # Generate the testing, index page.
+        #
+        try:
+            workflow_index_template = Template(load_template('root-sru-tracker-index.mako'))
+            template = workflow_index_template.render(data=results, timestamp=datetime.utcnow(), versions=versions)
+            dest = path.join(test_results.trr.cfg['repository_root'], 'tracker-index.html')
+            with open(dest, 'w') as f:
+                f.write(template)
+
+        except:
+            traceback = RichTraceback()
+            for (filename, lineno, function, line) in traceback.traceback:
+                print("File %s, line %s, in %s" % (filename, lineno, function))
+                print(line, "\n")
+            print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
+
+        cdebug("Leave Digest.generate_root_sru_tracker_results_index")
+
+    # main
+    #
+    def main(self):
+        cdebug("Enter Digest.main")
+
+        try:
+            self.generate_root_indexes()
+            self.generate_root_sru_tracker_results_index()
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            pass
+
+        except Exit:
+            pass
+
+        cdebug("Leave Digest.main")
+        return
+
+
+if __name__ == '__main__':
+    # Command line argument setup and initial processing
+    #
+    app_description = '''
+I'm a application skeleton, your job is to make me into something useful.
+    '''
+    app_epilog = '''
+examples:
+    process --help
+    '''
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--debug', action='store_true', default=False, help='Print out a lot of messages about what is going on.')
+    parser.add_argument('--nc', action='store_true', default=False, help='Debut output should not be colored.')
+    args = parser.parse_args()
+
+    # If logging parameters were set on the command line, handle them
+    # here.
+    #
+    log_format = "%(levelname)s - %(message)s"
+    if args.debug:
+        basicConfig(level=DEBUG, format=log_format)
+        Clog.dbg = True
+        Clog.color = not args.nc
+    else:
+        basicConfig(level=INFO, format=log_format)
+
+    app = TheApp()
+    exit(app.main())
+
+# vi:set ts=4 sw=4 expandtab:
