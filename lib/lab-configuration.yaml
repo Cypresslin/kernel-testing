@@ -87,7 +87,13 @@
                     password : "insecure"
                     type     : "ipmi"
                     username : "Administrator"
-            role: []
+            role:
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "smoke"
         dagmar:
             arch:
                 - "amd64"
@@ -122,6 +128,11 @@
                     type     : "ipmi"
                     username : "maas"
             role:
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "ubuntu_ecryptfs"
+                - "smoke"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
             scratch drive: "/dev/sdb"
@@ -342,21 +353,6 @@
             series-blacklist:
                 - "lucid"
                 - "precise"
-        nori:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.212"
-                    password : "SeqjBEPS6FeZaW"
-                    type     : "ipmi"
-                    username : "maas"
-            role:
-                - "arges"
         onibi:
             arch:
                 - "amd64"
@@ -426,7 +422,12 @@
                     password : "insecure"
                     type     : "ipmi"
                     username : "admin"
-            role: []
+            role: 
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "smoke"
             scratch drive: "/dev/sdb"
         rainier:
             arch:
@@ -473,7 +474,11 @@
                     type     : "ipmi"
                     username : "admin"
             role:
-                - "ubuntu_btrfs_kernel_fixes"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "smoke"
             scratch drive: "/dev/sdb"
         sayers:
             arch:
@@ -489,21 +494,6 @@
                     type     : "ipmi"
                     username : "root"
             role: []
-        statler:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.81.158"
-                    password : "j23x8zWbrPT"
-                    type     : "ipmi"
-                    username : "maas"
-            role: []
-            scratch drive: ""
         tarf:
             arch:
                 - "amd64"
@@ -754,5 +744,41 @@
                     username : "kernel"
             role:
                 - "dead"
+
+    reserved-systems:
+        # livepatch developers system
+        #
+        nori:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.212"
+                    password : "SeqjBEPS6FeZaW"
+                    type     : "ipmi"
+                    username : "maas"
+            role:
+                - "arges"
+        #statler is now an infrastructure system so it would be very bad were it to be deployed.
+        #
+        statler:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: true
+            power:
+                -
+                    address  : "10.245.81.158"
+                    password : "j23x8zWbrPT"
+                    type     : "ipmi"
+                    username : "maas"
+            role: []
+            scratch drive: ""
 
 # vi:set ts=4 sw=4 expandtab syntax=yaml:
