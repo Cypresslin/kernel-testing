@@ -1,0 +1,50 @@
+#!/usr/bin/env python
+#
+
+from sys                                import argv
+from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from datetime                           import datetime
+from os                                 import path
+
+from mako.template                      import Template
+
+from lib.grinder                        import TestResultsRepository, load_template
+from lib.utils                          import json_load
+
+# TheApp
+#
+class TheApp():
+    '''
+    '''
+    # main
+    #
+    def main(self):
+        trr = TestResultsRepository(rc='test-results.rc')
+        hosts_info = json_load(path.join(path.dirname(argv[0]), 'hosts.json'))
+        host_template = Template(load_template('host.mako'))
+
+        for host in hosts_info:
+            template = host_template.render(data=self.hosts_info[host], title=host, timestamp=datetime.utcnow())
+            dest = path.join(trr.cfg['repository_root'], '%s.html' % host)
+            with open(dest, 'w') as f:
+                f.write(template)
+
+        return 0
+
+
+if __name__ == '__main__':
+    # Command line argument setup and initial processing
+    #
+    app_description = '''
+    '''
+    app_epilog = '''
+examples:
+    gen-hosts-files --help
+    '''
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    args = parser.parse_args()
+
+    app = TheApp()
+    exit(app.main())
+
+# vi:set ts=4 sw=4 expandtab:
