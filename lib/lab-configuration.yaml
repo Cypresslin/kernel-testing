@@ -44,6 +44,7 @@
                     type     : "ipmi"
                     username : "admin"
             role:
+                - "sru"
                 - "smoke"
                 - "qrt"
             scratch drive: "/dev/sdb"
@@ -61,6 +62,7 @@
                     type     : "ipmi"
                     username : "Administrator"
             role:
+                - "sru"
                 - "smoke"
                 - "qrt"
         dagmar:
@@ -77,6 +79,7 @@
                     type     : "ipmi"
                     username : "Administrator"
             role:
+                - "sru"
                 - "smoke"
                 - "qrt"
         dwalin:
@@ -93,6 +96,7 @@
                     type     : "ipmi"
                     username : "maas"
             role:
+                - "sru"
                 - "sru-1"
                 - "sru-2"
             scratch drive: "/dev/sdb"
@@ -124,6 +128,7 @@
                     type     : "ipmi"
                     username : "admin"
             role:
+                - "sru"
                 - "sru-1"
                 - "sru-2"
         onza:
@@ -140,6 +145,7 @@
                     type     : "ipmi"
                     username : "admin"
             role:
+                - "sru"
                 - "sru-1"
                 - "sru-2"
             scratch drive: "/dev/sdb"
@@ -157,6 +163,7 @@
                     type     : "ipmi"
                     username : "admin"
             role:
+                - "sru"
                 - "sru-3"
                 - "xfstests"
                 - "ubuntu_ecryptfs"
@@ -177,6 +184,7 @@
                     type     : "ipmi"
                     username : "admin"
             role:
+                - "sru"
                 - "sru-3"
                 - "xfstests"
                 - "ubuntu_ecryptfs"
@@ -210,6 +218,7 @@
                     type     : "ipmi"
                     username : ""
             role:
+                - "sru"
                 - "qrt"
                 - "smoke"
                 - "sru"
@@ -240,6 +249,7 @@
                     type     : "ipmi"
                     username : "Administrator"
             role:
+                - "sru"
                 - "qrt"
                 - "smoke"
                 - "sru"
@@ -265,6 +275,7 @@
                     type     : "ipmi"
                     username : "Administrator"
             role:
+                - "sru"
                 - "sru-1"
                 - "sru-3"
                 - "xfstests"
