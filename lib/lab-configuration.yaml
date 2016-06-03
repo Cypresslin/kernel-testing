@@ -183,6 +183,20 @@
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
             scratch drive: "/dev/sdb"
+        amura:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.49"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role: []
         modoc:
             arch:
                 - "ppc64el"
@@ -350,6 +364,60 @@
                 - "lkp-xfstests"
                 - "livepatch-regression-test"
             scratch drive: "/dev/sdb"
+        glameow:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.50"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role:
+                - "lkp-1"
+                - "lkp-ecryptfs"
+                - "livepatch-regression-test"
+        pignite:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.51"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role:
+                - "lkp-2"
+                - "lkp-xfstests"
+                - "livepatch-regression-test"
+        snivy:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.52"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role:
+                - "lkp-1"
+                - "lkp-ecryptfs"
+                - "livepatch-regression-test"
+                - "lkp-2"
+                - "lkp-xfstests"
+                - "livepatch-regression-test"
 
         # --------------------------------------------------------------------------
         # Not useable
