@@ -97,7 +97,7 @@ class Base(object):
 
     # ssh
     #
-    def ssh(s, cmd, additional_ssh_options='', quiet=True, ignore_result=False):
+    def ssh(s, cmd, additional_ssh_options='-o BatchMode=yes', quiet=True, ignore_result=False):
         '''
         This ssh method uses the lower-level ssh function for actuall remote shell to
         the target system. This helper automatically provides the 'target' and 'user'
@@ -111,7 +111,7 @@ class Base(object):
     # prossh
     #
     #
-    def prossh(s, cmd, quiet=True, ignore_result=False, additional_ssh_options='-o BatchMode=yes'):
+    def prossh(s, cmd, quiet=True, ignore_result=False, additional_ssh_options=''):
         '''
         Helper for ssh'ing to the provisioning server. This is done a lot with the
         same options over and over.
