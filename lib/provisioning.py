@@ -111,7 +111,7 @@ class Base(object):
     # prossh
     #
     #
-    def prossh(s, cmd, quiet=True, ignore_result=False, additional_ssh_options=''):
+    def prossh(s, cmd, quiet=True, ignore_result=False, additional_ssh_options='-o BatchMode=yes'):
         '''
         Helper for ssh'ing to the provisioning server. This is done a lot with the
         same options over and over.
