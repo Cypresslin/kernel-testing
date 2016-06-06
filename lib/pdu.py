@@ -25,7 +25,7 @@ class PDU():
     #
     def cdu(s, outlet):
         retval = None
-        retval = pexpect.spawn('ssh -o MACs=hmac-sha1 -oKexAlgorithms=+diffie-hellman-group1-sha1 -oHostKeyAlgorithms=+ssh-dss enablement@%s' % s.__systems[s.target][outlet], timeout=600)
+        retval = pexpect.spawn('ssh enablement@%s' % s.__systems[s.target][outlet], timeout=600)
         retval.expect('Password: ')
         retval.sendline(s.__cdus[s.__systems[s.target][outlet]])
         retval.expect('Switched CDU: ')
