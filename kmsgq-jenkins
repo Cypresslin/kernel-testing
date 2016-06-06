@@ -229,7 +229,11 @@ class TheApp():
             # Note: jd['systems'] should never be empty when we get here. If it is then _handler isn't doing
             #       it's job.
 
-            jd = s.generate_jobs(test, jd['systems'], jd)
+            try:
+                jd = s.generate_jobs(test, s.valid_systems(test, jd['series-name']), jd)
+            except KeyError:
+                cdebug('KeyError Exception for %s' % test)
+
 
         if jd['fs-benchmarks']:
             jd['tests'] = ['ubuntu_fs_fio_perf']
