@@ -33,7 +33,7 @@ class TestResultsReaper():
             try:
                 trr = TestResultsRepository()
                 for tr in trr.test_runs:
-                    termination = 30
+                    termination = self.cfg.expire_after
                     try:
                         results = trr.results(tr)
                     except:
@@ -113,8 +113,11 @@ if __name__ == '__main__':
     parser.add_argument('--user',     required=False, help='Delete all the testing results for custom test runs for a particular user.')
     parser.add_argument('--series',   required=False, help='Delete all the testing results for a particular series.')
     parser.add_argument('--kernel',   required=False, help='Delete all the testing results for a particular kernel.')
+    parser.add_argument('--expire-after',   nargs=1, default=30, required=False, help='Remove all results older than N days.')
     parser.add_argument('--dry-run',  action='store_true', default=False, help='Don\'t do anything, just print out what would be done.')
     args = parser.parse_args()
+
+    args.expire_after = int(args.expire_after[0])
 
     app = TestResultsReaper(args)
     result = app.main()
