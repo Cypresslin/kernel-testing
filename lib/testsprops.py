@@ -14,6 +14,8 @@
 #
 TestProfiles = {
 
+    'dma_memtest' : {
+    },
     'connectathon' : {
     },
     'flail' : {
