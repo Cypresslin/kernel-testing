@@ -14,6 +14,12 @@
 #
 TestProfiles = {
 
+    'xmtest' : {
+    },
+    'ipv6connect' : {
+    },
+    'wb_kupdate' : {
+    },
     'monotonic_time' : {
     },
     'perfmon' : {
@@ -392,7 +398,7 @@ TestCollections = {
 
     'sru-3' : [
         'aiostress',
-        'dma_memtest',
+        # 'dma_memtest',
         'ebizzy',
         'fs_mark',
         'fsx',
@@ -403,16 +409,16 @@ TestCollections = {
         'isic',
         'libhugetlbfs',
         'monotonic_time',
-        'perfmon',
+        # 'perfmon',
         'posixtest',
-        'regression',
+        # 'regression',
         'rmaptest',
         'rtc',
         'scrashme',
         'signaltest',
         'synctest',
         'wb_kupdate',
-        'xmtest',
+        # 'xmtest',
         'aio_dio_bugs',
     ],
 
