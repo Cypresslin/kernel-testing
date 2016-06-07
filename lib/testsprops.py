@@ -14,6 +14,18 @@
 #
 TestProfiles = {
 
+    'monotonic_time' : {
+    },
+    'perfmon' : {
+    },
+    'posixtest' : {
+    },
+    'regression' : {
+    },
+    'rmaptest' : {
+    },
+    'fs_mark' : {
+    },
     'dma_memtest' : {
     },
     'connectathon' : {
