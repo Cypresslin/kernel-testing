@@ -72,7 +72,7 @@ class Runner():
         #
         valid_tests = []
         for t in self.tests_list:
-            if 'scratch' in TestProfiles[t]:
+            if t in TestProfiles and 'scratch' in TestProfiles[t]:
                 # We require a spare drive for xfstesting. We make an assumption about what that
                 # spare drive is. Look at the device the root device is and assume that the scratch
                 # drive is the 'b' device with that same device root.
