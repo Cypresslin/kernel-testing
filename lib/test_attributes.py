@@ -5,7 +5,6 @@ from sys                                import argv
 from os                                 import environ, path
 import platform
 import re
-import yaml
 from  subprocess                        import Popen, PIPE
 from datetime                           import datetime
 
@@ -71,8 +70,11 @@ class TestAttributes():
         return retval
 
     def livepatch_package_version(self):
+
         retval = '0.0'
         try:
+            import yaml
+
             result, output = sh('sudo canonical-livepatch status', quiet=True)
             status = yaml.safe_load(''.join(output))
             for k in status:
@@ -82,6 +84,14 @@ class TestAttributes():
             # For whatever reason it failed (probably not present) just ignore the failure.
             #
             pass
+
+        except ImportError:
+            # The ADT tests do not have a dependency on yaml and so the import will fail.
+            # Since we are not doing livepatch package testing as part of ADT we will just
+            # ignore the issue and continue.
+            #
+            pass
+
         return retval
 
     # gather
