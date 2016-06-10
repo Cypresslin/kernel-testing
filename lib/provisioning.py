@@ -174,7 +174,7 @@ class Base(object):
     def disable_apt_periodic_updates(s):
         center("Base::disable_apt_periodic_updates")
         s.progress('Disabling Periodic APT Updates')
-        s.ssh(r'sudo sed -i \'s/APT::Periodic::Update-Package-Lists "1"/APT::Periodic::Update-Package-Lists "0"/\' /etc/apt/apt.conf.d/10periodic')
+        s.ssh(r'sudo sed -i \'s/APT::Periodic::Update-Package-Lists "1"/APT::Periodic::Update-Package-Lists "0"/\' /etc/apt/apt.conf.d/10periodic', quiet=False)
         cleave('Base::disable_apt_periodic_updates')
 
     # install_specific_kernel_version
@@ -353,6 +353,22 @@ class Base(object):
         #
         s.ssh('sudo rm -f /etc/apt/apt.conf.d/90curtin-aptproxy', quiet=False)
 
+        # Remove the lines that are just comments
+        #
+        s.ssh('\'cat /etc/apt/sources.list | sed "/^#/d" | sudo tee /etc/apt/sources.list\'')
+
+        # Remove blank lines
+        #
+        s.ssh('\'cat /etc/apt/sources.list | sed "/^$/d" | sudo tee /etc/apt/sources.list\'')
+
+        # Remove deb-src lines
+        #
+        s.ssh('\'cat /etc/apt/sources.list | sed "/^deb-src/d" | sudo tee /etc/apt/sources.list\'')
+
+        # Remove lines with the security pocket
+        #
+        s.ssh('\'cat /etc/apt/sources.list | sed "/%s-security/d" | sudo tee /etc/apt/sources.list\'' % s.series)
+
         # Make sure we are using the us archive, it should be faster
         #
         s.ssh('\'cat /etc/apt/sources.list | sed "s/\/archive\./\/us.archive./" | sudo tee /etc/apt/sources.list\'')
@@ -368,8 +384,8 @@ class Base(object):
         '''
         center('Base::enable_src')
         s.progress('Enabling Src')
-        s.ssh('\'cat /etc/apt/sources.list | sed "s/^deb /deb-src /" | sudo tee -a /etc/apt/sources.list\'')
-        s.ssh('sudo apt-get update', ignore_result=True)
+        s.ssh('\'cat /etc/apt/sources.list | sed "s/^deb /deb-src /" | sudo tee -a /etc/apt/sources.list\'', quiet=False)
+        s.ssh('sudo apt-get update', ignore_result=True, quiet=False)
         cleave('Base::enable_src')
 
     # enable_proposed
