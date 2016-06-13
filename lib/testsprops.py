@@ -337,6 +337,11 @@ TestCollections = {
         'ubuntu_qrt_kernel_aslr_collisions',
         'ubuntu_qrt_apparmor',
         'ubuntu_kernel_selftests'
+        'ubuntu_aufs_smoke_test',
+        'ubuntu_stress_smoke_test',
+        'ubuntu_zfs_smoke_test',
+        'ubuntu_fan_smoke_test',
+        'ubuntu_squashfs_smoke_test',
     ],
 
     # The set of tests that Ubuntu Engineering QA run.
