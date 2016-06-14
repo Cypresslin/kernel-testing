@@ -14,6 +14,8 @@
 #
 TestProfiles = {
 
+    'ubuntu_boot' : {
+    },
     'xmtest' : {
     },
     'ipv6connect' : {
@@ -360,6 +362,10 @@ TestCollections = {
         'ubuntu_zfs_smoke_test',
         'ubuntu_fan_smoke_test',
         'ubuntu_squashfs_smoke_test',
+    ],
+
+    'boot' : [
+        'ubuntu_boot',
     ],
 
     # This is the set of tests that will run if no KERNEL_TEST_LIST variable is set.
