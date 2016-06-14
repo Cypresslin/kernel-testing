@@ -344,6 +344,7 @@ TestCollections = {
         'ubuntu_zfs_smoke_test',
         'ubuntu_fan_smoke_test',
         'ubuntu_squashfs_smoke_test',
+        'ubuntu_cve_kernel',
     ],
 
     # The set of tests that Ubuntu Engineering QA run.
