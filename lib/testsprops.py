@@ -338,7 +338,7 @@ TestCollections = {
         'ubuntu_qrt_kernel_security',
         'ubuntu_qrt_kernel_aslr_collisions',
         'ubuntu_qrt_apparmor',
-        'ubuntu_kernel_selftests'
+        'ubuntu_kernel_selftests',
         'ubuntu_aufs_smoke_test',
         'ubuntu_stress_smoke_test',
         'ubuntu_zfs_smoke_test',
