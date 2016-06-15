@@ -33,7 +33,6 @@ class Runner():
     def __init__(s, args):
         s.args = args
         s.__release_name = None
-        s.__scratch_needed = None
         s.test_list = None
         s.autotest_client_root = 'autotest/client'
         s.autotest_exe_path = path.join(s.autotest_client_root, 'autotest-local')
@@ -68,18 +67,11 @@ class Runner():
             s.tests_list = neo
         debug('    test list: %s' % s.tests_list)
 
-    def blacklisted_by_series(s, profile):
+    def blacklisted(s, test, value):
         retval = False
-        if 'series-blacklist' in profile:
-            if s.release_name in profile['series-blacklist']:
-                retval = True
-        return retval
-
-    def blacklisted_by_arch(s, profile):
-        retval = False
-        if 'arch-blacklist' in profile:
-            if s.arch in profile['arch-blacklist']:
-                retval = True
+        bl = path.join(s.autotest_tests_root, test, 'blacklist.%s' % value)
+        if path.exists(bl):
+            retval = True
         return retval
 
     # tests_list_verify
@@ -99,12 +91,15 @@ class Runner():
         # that we are currently running.
         #
         valid_tests = []
+        debug('    blacklist checking (%s) (%s)' % (s.release_name, s.arch))
         for t in s.tests_list:
-            if s.blacklisted_by_series(TestProfiles[t]):
+            debug('        \'%s\'' % t)
+            if s.blacklisted(t, s.release_name):
                 error('Test \'%s\' has been blacklisted for this series (%s)' % (t, s.release_name))
-            elif s.blacklisted_by_arch(TestProfiles[t]):
+            elif s.blacklisted(t, s.arch):
                 error('Test \'%s\' has been blacklisted for this arch (%s)' % (t, s.arch))
             else:
+                debug('            valid')
                 valid_tests.append(t)
 
         s.tests_list = valid_tests
@@ -136,34 +131,6 @@ class Runner():
                     debug("Release name is %s" % s.__release_name)
                     break
         return s.__release_name
-
-    # scratch_needed
-    #
-    @property
-    def scratch_needed(s):
-        if s.__scratch_needed is None:
-            s.__scratch_needed = False
-            for t in s.tests_list:
-                if 'scratch' in TestProfiles[t]:
-                    s.__scratch_needed = True
-        debug('scratch needed: %s' % s.__scratch_needed)
-        return s.__scratch_needed
-
-    # mounts
-    #
-    def mounts(s):
-        status, retval = sh('mount')
-        return retval
-
-    # root_device_prefix
-    #
-    def root_device_prefix(s):
-        retval='bogus'
-        for line in s.mounts():
-            if ' / ' in line:
-                retval = line.split()[0].replace('/dev/', '')[0:2]
-                debug('The root drive prefix is: %s' % retval)
-        return retval
 
     # test_list_determine_control_files
     #
@@ -212,8 +179,6 @@ class Runner():
             makedirs(s.per_test_logs_root)
 
         s.per_test_results_root = path.join(tp, 'results')
-        #if not path.exists(s.per_test_results_root):
-        #    makedirs(s.per_test_results_root)
 
     # gather_pretest_information
     #
@@ -233,34 +198,6 @@ class Runner():
         result, output = sh(r'sudo find %s -type d | xargs chmod +x' % (s.autotest_results_root))
 
         copytree(s.autotest_results_root, s.per_test_results_root)
-
-    # install_required_packages
-    #
-    def install_required_packages(s):
-        deps = []
-        for t in s.tests_list:
-            if 'packages' in TestProfiles[t]:
-                if 'common' in TestProfiles[t]['packages']:
-                    for pkg in TestProfiles[t]['packages']['common']:
-                        if s.arch in ['ppc64le', 'aarch64']:
-                            deps.append(pkg.replace('-multilib', ''))
-                        else:
-                            if pkg not in deps:
-                                deps.append(pkg)
-                if s.release_name in TestProfiles[t]['packages']:
-                    for pkg in TestProfiles[t]['packages'][s.release_name]:
-                        if s.arch in ['ppc64le', 'aarch64']:
-                            deps.append(pkg.replace('-multilib', ''))
-                        else:
-                            if pkg not in deps:
-                                deps.append(pkg)
-            else:
-                debug('No package dependencies for \'%s\'' % t)
-
-        debug('%s' % str(deps))
-        for dep in deps:
-            debug('Installing: \'%s\'' % dep)
-            sh('sudo apt-get install -fy %s' % dep)
 
     # autotest
     #
@@ -325,8 +262,6 @@ class Runner():
             #
             s.test_list_determine_control_files()
 
-            s.install_required_packages()
-
             # Create the test-results directory where everything we care about will end
             # up.
             if not path.exists(s.saved_results_root):
@@ -360,10 +295,6 @@ class Runner():
         #
         except KeyboardInterrupt:
             pass
-
-        #except KeyError:
-        #    import json
-        #    print(json.dumps(testsprops.profiles, sort_keys=True, indent=4))
 
         except ShellTimeoutError as e:
             error('The command (%s) timed out. (%d)' % (e.cmd, e.timeout))
@@ -407,4 +338,3 @@ if __name__ == '__main__':
     exit(status)
 
 # vi:set ts=4 sw=4 expandtab syntax=python:
-
