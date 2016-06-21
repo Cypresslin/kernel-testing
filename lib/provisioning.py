@@ -97,7 +97,7 @@ class Base(object):
 
     # ssh
     #
-    def ssh(s, cmd, additional_ssh_options='-o BatchMode=yes', quiet=True, ignore_result=False):
+    def ssh(s, cmd, additional_ssh_options='', quiet=True, ignore_result=False):
         '''
         This ssh method uses the lower-level ssh function for actuall remote shell to
         the target system. This helper automatically provides the 'target' and 'user'
@@ -174,7 +174,7 @@ class Base(object):
     def disable_apt_periodic_updates(s):
         center("Base::disable_apt_periodic_updates")
         s.progress('Disabling Periodic APT Updates')
-        s.ssh(r'sudo sed -i \'s/APT::Periodic::Update-Package-Lists "1"/APT::Periodic::Update-Package-Lists "0"/\' /etc/apt/apt.conf.d/10periodic', quiet=False)
+        s.ssh(r'sudo sed -i \'s/APT::Periodic::Update-Package-Lists "1"/APT::Periodic::Update-Package-Lists "0"/\' /etc/apt/apt.conf.d/10periodic')
         cleave('Base::disable_apt_periodic_updates')
 
     # install_specific_kernel_version
@@ -353,22 +353,6 @@ class Base(object):
         #
         s.ssh('sudo rm -f /etc/apt/apt.conf.d/90curtin-aptproxy', quiet=False)
 
-        # Remove the lines that are just comments
-        #
-        s.ssh('\'cat /etc/apt/sources.list | sed "/^#/d" | sudo tee /etc/apt/sources.list\'')
-
-        # Remove blank lines
-        #
-        s.ssh('\'cat /etc/apt/sources.list | sed "/^$/d" | sudo tee /etc/apt/sources.list\'')
-
-        # Remove deb-src lines
-        #
-        s.ssh('\'cat /etc/apt/sources.list | sed "/^deb-src/d" | sudo tee /etc/apt/sources.list\'')
-
-        # Remove lines with the security pocket
-        #
-        s.ssh('\'cat /etc/apt/sources.list | sed "/%s-security/d" | sudo tee /etc/apt/sources.list\'' % s.series)
-
         # Make sure we are using the us archive, it should be faster
         #
         s.ssh('\'cat /etc/apt/sources.list | sed "s/\/archive\./\/us.archive./" | sudo tee /etc/apt/sources.list\'')
@@ -384,8 +368,8 @@ class Base(object):
         '''
         center('Base::enable_src')
         s.progress('Enabling Src')
-        s.ssh('\'cat /etc/apt/sources.list | sed "s/^deb /deb-src /" | sudo tee -a /etc/apt/sources.list\'', quiet=False)
-        s.ssh('sudo apt-get update', ignore_result=True, quiet=False)
+        s.ssh('\'cat /etc/apt/sources.list | sed "s/^deb /deb-src /" | sudo tee -a /etc/apt/sources.list\'')
+        s.ssh('sudo apt-get update', ignore_result=True)
         cleave('Base::enable_src')
 
     # enable_proposed
@@ -702,6 +686,12 @@ class Metal(Base):
         dist_upgrade = None
         reboot = None
         retval = False
+
+        # If the provisioning type is "manual" then the system has been setup by hand and
+        # there is nothing for us to do.
+        #
+        if s.ps.type == "manual":
+            return True
 
         s.progress('Provisioner setup')
         if not s.ps.provision():

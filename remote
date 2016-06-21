@@ -75,7 +75,7 @@ export SSH_OPTIONS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null 
 
 # Push the tests and the kernel team infrastructure to the SUT.
 #
-ssh $SSH_OPTIONS $SUT sudo rm -rf autotest kernel-testing
+ssh $SSH_OPTIONS $SUT -- sudo rm -rf autotest kernel-testing kernel-test-results
 
 rsync -e "ssh $SSH_OPTIONS" -ar --exclude=.git $KT_ROOT/autotest/ $SUT:autotest/
 rsync -e "ssh $SSH_OPTIONS" -ar --exclude=.git $KT_ROOT/autotest-client-tests/* $SUT:autotest/client/tests/

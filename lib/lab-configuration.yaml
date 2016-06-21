@@ -26,10 +26,93 @@
         sut_user : "ubuntu"              # The user on the test system after it's been provisioned
         domain   : "kernel"
 
+    manual:
+        server   : ""
+        type     : "manual"
+        domain   : "kernel"
+
     # Test systems section. This is a dictionary of all the test systems that are available
     # to me.
     #
     systems:
+        s2lp6g001:
+            arch:
+                - "s390x.zKVM"
+            provisioner: "manual"
+            locked: false
+            power: []
+            role:
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "smoke"
+            series-blacklist:
+                - "lucid"
+                - "precise"
+                - "trusty"
+                - "utopic"
+                - "vivid"
+                - "wily"
+            proc-decoration: "zKVM"
+        s2lp4:
+            arch:
+                - "s390x.LPAR"
+            provisioner: "manual"
+            locked: false
+            power: []
+            role:
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "smoke"
+            series-blacklist:
+                - "lucid"
+                - "precise"
+                - "trusty"
+                - "utopic"
+                - "vivid"
+                - "wily"
+            proc-decoration: "Ubuntu on LPAR"
+        kernel01:
+            arch:
+                - "s390x.zVM"
+            provisioner: "manual"
+            locked: false
+            power: []
+            role:
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "smoke"
+            series-blacklist:
+                - "lucid"
+                - "precise"
+                - "trusty"
+                - "utopic"
+                - "vivid"
+                - "wily"
+            proc-decoration: "zVM"
         alkaid:
             arch:
                 - "amd64"
@@ -44,7 +127,6 @@
                     type     : "ipmi"
                     username : "admin"
             role:
-                - "sru"
                 - "smoke"
                 - "qrt"
             scratch drive: "/dev/sdb"
@@ -62,7 +144,6 @@
                     type     : "ipmi"
                     username : "Administrator"
             role:
-                - "sru"
                 - "smoke"
                 - "qrt"
         dagmar:
@@ -79,7 +160,6 @@
                     type     : "ipmi"
                     username : "Administrator"
             role:
-                - "sru"
                 - "smoke"
                 - "qrt"
         dwalin:
@@ -96,7 +176,6 @@
                     type     : "ipmi"
                     username : "maas"
             role:
-                - "sru"
                 - "sru-1"
                 - "sru-2"
             scratch drive: "/dev/sdb"
@@ -113,7 +192,7 @@
                     password : "insecure"
                     type     : "ipmi"
                     username : "admin"
-            role: []
+            role:
         onibi:
             arch:
                 - "amd64"
@@ -128,7 +207,6 @@
                     type     : "ipmi"
                     username : "admin"
             role:
-                - "sru"
                 - "sru-1"
                 - "sru-2"
         onza:
@@ -145,7 +223,6 @@
                     type     : "ipmi"
                     username : "admin"
             role:
-                - "sru"
                 - "sru-1"
                 - "sru-2"
             scratch drive: "/dev/sdb"
@@ -163,7 +240,6 @@
                     type     : "ipmi"
                     username : "admin"
             role:
-                - "sru"
                 - "sru-3"
                 - "xfstests"
                 - "ubuntu_ecryptfs"
@@ -184,27 +260,12 @@
                     type     : "ipmi"
                     username : "admin"
             role:
-                - "sru"
                 - "sru-3"
                 - "xfstests"
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
             scratch drive: "/dev/sdb"
-        amura:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.49"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role: []
         modoc:
             arch:
                 - "ppc64el"
@@ -218,7 +279,6 @@
                     type     : "ipmi"
                     username : ""
             role:
-                - "sru"
                 - "qrt"
                 - "smoke"
                 - "sru"
@@ -249,7 +309,6 @@
                     type     : "ipmi"
                     username : "Administrator"
             role:
-                - "sru"
                 - "qrt"
                 - "smoke"
                 - "sru"
@@ -275,7 +334,6 @@
                     type     : "ipmi"
                     username : "Administrator"
             role:
-                - "sru"
                 - "sru-1"
                 - "sru-3"
                 - "xfstests"
@@ -375,60 +433,6 @@
                 - "lkp-xfstests"
                 - "livepatch-regression-test"
             scratch drive: "/dev/sdb"
-        glameow:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "192.168.228.50"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "Administrator"
-            role:
-                - "lkp-1"
-                - "lkp-ecryptfs"
-                - "livepatch-regression-test"
-        pignite:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "192.168.228.51"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "Administrator"
-            role:
-                - "lkp-2"
-                - "lkp-xfstests"
-                - "livepatch-regression-test"
-        snivy:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "192.168.228.52"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "Administrator"
-            role:
-                - "lkp-1"
-                - "lkp-ecryptfs"
-                - "livepatch-regression-test"
-                - "lkp-2"
-                - "lkp-xfstests"
-                - "livepatch-regression-test"
 
         # --------------------------------------------------------------------------
         # Not useable

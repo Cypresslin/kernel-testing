@@ -72,7 +72,7 @@ class Runner():
         #
         valid_tests = []
         for t in self.tests_list:
-            if t in TestProfiles and 'scratch' in TestProfiles[t]:
+            if 'scratch' in TestProfiles[t]:
                 # We require a spare drive for xfstesting. We make an assumption about what that
                 # spare drive is. Look at the device the root device is and assume that the scratch
                 # drive is the 'b' device with that same device root.
@@ -337,6 +337,16 @@ class Runner():
             f.write(json.dumps(attributes.gather(), sort_keys=True, indent=4))
         sh('sudo cat %s' % attributes_path)
 
+    # results_cleanup
+    #
+    def results_cleanup(self):
+        node = Configuration['systems'][platform.node()]
+        if 'proc-decoration' in node:
+            print('Decorating')
+            sh('sed -i -e \'s/"proc": "%s"/"proc": "%s (%s)"/\' kernel-test-results/test-attributes.json' % (self.arch, self.arch, node['proc-decoration']), quiet=False)
+
+        return
+
     # main
     #
     def main(self):
@@ -392,6 +402,8 @@ class Runner():
 
             if t is None:
                 self.no_tests()
+
+            self.results_cleanup()
 
             retval = 0
 

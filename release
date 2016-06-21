@@ -28,9 +28,9 @@ class Release():
         retval = 1
         try:
             c = Configuration[Configuration["systems"][s.args.target]["provisioner"]]
-
-            s.server = MAAS(c['server'], c['creds'], s.args.target, c['domain'], None, None, None)
-            s.server.release(s.args.target)
+            if c['type'] != 'manual':
+                s.server = MAAS(c['server'], c['creds'], s.args.target, c['domain'], None, None, None)
+                s.server.release(s.args.target)
 
             retval = 0
 
