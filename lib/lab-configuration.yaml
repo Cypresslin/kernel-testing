@@ -192,7 +192,7 @@
                     password : "insecure"
                     type     : "ipmi"
                     username : "admin"
-            role:
+            role: []
         onibi:
             arch:
                 - "amd64"
