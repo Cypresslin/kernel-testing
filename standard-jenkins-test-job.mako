@@ -66,6 +66,9 @@ if data['lkp']:
 if data['kernel']:
     provision += ' --kernel=%s' % data['kernel']
 
+if data['version']:
+    provision += ' --required-kernel-version=%s' % data['version']
+
 provision += ' $SUT'
 %>
     # Provision the hardware.
