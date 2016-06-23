@@ -394,12 +394,7 @@
                     password : "insecure"
                     type     : "ipmi"
                     username : "admin"
-            role:
-                - "lkp-1"
-                - "lkp-2"
-                - "lkp-3"
-                - "livepatch-regression-test"
-                - "ubuntu_load_livepatch_modules"
+            role: []
             scratch drive: "/dev/sdb"
         fili:
             arch:
@@ -413,10 +408,7 @@
                     password : "gEktYeGpC"
                     type     : "ipmi"
                     username : "maas"
-            role: 
-                - "lkp-1"
-                - "lkp-ecryptfs"
-                - "livepatch-regression-test"
+            role: []
         kili:
             arch:
                 - "amd64"
@@ -429,6 +421,56 @@
                     password : "kodw6gcl"
                     type     : "ipmi"
                     username : "maas"
+            role: []
+            scratch drive: "/dev/sdb"
+
+        glameow:
+            arch:
+                - "amd64"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.50"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "lkp-1"
+                - "lkp-2"
+                - "lkp-3"
+                - "livepatch-regression-test"
+                - "ubuntu_load_livepatch_modules"
+            scratch drive: "/dev/sdb"
+        pignite:
+            arch:
+                - "amd64"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.51"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role: 
+                - "lkp-1"
+                - "lkp-ecryptfs"
+                - "livepatch-regression-test"
+        snivy:
+            arch:
+                - "amd64"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.52"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
             role:
                 - "lkp-2"
                 - "lkp-xfstests"
