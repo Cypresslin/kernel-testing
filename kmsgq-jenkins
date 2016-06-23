@@ -94,15 +94,19 @@ class TheApp():
         #
         s.sut_pool = {}
         for sut in s.configuration['systems']:
-            for role in s.configuration['systems'][sut]['role']:
-                try:
-                    s.sut_pool[role].append(sut)
-                except:
-                    s.sut_pool[role] = []
-                    s.sut_pool[role].append(sut)
+            try:
+                for role in s.configuration['systems'][sut]['role']:
+                    try:
+                        s.sut_pool[role].append(sut)
+                    except:
+                        s.sut_pool[role] = []
+                        s.sut_pool[role].append(sut)
+            except TypeError:
+                print('s.configuration[\'systems\'][sut][\'role\'] missing for %s' % sut)
+                raise
 
-        # if s.args.debug:
-        #     cdebug(json.dumps(s.sut_pool, sort_keys=True, indent=4))
+        if s.args.debug:
+            cdebug(json.dumps(s.sut_pool, sort_keys=True, indent=4))
 
         s.job_template = s.load_template('standard-jenkins-test-job.mako')
         s.maas_daily_image_test_template = s.load_template('maas-daily-image-test-job.mako')
@@ -230,7 +234,8 @@ class TheApp():
             #       it's job.
 
             try:
-                jd = s.generate_jobs(test, s.valid_systems(test, jd['series-name']), jd)
+                #jd = s.generate_jobs(test, s.valid_systems(test, jd['series-name']), jd)
+                jd = s.generate_jobs(test, jd['systems'], jd)
             except KeyError:
                 cdebug('KeyError Exception for %s' % test)
 
@@ -400,10 +405,12 @@ class TheApp():
 
                 if 'systems' == k:
                     if jd['op'] in ['sru', 'livepatch-regression-test']:
-                        jd['systems'] = s.valid_systems(jd['op'], jd['series-name'])
-                        if 'ubuntu_fs_fio_perf' in jd['tests']:
-                            for system in s.valid_systems('Filesystem Benchmarking', jd['series-name']):
-                                jd['systems'].append(system)
+                        for t in jd['tests']:
+                            for system in s.valid_systems(t, jd['series-name']):
+                                try:
+                                    jd['systems'].append(system)
+                                except KeyError:
+                                    jd['systems'] = [system]
                                 cdebug('appending : %s' % system)
                     elif 'request' == jd['op']:
                         jd['systems'] = s.valid_systems('Personal Testing', jd['series-name'])
@@ -423,6 +430,8 @@ class TheApp():
                     if 'ubuntu_fs_fio_perf' in jd['tests']:
                         jd['fs-benchmarks'] = True
                         jd['tests'].remove('ubuntu_fs_fio_perf')
+
+                    cdebug('Tests: %s' % jd['tests'])
 
         if s.args.lkp:
             if jd['key'] == 'sru' or jd['key'].startswith('livepatch.'):
@@ -458,13 +467,16 @@ class TheApp():
     #
     def valid_systems(s, key, series):
         retval = []
-        for system in s.sut_pool[key]:
-            try:
-                if series in s.configuration['systems'][system]['series-blacklist']:
-                    continue
-            except KeyError:
-                pass
-            retval.append(system)
+        try:
+            for system in s.sut_pool[key]:
+                try:
+                    if series in s.configuration['systems'][system]['series-blacklist']:
+                        continue
+                except KeyError:
+                    pass
+                retval.append(system)
+        except KeyError:
+            pass
         return retval
 
     # main
