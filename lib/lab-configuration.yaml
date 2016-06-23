@@ -30,6 +30,7 @@
         server   : ""
         type     : "manual"
         domain   : "kernel"
+        sut_user : "ubuntu"       # The user on the test system after it's been provisioned
 
     # Test systems section. This is a dictionary of all the test systems that are available
     # to me.
