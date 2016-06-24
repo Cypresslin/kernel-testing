@@ -416,7 +416,7 @@ TestCollections = {
         'fsx',
         'hwclock',
         'iosched_bugs',
-        # 'iperf',
+        'iperf',
         'ipv6connect',
         # 'isic',
         'libhugetlbfs',
