@@ -366,6 +366,14 @@ TestCollections = {
     ],
 
     'boot' : [
+        'ubuntu_aufs_smoke_test',
+        'ubuntu_stress_smoke_test',
+        'ubuntu_zfs_smoke_test',
+        'ubuntu_fan_smoke_test',
+        'ubuntu_squashfs_smoke_test',
+    ],
+
+    'boot' : [
         'ubuntu_boot',
     ],
 
@@ -457,6 +465,10 @@ LKP_TestsList = [
     'lkp-ecryptfs',
     'lkp-xfstests',
     'ubuntu_load_livepatch_modules',
+]
+
+BOOT_TestsList = [
+    'boot',
 ]
 
 # vi:set ts=4 sw=4 expandtab syntax=python:

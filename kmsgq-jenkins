@@ -9,7 +9,7 @@ from datetime                           import datetime
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import basicConfig, warning, DEBUG, INFO
 from lib.msgq                           import MsgQueue
-from lib.testsprops                     import SRU_TestsList, LKP_TestsList
+from lib.testsprops                     import SRU_TestsList, LKP_TestsList, BOOT_TestsList
 from lib.log                            import cdebug, center, cleave
 from lib.utils                          import date_to_string
 import json
@@ -367,7 +367,7 @@ class TheApp():
         s.dyno()  # Reload the configuration and any other relevant files
 
         valid_key = False
-        valid_keys = ['kernel.testing.request', 'kernel.publish', 'kernel.maas.daily']
+        valid_keys = ['kernel.testing.request', 'kernel.publish', 'kernel.maas.daily', 'kernel-publish.ppa']
         if s.args.lkp:
             valid_keys.append('kernel.testing.livekernelpatching.request')
             valid_keys.append('livepatch.publish')
@@ -404,7 +404,10 @@ class TheApp():
                                 cdebug('appending : %s' % a)
 
                 if 'systems' == k:
-                    if jd['op'] in ['sru', 'livepatch-regression-test']:
+                    if 'request' == jd['op']:
+                        jd['systems'] = s.valid_systems('Personal Testing', jd['series-name'])
+                        jd['decoration'] = None
+                    else:
                         for t in jd['tests']:
                             for system in s.valid_systems(t, jd['series-name']):
                                 try:
@@ -412,13 +415,12 @@ class TheApp():
                                 except KeyError:
                                     jd['systems'] = [system]
                                 cdebug('appending : %s' % system)
-                    elif 'request' == jd['op']:
-                        jd['systems'] = s.valid_systems('Personal Testing', jd['series-name'])
-                        jd['decoration'] = None
 
                 if 'tests' == k:
                     if 'sru' == jd['op']:
                         jd['tests'] = SRU_TestsList
+                    elif 'boot' == jd['op']:
+                        jd['tests'] = BOOT_TestsList
                     else:
                         if s.args.lkp:
                             jd['tests'] = LKP_TestsList

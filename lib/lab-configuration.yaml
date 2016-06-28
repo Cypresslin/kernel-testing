@@ -53,7 +53,7 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
-                - "smoke"
+                - "boot"
             series-blacklist:
                 - "lucid"
                 - "precise"
@@ -79,7 +79,7 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
-                - "smoke"
+                - "boot"
             series-blacklist:
                 - "lucid"
                 - "precise"
@@ -105,7 +105,7 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
-                - "smoke"
+                - "boot"
             series-blacklist:
                 - "lucid"
                 - "precise"
@@ -226,6 +226,7 @@
             role:
                 - "sru-1"
                 - "sru-2"
+                - "boot"
             scratch drive: "/dev/sdb"
         phact:
             arch:
@@ -290,7 +291,7 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
-                - "smoke"
+                - "boot"
             scratch drive: "/dev/sdb"
             series-blacklist:
                 - "lucid"
@@ -340,6 +341,7 @@
                 - "xfstests"
                 - "smoke"
                 - "ubuntu_zfs_fstest"
+                - "boot"
             series-blacklist:
                 - "lucid"
                 - "precise"
