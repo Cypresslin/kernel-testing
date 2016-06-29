@@ -450,7 +450,7 @@ class TheApp():
             elif jd['key'].startswith('kernel.publish'):
                 # This *is* a notification from shankbot that a new kernel is available for testing.
                 #
-                if 'proposed' in jd['pocket']:
+                if jd['pocket'] in ['proposed', 'ppa']:
                     if jd['package'] not in s.package_blacklist:
                         s.handle_kernel_publish(jd)
             elif jd['key'].startswith('kernel.maas.daily'):
