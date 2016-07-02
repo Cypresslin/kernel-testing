@@ -114,39 +114,6 @@
                 - "vivid"
                 - "wily"
             proc-decoration: "zVM"
-        alkaid:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.219"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role:
-                - "smoke"
-                - "qrt"
-            scratch drive: "/dev/sdb"
-        cavac:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "192.168.228.83"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "Administrator"
-            role:
-                - "smoke"
-                - "qrt"
         dagmar:
             arch:
                 - "amd64"
@@ -482,6 +449,35 @@
         # --------------------------------------------------------------------------
         # Not useable
         #
+        alkaid:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.219"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role: []
+            scratch drive: "/dev/sdb"
+        cavac:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.83"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role: []
         sayers:
             arch:
                 - "amd64"
