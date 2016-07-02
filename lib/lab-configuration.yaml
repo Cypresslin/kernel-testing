@@ -114,7 +114,7 @@
                 - "vivid"
                 - "wily"
             proc-decoration: "zVM"
-        dagmar:
+        alkaid:
             arch:
                 - "amd64"
                 - "i386"
@@ -123,13 +123,14 @@
             locked: false
             power:
                 -
-                    address  : "192.168.228.88"
+                    address  : "10.245.80.219"
                     password : "insecure"
                     type     : "ipmi"
-                    username : "Administrator"
+                    username : "admin"
             role:
                 - "smoke"
                 - "qrt"
+            scratch drive: "/dev/sdb"
         dwalin:
             arch:
                 - "amd64"
@@ -429,6 +430,20 @@
         # --------------------------------------------------------------------------
         # Not useable
         #
+        dagmar:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.88"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role: []
         rukbah:
             arch:
                 - "amd64"
@@ -439,21 +454,6 @@
             power:
                 -
                     address  : "10.245.80.206"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role: []
-            scratch drive: "/dev/sdb"
-        alkaid:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.219"
                     password : "insecure"
                     type     : "ipmi"
                     username : "admin"
