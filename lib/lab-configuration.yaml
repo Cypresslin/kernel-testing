@@ -62,7 +62,22 @@
                 - "vivid"
                 - "wily"
             proc-decoration: "zKVM"
-        s2lp4:
+        s2lp6g002:
+            arch:
+                - "s390x.zKVM"
+            provisioner: "manual"
+            locked: false
+            power: []
+            role: []
+            series-blacklist:
+                - "lucid"
+                - "precise"
+                - "trusty"
+                - "utopic"
+                - "vivid"
+                - "wily"
+            proc-decoration: "zKVM"
+        s2lp3:
             arch:
                 - "s390x.LPAR"
             provisioner: "manual"
@@ -80,6 +95,36 @@
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
+            series-blacklist:
+                - "lucid"
+                - "precise"
+                - "trusty"
+                - "utopic"
+                - "vivid"
+                - "wily"
+            proc-decoration: "Ubuntu on LPAR"
+        s2lp4:
+            arch:
+                - "s390x.LPAR"
+            provisioner: "manual"
+            locked: false
+            power: []
+            role: []
+            series-blacklist:
+                - "lucid"
+                - "precise"
+                - "trusty"
+                - "utopic"
+                - "vivid"
+                - "wily"
+            proc-decoration: "Ubuntu on LPAR"
+        s2lp5:
+            arch:
+                - "s390x.LPAR"
+            provisioner: "manual"
+            locked: false
+            power: []
+            role: []
             series-blacklist:
                 - "lucid"
                 - "precise"
@@ -114,6 +159,36 @@
                 - "vivid"
                 - "wily"
             proc-decoration: "zVM"
+        kernel02:
+            arch:
+                - "s390x.zVM"
+            provisioner: "manual"
+            locked: false
+            power: []
+            role: []
+            series-blacklist:
+                - "lucid"
+                - "precise"
+                - "trusty"
+                - "utopic"
+                - "vivid"
+                - "wily"
+            proc-decoration: "zVM"
+        kernel03:
+            arch:
+                - "s390x.zVM"
+            provisioner: "manual"
+            locked: false
+            power: []
+            role: []
+            series-blacklist:
+                - "lucid"
+                - "precise"
+                - "trusty"
+                - "utopic"
+                - "vivid"
+                - "wily"
+            proc-decoration: "zVM"
         alkaid:
             arch:
                 - "amd64"
@@ -127,10 +202,38 @@
                     password : "insecure"
                     type     : "ipmi"
                     username : "admin"
+            role: []
+            scratch drive: "/dev/sdb"
+        cavac:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.83"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role: []
+        dagmar:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.88"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
             role:
                 - "smoke"
                 - "qrt"
-            scratch drive: "/dev/sdb"
         dwalin:
             arch:
                 - "amd64"
@@ -206,6 +309,26 @@
             power:
                 -
                     address  : "10.245.80.224"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+            scratch drive: "/dev/sdb"
+        rukbah:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.206"
                     password : "insecure"
                     type     : "ipmi"
                     username : "admin"
@@ -430,49 +553,6 @@
         # --------------------------------------------------------------------------
         # Not useable
         #
-        dagmar:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "192.168.228.88"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "Administrator"
-            role: []
-        rukbah:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.206"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role: []
-            scratch drive: "/dev/sdb"
-        cavac:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "192.168.228.83"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "Administrator"
-            role: []
         sayers:
             arch:
                 - "amd64"
