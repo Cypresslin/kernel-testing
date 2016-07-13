@@ -61,6 +61,7 @@
                 - "utopic"
                 - "vivid"
                 - "wily"
+                - "yakkety"
             proc-decoration: "zKVM"
         s2lp6g002:
             arch:
@@ -68,7 +69,18 @@
             provisioner: "manual"
             locked: false
             power: []
-            role: []
+            role:
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
             series-blacklist:
                 - "lucid"
                 - "precise"
@@ -76,6 +88,7 @@
                 - "utopic"
                 - "vivid"
                 - "wily"
+                - "xenial"
             proc-decoration: "zKVM"
         s2lp3:
             arch:
@@ -102,6 +115,7 @@
                 - "utopic"
                 - "vivid"
                 - "wily"
+                - "yakkety"
             proc-decoration: "Ubuntu on LPAR"
         s2lp4:
             arch:
@@ -110,6 +124,17 @@
             locked: false
             power: []
             role: []
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
             series-blacklist:
                 - "lucid"
                 - "precise"
@@ -117,6 +142,7 @@
                 - "utopic"
                 - "vivid"
                 - "wily"
+                - "xenial"
             proc-decoration: "Ubuntu on LPAR"
         s2lp5:
             arch:
@@ -158,6 +184,7 @@
                 - "utopic"
                 - "vivid"
                 - "wily"
+                - "yakkety"
             proc-decoration: "zVM"
         kernel02:
             arch:
@@ -165,7 +192,18 @@
             provisioner: "manual"
             locked: false
             power: []
-            role: []
+            role:
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
             series-blacklist:
                 - "lucid"
                 - "precise"
@@ -173,6 +211,7 @@
                 - "utopic"
                 - "vivid"
                 - "wily"
+                - "xenial"
             proc-decoration: "zVM"
         kernel03:
             arch:
