@@ -123,7 +123,7 @@
             provisioner: "manual"
             locked: false
             power: []
-            role: []
+            role:
                 - "qrt"
                 - "smoke"
                 - "sru"
