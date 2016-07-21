@@ -11,7 +11,7 @@ from time                                           import sleep
 
 from maastk.client                                  import MaasClient
 from maastk.node                                    import NODE_STATUS
-from maastk.error                                   import MaasTKStandardException
+from maastk.error                                   import MaasTKStandardException, MaasTKTimeoutException
 from .pdu                                           import PDU
 
 
@@ -83,7 +83,7 @@ class MAAS(object):
                 #
                 try:
                     cdebug('querying power status')
-                    sut.power_state
+                    cdebug(sut.power_state)
                 except MaasTKStandardException as e:
                     cdebug('power_state exception thrown')
                     if e.status == 503:  # The call timed out
@@ -132,28 +132,39 @@ class MAAS(object):
         cdebug('          arch: %s' % sut.architecture)
         cdebug('        series: %s' % sut.distro_series)
 
-        cdebug('before: ' + str(sut.substatus))
-        s.release(s.target)
-        cdebug(' after: ' + str(sut.substatus))
+        try:
+            cdebug('before: ' + str(sut.substatus))
+            s.release(s.target)
+            cdebug(' after: ' + str(sut.substatus))
 
-        if sut.substatus == NODE_STATUS.READY:
-            if sut.architecture != arch:
-                progress('       Changing arch')
-                sut.architecture = arch
+            if sut.substatus == NODE_STATUS.READY:
+                if sut.architecture != arch:
+                    progress('       Changing arch')
+                    sut.architecture = arch
 
-            progress('       Acquiring...')
-            sut.acquire()
+                progress('       Acquiring...')
+                sut.acquire()
 
-            progress('       Starting...')
-            sut.start(distro_series=s.target_series)
+                progress('       Starting...')
+                sut.start(distro_series=s.target_series)
 
-            progress('       Deploying ...')
-            while sut.substatus == NODE_STATUS.DEPLOYING:
-                sleep(10)
-            if sut.substatus == NODE_STATUS.DEPLOYED:
-                progress('       Deployed     ')
-                retval = True
-            else:
-                progress('       Failed Deployment')
+                progress('       Deploying ...')
+                while sut.substatus == NODE_STATUS.DEPLOYING:
+                    sleep(10)
+                if sut.substatus == NODE_STATUS.DEPLOYED:
+                    progress('       Deployed     ')
+                    retval = True
+                else:
+                    progress('       Failed Deployment')
+
+        except MaasTKTimeoutException:
+            # This usually idicates that even after a power cycle of the system MaaS is
+            # still unable to talk to the BMC.
+            #
+            print("  ** Error: MaaS is reporting a timout. This usually indicates that even after a power cycle of the SUT")
+            print("            MaaS is unable to talk to the SUT's BMC.")
+            print("")
+            progress('       Failed Deployment')
+
         cdebug('        Leave MAAS::provision')
         return retval
