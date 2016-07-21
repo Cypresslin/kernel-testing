@@ -53,7 +53,7 @@ class PS(object):
 class Base(object):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False, lkp=False):
+    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, required_kernel_version=None):
         center("Base::__init__")
 
         # If we are installing a HWE kernel, we want to install the correct series first.
@@ -67,6 +67,7 @@ class Base(object):
         sp = Configuration['systems'][target]['provisioner']
         p = Configuration[sp]
         s.target = '%s.%s' % (target, p['domain'])
+        s.raw_target = target
 
         s.series = series
         s.arch = arch
@@ -76,6 +77,7 @@ class Base(object):
         s.ppa  = ppa
         s.lkp = lkp
         s.kernel = kernel
+        s.required_kernel_version = required_kernel_version
         s.dry_run = dry_run
         s.progress_dots = 0
         s.progress_msg = ''
@@ -341,6 +343,14 @@ class Base(object):
             s.wait_for_target()
         cleave('Base::reboot')
 
+    # fixup_hosts
+    #
+    def fixup_hosts(s):
+        center('Base::fixup_hosts')
+        s.progress('Fixup /etc/hosts')
+        s.ssh('sudo sed -i -e \\\'/localhost/a 127.0.1.1 %s %s\\\' /etc/hosts' % (s.raw_target, s.target), quiet=False, ignore_result=False)
+        cleave('Base::fixup_hosts')
+
     # fixup_apt_sources
     #
     def fixup_apt_sources(s):
@@ -474,10 +484,10 @@ class Base(object):
 class Metal(Base):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False, lkp=False):
+    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, required_kernel_version=None):
         center("Metal::__init__")
 
-        Base.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, xen=xen, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp)
+        Base.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, xen=xen, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, required_kernel_version=required_kernel_version)
 
         cleave("Metal::__init__")
 
@@ -587,14 +597,14 @@ class Metal(Base):
                 error("    Unable to find the kernel version in any line.")
                 error("")
 
-            if s.kernel is not None:
-                if installed_kernel == s.kernel:
+            if s.required_kernel_version is not None:
+                if installed_kernel == s.required_kernel_version:
                     retval = True
                 else:
                     retval = False
                     error("")
                     error("*** ERROR:")
-                    error("    Was expecting the target kernel version to be (%s) but found it to be (%s) instead." % (s.kernel, installed_kernel))
+                    error("    Was expecting the target kernel version to be (%s) but found it to be (%s) instead." % (s.required_kernel_version, installed_kernel))
                     error("")
 
         cleave('Metal::verify_target (%s)' % retval)
@@ -687,10 +697,12 @@ class Metal(Base):
         reboot = None
         retval = False
 
-        # If the provisioning type is "manual" then the system has been setup by hand and
-        # there is nothing for us to do.
+        # If the provisioning type is "manual" then the system has been setup by hand however,
+        # go ahead and dist-upgrade it.
         #
         if s.ps.type == "manual":
+            s.dist_upgrade()
+            s.reboot(progress="Rebooting for dist-upgrade")
             return True
 
         s.progress('Provisioner setup')
@@ -776,6 +788,8 @@ class Metal(Base):
                 cinfo("Target verification failed.")
             else:
                 retval = True
+
+        s.fixup_hosts()
 
         s.progress('That\'s All Folks!')
 

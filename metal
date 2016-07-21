@@ -102,7 +102,7 @@ class MetalApp(object):
         retval = 1
         try:
             s.validate_args(args)
-            metal = Metal(args.name, args.series, args.arch, hwe=args.hwe, xen=args.xen, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp)
+            metal = Metal(args.name, args.series, args.arch, hwe=args.hwe, xen=args.xen, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, required_kernel_version=args.required_kernel_version)
             if metal.provision():
                 retval = 0
 
@@ -191,6 +191,7 @@ examples:
     parser.add_argument('--lkp',      required=False, action='store_true', default=False, help='Turn on live kernel patching.')
     parser.add_argument('--hwe',      required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
     parser.add_argument('--xen',      required=False, action='store_true', default=False, help='The bare-metal should be a Xen host.')
+    parser.add_argument('--required-kernel-version',   required=False, default=None, help='Fail if this version has not been installed.')
 
     parser.add_argument('--nolog',    required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
 
