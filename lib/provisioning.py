@@ -142,7 +142,7 @@ class Base(object):
         #
         while True:
             try:
-                result, output = s.ssh('uname -vr')
+                result, output = s.ssh('uname -vr', additional_ssh_options="-oBatchMode=yes")
                 if result == 0 and len(output) > 0:
                     cdebug("exit result is 0")
                     break
