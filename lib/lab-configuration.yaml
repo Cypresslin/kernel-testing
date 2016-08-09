@@ -291,20 +291,6 @@
                 - "sru-1"
                 - "sru-2"
             scratch drive: "/dev/sdb"
-        fozzie:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.211"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role: []
         onibi:
             arch:
                 - "amd64"
@@ -442,21 +428,21 @@
         # --------------------------------------------------------------------------
         # Testing Development
         #
-        pepe:
+        kili:
             arch:
                 - "amd64"
-                - "i386"
             provisioner: "maas"
             jenkins server: "kernel-jenkins"
             locked: false
             power:
                 -
-                    address  : "10.245.80.213"
-                    password : "insecure"
+                    address  : "10.245.80.209"
+                    password : "kodw6gcl"
                     type     : "ipmi"
-                    username : "admin"
+                    username : "maas"
             role:
-                - "Personal Testing"
+                - "Infrastructure"
+            scratch drive: "/dev/sdb"
         rizzo:
             arch:
                 - "amd64"
@@ -471,12 +457,49 @@
                     type     : "ipmi"
                     username : "admin"
             role:
-                - "debug"
+                - "JuJu Controller"
             scratch drive: "/dev/sdb"
-
-        # --------------------------------------------------------------------------
-        # Livepatch testing
-        #
+        pepe:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.213"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role: []
+        fili:
+            arch:
+                - "amd64"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.98.5.226"
+                    password : "gEktYeGpC"
+                    type     : "ipmi"
+                    username : "maas"
+            role: []
+        fozzie:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.211"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role: []
         gonzo:
             arch:
                 - "amd64"
@@ -491,34 +514,11 @@
                     username : "admin"
             role: []
             scratch drive: "/dev/sdb"
-        fili:
-            arch:
-                - "amd64"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.98.5.226"
-                    password : "gEktYeGpC"
-                    type     : "ipmi"
-                    username : "maas"
-            role: []
-        kili:
-            arch:
-                - "amd64"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.209"
-                    password : "kodw6gcl"
-                    type     : "ipmi"
-                    username : "maas"
-            role: []
-            scratch drive: "/dev/sdb"
 
+
+        # --------------------------------------------------------------------------
+        # Livepatch testing
+        #
         glameow:
             arch:
                 - "amd64"
