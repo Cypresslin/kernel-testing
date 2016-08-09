@@ -26,6 +26,15 @@
         sut_user : "ubuntu"              # The user on the test system after it's been provisioned
         domain   : "kernel"
 
+    maas2:
+        server   : "10.246.72.3"         # Hostname/address of the MAAS server
+        profile  : "jenkins"             # The MAAS profile to use
+        creds    : Nkqj7nY6aBg2p56sj2:FSuqbcDgEWCT3gMt4H:6Q9xDtCH5nvx6CxnY7mcZdWfdqH3u5uf
+        user     : "jenkins"             # When ssh'ing to the MAAS server, use this user
+        type     : "maas"                # This _is_ a MAAS server (as opposed to a cobbler server)
+        sut_user : "ubuntu"              # The user on the test system after it's been provisioned
+        domain   : "maas"
+
     manual:
         server   : ""
         type     : "manual"
