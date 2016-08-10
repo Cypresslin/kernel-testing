@@ -358,26 +358,6 @@
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
             scratch drive: "/dev/sdb"
-        rukbah:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.206"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role:
-                - "sru-3"
-                - "xfstests"
-                - "ubuntu_ecryptfs"
-                - "ubuntu_zfs_fstest"
-                - "ubuntu_zfs_xfs_generic"
-            scratch drive: "/dev/sdb"
         modoc:
             arch:
                 - "ppc64el"
@@ -592,6 +572,30 @@
         # --------------------------------------------------------------------------
         # Not useable
         #
+
+        # RT Filed 8/10 to have rukbah looked at.
+        #
+        # rukbah:
+        #     arch:
+        #         - "amd64"
+        #         - "i386"
+        #     provisioner: "maas"
+        #     jenkins server: "kernel-jenkins"
+        #     locked: false
+        #     power:
+        #         -
+        #             address  : "10.245.80.206"
+        #             password : "insecure"
+        #             type     : "ipmi"
+        #             username : "admin"
+        #     role:
+        #         - "sru-3"
+        #         - "xfstests"
+        #         - "ubuntu_ecryptfs"
+        #         - "ubuntu_zfs_fstest"
+        #         - "ubuntu_zfs_xfs_generic"
+        #     scratch drive: "/dev/sdb"
+
         sayers:
             arch:
                 - "amd64"
