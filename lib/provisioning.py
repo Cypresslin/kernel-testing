@@ -230,22 +230,6 @@ class Base(object):
 
         cleave("Base::install_specific_kernel_version")
 
-    # enable_snappy
-    #
-    def enable_snappy(s):
-        center("Base::enable_snappy")
-        s.progress('Enabling Snappy')
-
-        s.ssh('sudo apt-get update')
-        s.ssh('sudo apt-get install --yes ubuntu-snappy')
-        s.ssh('sudo snappy install ubuntu-core.canonical')
-
-        s.progress('Verifying Snappy')
-        s.ssh('sudo snappy install hello-world')
-        s.ssh('hello-world.echo')
-
-        cleave('Base::enable_snappy')
-
     # enable_live_kernel_patching
     #
     def enable_live_kernel_patching(s):
@@ -765,12 +749,6 @@ class Metal(Base):
 
         if s.lkp:
             s.enable_live_kernel_patching()
-
-        # For all installs of 16.04 and later we want to install snappy.
-        #
-        series_version = Ubuntu().lookup(s.series)['series_version']
-        if int(series_version.split('.')[0]) >= 16:
-            s.enable_snappy()
 
         s.progress('Verifying the running kernel version')
         if s.hwe:
