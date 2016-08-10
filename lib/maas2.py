@@ -32,7 +32,7 @@ class MACHINE_STATUS(Enum):
     """
     The vocabulary of a `Node`'s possible statuses.
     """
-    DEFAULT               = 0   #: A node starts out as NEW (DEFAULT is an alias for NEW).
+    #DEFAULT               = 0   #: A node starts out as NEW (DEFAULT is an alias for NEW).
     NEW                   = 0   #: The node has been created and has a system ID assigned to it.
     COMMISSIONING         = 1   #: Testing and other commissioning steps are taking place.
     FAILED_COMMISSIONING  = 2   #: The commissioning step failed.
@@ -75,7 +75,8 @@ STATUS_MAP = [
 class maas(object):
     # __init__
     #
-    def __init__(s, address, creds):
+    def __init__(s, address, creds, api='2.0'):
+        s.api = api
         (s.consumer_key, s.key, s.secret) = creds.split(':')
         s.oauth = OAuth1(s.consumer_key,
                          client_secret="",
@@ -83,7 +84,7 @@ class maas(object):
                          resource_owner_secret=s.secret,
                          signature_method='PLAINTEXT',
                          signature_type='auth_header')
-        s.api = 'http://%s/MAAS/api/2.0' % address
+        s.api = 'http://%s/MAAS/api/%s' % (address, api)
         s.__machines = None
 
     # ------------------------------------------------------------------------------------------------------
@@ -115,17 +116,27 @@ class maas(object):
 
     def _release(s, hostname):
         sysid = s.machines[hostname]['system_id']
-        request = s.post('/machines/%s/' % sysid, params={'op': 'release'})
+        if s.api == '2.0':
+            request = s.post('/machines/%s/' % sysid, params={'op': 'release'})
+        else:
+            request = s.post('/nodes/%s/' % sysid, params={'op': 'release'})
         return request
 
     def _allocate(s, hostname):
         sysid = s.machines[hostname]['system_id']
-        request = s.post('/machines/', params={'op': 'allocate', 'name': hostname})
+        if s.api == '2.0':
+            request = s.post('/machines/', params={'op': 'allocate', 'name': hostname})
+        else:
+            request = s.post('/nodes/', params={'op': 'acquire', 'name': hostname})
 
     def _deploy(s, hostname, series, arch):
         sysid = s.machines[hostname]['system_id']
-        request = s.put('/machines/%s/' % sysid, params={'architecture': arch})
-        request = s.post('/machines/%s/' % sysid, params={'op': 'deploy', 'distro_series': series})
+        if s.api == '2.0':
+            request = s.put('/machines/%s/' % sysid, params={'architecture': arch})
+            request = s.post('/machines/%s/' % sysid, params={'op': 'deploy', 'distro_series': series})
+        else:
+            request = s.put('/nodes/%s/' % sysid, params={'architecture': arch})
+            request = s.post('/nodes/%s/' % sysid, params={'op': 'start', 'distro_series': series})
 
     # ------------------------------------------------------------------------------------------------------
     #
@@ -134,14 +145,21 @@ class maas(object):
     def machines(s):
         if s.__machines is None:
             s.__machines = {}
-            result = s.get('/machines/')
+            if s.api == '2.0':
+                result = s.get('/machines/')
+            else:
+                result = s.get('/nodes/', params={'op': 'list'})
             for machine in result:
                 s.__machines[machine['hostname']] = machine
         return s.__machines
 
     def status(s, hostname):
         s.__machines = None  # invalidate the cache, we want the latest status
-        return STATUS_MAP[s.machines[hostname]['status']]
+        if s.api == '2.0':
+            retval = STATUS_MAP[s.machines[hostname]['status']]
+        else:
+            retval = STATUS_MAP[s.machines[hostname]['substatus']]
+        return retval
 
     def allocate(s, hostname, timeout=30):
         progress('        Allocating...       ')
@@ -215,7 +233,7 @@ class sut(object):
     # __init__
     #
     def __init__(s, hostname, domain, series, arch, flavour='generic'):
-        s.hostname = hostname
+        s.hostname = '%s.%s' % (hostname, domain)
         s.domain   = domain
         s.series   = series
         s.arch     = arch
@@ -233,5 +251,18 @@ class sut(object):
         else:
             progress('        Failed Deployment')
 
-sys = sut('gonzo', 'maas', 'xenial', 'amd64', 'generic')
-sys.provision()
+    def provision_x(s):
+        m = maas('10.245.80.31', 'dtbXvrmy8CvK6AtRwj:HjMZXPWTBMeEwtXc9S:5TZvmeXRrATqaSAp2B6n9GLK5jpSXsqb', api='1.0')
+
+        m.release(s.hostname)
+        m.allocate(s.hostname)
+        m.deploy(s.hostname, s.series, s.arch)
+
+        if m.status(s.hostname) == MACHINE_STATUS.DEPLOYED:
+            progress('        Deployed       ')
+        else:
+            progress('        Failed Deployment')
+
+#sys = sut('gonzo', 'maas', 'xenial', 'amd64', 'generic')
+sys = sut('durin', 'kernel', 'xenial', 'amd64', 'generic')
+sys.provision_x()
