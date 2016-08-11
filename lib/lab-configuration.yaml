@@ -442,7 +442,7 @@
         kili:
             arch:
                 - "amd64"
-            provisioner: "maas"
+            provisioner: "maas2"
             jenkins server: "kernel-jenkins"
             locked: false
             power:
@@ -458,7 +458,7 @@
             arch:
                 - "amd64"
                 - "i386"
-            provisioner: "maas"
+            provisioner: "maas2"
             jenkins server: "kernel-jenkins"
             locked: false
             power:
@@ -474,7 +474,7 @@
             arch:
                 - "amd64"
                 - "i386"
-            provisioner: "maas"
+            provisioner: "maas2"
             jenkins server: "kernel-jenkins"
             locked: false
             power:
@@ -487,7 +487,7 @@
         fili:
             arch:
                 - "amd64"
-            provisioner: "maas"
+            provisioner: "maas2"
             jenkins server: "kernel-jenkins"
             locked: false
             power:
@@ -501,7 +501,7 @@
             arch:
                 - "amd64"
                 - "i386"
-            provisioner: "maas"
+            provisioner: "maas2"
             jenkins server: "kernel-jenkins"
             locked: false
             power:
@@ -514,7 +514,7 @@
         gonzo:
             arch:
                 - "amd64"
-            provisioner: "maas"
+            provisioner: "maas2"
             jenkins server: "kernel-jenkins"
             locked: false
             power:
