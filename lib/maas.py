@@ -1,170 +1,250 @@
-# TODO:
-#
-#    1. Use administrator/insecure for the username/passwd for ipmi.
-#    2. Use the debian installer and not the fastpath installer.
-#       NOTE: Try to use the fast path installer and "fixup" the install
-#             after the system comes up.
-#
-
-from lib.log                                        import cdebug, center, cleave
-from time                                           import sleep
-
-from maastk.client                                  import MaasClient
-from maastk.node                                    import NODE_STATUS
-from maastk.error                                   import MaasTKStandardException, MaasTKTimeoutException
-from .pdu                                           import PDU
-
+#!/usr/bin/env python3
+from requests_oauthlib  import OAuth1
+import requests
+import json
+from time               import sleep
+from enum               import Enum
+from .pdu               import PDU
+from datetime           import datetime
 
 def progress(msg):
     print(msg)
 
+class MachineReleaseFailed(Exception):
+    def __init__(s, error):
+        s.msg = error
 
-# MAAS
+class MachineReleaseTimeout(Exception):
+    def __init__(s, error):
+        s.msg = error
+
+class MachineAllocationTimeout(Exception):
+    def __init__(s, error):
+        s.msg = error
+
+class MachineDeploymentTimeout(Exception):
+    def __init__(s, error):
+        s.msg = error
+
+# MACHINE_STATUS
 #
+class MACHINE_STATUS(Enum):
+    """
+    The vocabulary of a `Node`'s possible statuses.
+    """
+    NEW                   = 0   # The node has been created and has a system ID assigned to it.
+    COMMISSIONING         = 1   # Testing and other commissioning steps are taking place.
+    FAILED_COMMISSIONING  = 2   # The commissioning step failed.
+    MISSING               = 3   # The node can't be contacted.
+    READY                 = 4   # The node is in the general pool ready to be deployed.
+    RESERVED              = 5   # The node is ready for named deployment.
+    DEPLOYED              = 6   # The node has booted into the operating system of its owner's choice and is ready for use.
+    RETIRED               = 7   # The node has been removed from service manually until an admin overrides the retirement.
+    BROKEN                = 8   # The node is broken: a step in the node lifecyle failed.
+    DEPLOYING             = 9   # The node is being installed.
+    ALLOCATED             = 10  # The node has been allocated to a user and is ready for deployment.
+    FAILED_DEPLOYMENT     = 11  # The deployment of the node failed.
+    RELEASING             = 12  # The node is powering down after a release request.
+    FAILED_RELEASING      = 13  # The releasing of the node failed.
+    DISK_ERASING          = 14  # The node is erasing its disks.
+    FAILED_DISK_ERASING   = 15  # The node failed to erase its disks.
+
+STATUS_MAP = [
+    MACHINE_STATUS.NEW,
+    MACHINE_STATUS.COMMISSIONING,
+    MACHINE_STATUS.FAILED_COMMISSIONING,
+    MACHINE_STATUS.MISSING,
+    MACHINE_STATUS.READY,
+    MACHINE_STATUS.RESERVED,
+    MACHINE_STATUS.DEPLOYED,
+    MACHINE_STATUS.RETIRED,
+    MACHINE_STATUS.BROKEN,
+    MACHINE_STATUS.DEPLOYING,
+    MACHINE_STATUS.ALLOCATED,
+    MACHINE_STATUS.FAILED_DEPLOYMENT,
+    MACHINE_STATUS.RELEASING,
+    MACHINE_STATUS.FAILED_RELEASING,
+    MACHINE_STATUS.DISK_ERASING,
+    MACHINE_STATUS.FAILED_DISK_ERASING,
+]
+
 class MAAS(object):
+
     # __init__
     #
-    def __init__(s, maas_server, creds, target, target_domain, target_series, target_arch, target_sub_arch='generic'):
-        cdebug('        Enter MAAS::__init__')
+    def __init__(s, maas_server_address, creds, hostname, domain, series, arch, flavour='generic', api='2.0'):
+        s.api = api
+        (s.consumer_key, s.key, s.secret) = creds.split(':')
+        s.oauth = OAuth1(s.consumer_key,
+                         client_secret="",
+                         resource_owner_key=s.key,
+                         resource_owner_secret=s.secret,
+                         signature_method='PLAINTEXT',
+                         signature_type='auth_header')
+        s.api_url = 'http://%s/MAAS/api/%s' % (maas_server_address, api)
+        s.__machines = None
+        if api == '2.0':
+            s.hostname = hostname
+        else:
+            s.hostname = '%s.%s' % (hostname, domain)
+        s.domain   = domain
+        s.series   = series
+        s.arch     = arch
+        s.flavour  = flavour
 
-        s.maas_server       = maas_server
-        s.creds             = creds
-        s.target            = target
-        s.target_domain     = target_domain
-        s.target_series     = target_series
-        s.target_arch       = target_arch
-        s.target_sub_arch   = target_sub_arch
-
-        s._sysids = None
-        s._nodes = None
-        s._client = None
-
-        cdebug('        Leave MAAS::__init__')
-
-    # nodes
+    # ------------------------------------------------------------------------------------------------------
     #
-    @property
-    def nodes(s):
-        center('nodes')
-        if s._nodes is None:
-            s._nodes = {}
-            nodes = s.client.nodes()
-            for n in nodes:
-                s._nodes[n['hostname']] = n
-        cleave('nodes')
-        return s._nodes
 
-    def __release(s, sut):
-        center('__rlease')
-        retval = True
-        sut.release()
-        while sut.substatus != NODE_STATUS.READY:
-            cdebug(sut.substatus)
-            if sut.substatus == NODE_STATUS.FAILED_RELEASING:
-                retval = False
-                break
+    def _raw_get(s, uri, params=None):
+        url = "%s%s" % (s.api_url, uri)
+        return requests.get(url=url, auth=s.oauth, params=params, headers={'Accept' : 'application/json'})
+
+    def _raw_post(s, uri, params=None):
+        url = "%s%s" % (s.api_url, uri)
+        return requests.post(url=url, auth=s.oauth, data=params, headers={'Accept' : 'application/json'})
+
+    def _raw_put(s, uri, params=None):
+        url = "%s%s" % (s.api_url, uri)
+        return requests.put(url=url, auth=s.oauth, data=params)
+
+    def get(s, uri, params=None):
+        return json.loads(s._raw_get(uri, params).text)
+
+    def post(s, uri, params=None):
+        return s._raw_post(uri, params)
+
+    def put(s, uri, params=None):
+        return s._raw_put(uri, params)
+
+    # ------------------------------------------------------------------------------------------------------
+    #
+
+    def _release(s, hostname):
+        sysid = s.machines[hostname]['system_id']
+        if s.api == '2.0':
+            request = s.post('/machines/%s/' % sysid, params={'op': 'release'})
+        else:
+            request = s.post('/nodes/%s/' % sysid, params={'op': 'release'})
+        return request
+
+    def _allocate(s, hostname):
+        if s.api == '2.0':
+            request = s.post('/machines/', params={'op': 'allocate', 'name': hostname})
+        else:
+            request = s.post('/nodes/', params={'op': 'acquire', 'name': hostname})
+        return request
+
+    def _deploy(s, hostname, series, arch):
+        sysid = s.machines[hostname]['system_id']
+        if s.api == '2.0':
+            request = s.put('/machines/%s/' % sysid, params={'architecture': arch})
+            request = s.post('/machines/%s/' % sysid, params={'op': 'deploy', 'distro_series': series})
+        else:
+            request = s.put('/nodes/%s/' % sysid, params={'architecture': arch})
+            request = s.post('/nodes/%s/' % sysid, params={'op': 'start', 'distro_series': series})
+        return request
+
+    # ------------------------------------------------------------------------------------------------------
+    #
+
+    @property
+    def machines(s):
+        if s.__machines is None:
+            s.__machines = {}
+            if s.api == '2.0':
+                result = s.get('/machines/')
             else:
-                sleep(5)  # Wait for the system to be released
-        cleave('__rlease')
+                result = s.get('/nodes/', params={'op': 'list'})
+            for machine in result:
+                s.__machines[machine['hostname']] = machine
+        return s.__machines
+
+    def status(s, hostname):
+        s.__machines = None  # invalidate the cache, we want the latest status
+        if s.api == '2.0':
+            retval = STATUS_MAP[s.machines[hostname]['status']]
+        else:
+            retval = STATUS_MAP[s.machines[hostname]['substatus']]
         return retval
 
-    # release
-    #
-    def release(s, target):
-        center('rlease')
-        fqdn = '%s.%s' % (s.target, s.target_domain)
-        sut = s.nodes[fqdn]
-        if sut.substatus != NODE_STATUS.READY:
-            progress('       Releasing...')
-            if not s.__release(sut):
-                # Try to get the current power state for the system. If this fails
-                # reset the PDU port for the system. This is actually powering off
-                # the outlets on the PDU and then powering them back on.
-                #
-                try:
-                    cdebug('querying power status')
-                    cdebug(sut.power_state)
-                except MaasTKStandardException as e:
-                    cdebug('power_state exception thrown')
-                    if e.status == 503:  # The call timed out
-                        pdu = PDU(s.target)
-                        cdebug('           resetting the pdu outlets ------------------------------------------------------------------')
-                        progress('           resetting the pdu outlets')
-                        pdu.cycle()
-                        cdebug('cycled .. sleeping')
-                        sleep(60)  # Give the BMC one minute to come back to life
+    def allocate(s, hostname, timeout=30):
+        progress('        Allocating...       ')
+        s._allocate(hostname)
 
-                        try:
-                            cdebug('querying power status')
-                            cdebug(sut.power_state)
-                            s.__release(sut)
-                        except MaasTKStandardException as e:
-                            cdebug('power_state exception thrown')
-                            progress('           unable to determine the power state')
-        cleave('rlease')
+        start = datetime.utcnow()
+        while True:
+            if s.status(hostname) == MACHINE_STATUS.ALLOCATED:
+                break
 
-    # client
-    #
-    @property
-    def client(s):
-        center('client')
-        if s._client is None:
-            progress('       Establishing connection to MAAS @ %s...' % s.maas_server)
-            s._client = MaasClient(s.maas_server, s.creds)
-        cleave('client')
-        return s._client
+            now = datetime.utcnow()
+            delta = now - start
+            if delta.seconds > (timeout * 60):
+                raise MachineAllocationTimeout('The specified timeout (%d) was reached while waiting for the system (%s) to be allocated.' % ((timeout * 60), hostname))
 
-    # provision
-    #
+            sleep(30)
+
+        return
+
+    def release(s, hostname, timeout=30):
+        if s.status(hostname) != MACHINE_STATUS.READY:
+            progress('        Releasing...       ')
+            s._release(hostname)
+
+            power_cycled = False
+            start = datetime.utcnow()
+            while True:
+                if s.status(hostname) == MACHINE_STATUS.READY:
+                    break
+
+                if s.status(hostname) == MACHINE_STATUS.FAILED_RELEASING:
+                    if power_cycled:
+                        raise MachineReleaseFailed('Failed to release (%s).' % hostname)
+
+                    # Power the system completely off and then back on using the pdu. This
+                    # may reset the BMC to a good state so it can be released.
+                    #
+                    pdu = PDU(hostname)
+                    pdu.cycle()
+                    sleep(60) # Give the BMC one minute to come back to life
+                    s._release(hostname)
+                    power_cycled = True
+
+                now = datetime.utcnow()
+                delta = now - start
+                if delta.seconds > (timeout * 60):
+                    raise MachineReleaseTimeout('The specified timeout (%d) was reached while waiting for the system (%s) to release.' % ((timeout * 60), hostname))
+
+                sleep(30)
+
+        return
+
+    def deploy(s, hostname, series, arch, timeout=30):
+        progress('        Deploying...       ')
+        s._deploy(hostname, series, arch)
+
+        start = datetime.utcnow()
+        while True:
+            if s.status(hostname) == MACHINE_STATUS.DEPLOYED:
+                break
+
+            now = datetime.utcnow()
+            delta = now - start
+            if delta.seconds > (timeout * 60):
+                raise MachineDeploymentTimeout('The specified timeout (%d) was reached while waiting for the system (%s) to be allocated.' % ((timeout * 60), hostname))
+
+            sleep(30)
+
     def provision(s):
-        cdebug('        Enter MAAS::provision')
         retval = False
 
-        fqdn = '%s.%s' % (s.target, s.target_domain)
-        arch = '%s/%s' % (s.target_arch, s.target_sub_arch)
+        s.release(s.hostname)
+        s.allocate(s.hostname)
+        s.deploy(s.hostname, s.series, s.arch)
 
-        sut = s.nodes[fqdn]
-        cdebug('\n')
-        cdebug('%s' % fqdn)
-        cdebug('         sysid: %s' % sut.system_id)
-        cdebug('        status: %s' % sut.status)
-        cdebug('    sub-status: %s' % sut.substatus)
-        cdebug('          arch: %s' % sut.architecture)
-        cdebug('        series: %s' % sut.distro_series)
+        if s.status(s.hostname) == MACHINE_STATUS.DEPLOYED:
+            progress('        Deployed       ')
+            retval = True
+        else:
+            progress('        Failed Deployment')
 
-        try:
-            cdebug('before: ' + str(sut.substatus))
-            s.release(s.target)
-            cdebug(' after: ' + str(sut.substatus))
-
-            if sut.substatus == NODE_STATUS.READY:
-                if sut.architecture != arch:
-                    progress('       Changing arch')
-                    sut.architecture = arch
-
-                progress('       Acquiring...')
-                sut.acquire()
-
-                progress('       Starting...')
-                sut.start(distro_series=s.target_series)
-
-                progress('       Deploying ...')
-                while sut.substatus == NODE_STATUS.DEPLOYING:
-                    sleep(10)
-                if sut.substatus == NODE_STATUS.DEPLOYED:
-                    progress('       Deployed     ')
-                    retval = True
-                else:
-                    progress('       Failed Deployment')
-
-        except MaasTKTimeoutException:
-            # This usually idicates that even after a power cycle of the system MaaS is
-            # still unable to talk to the BMC.
-            #
-            print("  ** Error: MaaS is reporting a timout. This usually indicates that even after a power cycle of the SUT")
-            print("            MaaS is unable to talk to the SUT's BMC.")
-            print("")
-            progress('       Failed Deployment')
-
-        cdebug('        Leave MAAS::provision')
         return retval

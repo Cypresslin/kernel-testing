@@ -12,7 +12,7 @@ from lib.hwe                            import HWE
 from lib3.shell                         import ShellError, Shell
 from lib.ubuntu                         import Ubuntu
 from lib.exceptions                     import ErrorExit
-from lib.maas2                          import MAAS
+from lib.maas                           import MAAS
 from .configuration                     import Configuration
 from .kernel_debs                       import KernelDebs
 
