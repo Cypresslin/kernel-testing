@@ -32,26 +32,22 @@ class MACHINE_STATUS(Enum):
     """
     The vocabulary of a `Node`'s possible statuses.
     """
-    #DEFAULT               = 0   #: A node starts out as NEW (DEFAULT is an alias for NEW).
-    NEW                   = 0   #: The node has been created and has a system ID assigned to it.
-    COMMISSIONING         = 1   #: Testing and other commissioning steps are taking place.
-    FAILED_COMMISSIONING  = 2   #: The commissioning step failed.
-    MISSING               = 3   #: The node can't be contacted.
-    READY                 = 4   #: The node is in the general pool ready to be deployed.
-    RESERVED              = 5   #: The node is ready for named deployment.
-    DEPLOYED              = 6   #: The node has booted into the operating system of its owner's choice
-                                #: and is ready for use.
-    RETIRED               = 7   #: The node has been removed from service manually until an admin
-                                #: overrides the retirement.
-    BROKEN                = 8   #: The node is broken: a step in the node lifecyle failed.
-                                #: More details can be found in the node's event log.
-    DEPLOYING             = 9   #: The node is being installed.
-    ALLOCATED             = 10  #: The node has been allocated to a user and is ready for deployment.
-    FAILED_DEPLOYMENT     = 11  #: The deployment of the node failed.
-    RELEASING             = 12  #: The node is powering down after a release request.
-    FAILED_RELEASING      = 13  #: The releasing of the node failed.
-    DISK_ERASING          = 14  #: The node is erasing its disks.
-    FAILED_DISK_ERASING   = 15  #: The node failed to erase its disks.
+    NEW                   = 0   # The node has been created and has a system ID assigned to it.
+    COMMISSIONING         = 1   # Testing and other commissioning steps are taking place.
+    FAILED_COMMISSIONING  = 2   # The commissioning step failed.
+    MISSING               = 3   # The node can't be contacted.
+    READY                 = 4   # The node is in the general pool ready to be deployed.
+    RESERVED              = 5   # The node is ready for named deployment.
+    DEPLOYED              = 6   # The node has booted into the operating system of its owner's choice and is ready for use.
+    RETIRED               = 7   # The node has been removed from service manually until an admin overrides the retirement.
+    BROKEN                = 8   # The node is broken: a step in the node lifecyle failed.
+    DEPLOYING             = 9   # The node is being installed.
+    ALLOCATED             = 10  # The node has been allocated to a user and is ready for deployment.
+    FAILED_DEPLOYMENT     = 11  # The deployment of the node failed.
+    RELEASING             = 12  # The node is powering down after a release request.
+    FAILED_RELEASING      = 13  # The releasing of the node failed.
+    DISK_ERASING          = 14  # The node is erasing its disks.
+    FAILED_DISK_ERASING   = 15  # The node failed to erase its disks.
 
 STATUS_MAP = [
     MACHINE_STATUS.NEW,
@@ -70,12 +66,13 @@ STATUS_MAP = [
     MACHINE_STATUS.FAILED_RELEASING,
     MACHINE_STATUS.DISK_ERASING,
     MACHINE_STATUS.FAILED_DISK_ERASING,
-  ]
+]
 
-class maas(object):
+class MAAS(object):
+
     # __init__
     #
-    def __init__(s, address, creds, api='2.0'):
+    def __init__(s, maas_server_address, creds, hostname, domain, series, arch, flavour='generic', api='2.0'):
         s.api = api
         (s.consumer_key, s.key, s.secret) = creds.split(':')
         s.oauth = OAuth1(s.consumer_key,
@@ -84,8 +81,16 @@ class maas(object):
                          resource_owner_secret=s.secret,
                          signature_method='PLAINTEXT',
                          signature_type='auth_header')
-        s.api = 'http://%s/MAAS/api/%s' % (address, api)
+        s.api = 'http://%s/MAAS/api/%s' % (maas_server_address, api)
         s.__machines = None
+        if api == '2.0':
+            s.hostname = hostname
+        else:
+            s.hostname = '%s.%s' % (hostname, domain)
+        s.domain   = domain
+        s.series   = series
+        s.arch     = arch
+        s.flavour  = flavour
 
     # ------------------------------------------------------------------------------------------------------
     #
@@ -123,11 +128,11 @@ class maas(object):
         return request
 
     def _allocate(s, hostname):
-        sysid = s.machines[hostname]['system_id']
         if s.api == '2.0':
             request = s.post('/machines/', params={'op': 'allocate', 'name': hostname})
         else:
             request = s.post('/nodes/', params={'op': 'acquire', 'name': hostname})
+        return request
 
     def _deploy(s, hostname, series, arch):
         sysid = s.machines[hostname]['system_id']
@@ -137,6 +142,7 @@ class maas(object):
         else:
             request = s.put('/nodes/%s/' % sysid, params={'architecture': arch})
             request = s.post('/nodes/%s/' % sysid, params={'op': 'start', 'distro_series': series})
+        return request
 
     # ------------------------------------------------------------------------------------------------------
     #
@@ -228,41 +234,13 @@ class maas(object):
 
             sleep(30)
 
-
-class sut(object):
-    # __init__
-    #
-    def __init__(s, hostname, domain, series, arch, flavour='generic'):
-        s.hostname = '%s.%s' % (hostname, domain)
-        s.domain   = domain
-        s.series   = series
-        s.arch     = arch
-        s.flavour  = flavour
-
     def provision(s):
-        m = maas('10.246.72.3', 'Nkqj7nY6aBg2p56sj2:FSuqbcDgEWCT3gMt4H:6Q9xDtCH5nvx6CxnY7mcZdWfdqH3u5uf')
 
-        m.release(s.hostname)
-        m.allocate(s.hostname)
-        m.deploy(s.hostname, s.series, s.arch)
+        s.release(s.hostname)
+        s.allocate(s.hostname)
+        s.deploy(s.hostname, s.series, s.arch)
 
-        if m.status(s.hostname) == MACHINE_STATUS.DEPLOYED:
+        if s.status(s.hostname) == MACHINE_STATUS.DEPLOYED:
             progress('        Deployed       ')
         else:
             progress('        Failed Deployment')
-
-    def provision_x(s):
-        m = maas('10.245.80.31', 'dtbXvrmy8CvK6AtRwj:HjMZXPWTBMeEwtXc9S:5TZvmeXRrATqaSAp2B6n9GLK5jpSXsqb', api='1.0')
-
-        m.release(s.hostname)
-        m.allocate(s.hostname)
-        m.deploy(s.hostname, s.series, s.arch)
-
-        if m.status(s.hostname) == MACHINE_STATUS.DEPLOYED:
-            progress('        Deployed       ')
-        else:
-            progress('        Failed Deployment')
-
-#sys = sut('gonzo', 'maas', 'xenial', 'amd64', 'generic')
-sys = sut('durin', 'kernel', 'xenial', 'amd64', 'generic')
-sys.provision_x()
