@@ -25,6 +25,7 @@
         type     : "maas"                # This _is_ a MAAS server (as opposed to a cobbler server)
         sut_user : "ubuntu"              # The user on the test system after it's been provisioned
         domain   : "kernel"
+        api      : "1.0"
 
     maas2:
         server   : "10.246.72.3"         # Hostname/address of the MAAS server
@@ -34,6 +35,7 @@
         type     : "maas"                # This _is_ a MAAS server (as opposed to a cobbler server)
         sut_user : "ubuntu"              # The user on the test system after it's been provisioned
         domain   : "maas"
+        api      : "2.0"
 
     manual:
         server   : ""
