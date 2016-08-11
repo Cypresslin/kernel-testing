@@ -12,7 +12,7 @@ from lib.hwe                            import HWE
 from lib3.shell                         import ShellError, Shell
 from lib.ubuntu                         import Ubuntu
 from lib.exceptions                     import ErrorExit
-from lib.maas                           import MAAS
+from lib.maas2                          import MAAS
 from .configuration                     import Configuration
 from .kernel_debs                       import KernelDebs
 
@@ -37,7 +37,7 @@ class PS(object):
             # in the configuration information.
             #
             sub_arch = Configuration['systems'][target].get('sub-arch', 'generic')
-            s.server = MAAS(s.server, s.creds, target, p['domain'], series, arch, sub_arch)
+            s.server = MAAS(s.server, s.creds, target, p['domain'], series, arch, flavour=sub_arch, api=s.api)
         else:
             s.server = None
         cleave("PS::__init__")
