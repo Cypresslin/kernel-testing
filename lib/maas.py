@@ -137,7 +137,7 @@ class MAAS(object):
     def _deploy(s, hostname, series, arch):
         sysid = s.machines[hostname]['system_id']
         if s.api == '2.0':
-            request = s.put('/machines/%s/' % sysid, params={'architecture': arch})
+            request = s.put('/machines/%s/' % sysid, params={'architecture': '%s/%s' % (arch, s.flavour)})
             request = s.post('/machines/%s/' % sysid, params={'op': 'deploy', 'distro_series': series})
         else:
             request = s.put('/nodes/%s/' % sysid, params={'architecture': arch})
@@ -181,7 +181,7 @@ class MAAS(object):
             if delta.seconds > (timeout * 60):
                 raise MachineAllocationTimeout('The specified timeout (%d) was reached while waiting for the system (%s) to be allocated.' % ((timeout * 60), hostname))
 
-            sleep(30)
+            sleep(10)
 
         return
 
@@ -214,7 +214,7 @@ class MAAS(object):
                 if delta.seconds > (timeout * 60):
                     raise MachineReleaseTimeout('The specified timeout (%d) was reached while waiting for the system (%s) to release.' % ((timeout * 60), hostname))
 
-                sleep(30)
+                sleep(10)
 
         return
 
