@@ -4,7 +4,7 @@ import requests
 import json
 from time               import sleep
 from enum               import Enum
-from pdu                import PDU
+from .pdu               import PDU
 from datetime           import datetime
 
 def progress(msg):
@@ -81,7 +81,7 @@ class MAAS(object):
                          resource_owner_secret=s.secret,
                          signature_method='PLAINTEXT',
                          signature_type='auth_header')
-        s.api = 'http://%s/MAAS/api/%s' % (maas_server_address, api)
+        s.api_url = 'http://%s/MAAS/api/%s' % (maas_server_address, api)
         s.__machines = None
         if api == '2.0':
             s.hostname = hostname
@@ -96,15 +96,15 @@ class MAAS(object):
     #
 
     def _raw_get(s, uri, params=None):
-        url = "%s%s" % (s.api, uri)
+        url = "%s%s" % (s.api_url, uri)
         return requests.get(url=url, auth=s.oauth, params=params, headers={'Accept' : 'application/json'})
 
     def _raw_post(s, uri, params=None):
-        url = "%s%s" % (s.api, uri)
+        url = "%s%s" % (s.api_url, uri)
         return requests.post(url=url, auth=s.oauth, data=params, headers={'Accept' : 'application/json'})
 
     def _raw_put(s, uri, params=None):
-        url = "%s%s" % (s.api, uri)
+        url = "%s%s" % (s.api_url, uri)
         return requests.put(url=url, auth=s.oauth, data=params)
 
     def get(s, uri, params=None):
@@ -235,6 +235,7 @@ class MAAS(object):
             sleep(30)
 
     def provision(s):
+        retval = False
 
         s.release(s.hostname)
         s.allocate(s.hostname)
@@ -242,5 +243,8 @@ class MAAS(object):
 
         if s.status(s.hostname) == MACHINE_STATUS.DEPLOYED:
             progress('        Deployed       ')
+            retval = True
         else:
             progress('        Failed Deployment')
+
+        return retval
