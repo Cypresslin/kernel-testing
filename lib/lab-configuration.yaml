@@ -487,6 +487,7 @@
         fili:
             arch:
                 - "amd64"
+                - "i386"
             provisioner: "maas2"
             jenkins server: "kernel-jenkins"
             locked: false
@@ -514,6 +515,7 @@
         gonzo:
             arch:
                 - "amd64"
+                - "i386"
             provisioner: "maas2"
             jenkins server: "kernel-jenkins"
             locked: false
