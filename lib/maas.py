@@ -203,7 +203,7 @@ class MAAS(object):
                     # Power the system completely off and then back on using the pdu. This
                     # may reset the BMC to a good state so it can be released.
                     #
-                    pdu = PDU(hostname)
+                    pdu = PDU(hostname.replace('.%s' % s.domain, ''))
                     pdu.cycle()
                     sleep(60) # Give the BMC one minute to come back to life
                     s._release(hostname)
