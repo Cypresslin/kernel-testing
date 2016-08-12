@@ -111,14 +111,6 @@ class TestAttributes():
         else:
             data['timestamp'] = 'unknown'
 
-        # Version
-        #
-        clpath = path.join(path.dirname(argv[0]), "debian/changelog")
-        with open(clpath, 'r') as f:
-            fl = f.readline()
-
-        data['version'] = fl[fl.find("(")+1:fl.find(")")]
-
         # TestAttributes the environment variables.
         #
         data['environ'] = {}
