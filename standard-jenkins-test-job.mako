@@ -66,7 +66,7 @@ if data['lkp']:
 if data['kernel']:
     provision += ' --kernel=%s' % data['kernel']
 
-if data['version']:
+if 'version' in data:
     if data['lkp']:
         provision += ' --required-kernel-version=%s' % data['kernel-version']
     else:
