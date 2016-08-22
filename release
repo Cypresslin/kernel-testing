@@ -7,6 +7,7 @@ from lib.argparse                       import ArgumentParser, RawDescriptionHel
 from lib.configuration                  import Configuration
 from lib.shell                          import ShellError, ShellTimeoutError
 from lib.maas                           import MAAS
+from lib.juju                           import JuJu
 from lib.log                            import Clog, center, cleave
 
 
@@ -28,8 +29,12 @@ class Release():
         retval = 1
         try:
             c = Configuration[Configuration["systems"][s.args.target]["provisioner"]]
-            if c['type'] != 'manual':
+            if c['type'] == 'maas':
                 s.server = MAAS(c['server'], c['creds'], s.args.target, c['domain'], None, None, None)
+                s.server.release(s.args.target)
+            elif c['type'] == 'juju':
+                t = Configuration["systems"][s.args.target]
+                s.server = JuJu(t['cloud'], s.args.target, None, domain=t['domain'])
                 s.server.release(s.args.target)
 
             retval = 0

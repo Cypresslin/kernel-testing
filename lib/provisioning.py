@@ -13,6 +13,7 @@ from lib3.shell                         import ShellError, Shell
 from lib.ubuntu                         import Ubuntu
 from lib.exceptions                     import ErrorExit
 from lib.maas                           import MAAS
+from lib.juju                           import JuJu
 from .configuration                     import Configuration
 from .kernel_debs                       import KernelDebs
 
@@ -38,6 +39,10 @@ class PS(object):
             #
             sub_arch = Configuration['systems'][target].get('sub-arch', 'generic')
             s.server = MAAS(s.server, s.creds, target, p['domain'], series, arch, flavour=sub_arch, api=s.api)
+        elif s.type == "juju":
+            domain = Configuration['systems'][target]['domain']
+            cloud  = Configuration['systems'][target]['cloud']
+            s.server = JuJu(cloud, target, series, domain=domain)
         else:
             s.server = None
         cleave("PS::__init__")
@@ -66,7 +71,10 @@ class Base(object):
 
         sp = Configuration['systems'][target]['provisioner']
         p = Configuration[sp]
-        s.target = '%s.%s' % (target, p['domain'])
+        if s.ps.type == "maas":
+            s.target = '%s.%s' % (target, p['domain'])
+        else:
+            s.target = target
         s.raw_target = target
 
         s.series = series

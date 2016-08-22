@@ -52,6 +52,8 @@
     #
     juju:
         server   : ""
+        type     : "juju"
+        sut_user : "ubuntu"
 
     # Test systems section. This is a dictionary of all the test systems that are available
     # to me.
@@ -485,6 +487,8 @@
                 - "amd64"
                 - "i386"
             provisioner: "juju"
+            cloud: "kernel-maas"
+            domain: "maas"
             jenkins server: "kernel-jenkins"
             locked: false
             power:
