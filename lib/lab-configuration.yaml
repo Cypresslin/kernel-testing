@@ -27,6 +27,8 @@
         domain   : "kernel"
         api      : "1.0"
 
+    # The Kernel Team's MAAS 2.0 server
+    #
     maas2:
         server   : "10.246.72.3"         # Hostname/address of the MAAS server
         profile  : "jenkins"             # The MAAS profile to use
@@ -37,11 +39,19 @@
         domain   : "maas"
         api      : "2.0"
 
+    # Systems that are hand crafted and never re-provisioned.
+    #
     manual:
         server   : ""
         type     : "manual"
         domain   : "kernel"
         sut_user : "ubuntu"       # The user on the test system after it's been provisioned
+
+    # Use JuJu to do the deployments and let it talk to the "clouds" to create
+    # instances.
+    #
+    juju:
+        server   : ""
 
     # Test systems section. This is a dictionary of all the test systems that are available
     # to me.
@@ -474,7 +484,7 @@
             arch:
                 - "amd64"
                 - "i386"
-            provisioner: "maas2"
+            provisioner: "juju"
             jenkins server: "kernel-jenkins"
             locked: false
             power:
