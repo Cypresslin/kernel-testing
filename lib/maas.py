@@ -84,8 +84,10 @@ class MAAS(object):
         s.api_url = 'http://%s/MAAS/api/%s' % (maas_server_address, api)
         s.__machines = None
         if api == '2.0':
+            print('2.0')
             s.hostname = hostname
         else:
+            print('1.0')
             s.hostname = '%s.%s' % (hostname, domain)
         s.domain   = domain
         s.series   = series
@@ -185,34 +187,34 @@ class MAAS(object):
 
         return
 
-    def release(s, hostname, timeout=30):
-        if s.status(hostname) != MACHINE_STATUS.READY:
+    def release(s, timeout=30):
+        if s.status(s.hostname) != MACHINE_STATUS.READY:
             progress('        Releasing...       ')
-            s._release(hostname)
+            s._release(s.hostname)
 
             power_cycled = False
             start = datetime.utcnow()
             while True:
-                if s.status(hostname) == MACHINE_STATUS.READY:
+                if s.status(s.hostname) == MACHINE_STATUS.READY:
                     break
 
-                if s.status(hostname) == MACHINE_STATUS.FAILED_RELEASING:
+                if s.status(s.hostname) == MACHINE_STATUS.FAILED_RELEASING:
                     if power_cycled:
-                        raise MachineReleaseFailed('Failed to release (%s).' % hostname)
+                        raise MachineReleaseFailed('Failed to release (%s).' % s.hostname)
 
                     # Power the system completely off and then back on using the pdu. This
                     # may reset the BMC to a good state so it can be released.
                     #
-                    pdu = PDU(hostname.replace('.%s' % s.domain, ''))
+                    pdu = PDU(s.hostname.replace('.%s' % s.domain, ''))
                     pdu.cycle()
                     sleep(60) # Give the BMC one minute to come back to life
-                    s._release(hostname)
+                    s._release(s.hostname)
                     power_cycled = True
 
                 now = datetime.utcnow()
                 delta = now - start
                 if delta.seconds > (timeout * 60):
-                    raise MachineReleaseTimeout('The specified timeout (%d) was reached while waiting for the system (%s) to release.' % ((timeout * 60), hostname))
+                    raise MachineReleaseTimeout('The specified timeout (%d) was reached while waiting for the system (%s) to release.' % ((timeout * 60), s.hostname))
 
                 sleep(10)
 
