@@ -213,14 +213,14 @@ class MAAS(object):
 
                 now = datetime.utcnow()
                 delta = now - start
-                if delta.seconds > (timeout * 60):
+                if delta.seconds > timeout:
                     raise MachineReleaseTimeout('The specified timeout (%d) was reached while waiting for the system (%s) to release.' % ((timeout * 60), s.hostname))
 
                 sleep(10)
 
         return
 
-    def deploy(s, hostname, series, arch, timeout=30):
+    def deploy(s, hostname, series, arch, timeout=30 * 60):
         progress('        Deploying...       ')
         s._deploy(hostname, series, arch)
 
@@ -231,7 +231,7 @@ class MAAS(object):
 
             now = datetime.utcnow()
             delta = now - start
-            if delta.seconds > (timeout * 60):
+            if delta.seconds > timeout:
                 raise MachineDeploymentTimeout('The specified timeout (%d) was reached while waiting for the system (%s) to be allocated.' % ((timeout * 60), hostname))
 
             sleep(30)
