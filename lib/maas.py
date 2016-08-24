@@ -84,10 +84,8 @@ class MAAS(object):
         s.api_url = 'http://%s/MAAS/api/%s' % (maas_server_address, api)
         s.__machines = None
         if api == '2.0':
-            print('2.0')
             s.hostname = hostname
         else:
-            print('1.0')
             s.hostname = '%s.%s' % (hostname, domain)
         s.domain   = domain
         s.series   = series
@@ -142,7 +140,9 @@ class MAAS(object):
             request = s.put('/machines/%s/' % sysid, params={'architecture': '%s/%s' % (arch, s.flavour)})
             request = s.post('/machines/%s/' % sysid, params={'op': 'deploy', 'distro_series': series})
         else:
-            request = s.put('/nodes/%s/' % sysid, params={'architecture': arch})
+            print(arch)
+            #request = s.put('/nodes/%s/' % sysid, params={'architecture': arch})
+            request = s.put('/nodes/%s/' % sysid, params={'architecture': '%s/%s' % (arch, s.flavour)})
             request = s.post('/nodes/%s/' % sysid, params={'op': 'start', 'distro_series': series})
         return request
 
@@ -214,7 +214,7 @@ class MAAS(object):
                 now = datetime.utcnow()
                 delta = now - start
                 if delta.seconds > timeout:
-                    raise MachineReleaseTimeout('The specified timeout (%d) was reached while waiting for the system (%s) to release.' % ((timeout * 60), s.hostname))
+                    raise MachineReleaseTimeout('The specified timeout (%d) was reached while waiting for the system (%s) to release.' % (timeout , s.hostname))
 
                 sleep(10)
 
@@ -239,7 +239,7 @@ class MAAS(object):
     def provision(s):
         retval = False
 
-        s.release(s.hostname)
+        s.release()
         s.allocate(s.hostname)
         s.deploy(s.hostname, s.series, s.arch)
 
