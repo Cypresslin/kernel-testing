@@ -267,7 +267,7 @@ class Jobs(Common):
         cls._Common__common(args)
         for j in args.jobs:
             try:
-                cls.jenkins.stop_build(j)
+                cls.jenkins.stop_build(j, 1)
 
             except JenkinsException as e:
                 print('job-stop: cannot stop \'%s\': The job does not exist.' % j)
