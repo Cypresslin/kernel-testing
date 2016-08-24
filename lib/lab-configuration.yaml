@@ -280,22 +280,6 @@
                     type     : "ipmi"
                     username : "Administrator"
             role: []
-        dagmar:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "192.168.228.88"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "Administrator"
-            role:
-                - "smoke"
-                - "qrt"
         dwalin:
             arch:
                 - "amd64"
