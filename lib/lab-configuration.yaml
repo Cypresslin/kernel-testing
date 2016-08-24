@@ -14,6 +14,7 @@
         type     : "maas"         # This _is_ a MAAS server (as opposed to a cobbler server)
         sut_user : "ubuntu"       # The user on the test system after it's been provisioned
         domain   : "1ss"
+        api      : "1.0"
 
     # The Kernel Team's MAAS server
     #
