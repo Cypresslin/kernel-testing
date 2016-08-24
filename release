@@ -31,7 +31,7 @@ class Release():
             c = Configuration[Configuration["systems"][s.args.target]["provisioner"]]
             if c['type'] == 'maas':
                 s.server = MAAS(c['server'], c['creds'], s.args.target, c['domain'], None, None, None, api=c['api'])
-                s.server.release(s.args.target)
+                s.server.release()
             elif c['type'] == 'juju':
                 t = Configuration["systems"][s.args.target]
                 s.server = JuJu(t['cloud'], s.args.target, None, domain=t['domain'])
