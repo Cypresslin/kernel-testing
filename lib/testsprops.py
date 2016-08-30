@@ -239,6 +239,10 @@ TestProfiles = {
 # Test Collections may be defined, and will run the list of autotest tests in them
 #
 TestCollections = {
+    'aws-sru' : [
+        'qrt',
+    ],
+
     # Live Kernel Patching
     #
     'lkp' : [
@@ -463,7 +467,6 @@ LKP_TestsList = [
     'lkp-2',
     'lkp-3',
     'lkp-ecryptfs',
-    'lkp-xfstests',
     'ubuntu_load_livepatch_modules',
 ]
 
