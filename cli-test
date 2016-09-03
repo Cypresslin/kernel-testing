@@ -1,0 +1,124 @@
+#!/usr/bin/env python3
+#
+
+from os                                 import environ
+from datetime                           import datetime
+from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import basicConfig, DEBUG, WARNING
+
+from lib.log                            import cdebug, Clog, center, cleave
+from lib3.shell                         import sh, Shell
+from lib3.cloud                         import Cloud
+
+# date_to_string
+#
+def date_to_string(date):
+    """
+    Return a standard, string representation of the date given. It is assumed that the
+    date is UTC based.
+    """
+    return "None" if date is None else date.strftime("%A, %d. %B %Y %H:%M UTC")
+
+# CloudInstance
+#
+class CloudInstance(object):
+    '''
+    '''
+
+    # __init__
+    #
+    def __init__(s):
+        center('CloudInstance::__init__')
+        cleave('CloudInstance::__init__')
+
+    # ssh
+    #
+    def ssh(s, cmd, quiet=True, ignore_result=False):
+        '''
+        This ssh method uses the lower-level ssh function for actuall remote shell to
+        the target system. This helper automatically provides the 'target' and 'user'
+        options to every ssh call.
+        '''
+        center("Base::ssh")
+        result, output = Shell.ssh(s.target, cmd, user=s.cloud_ssh_user, additional_ssh_options=s.cloud_ssh_options, quiet=quiet, ignore_result=ignore_result)
+        cleave("Base::ssh")
+        return result, output
+
+    # main
+    #
+    def main(s, args):
+        cdebug("Enter CloudInstance::main")
+        retval = 0
+        try:
+            target = args.sut
+
+            cloud = Cloud.construct(args.cloud)
+            s.cloud_ssh_options = cloud.ssh_options
+            s.cloud_ssh_user    = cloud.ssh_user
+
+            ssh_options = "%s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet" % s.cloud_ssh_options
+
+            ip = cloud.lookup_instance_ip(target)
+            s.target = ip
+
+            if s.cloud_ssh_user != '':
+                sut = '%s@%s' % (s.cloud_ssh_user, ip)
+            else:
+                sut = ip
+
+            # Remove previous results and previous copy of the test files.
+            #
+            result, output = s.ssh('rm -rf autotest kernel-testing kernel-test-results', ignore_result=True)
+
+            # Copy over a fresh set of test files.
+            #
+            result, output = sh('rsync -e "ssh %s" -ar --exclude=.git %s/autotest/ %s:autotest/' % (ssh_options, args.root, sut))
+            result, output = sh('rsync -e "ssh %s" -ar --exclude=.git %s/autotest-client-tests/* %s:autotest/client/tests/' % (ssh_options, args.root, sut))
+            result, output = sh('rsync -e "ssh %s" -ar --exclude=.git %s/autotest-client-virt-tests/* %s:autotest/client/tests/virt/' % (ssh_options, args.root, sut))
+            result, output = sh('rsync -e "ssh %s" -ar --exclude=.git %s/kernel-testing/ %s:./kernel-testing/' % (ssh_options, args.root, sut))
+
+            ts = date_to_string(datetime.utcnow())
+
+            s.ssh('_TS_=\\\"%s\\\" JOB_NAME=%s python kernel-testing/runner --cloud %s %s' % (ts, environ['JOB_NAME'], args.cloud, args.tests))
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            print("Aborting ...")
+
+        cdebug("Leave CloudInstance::main")
+        return retval
+
+if __name__ == '__main__':
+    app_description = '''
+    '''
+
+    app_epilog = '''
+    '''
+
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--debug',    action='store_true', default=False, help='Print out lots of stuff.')
+    parser.add_argument('cloud',  metavar='CLOUD',  type=str, help='The cloud the instance is to be created in.')
+    parser.add_argument('sut', metavar='SUT', type=str, help='')
+    parser.add_argument('series', metavar='SERIES', type=str, help='')
+    parser.add_argument('tests', metavar='TESTS', type=str, help='')
+    parser.add_argument('root', metavar='ROOT', type=str, help='')
+
+    args = parser.parse_args()
+
+    level = DEBUG
+    Clog.dbg = True
+    Clog.color = True
+    # if args.debug:
+    #     level = DEBUG
+    #     Clog.dbg = True
+    #     Clog.color = True
+    # else:
+    #     level = WARNING
+
+    basicConfig(filename=None, level=level, format="%(levelname)s - %(message)s")
+
+    app = CloudInstance()
+    exit(app.main(args))
+
+# vi:set ts=4 sw=4 expandtab syntax=python:

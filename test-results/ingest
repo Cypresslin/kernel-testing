@@ -8,8 +8,8 @@
 
 from sys                                import argv
 from getopt                             import getopt, GetoptError
-from datetime                           import timedelta, datetime
-from os                                 import path, rename, environ
+from datetime                           import datetime
+from os                                 import path, environ
 from shutil                             import rmtree
 from distutils.dir_util                 import copy_tree
 from logging                            import basicConfig, DEBUG
@@ -19,7 +19,7 @@ from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
 
 from lib.grinder                        import CmdlineError, Exit, TestResultsRepository, TestResultsRepositoryError, JenkinsTestResultsTree, JenkinsTestResultsTreeError, load_template
-from lib.utils                          import error, stdo, dump
+from lib.utils                          import error, stdo
 from lib.log                            import center, cleave, cdebug, Clog
 
 # Cmdline
@@ -34,8 +34,10 @@ class Cmdline:
         """
         Simple helper which prints out an error message and then prints out the usage.
         """
-        if e != '': error("%s\n" % e)
+        if e != '':
+            error("%s\n" % e)
         self.usage(defaults)
+        self.config = None
 
     # usage
     #
@@ -75,7 +77,7 @@ class Cmdline:
             cfg = defaults
 
             optsShort = ''
-            optsLong  = ['help', 'debug']
+            optsLong  = ['help', 'debug', 'config=']
             opts, args = getopt(argv[1:], optsShort, optsLong)
 
             for opt, val in opts:
@@ -87,19 +89,21 @@ class Cmdline:
                     basicConfig(level=DEBUG, format=log_format)
                     Clog.dbg = True
 
+                elif opt in ('--config'):
+                    cfg['config'] = val
+
             if result: # No errors yet
                 # There might be some bugs listed on the command line.
                 #
                 if len(args) > 0:
                     cfg['root'] = args[0]
 
-
             # Required options:
             #
             if 'root' not in cfg:
                 raise CmdlineError("You must specify the root directory of the test results that you wish to incorporate into the test-results repository.")
 
-        except GetoptError, error:
+        except GetoptError as error:
             raise CmdlineError(error)
 
         return cfg
@@ -127,7 +131,10 @@ class Ingest():
         center("Ingest.initialize")
 
         try:
-            self.trr = TestResultsRepository()
+            if 'config' in self.cfg and self.cfg['config'] is not None:
+                self.trr = TestResultsRepository(self.cfg['config'])
+            else:
+                self.trr = TestResultsRepository()
             self.jtr = JenkinsTestResultsTree(self.cfg['root'])
 
             self.index_template = Template(load_template(self.cfg['index template']))
@@ -159,7 +166,7 @@ class Ingest():
             data['results'] = self.jtr.results
             data['attributes'] = self.jtr.attributes
             try:
-                template = self.index_template.render(data = data, timestamp = datetime.utcnow())
+                template = self.index_template.render(data=data, timestamp=datetime.utcnow())
                 dest = path.join(self.trr.results_dir, 'results-index.html')
                 with open(dest, 'w') as f:
                     f.write(template)
@@ -182,7 +189,8 @@ class Ingest():
                     file_name = "%s-test-suite.html" % name
 
                     dest = path.join(self.trr.results_dir, file_name)
-                    template = self.suite_template.render(data = data, target_suite = suite['name'], timestamp = datetime.utcnow())
+                    print('dest: %s' % dest)
+                    template = self.suite_template.render(data=data, target_suite=suite['name'], timestamp=datetime.utcnow())
                     with open(dest, 'w') as f:
                         f.write(template)
 
@@ -192,7 +200,6 @@ class Ingest():
                     print("File %s, line %s, in %s" % (filename, lineno, function))
                     print(line, "\n")
                 print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
-
 
             # Hack:
             #    Benchmark "tests" bring back a bunch of data that needs to be moved from
@@ -207,7 +214,7 @@ class Ingest():
                 copy_tree(src, dst)
                 rmtree(src) # We don't want a separate copy eating up disk space
 
-            #dump(self.jtr.results)
+            # dump(self.jtr.results)
 
         # Handle the user presses <ctrl-C>.
         #
@@ -242,4 +249,3 @@ if __name__ == '__main__':
         cmdline.error(e.msg, defaults)
 
 # vi:set ts=4 sw=4 expandtab:
-

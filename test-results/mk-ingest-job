@@ -86,7 +86,7 @@ class IngestJobsFactory():
             #
             try:
                 job_name = "%s__ingest-results" % self.cfg.job_name
-                self.create_job(job_name, 'ingest-job.mako', self.cfg)
+                self.create_job(job_name, self.cfg.template, self.cfg)
                 self.jenkins.build_job(job_name)
                 retval = 0
 
@@ -124,6 +124,7 @@ if __name__ == '__main__':
     parser.add_argument('--job-name', required=True,  help='The name of the job that generated the test results that this job will ingest.')
     parser.add_argument('--build-id', required=True,  help='The build id of the job that generated the test results.')
     parser.add_argument('--jenkins-url',  required=False, default='http://localhost:8080', help='URL to the jenkins host.')
+    parser.add_argument('--template', default='ingest-job.mako', help='')
     args = parser.parse_args()
 
     app = IngestJobsFactory(args)

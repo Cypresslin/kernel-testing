@@ -340,10 +340,12 @@ class Runner():
     # results_cleanup
     #
     def results_cleanup(self):
-        node = Configuration['systems'][platform.node()]
-        if 'proc-decoration' in node:
-            print('Decorating')
-            sh('sed -i -e \'s/"proc": "%s"/"proc": "%s (%s)"/\' kernel-test-results/test-attributes.json' % (self.arch, self.arch, node['proc-decoration']), quiet=False)
+        if self.args.cloud:
+            sh('sed -i -e \'s/"proc": "%s"/"proc": "%s (%s)"/\' kernel-test-results/test-attributes.json' % (self.arch, self.arch, self.args.cloud), quiet=False)
+        else:
+            node = Configuration['systems'][platform.node()]
+            if 'proc-decoration' in node:
+                sh('sed -i -e \'s/"proc": "%s"/"proc": "%s (%s)"/\' kernel-test-results/test-attributes.json' % (self.arch, self.arch, node['proc-decoration']), quiet=False)
 
         return
 
@@ -354,21 +356,25 @@ class Runner():
         retval = 1
         try:
             self.release_name
-            self.tests_list_expand()
-            self.tests_list_verify()
+            if not self.args.cloud:
+                self.tests_list_expand()
+                self.tests_list_verify()
 
-            if self.scratch_needed:
-                node = platform.node()
-                if 'scratch drive' in Configuration['systems'][node]:
-                    device = Configuration['systems'][node]['scratch']
-                    TestProfiles['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] = device
+                if self.scratch_needed:
+                    node = platform.node()
+                    if 'scratch drive' in Configuration['systems'][node]:
+                        device = Configuration['systems'][node]['scratch']
+                        TestProfiles['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] = device
 
-            # Some tests may require environment variables bet set. Do that.
-            #
-            for t in self.tests_list:
-                if 'env' in TestProfiles[t]:
-                    for k, v in TestProfiles[t]['env']:
-                        environ[k] = v
+                # Some tests may require environment variables bet set. Do that.
+                #
+                for t in self.tests_list:
+                    if 'env' in TestProfiles[t]:
+                        for k, v in TestProfiles[t]['env']:
+                            environ[k] = v
+
+            else:
+                self.tests_list = self.args.tests
 
             # Create the test-results directory where everything we care about will end
             # up.
@@ -445,6 +451,7 @@ if __name__ == '__main__':
 
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
     parser.add_argument('--dry-run',  action='store_true', default=False, help='Don\'t do anything, just print out what would be done.')
+    parser.add_argument('--cloud',  help='')
     parser.add_argument('tests', metavar='T', type=str, nargs='+', help='The tests that are to be run.')
     args = parser.parse_args()
 

@@ -1,0 +1,134 @@
+#!/usr/bin/env python3
+#
+
+from os                                 import getenv
+from lib.argparse                       import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import error, basicConfig, DEBUG, WARNING
+
+from lib.log                            import Clog, center, cleave
+from lib.shell                          import ShellError, ShellTimeoutError
+from lib.target                         import Target
+from lib.exceptions                     import ErrorExit
+from lib3.cloud                         import Cloud
+
+
+# TheApp
+#
+class TheApp(object):
+    '''
+    Handle all the tasks for getting a test system fully up and installed and ready for
+    running the kernel tests.
+    '''
+
+    # __init__
+    #
+    def __init__(s):
+        center(s.__class__.__name__ + '.__init__')
+        s.__hwdb = None
+        cleave(s.__class__.__name__ + '.__init__')
+
+    # main
+    #
+    def main(s, args):
+        center(s.__class__.__name__ + '.main')
+        retval = 1
+        try:
+            cloud = Cloud.construct(args.cloud)
+            ip = cloud.lookup_instance_ip(args.target)
+            metal = Target(ip, args.series, args.arch, hwe=args.hwe, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, required_kernel_version=args.required_kernel_version, ssh_options=cloud.ssh_options, ssh_user=cloud.ssh_user)
+            if metal.provision():
+                retval = 0
+
+        except ErrorExit as e:
+            error(e.message)
+            ws = getenv('WORKSPACE')
+            if ws is not None:
+                s.produce_error_results(ws, e.message)
+            pass
+
+        # Handle the user presses <ctrl-C>.
+        #
+        except KeyboardInterrupt:
+            print("Aborting ...")
+
+        except ShellTimeoutError as e:
+            msg = 'The command (%s) timed out. (%d)' % (e.cmd, e.timeout)
+            ws = getenv('WORKSPACE')
+            if ws is not None:
+                s.produce_error_results(ws, msg)
+            error(msg)
+
+        except ShellError as e:
+            msg = 'The command (%s) returned a non-zero exit status (%d).\n' % (e.cmd, e.returncode)
+            for line in e.output:
+                msg += line.rstrip() + '\n'
+
+            error('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
+            for line in e.output:
+                error(line.rstrip())
+
+            ws = getenv('WORKSPACE')
+            if ws is not None:
+                s.produce_error_results(ws, msg)
+
+        except ErrorExit as e:
+            error(e.message)
+            ws = getenv('WORKSPACE')
+            if ws is not None:
+                s.produce_error_results(ws, e.message)
+            pass
+
+        if retval > 0:
+            error("")
+            error("Due to the above error(s), this script is unable to continue and is terminating.")
+            error("")
+
+        cleave(s.__class__.__name__ + '.main')
+        return retval
+
+if __name__ == '__main__':
+    app_description = '''
+    '''
+
+    app_epilog = '''
+    '''
+
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--dry-run',  action='store_true', default=False, help='Don\'t do anything, just print out what would be done.')
+    parser.add_argument('--quiet',    action='store_true', default=False, help='Do not print any progress information.')
+    parser.add_argument('--debug',    action='store_true', default=False, help='Print out lots of stuff.')
+    parser.add_argument('--nc',       action='store_true', default=False, help='Debut output should not be colored.')
+
+    parser.add_argument('--series',   required=True,  help='The series that is to be installed on the SUT. lts-hwe-<series> denotes that a lts-hwe kernel is to be run on the appropriate lts series.')
+    parser.add_argument('--arch',     required=False, default='amd64', choices=['amd64', 'i386', 'arm64', 'ppc64el', 's390x.zKVM', 's390x.LPAR', 's390x.zVM'], help='The architecture (amd64, i386, arm64 or ppc64el) that is to be installed on the SUT. (amd64 is the default)')
+    parser.add_argument('--debs-url', required=False, default=None, help='A pointer to a set of kernel deb packages that are to be installed.')
+    parser.add_argument('--ppa',      required=False, default=None, help='A ppa name to update packages from')
+    parser.add_argument('--kernel',   required=False, default=None, help='The specific kernel version to be installed.')
+    parser.add_argument('--lkp',      required=False, action='store_true', default=False, help='Turn on live kernel patching.')
+    parser.add_argument('--hwe',      required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
+    parser.add_argument('--required-kernel-version',   required=False, default=None, help='Fail if this version has not been installed.')
+
+    parser.add_argument('--nolog',    required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
+
+    parser.add_argument('cloud', metavar='CLOUD', type=str, help='')
+    parser.add_argument('target', metavar='TARGET', type=str, help='')
+
+    args = parser.parse_args()
+
+    if args.debug:
+        level = DEBUG
+        Clog.dbg = True
+        Clog.color = not args.nc
+    else:
+        level = WARNING
+
+    if args.nolog:
+        basicConfig(filename=None, level=level, format="%(levelname)s - %(message)s")
+    else:
+        logfile = 'provisioning.log'
+        basicConfig(filename=logfile, level=level, format="%(levelname)s - %(message)s")
+
+    app = TheApp()
+    exit(app.main(args))
+
+# vi:set ts=4 sw=4 expandtab syntax=python:

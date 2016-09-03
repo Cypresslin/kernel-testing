@@ -447,6 +447,19 @@ TestCollections = {
         'aio_dio_bugs',
     ],
 
+    # Cloud tests
+    #
+    'gce' : [
+        'qrt',
+    ],
+
+    'aws' : [
+        'qrt',
+    ],
+
+    'azure' : [
+        'qrt',
+    ],
 }
 
 # A list of the tests that is used to create test jobs when the mail handler
