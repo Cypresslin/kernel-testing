@@ -54,6 +54,15 @@ class TheApp():
         cleave(s.__class__.__name__ + '.public_ip')
         return 0
 
+    def fqdn(s):
+        center(s.__class__.__name__ + '.public_ip')
+
+        cloud = Cloud.construct(s.args.cloud)
+        print(cloud.fqdn(s.args.instance))
+
+        cleave(s.__class__.__name__ + '.public_ip')
+        return 0
+
     def user_and_ip(s):
         center(s.__class__.__name__ + '.public_ip')
 
@@ -112,6 +121,12 @@ if __name__ == '__main__':
 
     sub = subparsers.add_parser('destroy')
     sub.set_defaults(func=TheApp.destroy)
+    sub.add_argument('--debug', action='store_true', default=False, help='Print out a lot of messages about what is going on.')
+    sub.add_argument('cloud',  metavar='CLOUD',  type=str, help='')
+    sub.add_argument('instance', metavar='INSTANCE', type=str, help='')
+
+    sub = subparsers.add_parser('fqdn')
+    sub.set_defaults(func=TheApp.fqdn)
     sub.add_argument('--debug', action='store_true', default=False, help='Print out a lot of messages about what is going on.')
     sub.add_argument('cloud',  metavar='CLOUD',  type=str, help='')
     sub.add_argument('instance', metavar='INSTANCE', type=str, help='')

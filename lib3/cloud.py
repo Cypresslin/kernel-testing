@@ -158,10 +158,27 @@ class Azure(CloudBase):
         data = json.loads('\n'.join(output))
         for item in data:
             retval[item['VMName']] = {
-                'external_ip' : item['Network']['Endpoints'][0]['virtualIPAddress']
+                'external_ip' : item['Network']['Endpoints'][0]['virtualIPAddress'],
+                'fqdn' : item['DNSName'],
+                '__other__' : item,
             }
 
         cleave(s.__class__.__name__ + '.list_instances (%s)' % retval)
+        return retval
+
+    # fqdn
+    #
+    def fqdn(s, name):
+        center(s.__class__.__name__ + '.fqdn')
+
+        retval = None
+        instances = s.list_instances()
+        try:
+            retval = instances[name]['fqdn']
+        except:
+            pass
+
+        cleave(s.__class__.__name__ + '.fqdn (%s)' % retval)
         return retval
 
     # lookup_instance_ip
@@ -284,6 +301,21 @@ class GCE(CloudBase):
         cleave(s.__class__.__name__ + '.list_instances (%s)' % retval)
         return retval
 
+    # fqdn
+    #
+    def fqdn(s, name):
+        center(s.__class__.__name__ + '.fqdn')
+
+        retval = None
+        instances = s.list_instances()
+        try:
+            retval = instances[name]['external_ip']
+        except:
+            pass
+
+        cleave(s.__class__.__name__ + '.fqdn (%s)' % retval)
+        return retval
+
     # lookup_instance_ip
     #
     def lookup_instance_ip(s, name):
@@ -382,6 +414,9 @@ class AWS(CloudBase):
                         }
                         if 'PublicIpAddress' in instance:
                             retval[tags['Name']]['external_ip'] = instance['PublicIpAddress']
+                        if 'PublicDnsName' in instance:
+                            retval[tags['Name']]['fqdn'] = instance['PublicDnsName']
+                        retval[tags['Name']]['__other__'] = instance
 
                 except KeyError:
                     pass
@@ -402,6 +437,21 @@ class AWS(CloudBase):
             pass
 
         cleave(s.__class__.__name__ + '.lookup_instance_ip (%s)' % retval)
+        return retval
+
+    # fqdn
+    #
+    def fqdn(s, name):
+        center(s.__class__.__name__ + '.fqdn')
+
+        retval = None
+        instances = s.list_instances()
+        try:
+            retval = instances[name]['fqdn']
+        except:
+            pass
+
+        cleave(s.__class__.__name__ + '.fqdn (%s)' % retval)
         return retval
 
     @property
@@ -442,8 +492,6 @@ class AWS(CloudBase):
         if s.target is not None:
             s.wait_for_target()
             retval = 0
-            print('ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@%s' % s.target)
-            print('aws ec2 terminate-instances --instance-ids %s' % instance_id)
 
         cleave(s.__class__.__name__ + '.create')
         return retval
