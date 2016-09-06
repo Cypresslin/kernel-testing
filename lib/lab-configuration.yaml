@@ -316,6 +316,8 @@
                 - "Personal Testing"
                 - "sru-1"
                 - "sru-2"
+                - "sru-3"
+                - "virt"
         onza:
             arch:
                 - "amd64"
@@ -333,7 +335,9 @@
                 - "Personal Testing"
                 - "sru-1"
                 - "sru-2"
+                - "sru-3"
                 - "boot"
+                - "virt"
             scratch drive: "/dev/sdb"
         modoc:
             arch:
@@ -359,6 +363,7 @@
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
+                - "virt"
             scratch drive: "/dev/sdb"
             series-blacklist:
                 - "lucid"
@@ -409,6 +414,7 @@
                 - "smoke"
                 - "ubuntu_zfs_fstest"
                 - "boot"
+                - "virt"
             series-blacklist:
                 - "lucid"
                 - "precise"
