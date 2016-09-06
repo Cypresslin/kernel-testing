@@ -26,11 +26,8 @@ class TheApp():
     def create(s):
         center(s.__class__.__name__ + '.create')
 
-        stdout.write('Deploying ...')
-        stdout.flush()
         cloud = Cloud.construct(s.args.cloud)
-        cloud.create(s.args.instance, s.args.series)
-        stdout.write(' deployed')
+        cloud.create(s.args.instance, s.args.series, s.args.region)
         stdout.flush()
 
         cleave(s.__class__.__name__ + '.create')
@@ -89,14 +86,24 @@ class TheApp():
     def list_images(s):
         center(s.__class__.__name__ + '.list_instances')
 
-        images = CloudImages(s.args.cloud, series=s.args.series, region=s.args.region).images
-        print(len(images))
-        print('%-10s  %-15s  %-10s  %-10s  %-20s  %s' % ('Release', 'AMI', 'Iteam Name', 'Virt', 'Region', 'Updated'))
-        for image in images:
-            print('%-10s  %-15s  %-10s  %-10s  %-20s  %s' % (image['release'], image['id'], image['item_name'], image['virt'], image['region'], image['updated']))
-            if s.args.details:
-                for k, v in image.items():
-                    print('    %s : %s' % (k, v))
+        try:
+            images = CloudImages(s.args.cloud, series=s.args.series, region=s.args.region).images
+            if s.args.cloud == 'aws':
+                print('%-10s  %-15s  %-10s  %-10s  %-10s  %-20s  %32s  %s' % ('Release', 'Iteam Name', 'Virt', 'Store', 'Region', 'Updated', 'AMI'))
+                for image in images:
+                    print('%-10s  %-15s  %-10s  %-10s  %-10s  %-20s  %32s  %s' % (image['release'], image['item_name'], image['virt'], image['root_store'], image['region'], image['updated'], image['id']))
+                    if s.args.details:
+                        for k, v in image.items():
+                            print('    %s : %s' % (k, v))
+            else:
+                print('%-10s  %-10s  %-10s  %-20s  %-32s  %s' % ('Release', 'Iteam Name', 'Virt', 'Region', 'Updated', 'Image'))
+                for image in images:
+                    print('%-10s  %-10s  %-10s  %-20s  %-32s  %s' % (image['release'], image['item_name'], image['virt'], image['region'], image['updated'], image['id']))
+                    if s.args.details:
+                        for k, v in image.items():
+                            print('    %s : %s' % (k, v))
+        except IndexError:
+            print("Unable to find any images as specified.")
 
         cleave(s.__class__.__name__ + '.list_instances')
         return 0
@@ -118,6 +125,7 @@ if __name__ == '__main__':
     sub.add_argument('cloud',  metavar='CLOUD',  type=str, help='')
     sub.add_argument('instance', metavar='INSTANCE', type=str, help='')
     sub.add_argument('series', metavar='SERIES', type=str, help='')
+    sub.add_argument('region', metavar='REGION', help='')
 
     sub = subparsers.add_parser('destroy')
     sub.set_defaults(func=TheApp.destroy)
