@@ -402,6 +402,7 @@ TestCollections = {
         'sru-1',
         'sru-2',
         'sru-3',
+        'virt',
     ],
 
     'sru-1' : [
