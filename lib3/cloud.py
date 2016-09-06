@@ -142,12 +142,6 @@ class Azure(CloudBase):
     def ssh_user(s):
         return ''
 
-    @property
-    def images(s):
-        center(s.__class__.__name__ + '.images')
-        cleave(s.__class__.__name__ + '.images')
-        return retval
-
     # list_instances
     #
     def list_instances(s):
@@ -198,15 +192,16 @@ class Azure(CloudBase):
 
     # create
     #
-    def create(s, instance_name, series):
+    def create(s, instance_name, series, region='West US'):
         center(s.__class__.__name__ + '.create')
 
         s.instance_name = instance_name
         s.series = series
 
-        images = CloudImages(s.cloud, series=series, region="West US 2").images
+        images = CloudImages(s.cloud, series=series, region=region).images
         try:
-            result, response = s.sh('create %s %s jenkins --location "West US" --ssh --no-ssh-password --ssh-cert ~/.ssh/id_rsa.pub' % (s.instance_name, images[0]['id']))
+            cmd = 'create %s %s jenkins --location "%s" --ssh --no-ssh-password --ssh-cert ~/.ssh/id_rsa.pub' % (s.instance_name, images[0]['id'], region)
+            result, response = s.sh(cmd)
         except ShellError as e:
             for l in e.output:
                 l.strip()
@@ -239,7 +234,13 @@ class GCE(CloudBase):
 
     def sh(s, cmd):
         command = 'gcloud compute ' + cmd
-        r, o = sh(command, quiet=True)
+        try:
+            r, o = sh(command, quiet=True)
+        except ShellError as e:
+            for l in e.output:
+                l.strip()
+                print(l)
+            raise
         return r, o
 
     @property
@@ -249,25 +250,6 @@ class GCE(CloudBase):
     @property
     def ssh_user(s):
         return ''
-
-    @property
-    def images(s):
-        center(s.__class__.__name__ + '.images')
-        retval = {}
-
-        result, output = s.sh('images list')
-        for line in output:
-            if line.startswith('ubuntu'):
-                fields = line.split()
-                image = fields[0]
-
-                fields = image.split('-')
-                series = fields[2]
-
-                retval[series] = image
-
-        cleave(s.__class__.__name__ + '.images')
-        return retval
 
     # list_instances
     #
@@ -331,22 +313,53 @@ class GCE(CloudBase):
         cleave(s.__class__.__name__ + '.lookup_instance_ip (%s)' % retval)
         return retval
 
+    @property
+    def images(s):
+        center(s.__class__.__name__ + '.images')
+        retval = {}
+
+        result, output = s.sh('images list')
+        for line in output:
+            if line.startswith('ubuntu'):
+                fields = line.split()
+                image = fields[0]
+
+                fields = image.split('-')
+                series = fields[2]
+
+                retval[series] = image
+
+        cleave(s.__class__.__name__ + '.images')
+        return retval
+
     # create
     #
-    def create(s, instance_name, series):
+    # https://cloud.google.com/compute/docs/regions-zones/regions-zones
+    #
+    def create(s, instance_name, series, region='us-west1'):
         center(s.__class__.__name__ + '.create')
 
         s.instance_name = instance_name
         s.series = series
 
-        result, response = s.sh('instances create %s --zone us-west1-a --network "default" --no-restart-on-failure --image-project ubuntu-os-cloud --image %s' % (s.instance_name, s.images[s.series]))
-        for l in response:
-            if l.startswith(s.instance_name):
-                fields = l.split()
-                s.target = fields[4]
+        # r = '-'.join(region.split('-')[0:2])
+        # images = CloudImages(s.cloud, series=series, region=r).images
+        try:
+            # cmd = 'instances create %s --zone %s --network "default" --no-restart-on-failure --image-project ubuntu-os-cloud --image %s' % (s.instance_name, region, images[0]['id'])
+            cmd = 'instances create %s --zone %s --network "default" --no-restart-on-failure --image-project ubuntu-os-cloud --image %s' % (s.instance_name, region, s.images[series])
+            print(cmd)
+            result, response = s.sh(cmd)
+            for l in response:
+                if l.startswith(s.instance_name):
+                    fields = l.split()
+                    s.target = fields[4]
 
-        if s.target is not None:
-            s.wait_for_target()
+            if s.target is not None:
+                s.wait_for_target()
+        except ShellError as e:
+            for l in e.output:
+                l.strip()
+                print(l)
 
         cleave(s.__class__.__name__ + '.create')
 
@@ -354,7 +367,9 @@ class GCE(CloudBase):
     #
     def destroy(s, instance_name):
         center(s.__class__.__name__ + '.destroy')
-        s.sh('instances delete --quiet %s' % instance_name)
+        instances = s.list_instances()
+        cmd = 'instances delete --quiet --zone %s %s' % (instances[instance_name]['zone'], instance_name)
+        s.sh(cmd)
         cleave(s.__class__.__name__ + '.destroy')
 
 # AWS
@@ -464,34 +479,53 @@ class AWS(CloudBase):
 
     # create
     #
-    def create(s, instance_name, series):
+    def create(s, instance_name, series, region):
         center(s.__class__.__name__ + '.create')
 
         retval = 1
+        ami = None
 
-        response = s.sh('run-instances --image-id ami-f701cb97 --key-name cloud-figg --instance-type t2.micro --security-groups figg-security-group')
-        reservation_id = response['ReservationId']
+        # Note! If the series name is misspelled, we will get an "IndexError exception. We probably want
+        #       to be smarter about that.
 
-        response = s.sh('describe-instances')
+        images = CloudImages(s.cloud, series=series, region=region).images
 
-        s.target    = None
-        instance_id = None
-        for reservation in response['Reservations']:
-            if reservation['ReservationId'] == reservation_id:
-                try:
-                    s.target = reservation['Instances'][0]['PublicIpAddress']
-                    instance_id = reservation['Instances'][0]['InstanceId']
-                    break
-                except:
-                    print('ReservationId: %s' % reservation_id)
-                    print(json.dumps(reservation, sort_keys=True, indent=4))
+        # Since we are just using t2.micro instances right now we are restricted to 'hvm' amis
+        #
+        # Instance comparison chart: http://www.ec2instances.info/
+        #
+        for image in images:
+            if image['virt'] == 'hvm' and image['root_store'] == 'ssd':
+                ami = image['id']
+                break
 
-        s.sh('create-tags --resources %s --tags Key=Name,Value=%s' % (instance_id, instance_name))
-        s.sh('create-tags --resources %s --tags Key=Owner,Value=UbuntuKernelTeam' % (instance_id))
+        if ami is not None:
+            cmd = 'run-instances --image-id %s --key-name cloud-figg --instance-type t2.micro --security-groups figg-security-group' % (ami)
+            response = s.sh(cmd)
+            reservation_id = response['ReservationId']
 
-        if s.target is not None:
-            s.wait_for_target()
-            retval = 0
+            response = s.sh('describe-instances')
+
+            s.target    = None
+            instance_id = None
+            for reservation in response['Reservations']:
+                if reservation['ReservationId'] == reservation_id:
+                    try:
+                        s.target = reservation['Instances'][0]['PublicIpAddress']
+                        instance_id = reservation['Instances'][0]['InstanceId']
+                        break
+                    except:
+                        print('ReservationId: %s' % reservation_id)
+                        print(json.dumps(reservation, sort_keys=True, indent=4))
+
+            s.sh('create-tags --resources %s --tags Key=Name,Value=%s' % (instance_id, instance_name))
+            s.sh('create-tags --resources %s --tags Key=Owner,Value=UbuntuKernelTeam' % (instance_id))
+
+            if s.target is not None:
+                s.wait_for_target()
+                retval = 0
+        else:
+            print('No AMIs found')
 
         cleave(s.__class__.__name__ + '.create')
         return retval
