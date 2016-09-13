@@ -106,7 +106,10 @@
                     password : "insecure"
                     type     : "ipmi"
                     username : "admin"
-            role: []
+            role:
+                - "qrt"
+                - "sru"
+                - "sru-1"
         fili:
             arch:
                 - "amd64"
@@ -120,7 +123,9 @@
                     password : "gEktYeGpC"
                     type     : "ipmi"
                     username : "maas"
-            role: []
+            role:
+                - "sru"
+                - "sru-2"
         fozzie:
             arch:
                 - "amd64"
@@ -134,7 +139,10 @@
                     password : "insecure"
                     type     : "ipmi"
                     username : "admin"
-            role: []
+            role:
+                - "sru"
+                - "sru-3"
+                - "boot"
         gonzo:
             arch:
                 - "amd64"
@@ -148,7 +156,13 @@
                     password : "insecure"
                     type     : "ipmi"
                     username : "admin"
-            role: []
+            role:
+                - "smoke"
+                - "sru"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
             scratch drive: "/dev/sdb"
 
     # Test systems section. This is a dictionary of all the test systems that are available
