@@ -61,7 +61,10 @@ if data['ppa']:
     provision += ' --ppa=%s' % data['ppa']
 
 if data['lkp']:
-    provision += ' --lkp'
+    if data['op'] == 'livepatch-snappy-client-payload-test':
+        provision += ' --lkp-snappy'
+    else:
+        provision += ' --lkp'
 
 if data['kernel']:
     provision += ' --kernel=%s' % data['kernel']

@@ -9,7 +9,7 @@ from datetime                           import datetime
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import basicConfig, warning, DEBUG, INFO
 from lib.msgq                           import MsgQueue
-from lib.testsprops                     import SRU_TestsList, LKP_TestsList, BOOT_TestsList
+from lib.testsprops                     import SRU_TestsList, LKP_TestsList, BOOT_TestsList, LivepatchSnappyClientPayloadTests
 from lib.log                            import cdebug, center, cleave
 from lib.utils                          import date_to_string
 import json
@@ -423,7 +423,10 @@ class TheApp():
                         jd['tests'] = BOOT_TestsList
                     else:
                         if s.args.lkp:
-                            jd['tests'] = LKP_TestsList
+                            if jd['op'] == 'livepatch-regression-test':
+                                jd['tests'] = LKP_TestsList
+                            elif jd['op'] == 'livepatch-snappy-client-payload-test':
+                                jd['tests'] = LivepatchSnappyClientPayloadTests
                         else:
                             jd['tests'] = ['default']
 
@@ -436,10 +439,7 @@ class TheApp():
                     cdebug('Tests: %s' % jd['tests'])
 
         if s.args.lkp:
-            if jd['key'] == 'sru' or jd['key'].startswith('livepatch.'):
-                # This is a test request from an individual, not from any part of the automated
-                # system (shankbot).
-                #
+            if jd['key'].startswith('livepatch.'):
                 s.handle_request(jd)
         else:
             if jd['key'] == 'kernel.testing.request' or jd['key'].startswith('kdev'):

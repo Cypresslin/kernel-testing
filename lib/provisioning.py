@@ -58,7 +58,7 @@ class PS(object):
 class Base(object):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, required_kernel_version=None):
+    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, required_kernel_version=None):
         center("Base::__init__")
 
         # If we are installing a HWE kernel, we want to install the correct series first.
@@ -84,6 +84,7 @@ class Base(object):
         s.debs = debs
         s.ppa  = ppa
         s.lkp = lkp
+        s.lkp_snappy = lkp_snappy
         s.kernel = kernel
         s.required_kernel_version = required_kernel_version
         s.dry_run = dry_run
@@ -261,6 +262,48 @@ class Base(object):
         s.ssh('sudo canonical-livepatch update')
 
         cleave('Base::enable_live_kernel_patching')
+
+    def enable_snappy_client_live_kernel_patching(s):
+        center("Base::enable_snappy_client_live_kernel_patching")
+        s.progress('Enabling Live Kernel Snap Client Patching')
+
+        # teach snapd about the proxys
+        s.ssh('cp /etc/environment /tmp/environment.tmp')
+        s.ssh('\'echo http_proxy=\"http://squid.internal:3128\" >> /tmp/environment.tmp\'')
+        s.ssh('\'echo https_proxy=\"https://squid.internal:3128\" >> /tmp/environment.tmp\'')
+        s.ssh('sudo cp /tmp/environment.tmp /etc/environment')
+        s.ssh('sudo service snapd restart')
+
+        # grab livepatch client from snap store
+        (result, output) = s.ssh('sudo snap install --beta canonical-livepatch')
+        if result != 0:
+            raise ErrorExit("Failed to install canonical-livepatch snap")
+
+        # Ensure all interfaces are connected
+        s.ssh('sudo snap connect canonical-livepatch:kernel-module-control ubuntu-core:kernel-module-control')
+        s.ssh('sudo snap connect canonical-livepatch:hardware-observe ubuntu-core:hardware-observe')
+        s.ssh('sudo snap connect canonical-livepatch:system-observe ubuntu-core:system-observe')
+        s.ssh('sudo snap connect canonical-livepatch:network-control ubuntu-core:network-control')
+        s.ssh('sudo service snap.canonical-livepatch.canonical-livepatchd restart')
+
+        # Get the auth key and enable it
+        key = Configuration['systems'][s.raw_target]['livepatch key']
+        (result, output) = s.ssh('sudo canonical-livepatch enable %s' % key)
+        if result != 0:
+            raise ErrorExit("Failed to enable canonical-livepatch key for %s" % s.raw_target)
+        sleep(60)
+        (result, output) = s.ssh('sudo canonical-livepatch status --verbose')
+        (result, output) = s.ssh('lsmod')
+        found_module = False
+        for l in output:
+            cdebug(l)
+            if 'livepatch' in l:
+                found_module = True
+                break
+        if found_module == False:
+            raise ErrorExit("Could not find livepatch kernel module")
+
+        cleave("Base::enable_snappy_client_live_kernel_patching")
 
     # install_required_pkgs
     #
@@ -476,10 +519,10 @@ class Base(object):
 class Metal(Base):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, required_kernel_version=None):
+    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, required_kernel_version=None):
         center("Metal::__init__")
 
-        Base.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, xen=xen, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, required_kernel_version=required_kernel_version)
+        Base.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, xen=xen, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, required_kernel_version=required_kernel_version)
 
         cleave("Metal::__init__")
 
@@ -757,6 +800,8 @@ class Metal(Base):
 
         if s.lkp:
             s.enable_live_kernel_patching()
+        elif s.lkp_snappy:
+            s.enable_snappy_client_live_kernel_patching()
 
         s.progress('Verifying the running kernel version')
         if s.hwe:

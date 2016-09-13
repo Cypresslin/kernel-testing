@@ -475,4 +475,8 @@ BOOT_TestsList = [
     'boot',
 ]
 
+LivepatchSnappyClientPayloadTests = [
+    'lkp-1',
+]
+
 # vi:set ts=4 sw=4 expandtab syntax=python:

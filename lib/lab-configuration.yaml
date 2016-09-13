@@ -534,8 +534,10 @@
                 - "lkp-2"
                 - "lkp-3"
                 - "livepatch-regression-test"
+                - 'livepatch-snappy-client-payload-test'
                 - "ubuntu_load_livepatch_modules"
             scratch drive: "/dev/sdb"
+            livepatch key: ""
         pignite:
             arch:
                 - "amd64"
@@ -552,6 +554,8 @@
                 - "lkp-1"
                 - "lkp-ecryptfs"
                 - "livepatch-regression-test"
+                - 'livepatch-snappy-client-payload-test'
+            livepatch key: ""
         snivy:
             arch:
                 - "amd64"
@@ -568,7 +572,10 @@
                 - "lkp-2"
                 - "lkp-xfstests"
                 - "livepatch-regression-test"
+                - 'livepatch-snappy-client-regression-test'
+                - 'livepatch-snappy-client-payload-test'
             scratch drive: "/dev/sdb"
+            livepatch key: ""
 
         # --------------------------------------------------------------------------
         # Not useable
