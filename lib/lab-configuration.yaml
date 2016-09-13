@@ -56,6 +56,101 @@
         type     : "juju"
         sut_user : "ubuntu"
 
+    dev:
+        # --------------------------------------------------------------------------
+        # Testing Development
+        #
+        kili:
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.209"
+                    password : "kodw6gcl"
+                    type     : "ipmi"
+                    username : "maas"
+            role:
+                - "Infrastructure"
+            scratch drive: "/dev/sdb"
+        rizzo:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas2"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.210"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "JuJu Controller"
+            scratch drive: "/dev/sdb"
+        pepe:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "juju"
+            cloud: "kernel-maas"
+            domain: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.213"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role: []
+        fili:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas2"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.98.5.226"
+                    password : "gEktYeGpC"
+                    type     : "ipmi"
+                    username : "maas"
+            role: []
+        fozzie:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas2"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.211"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role: []
+        gonzo:
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas2"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.227"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role: []
+            scratch drive: "/dev/sdb"
+
     # Test systems section. This is a dictionary of all the test systems that are available
     # to me.
     #
@@ -418,100 +513,6 @@
             series-blacklist:
                 - "lucid"
                 - "precise"
-
-        # --------------------------------------------------------------------------
-        # Testing Development
-        #
-        kili:
-            arch:
-                - "amd64"
-            provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.209"
-                    password : "kodw6gcl"
-                    type     : "ipmi"
-                    username : "maas"
-            role:
-                - "Infrastructure"
-            scratch drive: "/dev/sdb"
-        rizzo:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.210"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role:
-                - "JuJu Controller"
-            scratch drive: "/dev/sdb"
-        pepe:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "juju"
-            cloud: "kernel-maas"
-            domain: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.213"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role: []
-        fili:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.98.5.226"
-                    password : "gEktYeGpC"
-                    type     : "ipmi"
-                    username : "maas"
-            role: []
-        fozzie:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.211"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role: []
-        gonzo:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.227"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role: []
-            scratch drive: "/dev/sdb"
 
 
         # --------------------------------------------------------------------------
