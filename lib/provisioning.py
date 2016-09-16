@@ -270,7 +270,7 @@ class Base(object):
         # teach snapd about the proxys
         s.ssh('cp /etc/environment /tmp/environment.tmp')
         s.ssh('\'echo http_proxy=\"http://squid.internal:3128\" >> /tmp/environment.tmp\'')
-        s.ssh('\'echo https_proxy=\"https://squid.internal:3128\" >> /tmp/environment.tmp\'')
+        s.ssh('\'echo https_proxy=\"http://squid.internal:3128\" >> /tmp/environment.tmp\'')
         s.ssh('sudo cp /tmp/environment.tmp /etc/environment')
         s.ssh('sudo service snapd restart')
 
