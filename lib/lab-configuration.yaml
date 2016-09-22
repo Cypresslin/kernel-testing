@@ -56,136 +56,12 @@
         type     : "juju"
         sut_user : "ubuntu"
 
-    dev:
-        # --------------------------------------------------------------------------
-        # Testing Development
-        #
-        kili:
-            arch:
-                - "amd64"
-            provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
-            locked: true
-            power:
-                -
-                    address  : "10.245.80.209"
-                    password : "kodw6gcl"
-                    type     : "ipmi"
-                    username : "maas"
-            role:
-                - "Infrastructure"
-            scratch drive: "/dev/sdb"
-        rizzo:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
-            locked: true
-            power:
-                -
-                    address  : "10.245.80.210"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role:
-                - "JuJu Controller"
-            scratch drive: "/dev/sdb"
-        amura:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.210"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role:
-                - smoke
-            scratch drive: "/dev/sdb"
-        pepe:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas2"
-            cloud: "kernel-maas"
-            domain: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.213"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role:
-                - "qrt"
-                - "sru"
-                - "sru-1"
-        fili:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.98.5.226"
-                    password : "gEktYeGpC"
-                    type     : "ipmi"
-                    username : "maas"
-            role:
-                - "sru"
-                - "sru-2"
-        fozzie:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.211"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role:
-                - "sru"
-                - "sru-3"
-                - "boot"
-        gonzo:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.227"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role:
-                - "smoke"
-                - "sru"
-                - "ubuntu_ecryptfs"
-                - "ubuntu_zfs_fstest"
-                - "ubuntu_zfs_xfs_generic"
-                - "boot"
-            scratch drive: "/dev/sdb"
-
     # Test systems section. This is a dictionary of all the test systems that are available
     # to me.
     #
     systems:
         s2lp6g001:
+            class: "test"
             arch:
                 - "s390x.zKVM"
             provisioner: "manual"
@@ -213,6 +89,7 @@
                 - "yakkety"
             proc-decoration: "zKVM"
         s2lp6g002:
+            class: "test"
             arch:
                 - "s390x.zKVM"
             provisioner: "manual"
@@ -240,6 +117,7 @@
                 - "xenial"
             proc-decoration: "zKVM"
         s2lp3:
+            class: "test"
             arch:
                 - "s390x.LPAR"
             provisioner: "manual"
@@ -267,6 +145,7 @@
                 - "yakkety"
             proc-decoration: "Ubuntu on LPAR"
         s2lp4:
+            class: "test"
             arch:
                 - "s390x.LPAR"
             provisioner: "manual"
@@ -294,6 +173,7 @@
                 - "xenial"
             proc-decoration: "Ubuntu on LPAR"
         s2lp5:
+            class: "test"
             arch:
                 - "s390x.LPAR"
             provisioner: "manual"
@@ -309,6 +189,7 @@
                 - "wily"
             proc-decoration: "Ubuntu on LPAR"
         kernel01:
+            class: "test"
             arch:
                 - "s390x.zVM"
             provisioner: "manual"
@@ -336,6 +217,7 @@
                 - "yakkety"
             proc-decoration: "zVM"
         kernel02:
+            class: "test"
             arch:
                 - "s390x.zVM"
             provisioner: "manual"
@@ -363,6 +245,7 @@
                 - "xenial"
             proc-decoration: "zVM"
         kernel03:
+            class: "test"
             arch:
                 - "s390x.zVM"
             provisioner: "manual"
@@ -378,6 +261,7 @@
                 - "wily"
             proc-decoration: "zVM"
         alkaid:
+            class: "test"
             arch:
                 - "amd64"
                 - "i386"
@@ -393,6 +277,7 @@
             role: []
             scratch drive: "/dev/sdb"
         cavac:
+            class: "test"
             arch:
                 - "amd64"
                 - "i386"
@@ -407,6 +292,7 @@
                     username : "Administrator"
             role: []
         dwalin:
+            class: "test"
             arch:
                 - "amd64"
                 - "i386"
@@ -425,6 +311,7 @@
                 - "sru-2"
             scratch drive: "/dev/sdb"
         onibi:
+            class: "test"
             arch:
                 - "amd64"
                 - "i386"
@@ -444,6 +331,7 @@
                 - "sru-3"
                 - "virt"
         onza:
+            class: "test"
             arch:
                 - "amd64"
                 - "i386"
@@ -465,6 +353,7 @@
                 - "virt"
             scratch drive: "/dev/sdb"
         modoc:
+            class: "test"
             arch:
                 - "ppc64el"
             provisioner: "maas"
@@ -494,6 +383,7 @@
                 - "lucid"
                 - "precise"
         ms10-34-mcdivittB0-kernel:
+            class: "test"
             arch:
                 - "arm64"
             sub-arch: "xgene-uboot"
@@ -520,6 +410,7 @@
                 - "precise"
                 - "xenial"
         ms10-35-mcdivittB0-kernel:
+            class: "test"
             arch:
                 - "arm64"
             sub-arch: "xgene-uboot"
@@ -551,6 +442,7 @@
         # Livepatch testing
         #
         glameow:
+            class: "live"
             arch:
                 - "amd64"
             provisioner: "maas"
@@ -572,6 +464,7 @@
             scratch drive: "/dev/sdb"
             livepatch key: ""
         pignite:
+            class: "live"
             arch:
                 - "amd64"
             provisioner: "maas"
@@ -590,6 +483,7 @@
                 - 'livepatch-snappy-client-payload-test'
             livepatch key: ""
         snivy:
+            class: "live"
             arch:
                 - "amd64"
             provisioner: "maas"
@@ -609,6 +503,137 @@
                 - 'livepatch-snappy-client-payload-test'
             scratch drive: "/dev/sdb"
             livepatch key: ""
+
+        # --------------------------------------------------------------------------
+        # Testing Development
+        #
+        kili:
+            class: "dev"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "kernel-jenkins"
+            locked: true
+            power:
+                -
+                    address  : "10.245.80.209"
+                    password : "kodw6gcl"
+                    type     : "ipmi"
+                    username : "maas"
+            role:
+                - "Infrastructure"
+            scratch drive: "/dev/sdb"
+        rizzo:
+            class: "dev"
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas2"
+            jenkins server: "kernel-jenkins"
+            locked: true
+            power:
+                -
+                    address  : "10.245.80.210"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "JuJu Controller"
+            scratch drive: "/dev/sdb"
+        amura:
+            class: "dev"
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas2"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.210"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - smoke
+            scratch drive: "/dev/sdb"
+        pepe:
+            class: "dev"
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas2"
+            cloud: "kernel-maas"
+            domain: "maas"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.213"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "qrt"
+                - "sru"
+                - "sru-1"
+        fili:
+            class: "dev"
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas2"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.98.5.226"
+                    password : "gEktYeGpC"
+                    type     : "ipmi"
+                    username : "maas"
+            role:
+                - "sru"
+                - "sru-2"
+        fozzie:
+            class: "dev"
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas2"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.211"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "sru"
+                - "sru-3"
+                - "boot"
+        gonzo:
+            class: "dev"
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas2"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.227"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "smoke"
+                - "sru"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+            scratch drive: "/dev/sdb"
 
         # --------------------------------------------------------------------------
         # Not useable

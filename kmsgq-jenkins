@@ -76,6 +76,12 @@ class TheApp():
             'linux-raspi2',
             'linux-snapdragon',
         ]
+        if args.lkp:
+            s.system_class = 'live'
+        elif args.dev:
+            s.system_class = 'dev'
+        else:
+            s.system_class = 'test'
 
     # dyno
     #
@@ -95,15 +101,18 @@ class TheApp():
         s.sut_pool = {}
         for sut in s.configuration['systems']:
             try:
-                for role in s.configuration['systems'][sut]['role']:
-                    try:
-                        s.sut_pool[role].append(sut)
-                    except:
-                        s.sut_pool[role] = []
-                        s.sut_pool[role].append(sut)
+                if s.configuration['systems'][sut]['class'] == s.system_class:
+                    for role in s.configuration['systems'][sut]['role']:
+                        try:
+                            s.sut_pool[role].append(sut)
+                        except:
+                            s.sut_pool[role] = []
+                            s.sut_pool[role].append(sut)
             except TypeError:
                 print('s.configuration[\'systems\'][sut][\'role\'] missing for %s' % sut)
                 raise
+            except KeyError:
+                pass
 
         if s.args.debug:
             cdebug(json.dumps(s.sut_pool, sort_keys=True, indent=4))
