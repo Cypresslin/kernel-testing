@@ -371,11 +371,6 @@ TestCollections = {
 
     'boot' : [
         'ubuntu_boot',
-        'ubuntu_aufs_smoke_test',
-        'ubuntu_stress_smoke_test',
-        'ubuntu_zfs_smoke_test',
-        # 'ubuntu_fan_smoke_test',
-        'ubuntu_squashfs_smoke_test',
     ],
 
     # This is the set of tests that will run if no KERNEL_TEST_LIST variable is set.
@@ -464,6 +459,7 @@ TestCollections = {
 #
 SRU_TestsList = [
     'boot',
+    'smoke',
     'qrt',
     'sru-1',
     'sru-2',
