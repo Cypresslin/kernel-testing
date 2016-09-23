@@ -68,6 +68,7 @@
             locked: false
             power: []
             role:
+                - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
                 - "sru"
@@ -96,6 +97,7 @@
             locked: false
             power: []
             role:
+                - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
                 - "sru"
@@ -124,6 +126,7 @@
             locked: false
             power: []
             role:
+                - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
                 - "sru"
@@ -152,6 +155,7 @@
             locked: false
             power: []
             role:
+                - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
                 - "sru"
@@ -196,6 +200,7 @@
             locked: false
             power: []
             role:
+                - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
                 - "sru"
@@ -224,6 +229,7 @@
             locked: false
             power: []
             role:
+                - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
                 - "sru"
@@ -306,6 +312,7 @@
                     type     : "ipmi"
                     username : "maas"
             role:
+                - "ubuntu_boot"
                 - "Personal Testing"
                 - "sru-1"
                 - "sru-2"
@@ -325,6 +332,7 @@
                     type     : "ipmi"
                     username : "admin"
             role:
+                - "ubuntu_boot"
                 - "Personal Testing"
                 - "sru-1"
                 - "sru-2"
@@ -345,6 +353,7 @@
                     type     : "ipmi"
                     username : "admin"
             role:
+                - "ubuntu_boot"
                 - "Personal Testing"
                 - "sru-1"
                 - "sru-2"
@@ -366,6 +375,7 @@
                     type     : "ipmi"
                     username : ""
             role:
+                - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
                 - "sru"
@@ -398,6 +408,7 @@
                     type     : "ipmi"
                     username : "Administrator"
             role:
+                - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
                 - "sru"
@@ -425,6 +436,7 @@
                     type     : "ipmi"
                     username : "Administrator"
             role:
+                - "ubuntu_boot"
                 - "sru-1"
                 - "sru-3"
                 - "xfstests"
@@ -555,7 +567,8 @@
                     type     : "ipmi"
                     username : "admin"
             role:
-                - smoke
+                - "ubuntu_boot"
+                - "smoke"
             scratch drive: "/dev/sdb"
         pepe:
             class: "dev"
@@ -592,6 +605,7 @@
                     type     : "ipmi"
                     username : "maas"
             role:
+                - "ubuntu_boot"
                 - "sru"
                 - "sru-2"
         fozzie:
@@ -609,6 +623,7 @@
                     type     : "ipmi"
                     username : "admin"
             role:
+                - "ubuntu_boot"
                 - "sru"
                 - "sru-3"
                 - "boot"
@@ -627,6 +642,7 @@
                     type     : "ipmi"
                     username : "admin"
             role:
+                - "ubuntu_boot"
                 - "smoke"
                 - "sru"
                 - "ubuntu_ecryptfs"
