@@ -6,8 +6,7 @@ if 'root' in data:
 else:
     kt_root = '/var/lib/jenkins'
 
-# deploy  = '$KT/cli-create %s $SUT %s' % (data['cloud'], data['series_name'])
-deploy  = '$KT/cl create %s $SUT %s' % (data['cloud'], data['series_name'])
+deploy  = '$KT/cl create %s $SUT %s %s' % (data['cloud'], data['series_name'], data['region'])
 prepare = '$KT/cli-prepare %s $SUT --series %s' % (data['cloud'], data['series_name'])
 tester  = '$KT/cli-test %s $SUT %s %s $KT_ROOT' % (data['cloud'], data['series_name'], data['test'])
 %>
