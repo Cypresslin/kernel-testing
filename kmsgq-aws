@@ -54,7 +54,11 @@ class RequestHandler(threading.Thread):
         cinfo('        ---------------------------------------  h a n d l e  ---------------------------------------', 'green')
         cinfo(json.dumps(request, sort_keys=True, indent=4))
 
-        factory = CloudJobFactory('aws', request['series-name'], 'aws')
+        factory = CloudJobFactory(cloud=s.cfg['cloud'],
+                                  series=request['series-name'],
+                                  region=s.cfg['region'],
+                                  tests=s.cfg['cloud'],
+                                  jenkins=s.cfg['jenkins'])
         factory.create_jobs()
 
         cleave(s.__class__.__name__ + '.handle')
@@ -122,21 +126,30 @@ class JobFactory(object):
         center(s.__class__.__name__ + '.msgq_handler')
 
         valid_keys = ['kernel.development.request', 'kernel.publish']
-        valid_ops  = ['aws']
+        valid_ops  = ['sru']
+        if s.args.aws:
+            valid_ops.append('aws')
+        elif s.args.gce:
+            valid_ops.append('gce')
+        elif s.args.azure:
+            valid_ops.append('azure')
+        valid_pkgs = ['linux']
 
         # Determine if the key in the current message is on that
         # we are going to process.
         #
-        queued = False
         for key in valid_keys:
-            if payload['key'].startswith(key):
-                if payload['op'] in valid_ops:
-                    s.enqueue(payload)
-                    queued = True
-                    break
+            if not payload['key'].startswith(key):
+                continue
 
-        # bjf if not queued:
-        # bjf     cinfo('ignored: %s' % payload['key'], 'magenta')
+            if payload['op'] not in valid_ops:
+                continue
+
+            if payload['package'] not in valid_pkgs:
+                continue
+
+            s.enqueue(payload)
+            break
 
         cleave(s.__class__.__name__ + '.msgq_handler')
 
@@ -157,10 +170,31 @@ class JobFactory(object):
             else:
                 mq = MsgQueue()
 
-            s.rh = RequestHandler(msgq=mq)
+            cfg = {
+                'jenkins' : args.jenkins,
+                'aws'     : args.aws,
+                'gce'     : args.gce,
+                'azure'   : args.azure,
+            }
+
+            if args.aws:
+                queue = 'kernel-aws-publishing-monitor'
+                cfg['cloud'] = 'aws'
+                cfg['region'] = 'us-west-2'
+            elif args.gce:
+                queue = 'kernel-gce-publishing-monitor'
+                cfg['cloud'] = 'gce'
+                cfg['region'] = 'us-west1-a'
+            elif args.azure:
+                queue = 'kernel-azure-publishing-monitor'
+                cfg['cloud'] = 'azure'
+                cfg['region'] = 'West US'
+            else:
+                raise Exit()
+
+            s.rh = RequestHandler(msgq=mq, cfg=cfg)
             s.rh.start()
 
-            queue = 'kernel-aws-publishing-monitor'
             mq.listen(queue, 'kernel.#', s.msgq_handler)
 
             retval = 0
@@ -195,6 +229,10 @@ if __name__ == '__main__':
     parser.add_argument('--lkp',   action='store_true', default=False, help='Handle requests for live kernel patching testing.')
     parser.add_argument('--dev',   action='store_true', default=False, help='Handle development testing requests.')
     parser.add_argument('--local-msgqueue-port',  type=int, default=None,  help='The local port to be used to talk to the Rabbit MQ service.')
+    parser.add_argument('--jenkins', type=str)
+    parser.add_argument('--aws',   action='store_true', default=False, help='')
+    parser.add_argument('--gce',   action='store_true', default=False, help='')
+    parser.add_argument('--azure', action='store_true', default=False, help='')
 
     args = parser.parse_args()
 
