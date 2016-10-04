@@ -26,7 +26,7 @@ class Release():
     #
     def main(s):
         center('Release::main')
-        retval = 1
+        retval = 0
         try:
             c = Configuration[Configuration["systems"][s.args.target]["provisioner"]]
             if c['type'] == 'maas':
@@ -36,8 +36,6 @@ class Release():
                 t = Configuration["systems"][s.args.target]
                 s.server = JuJu(t['cloud'], s.args.target, None, domain=t['domain'])
                 s.server.release()
-
-            retval = 0
 
         # Handle the user presses <ctrl-C>.
         #
@@ -51,11 +49,6 @@ class Release():
             error('The command (%s) returned a non-zero exit status (%d).' % (e.cmd, e.returncode))
             for line in e.output:
                 error(line.rstrip())
-
-        if retval > 0:
-            error("")
-            error("Due to the above error(s), this script is unable to continue and is terminating.")
-            error("")
 
         cleave('Release::main')
         return retval
