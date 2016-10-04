@@ -547,14 +547,15 @@ class CloudJobFactory(object):
 
     # __init__
     #
-    def __init__(s, cloud, series, tests):
+    def __init__(s, cloud, series, region, tests, jenkins='localhost:8080'):
         '''
         '''
         center(s.__class__.__name__ + '.__init__')
         s.cloud  = cloud
         s.tests  = tests
         s.series = series
-        s.jenkins_url_default = "http://localhost:8080"
+        s.region = region
+        s.jenkins_url_default = "http://%s" % jenkins
         s.jenkins = Jenkins(s.jenkins_url_default)
         cleave(s.__class__.__name__ + '.__init__')
 
@@ -626,6 +627,7 @@ class CloudJobFactory(object):
                 'series_name' : s.series,
                 'cloud'       : s.cloud,
                 'test'        : test,
+                'region'      : s.region,
                 'sut_name'    : job_name.replace('_', '-'),
                 'ssh_options' : cl.ssh_options,
             }
@@ -639,8 +641,8 @@ class CloudJobFactory(object):
                 pass
 
             s.jenkins.create_job(job_name, job_xml)
-            # sleep(10)
-            # s.jenkins.build_job(job_name)
+            sleep(10)
+            s.jenkins.build_job(job_name)
         cleave(s.__class__.__name__ + '.create_jobs')
 
     # main
