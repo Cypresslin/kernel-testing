@@ -204,7 +204,7 @@ class Channel(object):
 
         # If a consumer tag was not passed, create one
         consumer_tag = consumer_tag or 'ctag%i.%s' % (self.channel_number,
-                                                      uuid.uuid4().get_hex())
+                                                      uuid.uuid4().hex)
 
         if consumer_tag in self._consumers or consumer_tag in self._cancelled:
             raise exceptions.DuplicateConsumerTag(consumer_tag)
@@ -290,7 +290,7 @@ class Channel(object):
             raise exceptions.ChannelClosed()
         if immediate:
             LOGGER.warning('The immediate flag is deprecated in RabbitMQ')
-        if isinstance(body, unicode):
+        if isinstance(body, str):
             body = body.encode('utf-8')
         properties = properties or spec.BasicProperties()
         self._send_method(spec.Basic.Publish(exchange=exchange,
@@ -1123,7 +1123,7 @@ class ContentFrameDispatcher(object):
         """
         content = (self._method_frame,
                    self._header_frame,
-                   ''.join(self._body_fragments))
+                   b''.join(self._body_fragments))
         self._reset()
         return content
 

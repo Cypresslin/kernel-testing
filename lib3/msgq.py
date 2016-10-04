@@ -30,4 +30,7 @@ class MsgQueue():
         properties = pika.BasicProperties(delivery_mode=2)
         s.channel.basic_publish(exchange=s.exchange_name, routing_key=routing_key, body=message_body, properties=properties)
 
+    def queue_delete(s, queue_name):
+        s.channel.queue_delete(queue_name)
+
 # vi:set ts=4 sw=4 expandtab:

@@ -42,7 +42,7 @@ def retry_on_eintr(f):
             try:
                 return f(*args, **kwargs)
             except select.error as e:
-                if e[0] != errno.EINTR:
+                if e.args[0] != errno.EINTR:
                     raise
     return inner
 
@@ -248,7 +248,7 @@ class BlockingConnection(base_connection.BaseConnection):
 
     def process_timeouts(self):
         """Process the self._timeouts event stack"""
-        for timeout_id in self._timeouts.keys():
+        for timeout_id in list(self._timeouts.keys()):
             if self._deadline_passed(timeout_id):
                 self._call_timeout_method(self._timeouts.pop(timeout_id))
 
@@ -334,7 +334,7 @@ class BlockingConnection(base_connection.BaseConnection):
         :rtype: bool
 
         """
-        if timeout_id not in self._timeouts.keys():
+        if timeout_id not in list(self._timeouts.keys()):
             return False
         return self._timeouts[timeout_id]['deadline'] <= time.time()
 
@@ -356,7 +356,7 @@ class BlockingConnection(base_connection.BaseConnection):
 
         LOGGER.debug('Handling timeout %i with a threshold of %i',
                      self._socket_timeouts, threshold)
-        if self.is_closing and self._socket_timeouts > threshold:
+        if self.is_closing or self._socket_timeouts > threshold:
             if not self.is_closing:
                 LOGGER.critical('Closing connection due to timeout')
             self._on_connection_closed(None, True)
@@ -539,7 +539,7 @@ class BlockingChannel(channel.Channel):
         if mandatory:
             self._response = None
 
-        if isinstance(body, unicode):
+        if isinstance(body, str):
             body = body.encode('utf-8')
 
         if self._confirmation:
@@ -962,7 +962,7 @@ class BlockingChannel(channel.Channel):
         if consumer_tag:
             self.basic_cancel(consumer_tag)
         else:
-            for consumer_tag in self._consumers.keys():
+            for consumer_tag in list(self._consumers.keys()):
                 self.basic_cancel(consumer_tag)
         self.wait = True
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 
 import sys
@@ -10,12 +10,11 @@ from lib.msgq                           import MsgQueue
 import json
 
 from lib.grinder                        import JenkinsTestResultsTree, JenkinsTestResultsTreeError
-from lib.utils                          import string_to_date
-from lib.jenkins                        import Jenkins
+from lib3.jenkins_server_local          import JenkinsServerLocal
 
 # Exit
 #
-class Exit():
+class Exit(Exception):
     """
     If an error message has already been displayed and we want to just exit the app, this
     exception is raised.
@@ -35,8 +34,7 @@ class TheApp():
         '''
         '''
         s.args = args
-        s.jenkins_url_default = "http://localhost:8080"
-        s.jenkins = Jenkins(s.jenkins_url_default)
+        s.jenkins = JenkinsServerLocal.connect()
 
     # fetch_job_details
     #

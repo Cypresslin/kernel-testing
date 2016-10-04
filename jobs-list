@@ -5,8 +5,7 @@ import re
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import basicConfig, DEBUG, WARNING
 
-from jenkinsapi.jenkins                 import Jenkins
-from lib3.shell                         import sh
+from lib3.jenkins_server_local          import JenkinsServerLocal
 
 # CloudJobFactory
 #
@@ -19,19 +18,7 @@ class CloudJobFactory(object):
     def __init__(s):
         '''
         '''
-        # Determine the local ip address by processing the results from "ip address"
-        #
-        ip = 'bogus'
-        cmd = 'ip address'
-        retval, output = sh(cmd, quiet=True)
-        for line in output:
-            m = re.search('inet (\d+\.\d+\.\d+\.\d+)\/\d+ brd \d+\.\d+\.\d+\.\d+ scope', line)
-            if m:
-                ip = m.group(1)
-                break
-
-        s.jenkins_url_default = "http://%s:8080" % ip
-        s.jenkins = Jenkins(s.jenkins_url_default)
+        s.jenkins = JenkinsServerLocal.connect()
 
     # main
     #

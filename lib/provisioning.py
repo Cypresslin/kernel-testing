@@ -153,6 +153,8 @@ class Base(object):
             try:
                 result, output = s.ssh('uname -vr', additional_ssh_options="-o BatchMode=yes")
                 if result == 0 and len(output) > 0:
+                    for l in output:
+                        cdebug(l)
                     cdebug("exit result is 0")
                     break
 
@@ -538,10 +540,12 @@ class Metal(Base):
         s.progress('Verifying base install')
 
         cdebug('Verifying series:')
-        result, codename = s.ssh(r'lsb_release --codename')
+        found = False
+        result, codename = s.ssh(r'lsb_release --codename', quiet=False)
         for line in codename:
             line = line.strip()
             if line.startswith('Codename:'):
+                found = True
                 cdebug('lsb_release --codename : ' + line)
                 print('         series: ' + line.replace('Codename:', '').strip())
                 if s.series not in line:
@@ -551,6 +555,12 @@ class Metal(Base):
                     error("")
                 else:
                     retval = True
+        if not found:
+            error("")
+            error("*** ERROR:")
+            error("    No output lines were found containing 'Codename:'")
+            error("")
+
 
         # Verify we installed the arch we intended to install
         #
@@ -754,6 +764,8 @@ class Metal(Base):
         s.enable_src()
         if s.ppa is not None:
             s.enable_ppa()
+
+        s.reboot(progress="for the pure love of rebooting")
 
         # Disable APT from periodicly running and trying to update the systems.
         #

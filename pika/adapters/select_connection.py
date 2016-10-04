@@ -290,7 +290,7 @@ class SelectPoller(object):
         :param str timeout_id: The timeout id to remove
 
         """
-        for i in xrange(len(self._timeouts)):
+        for i in range(len(self._timeouts)):
             t_id, timeout = self._timeouts[i]
             if t_id == timeout_id:
                 del self._timeouts[i]

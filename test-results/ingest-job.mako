@@ -20,7 +20,6 @@
 
     sleep 60
     $KT/test-results/ingest $JENKINS_HOME/jobs/${data.job_name}/builds/${data.build_id}
-    $KT/test-results-announce ${data.job_name} $JENKINS_HOME/jobs/${data.job_name}/builds/${data.build_id}
             </command>
         </hudson.tasks.Shell>
 
