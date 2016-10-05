@@ -1,3 +1,4 @@
+import os
 import requests
 import pexpect
 import yaml
@@ -21,8 +22,11 @@ class PDU():
         Fetch the information about mapping from a system to the CDU outlets.
         '''
         center('PDU.__config')
-        r = requests.get('http://kernel-maas.kernel/lab-systems-power.yaml')
+        before = os.environ['NO_PROXY']
+        os.environ['NO_PROXY'] = '10.245.80.31'
+        r = requests.get('http://10.245.80.31/lab-systems-power.yaml', proxies={})
         retval = yaml.load(r.text)
+        os.environ['NO_PROXY'] = before
         cleave('PDU.__config')
         return retval
 
@@ -31,7 +35,7 @@ class PDU():
     def cdu(s, outlet):
         center('PDU.cdu')
         retval = None
-        ssh_options = '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet'
+        ssh_options = '-o KexAlgorithms=+diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-dss -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet'
         cmd = 'ssh -o MACs=hmac-sha1 %s enablement@%s' % (ssh_options, s.__systems[s.target][outlet])
         cdebug('cmd: %s' % cmd)
         retval = pexpect.spawn(cmd, timeout=60)
