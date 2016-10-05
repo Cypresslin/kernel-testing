@@ -187,7 +187,7 @@ class MAAS(object):
 
         return
 
-    def release(s, timeout=30):
+    def release(s, timeout=60*5):
         if s.status(s.hostname) != MACHINE_STATUS.READY:
             progress('        Releasing...       ')
             s._release(s.hostname)
