@@ -502,6 +502,7 @@
             series-blacklist:
                 - "lucid"
                 - "precise"
+                - "xenial"
         ms10-35-mcdivittB0-kernel:
             arch:
                 - "arm64"
@@ -527,6 +528,7 @@
             series-blacklist:
                 - "lucid"
                 - "precise"
+                - "yakkety"
 
 
         # --------------------------------------------------------------------------
