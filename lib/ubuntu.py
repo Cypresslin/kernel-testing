@@ -134,7 +134,7 @@ class Ubuntu:
         {
             'development' : True,
             'series_version' : '16.10',
-            'kernel'    : '4.6.0',
+            'kernel'    : '4.8.0',
             'name'      : 'yakkety',
             'supported' : False,
             'packages'  :
@@ -719,7 +719,7 @@ class Ubuntu:
     }
 
     index_by_kernel_version = {
-        '4.6.0'    : db['16.10'],
+        '4.8.0'    : db['16.10'],
         '4.4.0'    : db['16.04'],
         '4.2.0'    : db['15.10'],
         '4.0.0'    : db['15.10'],
