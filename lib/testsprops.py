@@ -435,7 +435,7 @@ TestCollections = {
         'libhugetlbfs',
         'monotonic_time',
         # 'perfmon',
-        'posixtest',
+        # 'posixtest',
         # 'regression',
         'rmaptest',
         'rtc',
