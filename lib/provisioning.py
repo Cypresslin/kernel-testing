@@ -736,7 +736,7 @@ class Metal(Base):
         # go ahead and dist-upgrade it.
         #
         if s.ps.type == "manual":
-            s.dist_upgrade()
+            # s.dist_upgrade()
             s.reboot(progress="Rebooting for dist-upgrade")
             return True
 
