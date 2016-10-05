@@ -744,6 +744,8 @@ class Metal(Base):
         if not s.ps.provision():
             raise ErrorExit('Failed to provision the system')
 
+        sleep(60 * 5)
+
         # The very first thing we need to do is make our changes to the apt sources and then dist-upgrade
         # the system. Once we do this the kernels that we install should be the right one.
         #
