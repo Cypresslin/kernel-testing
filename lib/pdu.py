@@ -2,6 +2,7 @@ import os
 import requests
 import pexpect
 import yaml
+import platform
 from time                               import sleep
 from lib.log                            import cdebug, center, cleave
 
@@ -15,6 +16,7 @@ class PDU():
         s.__systems = s.__cfg['systems']
         s.__cdus = s.__cfg['cdus']
         s.target = target
+        s.series = platform.dist()[2]
         cleave('PDU.__init__')
 
     def __config(s):
@@ -37,7 +39,10 @@ class PDU():
     def cdu(s, outlet):
         center('PDU.cdu')
         retval = None
-        ssh_options = '-o KexAlgorithms=+diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-dss -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet'
+        if s.series in ['trusty']:
+            ssh_options = '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet'
+        else:
+            ssh_options = '-o KexAlgorithms=+diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-dss -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet'
         cmd = 'ssh -o MACs=hmac-sha1 %s enablement@%s' % (ssh_options, s.__systems[s.target][outlet])
         cdebug('cmd: %s' % cmd)
         retval = pexpect.spawn(cmd, timeout=60)
