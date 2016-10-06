@@ -38,12 +38,6 @@ ${data['description']}
     export KT_ROOT=${kt_root}
     KT=$KT_ROOT/kernel-testing
 
-    status () {
-        $KT/test-status $JOB_NAME '{"key":"'kernel.testing.job.status'", "op":"'$1'"}'
-    }
-
-    status job.started
-
     SSH_OPTIONS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet"
     SUT=${data['sut-name']}
 
@@ -79,15 +73,12 @@ provision += ' $SUT'
 %>
     # Provision the hardware.
     #
-    ${provision} || (cat provisioning.log;status provisioning.failed;exit 1)
-    status provisioning.succeeded
+    ${provision} || (cat provisioning.log;exit 1)
 
 % if 'no-test' not in data:
-    status testing.started
     # Kick off testing on the newly provisioned SUT
     #
     $KT/remote ubuntu@$SUT --kernel-test-list="${data['test']}"
-    status testing.completed
 
     ARCHIVE=$JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_ID/archive
     scp $SSH_OPTIONS -r ubuntu@$SUT:kernel-test-results $ARCHIVE
@@ -98,7 +89,6 @@ provision += ' $SUT'
     #
     $KT/release $SUT
 
-    status job.completed
 
     # Publish the results. This *MUST* always be the very last thing the job does.
     #
@@ -117,6 +107,12 @@ provision += ' $SUT'
             <testDataPublishers/>
         </hudson.tasks.junit.JUnitResultArchiver>
     </publishers>
-    <buildWrappers/>
+    <buildWrappers>
+      <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.29">
+        <deleteDirs>false</deleteDirs>
+        <cleanupParameter></cleanupParameter>
+        <externalDelete></externalDelete>
+      </hudson.plugins.ws__cleanup.PreBuildCleanup>
+    </buildWrappers>
 </project>
 <!-- vi:set ts=4 sw=4 syntax=mako expandtab: -->
