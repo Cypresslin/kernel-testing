@@ -22,11 +22,13 @@ class PDU():
         Fetch the information about mapping from a system to the CDU outlets.
         '''
         center('PDU.__config')
-        before = os.environ['NO_PROXY']
+        if 'NO_PROXY' in os.environ:
+            before = os.environ['NO_PROXY']
         os.environ['NO_PROXY'] = '10.245.80.31'
-        r = requests.get('http://10.245.80.31/lab-systems-power.yaml', proxies={})
+        r = requests.get('http://10.245.80.31/lab-systems-power.yaml')
         retval = yaml.load(r.text)
-        os.environ['NO_PROXY'] = before
+        if 'NO_PROXY' in os.environ:
+            os.environ['NO_PROXY'] = before
         cleave('PDU.__config')
         return retval
 
