@@ -759,7 +759,7 @@ class Metal(Base):
         # The very first thing we need to do is make our changes to the apt sources and then dist-upgrade
         # the system. Once we do this the kernels that we install should be the right one.
         #
-        s.fixup_apt_sources()
+        # s.fixup_apt_sources() # This is breaking some systems
         s.enable_proposed()
         s.enable_src()
         if s.ppa is not None:
