@@ -57,8 +57,8 @@ class RequestHandler(threading.Thread):
         factory = CloudJobFactory(cloud=s.cfg['cloud'],
                                   series=request['series-name'],
                                   region=s.cfg['region'],
-                                  tests=s.cfg['cloud'],
-                                  jenkins=s.cfg['jenkins'])
+                                  tests=s.cfg['cloud'])
+
         factory.create_jobs()
 
         cleave(s.__class__.__name__ + '.handle')
@@ -171,7 +171,6 @@ class JobFactory(object):
                 mq = MsgQueue()
 
             cfg = {
-                'jenkins' : args.jenkins,
                 'aws'     : args.aws,
                 'gce'     : args.gce,
                 'azure'   : args.azure,
@@ -229,7 +228,6 @@ if __name__ == '__main__':
     parser.add_argument('--lkp',   action='store_true', default=False, help='Handle requests for live kernel patching testing.')
     parser.add_argument('--dev',   action='store_true', default=False, help='Handle development testing requests.')
     parser.add_argument('--local-msgqueue-port',  type=int, default=None,  help='The local port to be used to talk to the Rabbit MQ service.')
-    parser.add_argument('--jenkins', type=str)
     parser.add_argument('--aws',   action='store_true', default=False, help='')
     parser.add_argument('--gce',   action='store_true', default=False, help='')
     parser.add_argument('--azure', action='store_true', default=False, help='')

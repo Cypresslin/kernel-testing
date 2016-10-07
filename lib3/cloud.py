@@ -19,6 +19,7 @@ FORMAT_JSON = "JSON"
 
 from mako.template                      import Template
 from jenkinsapi.jenkins                 import Jenkins
+from lib3.jenkins_server_local          import JenkinsServerLocal
 
 # CloudBase
 #
@@ -547,7 +548,7 @@ class CloudJobFactory(object):
 
     # __init__
     #
-    def __init__(s, cloud, series, region, tests, jenkins='localhost:8080'):
+    def __init__(s, cloud, series, region, tests):
         '''
         '''
         center(s.__class__.__name__ + '.__init__')
@@ -555,8 +556,7 @@ class CloudJobFactory(object):
         s.tests  = tests
         s.series = series
         s.region = region
-        s.jenkins_url_default = "http://%s" % jenkins
-        s.jenkins = Jenkins(s.jenkins_url_default)
+        s.jenkins = JenkinsServerLocal.connect()
         cleave(s.__class__.__name__ + '.__init__')
 
     def expand(s, collection):
