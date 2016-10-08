@@ -60,6 +60,9 @@ if data['lkp']:
     else:
         provision += ' --lkp'
 
+if data['flavour']:
+    provision += ' --flavour=%s' % data['flavour']
+
 if data['kernel']:
     provision += ' --kernel=%s' % data['kernel']
 

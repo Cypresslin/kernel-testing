@@ -102,7 +102,7 @@ class MetalApp(object):
         retval = 1
         try:
             s.validate_args(args)
-            metal = Metal(args.name, args.series, args.arch, hwe=args.hwe, xen=args.xen, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, required_kernel_version=args.required_kernel_version, lkp_snappy=args.lkp_snappy)
+            metal = Metal(args.name, args.series, args.arch, hwe=args.hwe, xen=args.xen, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, required_kernel_version=args.required_kernel_version, lkp_snappy=args.lkp_snappy, flavour=args.flavour)
             if metal.provision():
                 retval = 0
 
@@ -188,6 +188,7 @@ examples:
     parser.add_argument('--debs-url', required=False, default=None, help='A pointer to a set of kernel deb packages that are to be installed.')
     parser.add_argument('--ppa',      required=False, default=None, help='A ppa name to update packages from')
     parser.add_argument('--kernel',   required=False, default=None, help='The specific kernel version to be installed.')
+    parser.add_argument('--flavour',  required=False, default='generic', help='The kernel flavour to be tested (generic | lowlatency).')
     parser.add_argument('--lkp',      required=False, action='store_true', default=False, help='Turn on live kernel patching.')
     parser.add_argument('--lkp-snappy', required=False, action='store_true', default=False, help='Turn on live kernel patching.')
     parser.add_argument('--hwe',      required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')

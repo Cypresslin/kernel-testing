@@ -67,6 +67,7 @@ title = "%s - %s - %s" % (target_suite.replace('autotest.', ''), test_attributes
                         <table width="100%" border="0" style="font-size: 0.9em">
                             <tr> <td width="100" align="right">timestamp :</td> <td width="2">&nbsp;</td> <td align="left">${ test_attributes['timestamp'] }</td> </tr>
                             <tr> <td width="100" align="right">kernel :</td> <td width="2">&nbsp;</td> <td align="left">${ test_attributes['kernel'] }</td> </tr>
+                            <tr> <td width="100" align="right">flavour :</td> <td width="2">&nbsp;</td> <td align="left">${ test_attributes['kernel-flavour'] }</td> </tr>
                             <tr> <td width="100" align="right">test suite :</td> <td width="2">&nbsp;</td> <td align="left">${ target_suite }</td> </tr>
                             <tr> <td width="100" align="right">archive :</td> <td width="2">&nbsp;</td> <td align="left"><a href="${ link }">files</a></td> </tr>
                         </table>

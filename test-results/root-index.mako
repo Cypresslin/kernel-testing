@@ -65,54 +65,56 @@
                                                 <table id="" width="100%" border="0">
                                                     <tbody>
                                                         % for kernel_version in sorted(data[ubuntu_series], reverse=True):
-                                                        <tr>
-                                                            <td align="left" width="150" colspan="7">${ kernel_version } </td> <td> </td>
-                                                        </tr>
-                                                            % for arch in sorted(data[ubuntu_series][kernel_version]):
-                                                                <tr>
-                                                                    <th width="100">&nbsp;</th>
-                                                                    <td align="center" colspan="7" style="background: #e9e7e5;">${ arch } </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th width="100">&nbsp;</th>
-                                                                    <th align="center" width="150">Suite</th>
-                                                                    <th align="center" width="45">Passed</th>
-                                                                    <th align="center" width="45">Failed</th>
-                                                                    <th width="50">&nbsp;</th>
-                                                                    <th align="center" width="150">Suite</th>
-                                                                    <th align="center" width="45">Passed</th>
-                                                                    <th align="center" width="45">Failed</th>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td width="100">&nbsp;</td>
-                                                                    <% suite_row = 0 %>
-                                                                    % for suite in sorted(data[ubuntu_series][kernel_version][arch]):
-                                                                            <%
-                                                                                suite_row += 1
-                                                                                r = data[ubuntu_series][kernel_version][arch][suite]
-                                                                                total = r['run']
-                                                                                passed = r['run'] - r['failed']
-                                                                                failed = r['failed']
-                                                                            %>
-                                                                    <td align="left"  ><a href="${ r['link'] }">${ suite }</a></td>
-                                                                    <td align="center"><a href="${ r['link'] }">${ passed }    </a></td>
-                                                                    <td align="center"><a href="${ r['link'] }">${ failed }    </a></td>
-                                                                        % if suite_row == 2:
-                                                                            <% suite_row = 0 %>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td width="100">&nbsp;</td>
-                                                                        % else:
-                                                                    <td width="50">&nbsp;</td>
-                                                                        % endif
-                                                                    % endfor
-                                                                    % if suite_row == 1:
-                                                                <tr>
-                                                                    <td>&nbsp;</td>
-                                                                </tr>
-                                                                    % endif
+                                                            % for kernel_flavour in sorted(data[ubuntu_series][kernel_version], reverse=True):
+                                                            <tr>
+                                                                <td align="left" width="150" colspan="7">${ kernel_version } - ${ kernel_flavour }</td> <td> </td>
+                                                            </tr>
+                                                                % for arch in sorted(data[ubuntu_series][kernel_version][kernel_flavour]):
+                                                                    <tr>
+                                                                        <th width="100">&nbsp;</th>
+                                                                        <td align="center" colspan="7" style="background: #e9e7e5;">${ arch } </td>
                                                                     </tr>
-                                                                </tr>
+                                                                    <tr>
+                                                                        <th width="100">&nbsp;</th>
+                                                                        <th align="center" width="150">Suite</th>
+                                                                        <th align="center" width="45">Passed</th>
+                                                                        <th align="center" width="45">Failed</th>
+                                                                        <th width="50">&nbsp;</th>
+                                                                        <th align="center" width="150">Suite</th>
+                                                                        <th align="center" width="45">Passed</th>
+                                                                        <th align="center" width="45">Failed</th>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td width="100">&nbsp;</td>
+                                                                        <% suite_row = 0 %>
+                                                                        % for suite in sorted(data[ubuntu_series][kernel_version][kernel_flavour][arch]):
+                                                                                <%
+                                                                                    suite_row += 1
+                                                                                    r = data[ubuntu_series][kernel_version][kernel_flavour][arch][suite]
+                                                                                    total = r['run']
+                                                                                    passed = r['run'] - r['failed']
+                                                                                    failed = r['failed']
+                                                                                %>
+                                                                        <td align="left"  ><a href="${ r['link'] }">${ suite }</a></td>
+                                                                        <td align="center"><a href="${ r['link'] }">${ passed }    </a></td>
+                                                                        <td align="center"><a href="${ r['link'] }">${ failed }    </a></td>
+                                                                            % if suite_row == 2:
+                                                                                <% suite_row = 0 %>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td width="100">&nbsp;</td>
+                                                                            % else:
+                                                                        <td width="50">&nbsp;</td>
+                                                                            % endif
+                                                                        % endfor
+                                                                        % if suite_row == 1:
+                                                                    <tr>
+                                                                        <td>&nbsp;</td>
+                                                                    </tr>
+                                                                        % endif
+                                                                        </tr>
+                                                                    </tr>
+                                                                % endfor
                                                             % endfor
                                                         % endfor
                                                     </tbody>

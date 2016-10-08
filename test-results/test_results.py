@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #
 
+import json
 from lib.log                            import cdebug
 
 from lib.grinder                        import Exit, TestResultsRepository, TestResultsRepositoryError
@@ -112,43 +113,49 @@ class TestResults():
                     retval[series] = {}
 
                 for kver in data[who][series]:
-                    cdebug('        kver: %s' % kver)
-                    if kver not in retval[series]:
-                        retval[series][kver] = {}
+                    cdebug('      kver: %s' % kver)
+                    for flavour in data[who][series][kver]:
+                        cdebug('   flavour: %s' % flavour)
+                        if kver not in retval[series]:
+                            retval[series][kver] = {}
+                            retval[series][kver][flavour] = {}
 
-                    for test_run in data[who][series][kver]:
-                        attributes = test_run['attributes']
+                        for test_run in data[who][series][kver][flavour]:
+                            attributes = test_run['attributes']
 
-                        # decode the arch
-                        #
-                        arch = self.arch_from_proc(attributes['platform']['proc'])
+                            # decode the arch
+                            #
+                            arch = self.arch_from_proc(attributes['platform']['proc'])
+                            cdebug('      arch: %s' % arch)
 
-                        if arch not in retval[series][kver]:
-                            retval[series][kver][arch] = {}
+                            if arch not in retval[series][kver][flavour]:
+                                retval[series][kver][flavour][arch] = {}
 
-                        results = test_run['results']
-                        for k in results['suites']:
-                            suite = k['name'].replace('autotest.', '')
+                            results = test_run['results']
+                            print(json.dumps(test_run, sort_keys=True, indent=4))
+                            for k in results['suites']:
+                                cdebug('    suite: %s' % k)
+                                suite = k['name'].replace('autotest.', '')
 
-                            if who == 'sru':
-                                link = '%s/%s-%s-%s-index.html' % (kver, suite, kver, arch)
-                            else:
-                                link = '%s/%s-%s-%s-%s-index.html' % (kver, who, suite, kver, arch)
+                                if who == 'sru':
+                                    link = '%s/%s-%s-%s-index.html' % (kver, suite, kver, arch)
+                                else:
+                                    link = '%s/%s-%s-%s-%s-index.html' % (kver, who, suite, kver, arch)
 
-                            if suite not in retval[series][kver][arch]:
-                                if suite == 'qrt_apparmor':
-                                    cdebug("            %s : new (%s); ran: %d; failed: %d" % (suite, arch, k['tests run'], k['tests failed']), 'green')
-                                retval[series][kver][arch][suite] = {}
-                                retval[series][kver][arch][suite]['link'] = link
-                                retval[series][kver][arch][suite]['failed']  = k['tests failed']
-                                retval[series][kver][arch][suite]['run']     = k['tests run']
-                                retval[series][kver][arch][suite]['skipped'] = k['tests skipped']
-                            else:
-                                if suite == 'qrt_apparmor':
-                                    cdebug("            %s : adding (%s); ran: %d; failed: %d" % (suite, arch, k['tests run'], k['tests failed']), 'green')
-                                retval[series][kver][arch][suite]['failed']  += k['tests failed']
-                                retval[series][kver][arch][suite]['run']     += k['tests run']
-                                retval[series][kver][arch][suite]['skipped'] += k['tests skipped']
+                                if suite not in retval[series][kver][flavour][arch]:
+                                    if suite == 'qrt_apparmor':
+                                        cdebug("            %s : new (%s); ran: %d; failed: %d" % (suite, arch, k['tests run'], k['tests failed']), 'green')
+                                    retval[series][kver][flavour][arch][suite] = {}
+                                    retval[series][kver][flavour][arch][suite]['link'] = link
+                                    retval[series][kver][flavour][arch][suite]['failed']  = k['tests failed']
+                                    retval[series][kver][flavour][arch][suite]['run']     = k['tests run']
+                                    retval[series][kver][flavour][arch][suite]['skipped'] = k['tests skipped']
+                                else:
+                                    if suite == 'qrt_apparmor':
+                                        cdebug("            %s : adding (%s); ran: %d; failed: %d" % (suite, arch, k['tests run'], k['tests failed']), 'green')
+                                    retval[series][kver][flavour][arch][suite]['failed']  += k['tests failed']
+                                    retval[series][kver][flavour][arch][suite]['run']     += k['tests run']
+                                    retval[series][kver][flavour][arch][suite]['skipped'] += k['tests skipped']
         except KeyError:
             pass
         return retval
@@ -210,13 +217,19 @@ class TestResults():
             # The secondary key for 'data' is the kernel version.
             #
             k = results['attributes']['kernel']
+            try:
+                flavour = results['attributes']['kernel-flavour']
+            except KeyError:
+                flavour = 'generic'
             if False:
                 if 'livepatch-package-version' in results['attributes']:
                     live = results['attributes']['livepatch-package-version']
                     k = '%s - %s' % (k, live)
             if k not in data[who][series]:
-                data[who][series][k] = []
-            data[who][series][k].append(results)
+                data[who][series][k] = {}
+            if flavour not in data[who][series][k]:
+                data[who][series][k][flavour] = []
+            data[who][series][k][flavour].append(results)
         return data
 
 # vi:set ts=4 sw=4 expandtab:

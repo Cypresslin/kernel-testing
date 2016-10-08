@@ -65,6 +65,7 @@ test_failures = False
                         <table width="100%" border="0" style="font-size: 0.9em">
                             <tr> <td width="100" align="right">timestamp :</td> <td width="2">&nbsp;</td> <td align="left">${ test_attributes['timestamp'] }</td> </tr>
                             <tr> <td width="100" align="right">kernel :</td> <td width="2">&nbsp;</td> <td align="left">${ test_attributes['kernel'] }</td> </tr>
+                            <tr> <td width="100" align="right">flavour :</td> <td width="2">&nbsp;</td> <td align="left">${ test_attributes['kernel-flavour'] }</td> </tr>
                             <tr> <td width="100" align="right">job :</td> <td width="2">&nbsp;</td> <td align="left">${ test_attributes['environ']['JOB_NAME'] }</td> </tr>
                             <tr> <td width="100" align="right">console output :</td> <td width="2">&nbsp;</td> <td align="left"><a href="console_output.txt.html">log</a></td> </tr>
                         </table>

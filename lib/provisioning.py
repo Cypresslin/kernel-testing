@@ -58,7 +58,7 @@ class PS(object):
 class Base(object):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, required_kernel_version=None):
+    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, required_kernel_version=None, flavour=None):
         center("Base::__init__")
 
         # If we are installing a HWE kernel, we want to install the correct series first.
@@ -86,6 +86,7 @@ class Base(object):
         s.lkp = lkp
         s.lkp_snappy = lkp_snappy
         s.kernel = kernel
+        s.flavour = flavour
         s.required_kernel_version = required_kernel_version
         s.dry_run = dry_run
         s.progress_dots = 0
@@ -189,6 +190,20 @@ class Base(object):
         s.progress('Disabling Periodic APT Updates')
         s.ssh(r'sudo sed -i \'s/APT::Periodic::Update-Package-Lists "1"/APT::Periodic::Update-Package-Lists "0"/\' /etc/apt/apt.conf.d/10periodic')
         cleave('Base::disable_apt_periodic_updates')
+
+    # install_kernel_flavour
+    #
+    def install_kernel_flavour(s):
+        '''
+        '''
+        center("Base::install_kernel_flavour")
+        s.progress('Installing %s Kernel Flavour' % s.flavour)
+
+        if s.flavour == 'lowlatency':
+            cmd = 'sudo apt-get install --yes linux-%s' % s.flavour
+            s.ssh(cmd)
+
+        cleave("Base::install_kernel_flavour")
 
     # install_specific_kernel_version
     #
@@ -521,10 +536,10 @@ class Base(object):
 class Metal(Base):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, required_kernel_version=None):
+    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, required_kernel_version=None, flavour='generic'):
         center("Metal::__init__")
 
-        Base.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, xen=xen, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, required_kernel_version=required_kernel_version)
+        Base.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, xen=xen, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, required_kernel_version=required_kernel_version, flavour=flavour)
 
         cleave("Metal::__init__")
 
@@ -804,6 +819,10 @@ class Metal(Base):
             s.dist_upgrade()
             if not reboot:
                 reboot = 'Rebooting for dist-upgrade'
+
+        if s.flavour != 'generic':
+            s.install_kernel_flavour()
+            reboot = 'Rebooting for Kernel flavour %s' % s.flavour
 
         if s.kernel:
             s.install_specific_kernel_version()

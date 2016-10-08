@@ -87,6 +87,8 @@ class TheApp():
         data = test_results.collect_results()
         results = test_results.per_suite_results(data)
 
+        print(json.dumps(results, sort_keys=True, indent=4))
+
         # Generate the testing, index page.
         #
         try:

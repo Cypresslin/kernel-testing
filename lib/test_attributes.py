@@ -28,14 +28,15 @@ class TestAttributes():
         Dbg.leave("TestAttributes.__init__")
 
     def kernel_version(self):
-        m = re.match('^(\d+\.\d+\.\d+[\.-][\drc]+)-?.*$', platform.release())
+        m = re.match('^(\d+\.\d+\.\d+[\.-][\drc]+)-?(.*)$', platform.release())
         version = m.group(1)
+        flavour = m.group(2)
 
         m = re.match('^#(\d+.*?)(-Ubuntu)* .*$', platform.version())
         upload = m.group(1)
 
         retval = "%s.%s" % (version, upload)
-        return retval
+        return retval, flavour
 
     def distro_release(self):
         p = Popen(['lsb_release', '-sir'], stdout=PIPE, stderr=PIPE, close_fds=True)
@@ -139,7 +140,7 @@ class TestAttributes():
         #            'name' : self.cfg.vh_name,
         #        }
 
-        data['kernel'] = self.kernel_version()
+        data['kernel'], data['kernel-flavour'] = self.kernel_version()
         data['distro-release'] = self.distro_release()
         data['distro-release-name'] = self.distro_release_name()
 
