@@ -78,6 +78,7 @@ class PDU():
     #
     def cycle(s):
         center('PDU.cycle')
+        print('            Cycling Power...       ')
         s.power('off')
         sleep(60)
         s.power('on')
