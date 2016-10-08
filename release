@@ -50,6 +50,10 @@ class Release():
             for line in e.output:
                 error(line.rstrip())
 
+        except:
+            # It doesn't matter what the error is, release should never fail
+            pass
+
         cleave('Release::main')
         return retval
 
