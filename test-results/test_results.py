@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 #
 
-import json
 from lib.log                            import cdebug
 
 from lib.grinder                        import Exit, TestResultsRepository, TestResultsRepositoryError
@@ -132,7 +131,6 @@ class TestResults():
                                 retval[series][kver][flavour][arch] = {}
 
                             results = test_run['results']
-                            print(json.dumps(test_run, sort_keys=True, indent=4))
                             for k in results['suites']:
                                 cdebug('    suite: %s' % k)
                                 suite = k['name'].replace('autotest.', '')
