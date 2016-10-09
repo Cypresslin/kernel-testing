@@ -2,44 +2,22 @@
 #
 
 from sys                                import stdout, stderr
-from commands                           import getstatusoutput
 from os                                 import path
 from datetime                           import datetime
-from dbg                                import Dbg
 import json
 
 # Exit
 #
-class Exit():
+class Exit(Exception):
     """
     If an error message has already been displayed and we want to just exit the app, this
     exception is raised.
     """
     pass
 
-# run_command
-#
-def run_command(cmd, dry_run=False):
-        """
-        Run a command in the shell, returning status and the output.
-        prints a message if there's an error, and raises an exception.
-        """
-        Dbg.enter("run_command")
-        status = ""
-        result = ""
-        if not dry_run:
-            status, result = getstatusoutput(cmd)
-            Dbg.progress("     cmd: '%s'" % cmd)
-            Dbg.progress("  status: '%d'" % status)
-            Dbg.progress("  result: '%s'" % result)
-        else:
-            Dbg.progress("run_command: '%s'" % cmd)
-
-        return status, result.split('\n')
-
 # FileDoesntExist
 #
-class FileDoesntExist():
+class FileDoesntExist(Exception):
     def __init__(self, file_name=''):
         self.file_name = file_name
 
@@ -112,8 +90,6 @@ def json_load(file_name):
     """
     Load the indicated json format file, returning the created object.
     """
-    Dbg.enter("json_load")
-
     retval = None
     if path.exists(file_name):
         with open(file_name, 'r') as f:
@@ -121,7 +97,6 @@ def json_load(file_name):
     else:
         raise FileDoesntExist(file_name)
 
-    Dbg.leave("json_load")
     return retval
 
 # file_load
@@ -130,8 +105,6 @@ def file_load(file_name):
     """
     Load the indicated file into a string and return the string.
     """
-    Dbg.enter("file_load")
-
     retval = None
     if path.exists(file_name):
         with open(file_name, 'r') as f:
@@ -139,7 +112,6 @@ def file_load(file_name):
     else:
         raise FileDoesntExist(file_name)
 
-    Dbg.leave("file_load")
     return retval
 
 # date_to_string

@@ -11,7 +11,7 @@ from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
 
 from lib.utils                          import json_load, file_load, FileDoesntExist, string_to_date
-from lib.dbg                            import Dbg
+from lib.log                            import center, cleave, cdebug
 
 # o2ascii
 #
@@ -101,7 +101,7 @@ class x2dict(dict):
     # __init__
     #
     def __init__(self, xmlstring, *args):
-        Dbg.enter("x2dict.__init__")
+        center("x2dict.__init__")
 
         dict.__init__(self, args)
 
@@ -111,36 +111,36 @@ class x2dict(dict):
         for k in x:
             self[k] = x[k]
 
-        Dbg.leave("x2dict.__init__")
+        cleave("x2dict.__init__")
 
     # e2d
     #
     def e2d(self, node):
-        Dbg.enter("x2dict.e2d")
+        center("x2dict.e2d")
 
         retval = None
 
         child = node.firstChild
         if not child:
-            Dbg.verbose('No child nodes\n')
-            Dbg.leave("x2dict.e2d")
+            cdebug('No child nodes\n')
+            cleave("x2dict.e2d")
             return None
 
         retval = {}
         text = ''
         while child is not None:
             if child.nodeType == Node.TEXT_NODE:
-                Dbg.verbose('nodeType: Node.TEXT_NODE\n')
-                Dbg.verbose('data: \'%s\'\n' % child.data.strip())
+                cdebug('nodeType: Node.TEXT_NODE\n')
+                cdebug('data: \'%s\'\n' % child.data.strip())
                 text = child.data.strip()
                 if text != '':
                     retval = { 'text' : text.split('\n') }
             elif child.nodeType == Node.ELEMENT_NODE:
-                Dbg.verbose('tagName: %s\n' % child.tagName)
-                Dbg.verbose('nodeType: Node.ELEMENT_NODE\n')
+                cdebug('tagName: %s\n' % child.tagName)
+                cdebug('nodeType: Node.ELEMENT_NODE\n')
 
                 if child.tagName not in retval:
-                    Dbg.verbose('Creating retval[%s] list.\n' % (child.tagName))
+                    cdebug('Creating retval[%s] list.\n' % (child.tagName))
                     retval[child.tagName] = []
 
                 neo = self.e2d(child)
@@ -149,14 +149,14 @@ class x2dict(dict):
                         neo = {}
 
                     for a in child.attributes.keys():
-                        Dbg.verbose("attributes[%s] = %s\n" % (a, child.attributes[a].value))
+                        cdebug("attributes[%s] = %s\n" % (a, child.attributes[a].value))
                         neo[a] = child.attributes[a].value
 
                 retval[child.tagName].append(neo)
 
             child = child.nextSibling
 
-        Dbg.leave("x2dict.e2d")
+        cleave("x2dict.e2d")
         return retval
 
     # dump
@@ -171,22 +171,22 @@ class JenkinsTestResultsTreeError(Exception):
     def __init__(self, error):
         self.msg = "%s" % error
 
-class JenkinsTestResultsTree():
+class JenkinsTestResultsTree(object):
     # __init__
     #
     def __init__(self, root):
-        Dbg.enter("JenkinsTestResultsTree.__init__")
+        center("JenkinsTestResultsTree.__init__")
 
         self.root = root
-        self.archive = path.join(root, 'archive')
+        self.arkive = path.join(root, 'archive')
 
-        Dbg.leave("JenkinsTestResultsTree.__init__")
+        cleave("JenkinsTestResultsTree.__init__")
 
     # results
     #
     @property
     def results(self):
-        Dbg.enter("JenkinsTestResultsTree.results")
+        center("JenkinsTestResultsTree.results")
 
         retval = None
         try:
@@ -242,31 +242,31 @@ class JenkinsTestResultsTree():
 
         except FileDoesntExist as e:
             raise JenkinsTestResultsTreeError('The Jenkins test results tree (%s) specified on the command line does\n           not appear to be a valid results tree, the file (%s)\n           does not exist.\n' % (self.root, e.file_name))
-            Dbg.leave("TestResultsRepository.__init__")
+            cleave("TestResultsRepository.__init__")
 
-        Dbg.leave("JenkinsTestResultsTree.results")
+        cleave("JenkinsTestResultsTree.results")
         return retval
 
     @property
     def attributes(self):
-        Dbg.enter("JenkinsTestResultsTree.attributes")
+        center("JenkinsTestResultsTree.attributes")
 
         retval = None
         try:
-            retval = json_load(path.join(self.archive, 'test-attributes.json'))
+            retval = json_load(path.join(self.arkive, 'test-attributes.json'))
 
         except FileDoesntExist as e:
             raise JenkinsTestResultsTreeError('The Jenkins test results tree (%s) specified on the command line does\n           not appear to be a valid results tree, the file (%s)\n           does not exist.\n' % (self.root, e.file_name))
-            Dbg.leave("TestResultsRepository.__init__")
+            cleave("TestResultsRepository.__init__")
 
-        Dbg.leave("JenkinsTestResultsTree.attributes")
+        cleave("JenkinsTestResultsTree.attributes")
         return retval
 
     @property
     def archive(self):
-        Dbg.enter("JenkinsTestResultsTree.archive")
+        center("JenkinsTestResultsTree.archive")
         retval = path.join(self.root, 'archive')
-        Dbg.leave("JenkinsTestResultsTree.archive")
+        cleave("JenkinsTestResultsTree.archive")
         return retval
 
     # duration
@@ -296,7 +296,7 @@ class TestResultsRepository():
         '''
         Load the test-results.rc file into self.
         '''
-        Dbg.enter("TestResultsRepository.__init__")
+        center("TestResultsRepository.__init__")
 
         try:
             # Find it ...
@@ -315,37 +315,37 @@ class TestResultsRepository():
 
         except FileDoesntExist as e:
             raise TestResultsRepositoryError('The file (%s) does not exist.\n' % e.file_name)
-            Dbg.leave("TestResultsRepository.__init__")
+            cleave("TestResultsRepository.__init__")
 
-        Dbg.leave("TestResultsRepository.__init__")
+        cleave("TestResultsRepository.__init__")
 
     # initialize_results_dir
     #
     def initialize_results_dir(self, dirname):
-        Dbg.enter("TestResultsRepository.initialize_results_dir")
+        center("TestResultsRepository.initialize_results_dir")
 
         self.results_dir = path.join(self.cfg['repository_root'], dirname)
         if path.exists(self.results_dir):
-            Dbg.verbose("%s exists.\n" % (self.results_dir))
+            cdebug("%s exists.\n" % (self.results_dir))
             rmtree(self.results_dir)
         else:
-            Dbg.verbose("%s does not exist.\n" % (self.results_dir))
+            cdebug("%s does not exist.\n" % (self.results_dir))
         makedirs(self.results_dir)
-        Dbg.leave("TestResultsRepository.initialize_results_dir")
+        cleave("TestResultsRepository.initialize_results_dir")
         return self.results_dir
 
     def store_results(self, data):
-        Dbg.enter("TestResultsRepository.store_results")
+        center("TestResultsRepository.store_results")
 
         destdir = path.join(self.results_dir, 'results.json')
-        Dbg.verbose('destdir: "%s"' % destdir)
+        cdebug('destdir: "%s"' % destdir)
         with open(destdir, 'w') as f:
             f.write(json.dumps(data, sort_keys=True, indent=4))
 
-        Dbg.leave("TestResultsRepository.store_results")
+        cleave("TestResultsRepository.store_results")
 
     def ingest(self, jtr):
-        Dbg.enter("TestResultsRepository.ingest")
+        center("TestResultsRepository.ingest")
 
         self.text_file_template = Template(filename=locate('text-file.mako'), default_filters=['decode.utf8'], input_encoding='utf-8', output_encoding='utf8')
 
@@ -400,11 +400,11 @@ class TestResultsRepository():
 
         self.store_results(data)
 
-        Dbg.leave("TestResultsRepository.ingest")
+        cleave("TestResultsRepository.ingest")
 
     @property
     def test_runs(self):
-        Dbg.enter("TestResultsRepository.test_runs")
+        center("TestResultsRepository.test_runs")
         retval = []
         for kver in listdir(self.cfg['repository_root']):
             p = path.join(self.cfg['repository_root'], kver)
@@ -413,17 +413,17 @@ class TestResultsRepository():
                     p = path.join(self.cfg['repository_root'], kver, run)
                     if path.isdir(p):
                         retval.append(path.join(kver, run))
-        Dbg.leave("TestResultsRepository.test_runs")
+        cleave("TestResultsRepository.test_runs")
         return retval
 
     def results(self, test_run):
-        Dbg.enter("TestResultsRepository.results")
+        center("TestResultsRepository.results")
         try:
             retval = json_load(path.join(self.cfg['repository_root'], test_run, 'results.json'))
         except FileDoesntExist as e:
             raise TestResultsRepositoryError('The file (%s) does not exist.\n' % e.file_name)
-            Dbg.leave("TestResultsRepository.__init__")
-        Dbg.leave("TestResultsRepository.results")
+            cleave("TestResultsRepository.__init__")
+        cleave("TestResultsRepository.results")
         return retval
 
 # vi:set ts=4 sw=4 expandtab:
