@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 
-from lib.log                            import cdebug
+from lib.log                            import cdebug, center, cleave
 
 from lib.grinder                        import Exit, TestResultsRepository, TestResultsRepositoryError
 from lib.utils                          import error, string_to_date
@@ -17,22 +17,25 @@ class TestResults():
 
     # __init__
     #
-    def __init__(self):
+    def __init__(s):
         '''
         '''
+        center(s.__class__.__name__ + '.__init__')
         try:
-            self.trr = TestResultsRepository(rc='test-results.rc')
-            self.ubuntu = Ubuntu()
+            s.trr = TestResultsRepository(rc='test-results.rc')
+            s.ubuntu = Ubuntu()
 
         except TestResultsRepositoryError as e:
             error(e.msg)
             cdebug("Leave Digest.initialize")
+            cleave(s.__class__.__name__ + '.__init__')
             raise Exit()
+        cleave(s.__class__.__name__ + '.__init__')
 
     # series
     #
-    def series(self, results):
-        cdebug("    Enter Digest.series")
+    def series(s, results):
+        center(s.__class__.__name__ + '.series')
 
         retval = "unknown"
         try:
@@ -46,13 +49,13 @@ class TestResults():
                 kv = results['attributes']['kernel']
                 m = Debian.version_rc.match(kv)
                 if m:
-                    for s in Ubuntu.index_by_series_name:
-                        if s in kv:
+                    for series in Ubuntu.index_by_series_name:
+                        if series in kv:
                             cdebug("            is backport kernel", 'blue')
                             # If the series is in the kernel version string, it is most likely
                             # a "backport" kernel and we should use the series in the version
                             #
-                            retval = s
+                            retval = series
                             break
 
                     if retval == 'unknown':
@@ -74,13 +77,13 @@ class TestResults():
                             version = '2.6.32'
                         else:
                             version = '%s.0' % (m.group(1)) # Only want major and minor for determining the series
-                        retval = self.ubuntu.lookup(version)['name']
+                        retval = s.ubuntu.lookup(version)['name']
                 else:
                     print(" ** WARNING: The kernel version string found in the results data did not match the regex.")
             except KeyError:
                 print(" ** WARNING: The kernel version (%s) did not match up with any Ubuntu series." % (results['attributes']['kernel']))
 
-        cdebug("    Leave Digest.series (%s)" % retval)
+        cleave(s.__class__.__name__ + '.series')
         return retval
 
     # arch_from_proc
@@ -98,10 +101,11 @@ class TestResults():
             arch = proc
         return arch
 
-    def per_suite_results(self, data, who='sru'):
+    def per_suite_results(s, data, who='sru'):
         # Take the cumulative results dictionary and build a test-suite focused dictionary from
         # it.
         #
+        center(s.__class__.__name__ + '.per_suite_results')
         cdebug('--------------------------------------------------')
         retval = {} # suite results
         cdebug('Building test-suite focused dictionary')
@@ -112,11 +116,13 @@ class TestResults():
                     retval[series] = {}
 
                 for kver in data[who][series]:
-                    cdebug('      kver: %s' % kver)
+                    cdebug('        kver: %s' % kver)
                     for flavour in data[who][series][kver]:
-                        cdebug('   flavour: %s' % flavour)
+                        cdebug('            flavour: %s' % flavour)
                         if kver not in retval[series]:
                             retval[series][kver] = {}
+
+                        if flavour not in retval[series][kver]:
                             retval[series][kver][flavour] = {}
 
                         for test_run in data[who][series][kver][flavour]:
@@ -124,15 +130,14 @@ class TestResults():
 
                             # decode the arch
                             #
-                            arch = self.arch_from_proc(attributes['platform']['proc'])
-                            cdebug('      arch: %s' % arch)
+                            arch = s.arch_from_proc(attributes['platform']['proc'])
+                            cdebug('                arch: %s' % arch)
 
                             if arch not in retval[series][kver][flavour]:
                                 retval[series][kver][flavour][arch] = {}
 
                             results = test_run['results']
                             for k in results['suites']:
-                                cdebug('    suite: %s' % k)
                                 suite = k['name'].replace('autotest.', '')
 
                                 if who == 'sru':
@@ -156,11 +161,12 @@ class TestResults():
                                     retval[series][kver][flavour][arch][suite]['skipped'] += k['tests skipped']
         except KeyError:
             pass
+        cleave(s.__class__.__name__ + '.per_suite_results')
         return retval
 
     # collect_results
     #
-    def collect_results(self):
+    def collect_results(s):
         '''
         Build a dictionary of all of the test results.
 
@@ -170,17 +176,32 @@ class TestResults():
                     kernel-version:
                         test results
         '''
+        center(s.__class__.__name__ + '.collect_results')
         data = {}
-        for tr in self.trr.test_runs:
+        for tr in s.trr.test_runs:
             try:
                 cdebug('tr: %s' % tr)
-                results = self.trr.results(tr)
+                results = s.trr.results(tr)
             except TestResultsRepositoryError as e:
                 error(e.msg)
                 continue
 
             cdebug("Processing: %s" % (tr), 'green')
-            cdebug("    kernel: %s" % (results['attributes']['kernel']))
+
+            kernel_version = results['attributes']['kernel']
+            try:
+                flavour = results['attributes']['kernel-flavour']
+            except KeyError:
+                cdebug("no kernel-flavour", 'cyan')
+                flavour = 'generic'
+            series = s.series(results)
+
+            cdebug("    kernel: %s" % (kernel_version))
+            if flavour == 'lowlatency':
+                cdebug("   falvour: %s     --------------------------------------------------------------------------------------" % (flavour))
+            else:
+                cdebug("   falvour: %s" % (flavour))
+            cdebug("    series: %s" % (series))
 
             # If the kernel used was a "custom" kernel, one that someone on the kernel
             # team built themselves or a mainline build kernel, we want that information
@@ -195,39 +216,43 @@ class TestResults():
                 # that wasn't done by someone specifically into a single
                 # bucket.
 
-            if who not in data:
-                data[who] = {}
+            if who == 'kernel':
+                who = 'sru'
 
-            series = self.series(results)
             results['attributes']['series'] = series
-            cdebug("    series: %s" % (series))
 
             # "Fixup" the timestamp to be what we want it to look like on the web page
             #
             ts = string_to_date(results['attributes']['timestamp'])
             results['attributes']['timestamp'] = ts.strftime("%Y-%m-%d %H:%M")
 
-            # The primary key is the series.
+            # The primary key is who.
+            #
+            if who not in data:
+                data[who] = {}
+                cdebug('                                                                                       who first seen (%s)' % who, 'white')
+
+            # The second key is the series.
             #
             if series not in data[who]:
                 data[who][series] = {}
+                cdebug('                                                                                       series first seen (%s)' % series, 'white')
 
-            # The secondary key for 'data' is the kernel version.
+            # The third key for 'data' is the kernel version.
             #
-            k = results['attributes']['kernel']
-            try:
-                flavour = results['attributes']['kernel-flavour']
-            except KeyError:
-                flavour = 'generic'
-            if False:
-                if 'livepatch-package-version' in results['attributes']:
-                    live = results['attributes']['livepatch-package-version']
-                    k = '%s - %s' % (k, live)
-            if k not in data[who][series]:
-                data[who][series][k] = {}
-            if flavour not in data[who][series][k]:
-                data[who][series][k][flavour] = []
-            data[who][series][k][flavour].append(results)
+            if kernel_version not in data[who][series]:
+                data[who][series][kernel_version] = {}
+                cdebug('                                                                                       version (%s) first seen (%s %s)' % (kernel_version, who, series), 'white')
+
+            # The fourth key for 'data' is the flavour
+            #
+            if flavour not in data[who][series][kernel_version]:
+                data[who][series][kernel_version][flavour] = []
+                cdebug('                                                                                       flavour first seen (%s)' % flavour, 'white')
+
+            data[who][series][kernel_version][flavour].append(results)
+
+        cleave(s.__class__.__name__ + '.collect_results')
         return data
 
 # vi:set ts=4 sw=4 expandtab:
