@@ -475,9 +475,9 @@ class Jobber(object):
         elif s.args.dev:
             valid_keys = ['kdev.testing.request', 'kdev.testing.livekernelpatching.request']
         else:
-            valid_keys = ['kernel.testing.request', 'kernel.publish', 'kernel.maas.daily', 'kernel-publish.ppa', 'kernel.testing.job']
+            valid_keys = ['kernel.testing.request', 'kernel.publish', 'kernel.testing.job']
 
-        valid_ops  = ['sru']
+        valid_ops  = ['sru', 'boot']
         valid_pkgs = ['linux']
 
         # Determine if the key in the current message is on that
@@ -485,12 +485,15 @@ class Jobber(object):
         #
         for key in valid_keys:
             if not payload['key'].startswith(key):
+                cdebug('Invalid key: %s' % payload['key'])
                 continue
 
             if payload['op'] not in valid_ops:
+                cdebug('Invalid op: %s' % payload['op'])
                 continue
 
             if payload['package'] not in valid_pkgs:
+                cdebug('Invalid package: %s' % payload['package'])
                 continue
 
             s.enqueue(payload)
