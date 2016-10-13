@@ -176,22 +176,22 @@
                 - "wily"
                 - "xenial"
             proc-decoration: "Ubuntu on LPAR"
-        s2lp5:
-            class: "test"
-            arch:
-                - "s390x.LPAR"
-            provisioner: "manual"
-            locked: false
-            power: []
-            role: []
-            series-blacklist:
-                - "lucid"
-                - "precise"
-                - "trusty"
-                - "utopic"
-                - "vivid"
-                - "wily"
-            proc-decoration: "Ubuntu on LPAR"
+        # s2lp5:
+        #     class: "test"
+        #     arch:
+        #         - "s390x.LPAR"
+        #     provisioner: "manual"
+        #     locked: false
+        #     power: []
+        #     role: []
+        #     series-blacklist:
+        #         - "lucid"
+        #         - "precise"
+        #         - "trusty"
+        #         - "utopic"
+        #         - "vivid"
+        #         - "wily"
+        #     proc-decoration: "Ubuntu on LPAR"
         kernel01:
             class: "test"
             arch:
@@ -250,22 +250,22 @@
                 - "wily"
                 - "xenial"
             proc-decoration: "zVM"
-        kernel03:
-            class: "test"
-            arch:
-                - "s390x.zVM"
-            provisioner: "manual"
-            locked: false
-            power: []
-            role: []
-            series-blacklist:
-                - "lucid"
-                - "precise"
-                - "trusty"
-                - "utopic"
-                - "vivid"
-                - "wily"
-            proc-decoration: "zVM"
+        # kernel03:
+        #     class: "test"
+        #     arch:
+        #         - "s390x.zVM"
+        #     provisioner: "manual"
+        #     locked: false
+        #     power: []
+        #     role: []
+        #     series-blacklist:
+        #         - "lucid"
+        #         - "precise"
+        #         - "trusty"
+        #         - "utopic"
+        #         - "vivid"
+        #         - "wily"
+        #     proc-decoration: "zVM"
         alkaid:
             class: "test"
             arch:
