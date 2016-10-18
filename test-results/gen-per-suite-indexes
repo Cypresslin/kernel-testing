@@ -32,45 +32,47 @@ class TheApp():
                 cdebug('    series: %s' % series)
                 for kver in data[who][series]:
                     cdebug('        kver: %s' % kver)
-                    for test_run in data[who][series][kver]:
-                        attributes = test_run['attributes']
+                    for flavour in data[who][series][kver]:
+                        cdebug('            flavour: %s' % flavour)
+                        for test_run in data[who][series][kver][flavour]:
+                            attributes = test_run['attributes']
 
-                        # decode the arch
-                        #
-                        hostname = attributes['platform']['hostname']
-                        arch = test_results.arch_from_proc(attributes['platform']['proc'])
+                            # decode the arch
+                            #
+                            hostname = attributes['platform']['hostname']
+                            arch = test_results.arch_from_proc(attributes['platform']['proc'])
 
-                        dt = datetime.strptime(attributes['timestamp'], '%Y-%m-%d %H:%M')
-                        ts = dt.strftime('%Y-%m-%d_%H-%M-%S')
+                            dt = datetime.strptime(attributes['timestamp'], '%Y-%m-%d %H:%M')
+                            ts = dt.strftime('%Y-%m-%d_%H-%M-%S')
 
-                        results = test_run['results']
-                        for k in results['suites']:
-                            suite = k['name'].replace('autotest.', '')
+                            results = test_run['results']
+                            for k in results['suites']:
+                                suite = k['name'].replace('autotest.', '')
 
-                            if suite not in sr:
-                                sr[suite] = {}
+                                if suite not in sr:
+                                    sr[suite] = {}
 
-                            if kver not in sr[suite]:
-                                sr[suite][kver] = {}
+                                if kver not in sr[suite]:
+                                    sr[suite][kver] = {}
 
-                            if arch not in sr[suite][kver]:
-                                sr[suite][kver][arch] = {}
+                                if arch not in sr[suite][kver]:
+                                    sr[suite][kver][arch] = {}
 
-                            if ts not in sr[suite][kver][arch]:
-                                sr[suite][kver][arch][ts] = {}
+                                if ts not in sr[suite][kver][arch]:
+                                    sr[suite][kver][arch][ts] = {}
 
-                            if suite == 'qrt_apparmor':
-                                cdebug("            New: %s %s %s %s %s" % (suite, kver, arch, ts, hostname), 'green')
+                                if suite == 'qrt_apparmor':
+                                    cdebug("            New: %s %s %s %s %s" % (suite, kver, arch, ts, hostname), 'green')
 
-                            sr[suite][kver][arch][ts][hostname] = {}
-                            sr[suite][kver][arch][ts][hostname]['failed']  = k['tests failed']
-                            sr[suite][kver][arch][ts][hostname]['ran']     = k['tests run']
-                            sr[suite][kver][arch][ts][hostname]['passed']  = k['tests run'] - k['tests failed']
+                                sr[suite][kver][arch][ts][hostname] = {}
+                                sr[suite][kver][arch][ts][hostname]['failed']  = k['tests failed']
+                                sr[suite][kver][arch][ts][hostname]['ran']     = k['tests run']
+                                sr[suite][kver][arch][ts][hostname]['passed']  = k['tests run'] - k['tests failed']
 
-                            link = "%s__%s__%s/%s-test-suite.html" % (hostname, kver, ts, suite)
-                            sr[suite][kver][arch][ts][hostname]['link'] = link
+                                link = "%s__%s__%s/%s-test-suite.html" % (hostname, kver, ts, suite)
+                                sr[suite][kver][arch][ts][hostname]['link'] = link
 
-                            sr[suite][kver][arch][ts][hostname]['timestamp'] = attributes['timestamp']
+                                sr[suite][kver][arch][ts][hostname]['timestamp'] = attributes['timestamp']
 
             for suite in sr:
                 cdebug('suite: %s' % suite)
