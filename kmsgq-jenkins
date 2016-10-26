@@ -30,6 +30,7 @@ from lib3.msgq                          import MsgQueue
 from mako.template                      import Template
 from mako.exceptions                    import RichTraceback
 from lib3.jenkins_server_local          import JenkinsServerLocal
+from lib.ubuntu                         import Ubuntu
 
 # Exit
 #
@@ -367,7 +368,10 @@ class JobsFactory(object):
         if 'series-decoration' in jd and jd['series-decoration'] is not None:
             retval += '_%s' % jd['series-decoration']
 
-        retval += '_%s__using_%s' % (arch, system)
+        if 'flavour' in jd:
+            retval += '_%s-%s__using_%s' % (arch, jd['flavour'], system)
+        else:
+            retval += '_%s__using_%s' % (arch, system)
 
         if jd['who'] is not None:
             retval += '__for_%s' % '_'.join(jd['who'])
@@ -463,6 +467,19 @@ class Jobber(object):
         s.rh.cmd_q.put(payload)
         cleave(s.__class__.__name__ + '.enqueue')
 
+    # valid_pkgs
+    #
+    @property
+    def valid_pkgs(s):
+        retval = ['linux']
+
+        db = Ubuntu().db
+        for k in db:
+            if 'backport-packages' in db[k]:
+                for bp in db[k]['backport-packages']:
+                    retval.append(bp)
+        return retval
+
     # msgq_handler
     #
     def msgq_handler(s, payload):
@@ -478,7 +495,6 @@ class Jobber(object):
             valid_keys = ['kernel.testing.request', 'kernel.publish', 'kernel.testing.job']
 
         valid_ops  = ['sru', 'boot']
-        valid_pkgs = ['linux']
 
         # Determine if the key in the current message is on that
         # we are going to process.
@@ -492,7 +508,7 @@ class Jobber(object):
                 cdebug('Invalid op: %s' % payload['op'])
                 continue
 
-            if payload['package'] not in valid_pkgs:
+            if payload['package'] not in s.valid_pkgs:
                 cdebug('Invalid package: %s' % payload['package'])
                 continue
 
