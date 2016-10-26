@@ -779,6 +779,7 @@ class Metal(Base):
         s.enable_src()
         if s.ppa is not None:
             s.enable_ppa()
+            dist_upgrade = True
 
         s.reboot(progress="for the pure love of rebooting")
 
