@@ -721,20 +721,6 @@
                     type     : "ipmi"
                     username : "root"
             role: []
-        bantam:
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "192.168.228.89"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "Administrator"
-            role: [] # Too many problems with this system
         etnyre:
             arch:
                 - "amd64"
