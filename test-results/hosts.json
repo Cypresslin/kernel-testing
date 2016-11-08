@@ -9,11 +9,6 @@
         "processors" : "1 x Intel(R) Xeon(R) CPU 3430 @ 2.40 GHz (4 Cores)",
         "memory" : "8GB"
     },
-    "rukbah" : {
-        "platform" : "Dell PowerEdge R210 II",
-        "processors" : "Intel(R) Core(TM) i3-2100 CPU @ 3.10 GHz (2 Cores)",
-        "memory" : "4GB"
-    },
     "onza" : {
         "platform" : "Dell PowerEdge R310",
         "processors" : "1 x Intel(R) Xeon(R) CPU 3430 @ 2.40 GHz (4 Cores)",
@@ -34,11 +29,6 @@
         "processors" : "1 x AMD Opteron(tm) 4162 EE (6 Cores)",
         "memory" : "8GB"
     },
-    "phact" : {
-        "platform" : "Dell PowerEdge R210 II",
-        "processors" : "Intel(R) Core(TM) i3-2100 CPU @ 3.10 GHz (2 Cores)",
-        "memory" : "4GB"
-    },
     "modoc" : {
         "platform" : "IBM Power8 S822L",
         "processors" : "",
@@ -51,12 +41,6 @@
     },
 
     "etnyre" : {
-        "platform" : "HP ProLiant BL2x220c G7",
-        "processors" : "2 x Intel(R) Xeon(R) CPU E5640 @ 2.67GHz (4 Cores)",
-        "memory" : "24GB"
-    },
-
-    "bantam" : {
         "platform" : "HP ProLiant BL2x220c G7",
         "processors" : "2 x Intel(R) Xeon(R) CPU E5640 @ 2.67GHz (4 Cores)",
         "memory" : "24GB"
@@ -77,12 +61,6 @@
     "fuller" : {
         "platform" : "HP ProLiant BL465c Gen8",
         "processors" : "1 x AMD Opteron(TM) Processor 6272 (16 Cores)",
-        "memory" : "16GB"
-    },
-
-    "dagmar" : {
-        "platform" : "HP ProLiant BL460c Gen8",
-        "processors" : "1 x Intel(R) Xeon(R) CPU E5-2609 0 @ 2.40GHz (4 Cores)",
         "memory" : "16GB"
     },
 

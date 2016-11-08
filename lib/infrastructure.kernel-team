@@ -437,21 +437,6 @@ LabHW = {
         "role" : ["smb"],
         "locked" : False,
     },
-    "bantam" : {
-        "provisioning" : {
-            "server" : "thorin.ubuntu-ci",
-            "type" : "maas",
-        },
-        "jenkins server" : "kernel-jenkins",
-        "mac address" : "80:c1:6e:62:22:30",
-        "ipmi" : {
-            "ip" : "10.98.5.89",
-            "username" : "Administrator",
-            "passwd" : "insecure"
-        },
-        "role" : ["unknown"],
-        "locked" : False,
-    },
     "larsen" : {
         "provisioning" : {
             "server" : "thorin.ubuntu-ci",
@@ -496,21 +481,6 @@ LabHW = {
         },
         "role" : ["openstack"],
         "locked" : False,
-    },
-    "dagmar" : {
-        "provisioning" : {
-            "server" : "cobbler",
-            "type" : "cobbler",
-        },
-        "jenkins server" : "kernel-jenkins",
-        "mac address" : "10:60:4b:a9:e8:b8",
-        "ipmi" : {
-            "ip" : "10.98.5.88",
-            "username" : "Administrator",
-            "passwd" : "insecure"
-        },
-        "role" : ["openstack"],
-        "locked" : True,
     },
 }
 # vi:set ts=4 sw=4 expandtab:
