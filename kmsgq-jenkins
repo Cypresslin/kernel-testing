@@ -143,7 +143,7 @@ class JobsFactory(object):
             s.jd['tests'] = SRU_TestsList
         elif 'boot' == s.jd['op']:
             s.jd['tests'] = BOOT_TestsList
-        elif s.args.lkp:
+        elif s.cfg.lkp:
             s.jd['tests'] = LKP_TestsList
         else:
             s.jd['tests'] = ['default']
@@ -495,6 +495,9 @@ class Jobber(object):
             valid_keys = ['kernel.testing.request', 'kernel.publish', 'kernel.testing.job']
 
         valid_ops  = ['sru', 'boot']
+        if s.args.lkp:
+            valid_ops.append('livepatch-regression-test')
+            valid_ops.append('livepatch-snappy-client-payload-test')
 
         # Determine if the key in the current message is on that
         # we are going to process.
@@ -508,10 +511,19 @@ class Jobber(object):
                 cdebug('Invalid op: %s' % payload['op'])
                 continue
 
-            if payload['package'] not in s.valid_pkgs:
-                cdebug('Invalid package: %s' % payload['package'])
-                continue
+            if s.args.lkp:
+                if not payload['package'].startswith('livepatch'):
+                    cdebug('Invalid package: %s' % payload['package'])
+                    continue
+            else:
+                if payload['package'] not in s.valid_pkgs:
+                    cdebug('Invalid package: %s' % payload['package'])
+                    continue
 
+            # Just assume the 'generic' flavour is nothing is specified
+            if s.args.lkp:
+                if 'flavour' not in payload:
+                    payload['flavour'] = 'generic'
             s.enqueue(payload)
             break
 

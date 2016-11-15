@@ -19,7 +19,7 @@ class GetPublishedSourcesError(Exception):
 class KernelDebs:
     build = None
 
-    def __init__(self, version, series, arch):
+    def __init__(self, version, series, arch, flavour='generic'):
         center('KernelDebs.__init__')
         launchpad = Launchpad.login_anonymously('canonical-livepatch', 'production')
         ubuntu = launchpad.distributions["ubuntu"]
@@ -28,6 +28,7 @@ class KernelDebs:
         self.arch = arch
         self.version = version
         self.abi = version.split('-')[1].split('.')[0]
+        self.flavour = flavour
         cinfo('       arch: %s' % arch)
         cinfo('    version: %s' % version)
         cinfo('        abi: %s' % self.abi)
@@ -55,11 +56,12 @@ class KernelDebs:
 
     def get_urls(self):
         center('KernelDebs.get_urls')
-        appendage = '%s-%s-generic_%s_%s.deb' % (self.version.split('-')[0], self.abi, self.version, self.arch)
-        filenames = [
-            'linux-image-'       + appendage,
-            'linux-image-extra-' + appendage
-        ]
+
+        appendage = '%s-%s-%s_%s_%s.deb' % (self.version.split('-')[0], self.abi, self.flavour, self.version, self.arch)
+        filenames = [ 'linux-image-' + appendage ]
+        if self.flavour == 'generic':
+            # other flavours don't have the -extra package
+            filenames.append('linux-image-extra-' + appendage)
 
         urls = []
         url = ''

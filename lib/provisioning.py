@@ -213,7 +213,7 @@ class Base(object):
         center("Base::install_specific_kernel_version")
         s.progress('Installing Specific Kernel Version')
 
-        kd = KernelDebs(s.kernel, s.series, s.arch)
+        kd = KernelDebs(s.kernel, s.series, s.arch, s.flavour)
         urls = kd.get_urls()
         if urls:
             for url in urls:
