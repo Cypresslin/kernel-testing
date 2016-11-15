@@ -5,7 +5,7 @@ from datetime     import timedelta
 test_results = data['results']
 test_attributes = data['attributes']
 
-title = "%s - %s - %s" % (test_attributes['environ']['JOB_NAME'], test_attributes['kernel'], test_attributes['timestamp'])
+title = "%s - %s-%s - %s" % (test_attributes['environ']['JOB_NAME'], test_attributes['kernel'], test_attributes['kernel-flavour'], test_attributes['timestamp'])
 test_failures = False
 
 %>

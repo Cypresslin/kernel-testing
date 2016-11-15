@@ -5,7 +5,7 @@ from datetime     import timedelta
 test_results = data['results']
 test_attributes = data['attributes']
 
-title = "%s - %s - %s" % (target_suite.replace('autotest.', ''), test_attributes['kernel'], test_attributes['timestamp'])
+title = "%s - %s-%s - %s" % (target_suite.replace('autotest.', ''), test_attributes['kernel'], test_attributes['kernel-flavour'], test_attributes['timestamp'])
 
 %>
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">

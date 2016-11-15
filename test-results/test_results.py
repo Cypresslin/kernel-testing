@@ -141,9 +141,9 @@ class TestResults():
                                 suite = k['name'].replace('autotest.', '')
 
                                 if who == 'sru':
-                                    link = '%s/%s-%s-%s-index.html' % (kver, suite, kver, arch)
+                                    link = '%s-%s/%s-%s-%s-index.html' % (kver, flavour, suite, kver, arch)
                                 else:
-                                    link = '%s/%s-%s-%s-%s-index.html' % (kver, who, suite, kver, arch)
+                                    link = '%s-%s/%s-%s-%s-%s-index.html' % (kver, flavour, who, suite, kver, arch)
 
                                 if suite not in retval[series][kver][flavour][arch]:
                                     if suite == 'qrt_apparmor':
