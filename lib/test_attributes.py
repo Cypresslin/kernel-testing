@@ -76,11 +76,20 @@ class TestAttributes():
         try:
             import yaml
 
+            # are we running from a livepatch snap?
+            snap = False
+            result, output = sh('which canonical-livepatch', quiet=True)
+            if "snap" in output:
+                snap = True
             result, output = sh('sudo canonical-livepatch status', quiet=True)
             status = yaml.safe_load(''.join(output))
-            for k in status:
-                if k['livepatch']['installed'] is True:
-                    retval = k['livepatch']['version']
+            if snap == True:
+                # snap client uses a different format
+                retval = status['version']
+            else:
+                for k in status:
+                    if k['livepatch']['installed'] is True:
+                        retval = k['livepatch']['version']
         except ShellError:
             # For whatever reason it failed (probably not present) just ignore the failure.
             #
