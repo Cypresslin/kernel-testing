@@ -34,6 +34,7 @@ class TheApp():
                     cdebug('        kver: %s' % kver)
                     for flavour in data[who][series][kver]:
                         cdebug('            flavour: %s' % flavour)
+                        kver_flav = '%s&%s' % (kver, flavour)
                         for test_run in data[who][series][kver][flavour]:
                             attributes = test_run['attributes']
 
@@ -53,61 +54,62 @@ class TheApp():
                                     sr[suite] = {}
 
                                 if kver not in sr[suite]:
-                                    sr[suite][kver] = {}
+                                    sr[suite][kver] = {flavour: {}}
 
                                 if arch not in sr[suite][kver]:
-                                    sr[suite][kver][arch] = {}
+                                    sr[suite][kver][flavour][arch] = {}
 
-                                if ts not in sr[suite][kver][arch]:
-                                    sr[suite][kver][arch][ts] = {}
+                                if ts not in sr[suite][kver][flavour][arch]:
+                                    sr[suite][kver][flavour][arch][ts] = {}
 
                                 if suite == 'qrt_apparmor':
                                     cdebug("            New: %s %s %s %s %s" % (suite, kver, arch, ts, hostname), 'green')
 
-                                sr[suite][kver][arch][ts][hostname] = {}
-                                sr[suite][kver][arch][ts][hostname]['failed']  = k['tests failed']
-                                sr[suite][kver][arch][ts][hostname]['ran']     = k['tests run']
-                                sr[suite][kver][arch][ts][hostname]['passed']  = k['tests run'] - k['tests failed']
+                                sr[suite][kver][flavour][arch][ts][hostname] = {}
+                                sr[suite][kver][flavour][arch][ts][hostname]['failed']  = k['tests failed']
+                                sr[suite][kver][flavour][arch][ts][hostname]['ran']     = k['tests run']
+                                sr[suite][kver][flavour][arch][ts][hostname]['passed']  = k['tests run'] - k['tests failed']
 
                                 link = "%s__%s__%s/%s-test-suite.html" % (hostname, kver, ts, suite)
-                                sr[suite][kver][arch][ts][hostname]['link'] = link
+                                sr[suite][kver][flavour][arch][ts][hostname]['link'] = link
 
-                                sr[suite][kver][arch][ts][hostname]['timestamp'] = attributes['timestamp']
+                                sr[suite][kver][flavour][arch][ts][hostname]['timestamp'] = attributes['timestamp']
 
             for suite in sr:
                 cdebug('suite: %s' % suite)
                 for kver in sr[suite]:
                     cdebug('    kver: %s' % kver)
-                    for arch in sr[suite][kver]:
-                        cdebug('    arch: %s' % arch)
+                    for flavour in sr[suite][kver]:
+                        for arch in sr[suite][kver][flavour]:
+                            cdebug('    arch: %s' % arch)
 
-                        xs = suite.replace('autotest.', '')
-                        if who == 'sru':
-                            fname = '%s-%s-%s-index.html' % (suite.replace('autotest.', ''), kver, arch)
-                        else:
-                            fname = '%s-%s-%s-%s-index.html' % (who, suite.replace('autotest.', ''), kver, arch)
+                            xs = suite.replace('autotest.', '')
+                            if who == 'sru':
+                                fname = '%s-%s-%s-index.html' % (suite.replace('autotest.', ''), kver, arch)
+                            else:
+                                fname = '%s-%s-%s-%s-index.html' % (who, suite.replace('autotest.', ''), kver, arch)
 
-                        # Generate the testing, index page.
-                        #
-                        try:
-                            p = path.join(test_results.trr.cfg['repository_root'], kver)
-                            if not path.exists(p):
-                                makedirs(p)
+                            # Generate the testing, index page.
+                            #
+                            try:
+                                p = path.join(test_results.trr.cfg['repository_root'], '%s-%s' % (kver, flavour))
+                                if not path.exists(p):
+                                    makedirs(p)
 
-                            suite_index_template = Template(load_template('suite-index.mako'))
-                            cdebug('xs: %s' % xs, 'blue')
-                            template = suite_index_template.render(suite=xs, kver=kver, arch=arch, data=sr[suite][kver][arch], timestamp=datetime.utcnow())
-                            dest = path.join(test_results.trr.cfg['repository_root'], kver, fname)
-                            cdebug('Generating: %s' % dest, 'green')
-                            with open(dest, 'w') as f:
-                                f.write(template)
+                                suite_index_template = Template(load_template('suite-index.mako'))
+                                cdebug('xs: %s' % xs, 'blue')
+                                template = suite_index_template.render(suite=xs, kver=kver, arch=arch, data=sr[suite][kver][flavour][arch], timestamp=datetime.utcnow())
+                                dest = path.join(test_results.trr.cfg['repository_root'], '%s-%s' % (kver, flavour), fname)
+                                cdebug('Generating: %s' % dest, 'green')
+                                with open(dest, 'w') as f:
+                                    f.write(template)
 
-                        except:
-                            traceback = RichTraceback()
-                            for (filename, lineno, function, line) in traceback.traceback:
-                                print("File %s, line %s, in %s" % (filename, lineno, function))
-                                print(line, "\n")
-                            print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
+                            except:
+                                traceback = RichTraceback()
+                                for (filename, lineno, function, line) in traceback.traceback:
+                                    print("File %s, line %s, in %s" % (filename, lineno, function))
+                                    print(line, "\n")
+                                print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
 
 
     # main
