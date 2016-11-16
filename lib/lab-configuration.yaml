@@ -88,6 +88,7 @@
                 - "vivid"
                 - "wily"
                 - "yakkety"
+                - "zesty"
             proc-decoration: "zKVM"
         s2lp6g002:
             class: "test"
@@ -117,6 +118,7 @@
                 - "vivid"
                 - "wily"
                 - "xenial"
+                - "zesty"
             proc-decoration: "zKVM"
         s2lp3:
             class: "test"
@@ -146,6 +148,7 @@
                 - "vivid"
                 - "wily"
                 - "yakkety"
+                - "zesty"
             proc-decoration: "Ubuntu on LPAR"
         s2lp4:
             class: "test"
@@ -175,6 +178,7 @@
                 - "vivid"
                 - "wily"
                 - "xenial"
+                - "zesty"
             proc-decoration: "Ubuntu on LPAR"
         # s2lp5:
         #     class: "test"
@@ -220,6 +224,7 @@
                 - "vivid"
                 - "wily"
                 - "yakkety"
+                - "zesty"
             proc-decoration: "zVM"
         kernel02:
             class: "test"
@@ -249,6 +254,7 @@
                 - "vivid"
                 - "wily"
                 - "xenial"
+                - "zesty"
             proc-decoration: "zVM"
         # kernel03:
         #     class: "test"
