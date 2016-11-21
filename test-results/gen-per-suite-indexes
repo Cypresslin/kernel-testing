@@ -54,7 +54,10 @@ class TheApp():
                                     sr[suite] = {}
 
                                 if kver not in sr[suite]:
-                                    sr[suite][kver] = {flavour: {}}
+                                    sr[suite][kver] = {}
+
+                                if flavour not in sr[suite][kver]:
+                                    sr[suite][kver][flavour] = {}
 
                                 if arch not in sr[suite][kver]:
                                     sr[suite][kver][flavour][arch] = {}
