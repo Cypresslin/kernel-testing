@@ -471,7 +471,7 @@ class Jobber(object):
     #
     @property
     def valid_pkgs(s):
-        retval = ['linux']
+        retval = ['linux', 'linux-fips']
 
         db = Ubuntu().db
         for k in db:
