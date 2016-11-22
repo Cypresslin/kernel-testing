@@ -281,6 +281,11 @@
             jenkins server: "kernel-jenkins"
             locked: false
             power:
+                -
+                    address  : "192.168.228.92"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
             role: []
             scratch drive: ""
         michael:
@@ -292,6 +297,11 @@
             jenkins server: "kernel-jenkins"
             locked: false
             power:
+                -
+                    address  : "192.168.228.94"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
             role: []
             scratch drive: ""
         lagalla:
@@ -303,9 +313,14 @@
             jenkins server: "kernel-jenkins"
             locked: false
             power:
+                -
+                    address  : "192.168.228.93"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
             role: []
             scratch drive: ""
-        beketov:
+        rumford:
             class: "test"
             arch:
                 - "amd64"
@@ -314,6 +329,11 @@
             jenkins server: "kernel-jenkins"
             locked: false
             power:
+                -
+                    address  : "192.168.228.95"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
             role: []
             scratch drive: ""
         alkaid:
