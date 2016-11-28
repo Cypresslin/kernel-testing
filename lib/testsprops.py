@@ -238,6 +238,7 @@ TestProfiles = {
     },
 
     'ubuntu_bpf_jit' : {},
+    'ubuntu_bpf' : {},
 }
 
 # Test Collections may be defined, and will run the list of autotest tests in them
@@ -409,6 +410,7 @@ TestCollections = {
         'ubuntu_leap_seconds',
         'ubuntu_32_on_64',
         'ubuntu_bpf_jit',
+        'ubuntu_bpf',
     ],
 
     'sru-2' : [
