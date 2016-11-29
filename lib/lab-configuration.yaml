@@ -273,11 +273,11 @@
         #         - "wily"
         #     proc-decoration: "zVM"
         beketov:
-            class: "test"
+            class: "dev"
             arch:
                 - "amd64"
                 - "i386"
-            provisioner: "maas"
+            provisioner: "maas2"
             jenkins server: "kernel-jenkins"
             locked: false
             power:
@@ -286,14 +286,20 @@
                     password : "insecure"
                     type     : "ipmi"
                     username : "Administrator"
-            role: []
+            role:
+                - "ubuntu_boot"
+                - "sru-1"
+                - "xfstests"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
             scratch drive: ""
         michael:
-            class: "test"
+            class: "dev"
             arch:
                 - "amd64"
                 - "i386"
-            provisioner: "maas"
+            provisioner: "maas2"
             jenkins server: "kernel-jenkins"
             locked: false
             power:
@@ -302,14 +308,20 @@
                     password : "insecure"
                     type     : "ipmi"
                     username : "Administrator"
-            role: []
+            role:
+                - "qrt"
+                - "sru-2"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
             scratch drive: ""
         lagalla:
-            class: "test"
+            class: "dev"
             arch:
                 - "amd64"
                 - "i386"
-            provisioner: "maas"
+            provisioner: "maas2"
             jenkins server: "kernel-jenkins"
             locked: false
             power:
@@ -318,14 +330,19 @@
                     password : "insecure"
                     type     : "ipmi"
                     username : "Administrator"
-            role: []
+            role:
+                - "smoke"
+                - "sru-3"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
             scratch drive: ""
         rumford:
-            class: "test"
+            class: "dev"
             arch:
                 - "amd64"
                 - "i386"
-            provisioner: "maas"
+            provisioner: "maas2"
             jenkins server: "kernel-jenkins"
             locked: false
             power:
@@ -334,7 +351,11 @@
                     password : "insecure"
                     type     : "ipmi"
                     username : "Administrator"
-            role: []
+            role:
+                - "sru"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
             scratch drive: ""
         alkaid:
             class: "test"
