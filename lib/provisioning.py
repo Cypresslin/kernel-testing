@@ -6,6 +6,8 @@ from logging                            import error
 from datetime                           import datetime
 from time                               import sleep
 import re
+import yaml
+import json
 
 from lib.log                            import cdebug, cinfo, center, cleave
 from lib.hwe                            import HWE
@@ -199,7 +201,38 @@ class Base(object):
         center("Base::install_kernel_flavour")
         s.progress('Installing %s Kernel Flavour' % s.flavour)
 
-        if s.flavour == 'lowlatency':
+        extras = {}
+        try:
+            fid = path.join(path.dirname(argv[0]), 'flavour-extras')
+            with open(fid, 'r') as stream:
+                extras = yaml.safe_load(stream)
+        except FileNotFoundError as e:
+            print('Exception thrown and ignored. Did not find a flavour-extras file.')
+            print(fid)
+            pass # Ignore the error
+
+        if s.flavour in extras:
+            if 'key' in extras[s.flavour]['ppa']:
+                for line in extras[s.flavour]['ppa']['key']:
+                    cmd = '\'echo \"%s\" | sudo tee -a /tmp/%s.key\'' % (line, s.flavour)
+                    s.ssh(cmd)
+                cmd = 'sudo apt-key add /tmp/%s.key' % s.flavour
+                s.ssh(cmd)
+
+            if 'subscription' in extras[s.flavour]['ppa']:
+                for line in extras[s.flavour]['ppa']['subscription']:
+                    cmd = '\'echo \"%s\" | sudo tee -a /etc/apt/sources.list.d/%s.list\'' % (line, s.flavour)
+                    s.ssh(cmd)
+
+            s.ssh('sudo apt-get update', ignore_result=True)
+
+            if 'packages' in extras[s.flavour]:
+                for package in extras[s.flavour]['packages']:
+                    p = package.replace('%v', '.'.join(s.required_kernel_version.split('.')[0:-1]))
+                    cmd = 'sudo apt-get install --yes %s' % p
+                    s.ssh(cmd)
+
+        elif s.flavour == 'lowlatency':
             cmd = 'sudo apt-get install --yes linux-%s' % s.flavour
             s.ssh(cmd)
 
