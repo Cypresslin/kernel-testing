@@ -276,7 +276,6 @@
             class: "dev"
             arch:
                 - "amd64"
-                - "i386"
             provisioner: "maas2"
             jenkins server: "kernel-jenkins"
             locked: false
@@ -298,7 +297,6 @@
             class: "dev"
             arch:
                 - "amd64"
-                - "i386"
             provisioner: "maas2"
             jenkins server: "kernel-jenkins"
             locked: false
@@ -320,7 +318,6 @@
             class: "dev"
             arch:
                 - "amd64"
-                - "i386"
             provisioner: "maas2"
             jenkins server: "kernel-jenkins"
             locked: false
@@ -341,7 +338,6 @@
             class: "dev"
             arch:
                 - "amd64"
-                - "i386"
             provisioner: "maas2"
             jenkins server: "kernel-jenkins"
             locked: false
