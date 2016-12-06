@@ -65,6 +65,8 @@
             arch:
                 - "s390x.zKVM"
             provisioner: "manual"
+            series: "xenial"
+            hwe: false
             locked: false
             power: []
             role:
@@ -640,22 +642,19 @@
                 - "JuJu Controller"
             scratch drive: "/dev/sdb"
         amura:
-            class: "dev"
+            class: "private"
             arch:
                 - "amd64"
             provisioner: "maas2"
             jenkins server: "kernel-jenkins"
-            locked: false
+            locked: true
             power:
                 -
                     address  : "10.245.80.210"
                     password : "insecure"
                     type     : "ipmi"
                     username : "admin"
-            role:
-                - "ubuntu_boot"
-                - "smoke"
-            scratch drive: "/dev/sdb"
+            role: []
         pepe:
             class: "dev"
             arch:
