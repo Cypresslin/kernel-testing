@@ -9,7 +9,7 @@
     hyper-maas:
         server   : "10.229.32.21" # Hostname/address of the MAAS server
         profile  : "kernel"       # The MAAS profile to use
-        creds    : "Brs5KRmamVnDueYjHh:pY9tEvzHF4dBdf5xY7:HsuVtd763VWX8KVGWa8sAVP9DqfqnWJQ"
+        creds    : 6vD2SuKBHfAsWzwGVL:htYw2bA882aEmDnBcz:FsTW26vkMtnwTxbvKUp85pNvdwsVKkcQ
         user     : "kernel"       # When ssh'ing to the MAAS server, use this user
         type     : "maas"         # This _is_ a MAAS server (as opposed to a cobbler server)
         sut_user : "ubuntu"       # The user on the test system after it's been provisioned
