@@ -22,6 +22,10 @@ class MachineAllocationTimeout(Exception):
     def __init__(s, error):
         s.msg = error
 
+class MachineDeploymentFailed(Exception):
+    def __init__(s, error):
+        s.msg = error
+
 class MachineDeploymentTimeout(Exception):
     def __init__(s, error):
         s.msg = error
@@ -228,11 +232,13 @@ class MAAS(object):
         while True:
             if s.status(hostname) == MACHINE_STATUS.DEPLOYED:
                 break
+            elif s.status(hostname) == MACHINE_STATUS.FAILED_DEPLOYMENT:
+                raise MachineDeploymentFailed('Failed to deploy (%s).' % s.hostname)
 
             now = datetime.utcnow()
             delta = now - start
             if delta.seconds > timeout:
-                raise MachineDeploymentTimeout('The specified timeout (%d) was reached while waiting for the system (%s) to be allocated.' % ((timeout * 60), hostname))
+                raise MachineDeploymentTimeout('The specified timeout (%d) was reached while waiting for the system (%s) to be deployed.' % ((timeout * 60), hostname))
 
             sleep(30)
 
