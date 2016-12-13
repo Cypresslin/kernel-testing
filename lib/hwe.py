@@ -36,7 +36,7 @@ HWE = {
     },
     'yakkety' : {
         'series' : 'xenial',
-        'package' : 'linux-generic-lts-yakkety',
+        'package' : 'linux-generic-hwe-16.04-edge',
         'ppa' : True
     },
 }
