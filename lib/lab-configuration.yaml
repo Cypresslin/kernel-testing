@@ -289,7 +289,7 @@
                     username : "admin"
             role: []
         michael:
-            class: "dev"
+            class: "sru"
             arch:
                 - "amd64"
             provisioner: "maas2"
@@ -310,7 +310,7 @@
                 - "boot"
             scratch drive: ""
         lagalla:
-            class: "dev"
+            class: "sru"
             arch:
                 - "amd64"
             provisioner: "maas2"
@@ -330,7 +330,7 @@
                 - "boot"
             scratch drive: ""
         rumford:
-            class: "dev"
+            class: "sru"
             arch:
                 - "amd64"
             provisioner: "maas2"
@@ -635,7 +635,7 @@
                 - "JuJu Controller"
             scratch drive: "/dev/sdb"
         amura:
-            class: "private"
+            class: "sru"
             arch:
                 - "amd64"
             provisioner: "maas2"
@@ -655,7 +655,7 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
         pepe:
-            class: "dev"
+            class: "sru"
             arch:
                 - "amd64"
                 - "i386"
@@ -675,7 +675,7 @@
                 - "sru"
                 - "sru-1"
         fili:
-            class: "dev"
+            class: "sru"
             arch:
                 - "amd64"
                 - "i386"
@@ -693,7 +693,7 @@
                 - "sru"
                 - "sru-2"
         fozzie:
-            class: "dev"
+            class: "sru"
             arch:
                 - "amd64"
                 - "i386"
@@ -712,7 +712,7 @@
                 - "sru-3"
                 - "boot"
         gonzo:
-            class: "dev"
+            class: "sru"
             arch:
                 - "amd64"
                 - "i386"
