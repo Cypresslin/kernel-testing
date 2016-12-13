@@ -5,6 +5,7 @@ from os                                 import path
 from logging                            import error
 from datetime                           import datetime
 from time                               import sleep
+from logging                            import getLogger, CRITICAL
 import re
 import yaml
 import json
@@ -19,6 +20,16 @@ from lib.juju                           import JuJu
 from .configuration                     import Configuration
 from .kernel_debs                       import KernelDebs
 
+
+def logging_off():
+    logger = getLogger()
+    level = logger.getLevel()
+    logger.setLevel(CRITICAL)
+    return level
+
+def logging_on(level):
+    logger = getLogger()
+    logger.setLevel(level)
 
 # PS
 #
@@ -52,7 +63,10 @@ class PS(object):
     # provision
     #
     def provision(s):
-        return s.server.provision()
+        level = logging_off()
+        retval = s.server.provision()
+        logging_on(level)
+        return retval
 
 
 # Base
@@ -424,6 +438,8 @@ class Base(object):
             s.progress(progress)
 
         s.ssh('sudo reboot', quiet=quiet)
+        sleep(30)                       # Got the "Connection to <host> close by remote host" but was able
+                                        # to immediately get a valid "uname -vr" which shouldn't have happened.
         if wait:
             s.wait_for_target()
         cleave('Base::reboot')
