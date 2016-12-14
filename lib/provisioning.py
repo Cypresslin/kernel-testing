@@ -23,7 +23,7 @@ from .kernel_debs                       import KernelDebs
 
 def logging_off():
     logger = getLogger()
-    level = logger.getLevel()
+    level = logger.getEffectiveLevel()
     logger.setLevel(CRITICAL)
     return level
 
