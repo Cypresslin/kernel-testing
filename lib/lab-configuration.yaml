@@ -97,6 +97,7 @@
             arch:
                 - "s390x.zKVM"
             provisioner: "manual"
+            hwe: false
             locked: false
             power: []
             role:
@@ -127,6 +128,7 @@
             arch:
                 - "s390x.LPAR"
             provisioner: "manual"
+            hwe: false
             locked: false
             power: []
             role:
@@ -157,6 +159,7 @@
             arch:
                 - "s390x.LPAR"
             provisioner: "manual"
+            hwe: false
             locked: false
             power: []
             role:
@@ -203,6 +206,7 @@
             arch:
                 - "s390x.zVM"
             provisioner: "manual"
+            hwe: false
             locked: false
             power: []
             role:
@@ -233,6 +237,7 @@
             arch:
                 - "s390x.zVM"
             provisioner: "manual"
+            hwe: false
             locked: false
             power: []
             role:
