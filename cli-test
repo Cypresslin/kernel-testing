@@ -98,6 +98,7 @@ if __name__ == '__main__':
 
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
     parser.add_argument('--debug',    action='store_true', default=False, help='Print out lots of stuff.')
+    parser.add_argument('--nc',       action='store_true', default=False, help='Debut output should not be colored.')
     parser.add_argument('cloud',  metavar='CLOUD',  type=str, help='The cloud the instance is to be created in.')
     parser.add_argument('sut', metavar='SUT', type=str, help='')
     parser.add_argument('series', metavar='SERIES', type=str, help='')
@@ -106,15 +107,12 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    level = DEBUG
-    Clog.dbg = True
-    Clog.color = True
-    # if args.debug:
-    #     level = DEBUG
-    #     Clog.dbg = True
-    #     Clog.color = True
-    # else:
-    #     level = WARNING
+    if args.debug:
+        level = DEBUG
+        Clog.dbg = True
+        Clog.color = not args.nc
+    else:
+        level = WARNING
 
     basicConfig(filename=None, level=level, format="%(levelname)s - %(message)s")
 
