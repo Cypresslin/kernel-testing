@@ -6,7 +6,7 @@ if 'root' in data:
 else:
     kt_root = '/var/lib/jenkins'
 
-deploy  = '$KT/cl create %s $SUT %s %s' % (data['cloud'], data['series_name'], data['region'])
+deploy  = '$KT/cl create %s $SUT %s "%s"' % (data['cloud'], data['series_name'], data['region'])
 prepare = '$KT/cli-prepare %s $SUT --series %s' % (data['cloud'], data['series_name'])
 tester  = '$KT/cli-test %s $SUT %s %s $KT_ROOT' % (data['cloud'], data['series_name'], data['test'])
 %>
@@ -18,6 +18,13 @@ tester  = '$KT/cli-test %s $SUT %s %s $KT_ROOT' % (data['cloud'], data['series_n
     </description>
     <keepDependencies>false</keepDependencies>
     <properties>
+        <hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+            <categories>
+                <string>${data['cloud']}-throttle</string>
+            </categories>
+            <throttleEnabled>true</throttleEnabled>
+            <throttleOption>category</throttleOption>
+        </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
     </properties>
     <scm class="hudson.scm.NullSCM"/>
     <assignedNode>master</assignedNode>
@@ -40,9 +47,24 @@ SUT=${data['sut_name']}
 # Provision the hardware.
 #
 ${deploy}
+if [ $? -ne 0 ]; then
+    $KT/cl destroy ${data['cloud']} $SUT
+    exit -1
+fi
+
 SUT_IP=`$KT/cl user-and-ip ${data['cloud']} $SUT`
 ${prepare}
+if [ $? -ne 0 ]; then
+    $KT/cl destroy ${data['cloud']} $SUT
+    exit -1
+fi
+
 ${tester}
+if [ $? -ne 0 ]; then
+    $KT/cl destroy ${data['cloud']} $SUT
+    exit -1
+fi
+
 
 ARCHIVE=$JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_ID/archive
 scp $SSH_OPTIONS -r $SUT_IP:kernel-test-results $ARCHIVE
