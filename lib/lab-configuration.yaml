@@ -315,25 +315,19 @@
                 - "boot"
             scratch drive: ""
         lagalla:
-            class: "sru"
+            class: "private"
             arch:
                 - "amd64"
             provisioner: "maas2"
             jenkins server: "kernel-jenkins"
-            locked: false
+            locked: true
             power:
                 -
                     address  : "192.168.228.93"
                     password : "insecure"
                     type     : "ipmi"
                     username : "Administrator"
-            role:
-                - "smoke"
-                - "sru-3"
-                - "ubuntu_zfs_fstest"
-                - "ubuntu_zfs_xfs_generic"
-                - "boot"
-            scratch drive: ""
+            role: []
         rumford:
             class: "sru"
             arch:
