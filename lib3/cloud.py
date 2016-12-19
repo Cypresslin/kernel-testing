@@ -7,7 +7,6 @@ import json
 from time                               import sleep
 from lib.exceptions                     import ErrorExit
 from lib.log                            import center, cleave, cinfo, cdebug
-from lib.testsprops                     import TestCollections
 from lib3.shell                         import sh, Shell, ShellError
 from datetime                           import datetime
 
@@ -557,9 +556,17 @@ class CloudJobFactory(object):
         s.series = series
         s.region = region
         s.jenkins = JenkinsServerLocal.connect()
+        s.props_imported = False
         cleave(s.__class__.__name__ + '.__init__')
 
     def expand(s, collection):
+        # By importing the TestCollections here, this way, we automatically
+        # pick up changes to lib.tessprops without having to kill and restart
+        # the utility (kmsgq-aws).
+        #
+        from lib.testsprops  import TestCollections
+        s.props_imported = True
+
         result = []
         if collection in TestCollections:
             for test in TestCollections[collection]:
@@ -620,7 +627,8 @@ class CloudJobFactory(object):
     def create_jobs(s):
         center(s.__class__.__name__ + '.create_jobs')
         cl = Cloud.construct(s.cloud)
-        for test in s.expand(s.tests):
+        tests = s.expand(s.tests)
+        for test in tests:
             job_name = s.job_name(test)
             job_data = {
                 'job_name'    : job_name,
