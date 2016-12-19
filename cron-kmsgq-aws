@@ -1,4 +1,5 @@
 #!/bin/sh
 # Start the daemon in the background.
-flock -nx /tmp/kmsgq-aws.lck -c "$HOME/kernel-testing/kmsgq-aws --debug --local-msgqueue-port 9123 --aws&"
-flock -nx /tmp/kmsgq-gce.lck -c "$HOME/kernel-testing/kmsgq-aws --debug --local-msgqueue-port 9123 --gce&"
+flock -nx /tmp/kmsgq-aws.lck -c "$HOME/kernel-testing/kmsgq-aws --local-msgqueue-port 9123 --aws&"
+flock -nx /tmp/kmsgq-gce.lck -c "$HOME/kernel-testing/kmsgq-aws --local-msgqueue-port 9123 --gce&"
+flock -nx /tmp/kmsgq-azure.lck -c "$HOME/kernel-testing/kmsgq-azure --local-msgqueue-port 9123 --azure&"
