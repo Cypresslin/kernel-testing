@@ -449,16 +449,50 @@ TestCollections = {
 
     # Cloud tests
     #
-    'gce' : [
+    'cloud' : [
         'qrt',
+        'ubuntu_lxc',
+        'ubuntu_seccomp',
+        'ubuntu_kvm_unit_tests',
+        'ubuntu_leap_seconds',
+        'ubuntu_32_on_64',
+        'ubuntu_kernel_selftests',
+        'ubuntu_unionmount_overlayfs_suite',
+        'ubuntu_aufs_smoke_test',
+        'ubuntu_stress_smoke_test',
+        'ubuntu_zfs_smoke_test',
+        'ubuntu_fan_smoke_test',
+        'ubuntu_squashfs_smoke_test',
+        'ubuntu_loop_smoke_test',
+        'aiostress',
+        'ebizzy',
+        'fs_mark',
+        'fsx',
+        'hwclock',
+        'iosched_bugs',
+        'iperf',
+        'ipv6connect',
+        'libhugetlbfs',
+        'monotonic_time',
+        'rmaptest',
+        'rtc',
+        'scrashme',
+        'signaltest',
+        'synctest',
+        'wb_kupdate',
+        'aio_dio_bugs',
+    ],
+
+    'gce' : [
+        'cloud',
     ],
 
     'aws' : [
-        'qrt',
+        'cloud',
     ],
 
     'azure' : [
-        'qrt',
+        'cloud',
     ],
 }
 
