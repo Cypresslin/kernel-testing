@@ -343,27 +343,6 @@
                     type     : "ipmi"
                     username : "admin"
             role: []
-        michael:
-            class: "sru"
-            arch:
-                - "amd64"
-            provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
-            locked: false
-            power:
-                -
-                    address  : "192.168.228.94"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "Administrator"
-            role:
-                - "qrt"
-                - "sru-2"
-                - "ubuntu_ecryptfs"
-                - "ubuntu_zfs_fstest"
-                - "ubuntu_zfs_xfs_generic"
-                - "boot"
-            scratch drive: ""
         lagalla:
             class: "private"
             arch:
@@ -378,6 +357,33 @@
                     type     : "ipmi"
                     username : "Administrator"
             role: []
+        michael:
+            class: "sru"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power:
+                -
+                    address  : "192.168.228.94"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "Administrator"
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+                - "virt"
         rumford:
             class: "sru"
             arch:
@@ -392,11 +398,19 @@
                     type     : "ipmi"
                     username : "Administrator"
             role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
                 - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
-            scratch drive: ""
+                - "virt"
         alkaid:
             class: "test"
             arch:
