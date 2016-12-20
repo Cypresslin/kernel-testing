@@ -60,6 +60,56 @@
     # to me.
     #
     systems:
+        naumann:
+            class: "sru"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+                - "virt"
+            series-blacklist:
+                - "precise"
+                - "trusty"
+        secchi:
+            class: "sru"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "kernel-jenkins"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+                - "virt"
+            series-blacklist:
+                - "precise"
+                - "trusty"
         s2lp6g001:
             class: "test"
             arch:
