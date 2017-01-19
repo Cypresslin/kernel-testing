@@ -47,6 +47,27 @@ class RequestHandler(threading.Thread):
         s.alive.set()
         s.cfg = cfg
 
+    # store_jobs
+    #
+    def store_jobs(s, request, jobs):
+        center(s.__class__.__name__ + '.store_jobs')
+        msg = {}
+        msg['key']  = 'kernel.test.jobs.created'
+        msg['bug-id'] = request['bug-id']
+        msg['jobs'] = jobs
+        file_name  = ''
+        file_name += request['series-name']
+        file_name += '__'
+        file_name += request['version']
+        file_name += '__'
+        file_name += s.cfg['cloud']
+        file_name += '.msg'
+        file_name  = path.join(path.expanduser('~'), 'job-messages', file_name)
+        with open(file_name, "w") as fid:
+            fid.write(json.dumps(msg, sort_keys=True, indent=4))
+            fid.write('\n')
+        cleave(s.__class__.__name__ + '.store_jobs')
+
     # handle_request
     #
     def handle(s, request):
@@ -59,8 +80,8 @@ class RequestHandler(threading.Thread):
                                   region=s.cfg['region'],
                                   tests=s.cfg['cloud'])
 
-        factory.create_jobs()
-
+        jobs = factory.create_jobs()
+        s.store_jobs(request, jobs)
         cleave(s.__class__.__name__ + '.handle')
 
     # dequeue
@@ -179,7 +200,7 @@ class JobFactory(object):
             if args.aws:
                 queue = 'kernel-aws-publishing-monitor'
                 cfg['cloud'] = 'aws'
-                cfg['region'] = 'us-west-2'
+                cfg['region'] = 'us-west-1'
             elif args.gce:
                 queue = 'kernel-gce-publishing-monitor'
                 cfg['cloud'] = 'gce'
