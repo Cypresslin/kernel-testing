@@ -27,7 +27,7 @@ rmdir autotest/client/tests/docker
 mv autotest-docker/ autotest/client/tests/docker
 
 set +e
-kernel-testing/dep8-runner --debug
+kernel-testing/dep8-runner
 RESULT=$?
 
 # Collect the artifacts
