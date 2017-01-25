@@ -1,8 +1,19 @@
 ---
-    # The Jenkins server section. My Jenkins server is named 'jenkins'.
+    # The Jenkins server section.
+    # Kernel Team's Jenkins server
     #
     jenkins:
-        server_url: "http://10.245.80.50:8080"
+        server_url: "http://kernel-jenkins.kernel:8080"  # http://10.245.80.50:8080"
+
+    # Kernel Team's Jenkins 2.0 server
+    #
+    jenkins2:
+        server_url: "http://10.246.72.4:8080/"
+
+    # Kernel Team's Live-Patching Jenkins server
+    #
+    jenkins-lkp:
+        server_url: "http://10.245.81.169:8080/"
 
     # We have 2 McDivitt chartridges on the hyperscale MAAS server.
     #
@@ -65,7 +76,7 @@
             arch:
                 - "amd64"
             provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins2"
             locked: false
             power: []
             role:
@@ -90,7 +101,7 @@
             arch:
                 - "amd64"
             provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins2"
             locked: false
             power: []
             role:
@@ -115,6 +126,7 @@
             arch:
                 - "s390x.zKVM"
             provisioner: "manual"
+            jenkins server: "jenkins2"
             series: "xenial"
             hwe: false
             locked: false
@@ -147,6 +159,7 @@
             arch:
                 - "s390x.zKVM"
             provisioner: "manual"
+            jenkins server: "jenkins2"
             hwe: false
             locked: false
             power: []
@@ -178,6 +191,7 @@
             arch:
                 - "s390x.LPAR"
             provisioner: "manual"
+            jenkins server: "jenkins2"
             hwe: false
             locked: false
             power: []
@@ -209,6 +223,7 @@
             arch:
                 - "s390x.LPAR"
             provisioner: "manual"
+            jenkins server: "jenkins2"
             hwe: false
             locked: false
             power: []
@@ -256,6 +271,7 @@
             arch:
                 - "s390x.zVM"
             provisioner: "manual"
+            jenkins server: "jenkins2"
             hwe: false
             locked: false
             power: []
@@ -287,6 +303,7 @@
             arch:
                 - "s390x.zVM"
             provisioner: "manual"
+            jenkins server: "jenkins2"
             hwe: false
             locked: false
             power: []
@@ -334,7 +351,7 @@
             arch:
                 - "amd64"
             provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins2"
             locked: true
             power:
                 -
@@ -348,7 +365,7 @@
             arch:
                 - "amd64"
             provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins2"
             locked: true
             power:
                 -
@@ -362,7 +379,7 @@
             arch:
                 - "amd64"
             provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins2"
             locked: false
             power:
                 -
@@ -389,7 +406,7 @@
             arch:
                 - "amd64"
             provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins2"
             locked: false
             power:
                 -
@@ -417,7 +434,7 @@
                 - "amd64"
                 - "i386"
             provisioner: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins"
             locked: false
             power:
                 -
@@ -433,7 +450,7 @@
                 - "amd64"
                 - "i386"
             provisioner: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins"
             locked: false
             power:
                 -
@@ -448,7 +465,7 @@
                 - "amd64"
                 - "i386"
             provisioner: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins"
             locked: false
             power:
                 -
@@ -468,7 +485,7 @@
                 - "amd64"
                 - "i386"
             provisioner: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins"
             locked: false
             power:
                 -
@@ -489,7 +506,7 @@
                 - "amd64"
                 - "i386"
             provisioner: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins"
             locked: false
             power:
                 -
@@ -511,7 +528,7 @@
             arch:
                 - "ppc64el"
             provisioner: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins"
             locked: false
             power:
                 -
@@ -543,7 +560,7 @@
                 - "arm64"
             sub-arch: "xgene-uboot"
             provisioner: "hyper-maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins2"
             locked: false
             power:
                 -
@@ -571,7 +588,7 @@
                 - "arm64"
             sub-arch: "xgene-uboot"
             provisioner: "hyper-maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins2"
             locked: false
             power:
                 -
@@ -603,7 +620,7 @@
             arch:
                 - "amd64"
             provisioner: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins-lkp"
             locked: false
             power:
                 -
@@ -625,7 +642,7 @@
             arch:
                 - "amd64"
             provisioner: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins-lkp"
             locked: false
             power:
                 -
@@ -644,7 +661,7 @@
             arch:
                 - "amd64"
             provisioner: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins-lkp"
             locked: false
             power:
                 -
@@ -669,7 +686,7 @@
             arch:
                 - "amd64"
             provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins"
             locked: true
             power:
                 -
@@ -686,7 +703,7 @@
                 - "amd64"
                 - "i386"
             provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins2"
             locked: true
             power:
                 -
@@ -702,7 +719,7 @@
             arch:
                 - "amd64"
             provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins2"
             locked: true
             power:
                 -
@@ -725,7 +742,7 @@
             provisioner: "maas2"
             cloud: "kernel-maas"
             domain: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins2"
             locked: false
             power:
                 -
@@ -743,7 +760,7 @@
                 - "amd64"
                 - "i386"
             provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins2"
             locked: false
             power:
                 -
@@ -761,7 +778,7 @@
                 - "amd64"
                 - "i386"
             provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins2"
             locked: false
             power:
                 -
@@ -780,7 +797,7 @@
                 - "amd64"
                 - "i386"
             provisioner: "maas2"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins2"
             locked: false
             power:
                 -
@@ -807,7 +824,7 @@
                 - "amd64"
                 - "i386"
             provisioner: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins"
             locked: false
             power:
                 -
@@ -821,7 +838,7 @@
                 - "amd64"
                 - "i386"
             provisioner: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins"
             locked: false
             power:
                 -
@@ -837,7 +854,7 @@
                 - "amd64"
                 - "i386"
             provisioner: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins"
             locked: false
             power:
                 -
@@ -851,7 +868,7 @@
                 - "amd64"
                 - "i386"
             provisioner: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins"
             locked: false
             power:
                 -
@@ -865,7 +882,7 @@
                 - "amd64"
                 - "i386"
             provisioner: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins"
             locked: false
             power:
                 -
@@ -879,7 +896,7 @@
                 - "amd64"
                 - "i386"
             provisioner: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins"
             locked: false
             power:
                 -
@@ -898,7 +915,7 @@
                 - "amd64"
                 - "i386"
             provisioner: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins"
             locked: false
             power:
                 -
@@ -915,7 +932,7 @@
                 - "amd64"
                 - "i386"
             provisioner: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins"
             locked: true
             power:
                 -
@@ -930,7 +947,7 @@
                 - "amd64"
                 - "i386"
             provisioner: "maas"
-            jenkins server: "kernel-jenkins"
+            jenkins server: "jenkins"
             locked: true
             power:
                 -
