@@ -76,7 +76,7 @@ class JobsFactory(object):
             s.system_class = 'dev'
             s.job_template = s.load_template('dev-jenkins-test-job.mako')
         else:
-            s.system_class = 'test'
+            s.system_class = 'sru-testing'
             s.job_template = s.load_template('standard-jenkins-test-job.mako')
 
 

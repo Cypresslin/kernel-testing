@@ -72,7 +72,7 @@
     #
     systems:
         naumann:
-            class: "sru"
+            class: "sru-testing"
             arch:
                 - "amd64"
             provisioner: "maas2"
@@ -97,7 +97,7 @@
                 - "precise"
                 - "trusty"
         secchi:
-            class: "sru"
+            class: "sru-testing"
             arch:
                 - "amd64"
             provisioner: "maas2"
@@ -122,7 +122,7 @@
                 - "precise"
                 - "trusty"
         s2lp6g001:
-            class: "test"
+            class: "sru-testing"
             arch:
                 - "s390x.zKVM"
             provisioner: "manual"
@@ -155,7 +155,7 @@
                 - "zesty"
             proc-decoration: "zKVM"
         s2lp6g002:
-            class: "test"
+            class: "sru-testing"
             arch:
                 - "s390x.zKVM"
             provisioner: "manual"
@@ -187,7 +187,7 @@
                 - "zesty"
             proc-decoration: "zKVM"
         s2lp3:
-            class: "test"
+            class: "sru-testing"
             arch:
                 - "s390x.LPAR"
             provisioner: "manual"
@@ -219,7 +219,7 @@
                 - "zesty"
             proc-decoration: "Ubuntu on LPAR"
         s2lp4:
-            class: "test"
+            class: "sru-testing"
             arch:
                 - "s390x.LPAR"
             provisioner: "manual"
@@ -267,7 +267,7 @@
         #         - "wily"
         #     proc-decoration: "Ubuntu on LPAR"
         kernel01:
-            class: "test"
+            class: "sru-testing"
             arch:
                 - "s390x.zVM"
             provisioner: "manual"
@@ -299,7 +299,7 @@
                 - "zesty"
             proc-decoration: "zVM"
         kernel02:
-            class: "test"
+            class: "sru-testing"
             arch:
                 - "s390x.zVM"
             provisioner: "manual"
@@ -375,7 +375,7 @@
                     username : "Administrator"
             role: []
         michael:
-            class: "sru"
+            class: "sru-testing"
             arch:
                 - "amd64"
             provisioner: "maas2"
@@ -402,7 +402,7 @@
                 - "boot"
                 - "virt"
         rumford:
-            class: "sru"
+            class: "sru-testing"
             arch:
                 - "amd64"
             provisioner: "maas2"
@@ -555,7 +555,7 @@
                 - "lucid"
                 - "precise"
         ms10-34-mcdivittB0-kernel:
-            class: "test"
+            class: "sru-testing"
             arch:
                 - "arm64"
             sub-arch: "xgene-uboot"
@@ -583,7 +583,7 @@
                 - "precise"
                 - "xenial"
         ms10-35-mcdivittB0-kernel:
-            class: "test"
+            class: "sru-testing"
             arch:
                 - "arm64"
             sub-arch: "xgene-uboot"
@@ -715,7 +715,7 @@
                 - "JuJu Controller"
             scratch drive: "/dev/sdb"
         amura:
-            class: "sru"
+            class: "sru-testing"
             arch:
                 - "amd64"
             provisioner: "maas2"
@@ -735,7 +735,7 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
         pepe:
-            class: "sru"
+            class: "sru-testing"
             arch:
                 - "amd64"
                 - "i386"
@@ -755,7 +755,7 @@
                 - "sru"
                 - "sru-1"
         fili:
-            class: "sru"
+            class: "sru-testing"
             arch:
                 - "amd64"
                 - "i386"
@@ -773,7 +773,7 @@
                 - "sru"
                 - "sru-2"
         fozzie:
-            class: "sru"
+            class: "sru-testing"
             arch:
                 - "amd64"
                 - "i386"
@@ -792,7 +792,7 @@
                 - "sru-3"
                 - "boot"
         gonzo:
-            class: "sru"
+            class: "sru-testing"
             arch:
                 - "amd64"
                 - "i386"
