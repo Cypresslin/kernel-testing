@@ -74,9 +74,21 @@ if 'version' in data:
 
 provision += ' $SUT'
 %>
-    # Provision the hardware.
+set +e
+# Provision the hardware.
+#
+${provision}
+if [ $? -ne 0 ]; then
+    cat provisioning.log
+    $KT/remote ubuntu@$SUT --kernel-test-list="${data['test']}"
+
+    # Publish the results. This *MUST* always be the very last thing the job does.
     #
-    ${provision} || (cat provisioning.log;exit 1)
+    if [ ! -e $ARCHIVE/no-tests ]; then
+        $KT/test-results/mk-ingest-job --job-name=$JOB_NAME --build-id=$BUILD_ID
+    fi
+    exit -1
+fi
 
 % if 'no-test' not in data:
     # Kick off testing on the newly provisioned SUT
