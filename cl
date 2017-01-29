@@ -89,9 +89,9 @@ class TheApp():
         try:
             images = CloudImages(s.args.cloud, series=s.args.series, region=s.args.region).images
             if s.args.cloud == 'aws':
-                print('%-10s  %-15s  %-10s  %-10s  %-10s  %-20s  %32s  %s' % ('Release', 'Iteam Name', 'Virt', 'Store', 'Region', 'Updated', 'AMI'))
+                print('%-15s  %-10s  %-10s  %-10s  %-20s  %-32s  %s' % ('Release', 'Iteam Name', 'Virt', 'Store', 'Region', 'Updated', 'AMI'))
                 for image in images:
-                    print('%-10s  %-15s  %-10s  %-10s  %-10s  %-20s  %32s  %s' % (image['release'], image['item_name'], image['virt'], image['root_store'], image['region'], image['updated'], image['id']))
+                    print('%-15s  %-10s  %-10s  %-10s  %-20s  %-32s  %s' % (image['release'], image['item_name'], image['virt'], image['root_store'], image['region'], image['updated'], image['id']))
                     if s.args.details:
                         for k, v in image.items():
                             print('    %s : %s' % (k, v))
