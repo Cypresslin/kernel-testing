@@ -36,6 +36,11 @@ HWE = {
     },
     'yakkety' : {
         'series' : 'xenial',
+        'package' : 'linux-generic-hwe-16.04',
+        'ppa' : True
+    },
+    'zesty' : {
+        'series' : 'xenial',
         'package' : 'linux-generic-hwe-16.04-edge',
         'ppa' : True
     },
