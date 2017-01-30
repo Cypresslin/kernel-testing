@@ -578,10 +578,17 @@
                 - "xfstests"
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_xfs_generic"
+                - "ubuntu_boot"
+                - "sru-1"
+                - "sru-3"
+                - "xfstests"
+                - "smoke"
+                - "ubuntu_zfs_fstest"
+                - "boot"
+                - "virt"
             series-blacklist:
                 - "lucid"
                 - "precise"
-                - "xenial"
         ms10-35-mcdivittB0-kernel:
             class: "sru-testing"
             arch:
@@ -599,6 +606,14 @@
                     username : "Administrator"
             role:
                 - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-2"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_xfs_generic"
+                - "ubuntu_boot"
                 - "sru-1"
                 - "sru-3"
                 - "xfstests"
@@ -609,7 +624,6 @@
             series-blacklist:
                 - "lucid"
                 - "precise"
-                - "yakkety"
 
 
         # --------------------------------------------------------------------------
