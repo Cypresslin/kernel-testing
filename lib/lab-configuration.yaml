@@ -555,7 +555,7 @@
                 - "lucid"
                 - "precise"
         ms10-34-mcdivittB0-kernel:
-            class: "sru-testing"
+            class: "test-development"
             arch:
                 - "arm64"
             sub-arch: "xgene-uboot"
