@@ -1,0 +1,84 @@
+#!/usr/bin/env python3
+#
+
+from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import basicConfig, DEBUG, INFO
+from lib.log                            import center, cleave
+import json
+
+# Results
+#
+class Results(object):
+    '''
+    '''
+
+    # __init__
+    #
+    def __init__(s):
+        '''
+        '''
+        pass
+
+    # main
+    #
+    def main(s, args):
+        center(s.__class__.__name__ + '.main')
+        retval = 0
+
+        with open(args.results, 'r') as f:
+            data = json.load(f)
+
+        seed = {}
+        for k in data:
+            if k == 'suites-results':
+                continue
+            seed[k] = data[k]
+
+        for arch in data['suites-results']:
+            seed['arch'] = arch
+
+            for suite in data['suites-results'][arch]:
+                seed['suite'] = suite
+                seed['jobs'] = data['suites-results'][arch][suite]['jobs']
+
+                fname = '%s-%s-%s-suite-results.json' % (suite, data['kernel'], arch)
+                with open(fname, 'w') as f:
+                    f.write(json.dumps(seed, sort_keys=True, indent=4))
+
+        cleave(s.__class__.__name__ + '.main (%d)' % retval)
+        return retval
+
+if __name__ == '__main__':
+    retval = -1
+
+    # Command line argument setup and initial processing
+    #
+    app_description = '''
+    '''
+    app_epilog = '''
+    '''
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--debug', action='store_true', default=False, help='')
+    parser.add_argument('results', help='')
+
+    args = parser.parse_args()
+
+    # If logging parameters were set on the command line, handle them
+    # here.
+    #
+    if args.debug:
+        log_format = "%(levelname)s - %(message)s"
+        basicConfig(level=DEBUG, format=log_format)
+    else:
+        log_format = "%(message)s"
+        basicConfig(level=INFO, format=log_format)
+
+    try:
+        app = Results()
+        retval = app.main(args)
+    except KeyboardInterrupt:
+        pass
+
+    exit(retval)
+
+# vi:set ts=4 sw=4 expandtab syntax=python:

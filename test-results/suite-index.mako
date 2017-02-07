@@ -57,9 +57,9 @@
                                 <td width="100%" valign="top">
                                     <table width="100%" style="font-size: 0.9em" border="0"> <!-- SRU Data -->
                                         <tr>
-                                            <td style="background: #e9e7e5;" width="33%" align="left"><strong>${suite}</strong></td>
-                                            <td style="background: #e9e7e5;" width="33%" align="center"><strong>${kver} </strong></td>
-                                            <td style="background: #e9e7e5;" width="33%" align="right"><strong>${arch} </strong></td>
+                                            <td style="background: #e9e7e5;" width="33%" align="left"><strong>${data['suite']}</strong></td>
+                                            <td style="background: #e9e7e5;" width="33%" align="center"><strong>${data['kernel']} </strong></td>
+                                            <td style="background: #e9e7e5;" width="33%" align="right"><strong>${data['arch']} </strong></td>
                                         </tr>
                                         <tr>
                                             <td width="100%" colspan="3">
@@ -74,18 +74,22 @@
                                                             <th align="center" width="45">Failed</th>
                                                             <th>&nbsp;</th>
                                                         </tr>
-                                                            % for ts in data:
-                                                                % for host in data[ts]:
-                                                                <tr>
-                                                                    <td><a href="${ host }.html">${ host }</a></td>
-                                                                    <td align="center">${ data[ts][host]['timestamp'] }</a></td>
-                                                                    <td align="center"><a href="${ data[ts][host]['link'] }">${ data[ts][host]['ran'] }</a></td>
-                                                                    <td align="center"><a href="${ data[ts][host]['link'] }">${ data[ts][host]['passed'] }</a></td>
-                                                                    <td align="center"><a href="${ data[ts][host]['link'] }">${ data[ts][host]['failed'] }</a></td>
-                                                                    <td>&nbsp;</td>
-                                                                </tr>
-                                                                % endfor
-                                                            % endfor
+                                                        % for i in range(0, len(data['jobs'])):
+                                                            <%
+                                                            (jname, host, passed, failed) = data['jobs'][i]
+                                                            (j, k, timestamp) = jname.split('__')
+                                                            ran = passed + failed
+                                                            link = '%s/%s-test-suite.html' % (jname, data['suite'])
+                                                            %>
+                                                            <tr>
+                                                                <td><a href="${ host }.html">${ host }</a></td>
+                                                                <td align="center">${timestamp}</a></td>
+                                                                <td align="center"><a href="${link}">${ran}</a></td>
+                                                                <td align="center"><a href="${link}">${passed}</a></td>
+                                                                <td align="center"><a href="${link}">${failed}</a></td>
+                                                                <td>&nbsp;</td>
+                                                            </tr>
+                                                        % endfor
                                                     </tbody>
                                                 </table>
                                             </td>

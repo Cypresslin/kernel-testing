@@ -1,0 +1,174 @@
+#!/usr/bin/env python3
+#
+
+from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import basicConfig, DEBUG, INFO
+from lib.log                            import center, cleave, cdebug, cinfo
+import re
+import os
+import json
+
+# Kinfo
+#
+class Kinfo(object):
+    # __init__
+    #
+    def __init__(s, txt):
+        '''
+        '''
+        #                                  .- kernel version (group(2))
+        #                                 /          .- version/abi separator (group(3))
+        #                                /          /
+        ver_rc     = re.compile("(\d+\.\d+\.\d+)([-\.])(\d+)\.(\d+)([~a-z\d.]*)")
+        #                                                /      /       /
+        #                                               /      /       .- backport extra (m.group(6))
+        #                                              /      .- upload number (m.group(5))
+        #                                             .- abi (group(4))
+        m = ver_rc.search(txt)
+        if m is not None:
+            cdebug('version: %s%s%s.%s%s' % (m.group(1), m.group(2), m.group(3), m.group(4), m.group(5)))
+            cdebug(' kernel: %s' % m.group(1))
+            cdebug('    abi: %s' % m.group(3))
+
+            setattr(s, 'name', m.group(1))
+            setattr(s, 'version', '%s%s%s.%s%s' % (m.group(1), m.group(2), m.group(3), m.group(4), m.group(5)))
+            setattr(s, 'kernel', m.group(1))
+            setattr(s, 'abi', m.group(3))
+
+            s.valid = True
+        else:
+            cdebug('No match.')
+
+# Results
+#
+class Results(object):
+    '''
+    '''
+
+    # __init__
+    #
+    def __init__(s):
+        '''
+        '''
+        pass
+
+    # arch_from_proc
+    #
+    def arch_from_proc(s, proc):
+        if proc == 'x86_64':
+            arch = 'amd64'
+        elif proc == 'i686':
+            arch = 'i386'
+        elif proc == 'athlon':
+            arch = 'i386'
+        elif proc == 'aarch64':
+            arch = 'arm64'
+        else:
+            arch = proc
+        return arch
+
+    def jobs(s, root):
+        center(s.__class__.__name__ + '.jobs')
+        retval = []
+        for fid in os.listdir(root):
+            if os.path.isdir(os.path.join(root, fid)):
+                retval.append([os.path.join(root, fid), fid])
+        cleave(s.__class__.__name__ + '.jobs')
+        return retval
+
+    # arch
+    #    suite
+    #        job
+
+    def aggregate_results(s, root):
+        center(s.__class__.__name__ + '.aggregate_results')
+        retval = {}
+        retval['suites-results'] = {}
+        for job in s.jobs(args.root):
+            cdebug(os.path.join(job[0], 'results.json'))
+            with open(os.path.join(job[0], 'results.json'), 'r') as f:
+                data = json.load(f)
+
+            retval['distro-release-name'] = data['attributes']['distro-release-name']
+            retval['kernel-flavour']      = data['attributes']['kernel-flavour']
+            retval['kernel']              = data['attributes']['kernel']
+
+            suites_results = retval['suites-results']
+            arch = s.arch_from_proc(data['attributes']['platform']['proc'])
+            results = data['results']
+            for suite in results['suites']:
+                name = suite['name'].replace('autotest.', '')
+
+                if arch not in suites_results:
+                    suites_results[arch] = {}
+                if name not in suites_results[arch]:
+                    suites_results[arch][name] = {}
+                    suites_results[arch][name]['jobs'] = []
+                    suites_results[arch][name]['totals'] = (0, 0)
+
+                # Url which points at the per-suite results
+                #
+                link  = '%s-%s' % (retval['kernel'], retval['kernel-flavour'])
+                link += '/'
+                link += '%s-%s-%s-index.html' % (name, retval['kernel'], arch)
+                suites_results[arch][name]['link'] = link
+
+                # Test suite totals
+                #
+                passed = suites_results[arch][name]['totals'][0] + suite['tests run'] - suite['tests failed']
+                failed = suites_results[arch][name]['totals'][1] + suite['tests failed']
+                suites_results[arch][name]['totals'] = (passed, failed)
+
+                hostname = data['attributes']['platform']['hostname']
+                suites_results[arch][name]['jobs'].append((job[1], hostname, suite['tests run'] - suite['tests failed'], suite['tests failed']))
+
+        cleave(s.__class__.__name__ + '.aggregate_results')
+        return retval
+
+    # main
+    #
+    def main(s, args):
+        center(s.__class__.__name__ + '.main')
+        retval = 0
+        cinfo('root: %s' % args.root, 'cyan')
+
+        data = s.aggregate_results(args.root)
+        print(json.dumps(data, sort_keys=True, indent=4))
+
+        cleave(s.__class__.__name__ + '.main (%d)' % retval)
+        return retval
+
+if __name__ == '__main__':
+    retval = -1
+
+    # Command line argument setup and initial processing
+    #
+    app_description = '''
+    '''
+    app_epilog = '''
+    '''
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--debug', action='store_true', default=False, help='')
+    parser.add_argument('root', help='')
+
+    args = parser.parse_args()
+
+    # If logging parameters were set on the command line, handle them
+    # here.
+    #
+    if args.debug:
+        log_format = "%(levelname)s - %(message)s"
+        basicConfig(level=DEBUG, format=log_format)
+    else:
+        log_format = "%(message)s"
+        basicConfig(level=INFO, format=log_format)
+
+    try:
+        app = Results()
+        retval = app.main(args)
+    except KeyboardInterrupt:
+        pass
+
+    exit(retval)
+
+# vi:set ts=4 sw=4 expandtab syntax=python:

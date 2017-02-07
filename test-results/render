@@ -1,0 +1,76 @@
+#!/usr/bin/env python
+#
+
+from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from datetime                           import datetime
+import json
+import os
+from sys                                import argv
+
+from mako.template                      import Template
+from mako.exceptions                    import RichTraceback
+
+# load_template
+#
+def load_template(file_name):
+    """
+    Load the template file.
+    """
+    retval = None
+
+    # Find it ...
+    #
+    fid = file_name
+    if not os.path.exists(fid): # Current directory
+        fid = os.path.join(os.path.dirname(argv[0]), file_name)
+        if not os.path.exists(fid):
+            fid = None
+
+    if fid is not None:
+        with open(fid, 'r') as f:
+            retval = f.read()
+    else:
+        print("Error: Failed to find the template file.")
+
+    return retval
+
+if __name__ == '__main__':
+    # Command line argument setup and initial processing
+    #
+    app_description = '''
+I'm a application skeleton, your job is to make me into something useful.
+    '''
+    app_epilog = '''
+examples:
+    process --help
+    '''
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('data', help='')
+    parser.add_argument('template', help='')
+    args = parser.parse_args()
+
+    try:
+        with open(args.data, 'r') as f:
+            data = json.load(f)
+
+        # Generate the testing, index page.
+        #
+        try:
+            template = Template(load_template(args.template))
+            html = template.render(data=data, timestamp=datetime.utcnow())
+            print(html)
+
+        except:
+            traceback = RichTraceback()
+            for (filename, lineno, function, line) in traceback.traceback:
+                print("File %s, line %s, in %s" % (filename, lineno, function))
+                print(line, "\n")
+            print("%s: %s" % (str(traceback.error.__class__.__name__), traceback.error))
+
+    # Handle the user presses <ctrl-C>.
+    #
+    except KeyboardInterrupt:
+        pass
+
+
+# vi:set ts=4 sw=4 expandtab:
