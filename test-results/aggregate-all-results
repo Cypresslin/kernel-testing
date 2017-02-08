@@ -5,6 +5,8 @@ from argparse                           import ArgumentParser, RawDescriptionHel
 from logging                            import basicConfig, DEBUG, INFO
 from lib.log                            import center, cleave
 import json
+import requests
+import re
 
 # Results
 #
@@ -19,19 +21,55 @@ class Results(object):
         '''
         pass
 
+    def current_sru_versions(s):
+        #                              .- package name (group(1))
+        #                             /           .- kernel version (group(2))
+        #                            /           /          .- version/abi separator (group(3))
+        #                           /           /          /
+        ver_rc     = re.compile("(\S+): (\d+\.\d+\.\d+)([-\.])(\d+)\.(\d+)([~a-z\d.]*)")
+        #                                                       /      /       /
+        #                                                      /      /       .- backport extra (m.group(6))
+        #                                                     /      .- upload number (m.group(5))
+        #                                                    .- abi (group(4))
+
+        versions = []
+
+        r = requests.get('http://kernel.ubuntu.com/sru/kernel-sru-workflow.json')
+        trackers = json.loads(r.text)
+
+        for project in ['kernel-development-workflow', 'kernel-sru-workflow']:
+            if project not in trackers['bug-collections']:
+                continue
+            for x in trackers['bug-collections'][project]['bugs']:
+                bug = trackers['bug-collections'][project]['bugs'][x]
+                title = bug['title']
+
+                m = ver_rc.search(title)
+                if m is not None:
+                    version = '%s%s%s.%s%s' % (m.group(2), m.group(3), m.group(4), m.group(5), m.group(6))
+                    versions.append(version)
+
+        return versions
+
     # main
     #
     def main(s, args):
         center(s.__class__.__name__ + '.main')
         retval = 0
 
+        if args.sru:
+            versions = s.current_sru_versions()
+
         aggregate = {}
         for fid in args.results:
             with open(fid, 'r') as f:
                 data = json.load(f)
 
-            series  = data['distro-release-name']
             kernel  = data['kernel']
+            if args.sru and kernel not in versions:
+                continue
+
+            series  = data['distro-release-name']
             flavour = data['kernel-flavour']
 
             if series not in aggregate:
@@ -54,6 +92,7 @@ if __name__ == '__main__':
     '''
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
     parser.add_argument('--debug', action='store_true', default=False, help='')
+    parser.add_argument('--sru', action='store_true', default=False, help='')
     parser.add_argument('results', nargs='+', help='')
 
     args = parser.parse_args()
