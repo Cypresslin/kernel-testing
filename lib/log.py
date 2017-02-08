@@ -39,9 +39,15 @@ class Clog:
             # and "INFO -" is fewer chars then "DEBUG -" and so things don't line
             # up.
             #
-            debug(msg)
+            if c.color:
+                debug(colored(msg, color))
+            else:
+                debug(msg)
         else:
-            info(msg)
+            if c.color:
+                info(colored(msg, color))
+            else:
+                info(msg)
 
     @classmethod
     def debug(c, msg, color='magenta'):
