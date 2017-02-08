@@ -234,6 +234,8 @@ TestProfiles = {
 
     'ubuntu_loop_smoke_test' : {},
 
+    'ubuntu_lttng_smoke_test' : {},
+
     'ubuntu_load_livepatch_modules' : {
     },
 
@@ -373,6 +375,7 @@ TestCollections = {
         'ubuntu_fan_smoke_test',
         'ubuntu_squashfs_smoke_test',
         'ubuntu_loop_smoke_test',
+        'ubuntu_lttng_smoke_test',
     ],
 
     'boot' : [
