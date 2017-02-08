@@ -14,7 +14,7 @@ tester  = '$KT/cli-test %s $SUT %s %s $KT_ROOT' % (data['cloud'], data['series_n
 <project>
     <actions/>
     <description>
-{}
+${data['description']}
     </description>
     <keepDependencies>false</keepDependencies>
     <properties>
@@ -37,33 +37,47 @@ tester  = '$KT/cli-test %s $SUT %s %s $KT_ROOT' % (data['cloud'], data['series_n
     <builders>
         <hudson.tasks.Shell>
             <command>
+set +x
 export KT_ROOT=${kt_root}
 KT=$KT_ROOT/kernel-testing
 
 SSH_OPTIONS="${data['ssh_options']} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet"
 
-SUT=${data['sut_name']}
+SUT=${data['sut-name']}
+
+status () {
+    $KT/test-status --local $JOB_NAME '{"key":"'kernel.testing.job.status'", "op":"'$1'"}'
+}
+
+status job.started
 
 # Provision the hardware.
 #
+status deploy.started
 ${deploy}
 if [ $? -ne 0 ]; then
+    status deploy.failed
     $KT/cl destroy ${data['cloud']} $SUT
     exit -1
 fi
+status deploy.succeeded
 
 SUT_IP=`$KT/cl user-and-ip ${data['cloud']} $SUT`
 ${prepare}
 if [ $? -ne 0 ]; then
+    status prepare.failed
     $KT/cl destroy ${data['cloud']} $SUT
     exit -1
 fi
 
+status testing.started
 ${tester}
 if [ $? -ne 0 ]; then
+    status testing.failed
     $KT/cl destroy ${data['cloud']} $SUT
     exit -1
 fi
+status testing.completed
 
 
 ARCHIVE=$JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_ID/archive
@@ -73,7 +87,6 @@ $KT/unicode-filter $WORKSPACE/kernel-results-unfiltered.xml > $WORKSPACE/kernel-
 
 # Don't need the HW any longer, it can be powered off.
 #
-# $KT/cli-destroy ${data['cloud']} $SUT
 $KT/cl destroy ${data['cloud']} $SUT
 
 # Publish the results. This *MUST* always be the very last thing the job does.
