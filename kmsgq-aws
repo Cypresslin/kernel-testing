@@ -51,22 +51,36 @@ class RequestHandler(threading.Thread):
     #
     def store_jobs(s, request, jobs):
         center(s.__class__.__name__ + '.store_jobs')
+
+        for j in jobs:
+            del jobs[j]['description']  # Don't need this
+            del jobs[j]['op']
+            del jobs[j]['pocket']
+            del jobs[j]['ssh_options']
+            del jobs[j]['arch']
+            del jobs[j]['who']
         msg = {}
-        msg['key']  = 'kernel.test.jobs.created'
+        msg['key']  = 'kernel.testing.jobs.created'
         msg['bug-id'] = request['bug-id']
+        msg['series-name'] = request['series-name']
+        msg['kernel-version'] = request['version']
         msg['jobs'] = jobs
+        msg['timestamp'] = request['date']
+        msg['package'] = request['package']
+        msg['series-name'] = request['series-name']
         file_name  = ''
         file_name += request['series-name']
         file_name += '__'
         file_name += request['version']
         file_name += '__'
-        file_name += s.cfg['cloud']
+        file_name += request['op']
         file_name += '.msg'
         file_name  = path.join(path.expanduser('~'), 'job-messages', file_name)
         with open(file_name, "w") as fid:
             fid.write(json.dumps(msg, sort_keys=True, indent=4))
             fid.write('\n')
         cleave(s.__class__.__name__ + '.store_jobs')
+        return msg
 
     # handle_request
     #
@@ -75,13 +89,26 @@ class RequestHandler(threading.Thread):
         cinfo('        ---------------------------------------  h a n d l e  ---------------------------------------', 'green')
         cinfo(json.dumps(request, sort_keys=True, indent=4))
 
-        factory = CloudJobFactory(cloud=s.cfg['cloud'],
-                                  series=request['series-name'],
-                                  region=s.cfg['region'],
-                                  tests=s.cfg['cloud'])
+        # For now all clouds are amd64. sut-arch is required
+        #
+        request['sut-arch'] = 'amd64'
+
+        cloud = request['op']
+        factory = CloudJobFactory(cloud=cloud, series=request['series-name'], region=s.cfg[cloud]['region'], tests=cloud, request=request)
 
         jobs = factory.create_jobs()
-        s.store_jobs(request, jobs)
+        msg = s.store_jobs(request, jobs)
+
+        # Announce the list of jobs before we start them.
+        #
+        if s.cfg['args'].local_msgqueue_port:
+            mq = MsgQueue(address='localhost', port=9123)
+        else:
+            mq = MsgQueue()
+        mq.publish(msg['key'], msg)
+
+        factory.start_jobs(jobs)
+
         cleave(s.__class__.__name__ + '.handle')
 
     # dequeue
@@ -146,14 +173,8 @@ class JobFactory(object):
     def msgq_handler(s, payload):
         center(s.__class__.__name__ + '.msgq_handler')
 
-        valid_keys = ['kernel.development.request', 'kernel.publish']
-        valid_ops  = ['sru']
-        if s.args.aws:
-            valid_ops.append('aws')
-        elif s.args.gce:
-            valid_ops.append('gce')
-        elif s.args.azure:
-            valid_ops.append('azure')
+        valid_keys = ['kernel.testing.request', 'kernel.publish']
+        valid_ops  = ['sru', 'aws', 'gce', 'azure']
         valid_pkgs = ['linux']
 
         # Determine if the key in the current message is on that
@@ -192,29 +213,31 @@ class JobFactory(object):
                 mq = MsgQueue()
 
             cfg = {
-                'aws'     : args.aws,
-                'gce'     : args.gce,
-                'azure'   : args.azure,
+                'aws' : {
+                    # 'region' : 'us-west-1',
+                    'region' : 'us-east-2',
+                },
+                'gce' : {
+                    'region' : 'us-west1-a',
+                },
+                'azure' : {
+                    'region' : 'West US',
+                },
             }
 
-            if args.aws:
-                queue = 'kernel-aws-publishing-monitor'
-                cfg['cloud'] = 'aws'
-                cfg['region'] = 'us-west-1'
-            elif args.gce:
-                queue = 'kernel-gce-publishing-monitor'
-                cfg['cloud'] = 'gce'
-                cfg['region'] = 'us-west1-a'
-            elif args.azure:
-                queue = 'kernel-azure-publishing-monitor'
-                cfg['cloud'] = 'azure'
-                cfg['region'] = 'West US'
-            else:
-                raise Exit()
+            cfg['args'] = args
 
             s.rh = RequestHandler(msgq=mq, cfg=cfg)
             s.rh.start()
 
+            # queue = 'kernel-aws-publishing-monitor'
+            # mq.queue_delete(queue)
+            # queue = 'kernel-gce-publishing-monitor'
+            # mq.queue_delete(queue)
+            # queue = 'kernel-azure-publishing-monitor'
+            # mq.queue_delete(queue)
+
+            queue = 'kernel-cloud-publishing-monitor'
             mq.listen(queue, 'kernel.#', s.msgq_handler)
 
             retval = 0
@@ -249,9 +272,6 @@ if __name__ == '__main__':
     parser.add_argument('--lkp',   action='store_true', default=False, help='Handle requests for live kernel patching testing.')
     parser.add_argument('--dev',   action='store_true', default=False, help='Handle development testing requests.')
     parser.add_argument('--local-msgqueue-port',  type=int, default=None,  help='The local port to be used to talk to the Rabbit MQ service.')
-    parser.add_argument('--aws',   action='store_true', default=False, help='')
-    parser.add_argument('--gce',   action='store_true', default=False, help='')
-    parser.add_argument('--azure', action='store_true', default=False, help='')
 
     args = parser.parse_args()
 
