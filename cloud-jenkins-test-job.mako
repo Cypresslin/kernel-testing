@@ -37,7 +37,7 @@ ${data['description']}
     <builders>
         <hudson.tasks.Shell>
             <command>
-set +x
+set -x
 export KT_ROOT=${kt_root}
 KT=$KT_ROOT/kernel-testing
 
