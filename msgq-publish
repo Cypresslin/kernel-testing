@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+#
+
+from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import basicConfig, INFO, DEBUG, warning
+from lib3.msgq                          import MsgQueue
+import json
+
+if __name__ == '__main__':
+    # Command line argument setup and initial processing
+    #
+    app_description = '''
+    '''
+    app_epilog = '''
+examples:
+    listen --help
+    '''
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--debug', action='store_true', default=False, help='Print out a lot of messages about what is going on.')
+    parser.add_argument('--local', action='store_true', default=False, help='Assume we have ssh tunnel setup to the MQ server.')
+    parser.add_argument('--notice', action='store_true', default=False, help='The message shoud be a "notice".')
+    parser.add_argument('--queue', help='Name of the queue to use')
+    parser.add_argument('file', help='The json file to be loaded and then published into the queue')
+
+    args = parser.parse_args()
+
+    # If logging parameters were set on the command line, handle them
+    # here.
+    #
+    log_format = "%(levelname)s - %(message)s"
+    if args.debug:
+        basicConfig(level=DEBUG, format=log_format)
+    else:
+        basicConfig(level=INFO, format=log_format)
+
+    try:
+        if args.local:
+            mq = MsgQueue(address='localhost', port=9123)
+        else:
+            mq = MsgQueue()
+
+        with open(args.file, 'r') as f:
+            msg = json.load(f)
+
+        mq.publish(msg['key'], msg)
+
+        retval = 0
+
+    # Handle the user presses <ctrl-C>.
+    #
+    except KeyboardInterrupt:
+        warning("Aborting ...")
+
+# vi:set ts=4 sw=4 expandtab:
