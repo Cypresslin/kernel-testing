@@ -195,6 +195,7 @@ class Azure(CloudBase):
     def create(s, instance_name, series, region='West US'):
         center(s.__class__.__name__ + '.create')
 
+        retval = 0
         s.instance_name = instance_name
         s.series = series
 
@@ -203,6 +204,7 @@ class Azure(CloudBase):
             cmd = 'create %s %s jenkins --location "%s" --ssh --no-ssh-password --ssh-cert ~/.ssh/id_rsa.pub' % (s.instance_name, images[0]['id'], region)
             result, response = s.sh(cmd)
         except ShellError as e:
+            retval = 1
             for l in e.output:
                 l.strip()
                 print(l)
@@ -211,6 +213,7 @@ class Azure(CloudBase):
         #     s.wait_for_target()
 
         cleave(s.__class__.__name__ + '.create')
+        return retval
 
     # destroy
     #
@@ -338,6 +341,10 @@ class GCE(CloudBase):
     #
     def create(s, instance_name, series, region='us-west1'):
         center(s.__class__.__name__ + '.create')
+        cdebug('    instance_name: %s' % instance_name)
+        cdebug('           series: %s' % series)
+        cdebug('           region: %s' % region)
+        retval = 0
 
         s.instance_name = instance_name
         s.series = series
@@ -345,9 +352,10 @@ class GCE(CloudBase):
         # r = '-'.join(region.split('-')[0:2])
         # images = CloudImages(s.cloud, series=series, region=r).images
         try:
-            # cmd = 'instances create %s --zone %s --network "default" --no-restart-on-failure --image-project ubuntu-os-cloud --image %s' % (s.instance_name, region, images[0]['id'])
+            # print('image: %s' % (s.images[series]))
+            # print('image: %s' % (images[0]['id']))
+            # cmd = 'instances create %s --zone %s --network "default" --no-restart-on-failure --image-project ubuntu-os-cloud --image %s' % (s.instance_name, region, images[0]['id'].replace('daily-', ''))
             cmd = 'instances create %s --zone %s --network "default" --no-restart-on-failure --image-project ubuntu-os-cloud --image %s' % (s.instance_name, region, s.images[series])
-            print(cmd)
             result, response = s.sh(cmd)
             for l in response:
                 if l.startswith(s.instance_name):
@@ -357,11 +365,13 @@ class GCE(CloudBase):
             if s.target is not None:
                 s.wait_for_target()
         except ShellError as e:
+            retval = 1
             for l in e.output:
                 l.strip()
                 print(l)
 
         cleave(s.__class__.__name__ + '.create')
+        return retval
 
     # destroy
     #
@@ -547,7 +557,7 @@ class CloudJobFactory(object):
 
     # __init__
     #
-    def __init__(s, cloud, series, region, tests):
+    def __init__(s, cloud, series, region, tests, request):
         '''
         '''
         center(s.__class__.__name__ + '.__init__')
@@ -555,6 +565,7 @@ class CloudJobFactory(object):
         s.tests  = tests
         s.series = series
         s.region = region
+        s.request = request
         s.jenkins = JenkinsServerLocal.connect()
         s.props_imported = False
         cleave(s.__class__.__name__ + '.__init__')
@@ -626,6 +637,7 @@ class CloudJobFactory(object):
 
     def create_jobs(s):
         center(s.__class__.__name__ + '.create_jobs')
+        retval = {}
         cl = Cloud.construct(s.cloud)
         tests = s.expand(s.tests)
         for test in tests:
@@ -636,9 +648,15 @@ class CloudJobFactory(object):
                 'cloud'       : s.cloud,
                 'test'        : test,
                 'region'      : s.region,
-                'sut_name'    : job_name.replace('_', '-'),
+                'sut-name'    : job_name.replace('_', '-'),
                 'ssh_options' : cl.ssh_options,
             }
+            for k in s.request:
+                job_data[k] = s.request[k]
+
+            # The description is used by test-results-announce
+            #
+            job_data['description'] = json.dumps(job_data, sort_keys=True, indent=4)
 
             s.job_template = s.load_template('cloud-jenkins-test-job.mako')
             job_xml = s.job_template.render(data=job_data)
@@ -649,8 +667,21 @@ class CloudJobFactory(object):
                 pass
 
             s.jenkins.create_job(job_name, job_xml)
-            sleep(10)
-            s.jenkins.build_job(job_name)
+
+            # Separate out the buld_job
+            #
+            # sleep(10)
+            # s.jenkins.build_job(job_name)
+            retval[job_data['job_name']] = job_data
+        cleave(s.__class__.__name__ + '.create_jobs')
+        return retval
+
+    def start_jobs(s, jobs):
+        center(s.__class__.__name__ + '.create_jobs')
+        for job in jobs:
+            s.jenkins.build_job(job)
+            sleep(2)
+
         cleave(s.__class__.__name__ + '.create_jobs')
 
     # main
@@ -713,6 +744,8 @@ class CloudImages(object):
 
         # Get daily streams, change for releases
         (mirror_url, path) = util.path_from_mirror_url('https://cloud-images.ubuntu.com/daily/streams/v1/index.sjson', None)
+        cdebug('    mirror_url: %s' % mirror_url)
+        cdebug('          path: %s' % path)
 
         smirror = mirrors.UrlMirrorReader(mirror_url)
 
@@ -724,19 +757,28 @@ class CloudImages(object):
         if s.region is not None:
             fl.append('region=' + s.region)
         filter_list = filters.get_filters(fl)
+        cdebug('            fl: %s' % fl)
 
         tmirror = FilterMirror(config={'filters': filter_list})
         try:
             tmirror.sync(smirror, path)
 
-            # Find the latest version
-            versions = [item['version_name'] for item in tmirror.json_entries]
-            versions = sorted(list(set(versions)))
-            latest = versions[-1]
+            try:
+                # Find the latest version
+                for i in tmirror.json_entries:
+                    # cdebug(i)
+                    cdebug(i['version_name'])
+                versions = [item['version_name'] for item in tmirror.json_entries]
+                versions = sorted(list(set(versions)))
+                cdebug(versions)
+                latest = versions[-1]
 
-            items = [i for i in tmirror.json_entries if i['version_name'] == latest]
-            for item in items:
-                retval.append(item)
+                items = [i for i in tmirror.json_entries if i['version_name'] == latest]
+                for item in items:
+                    retval.append(item)
+
+            except IndexError:
+                pass
 
             # # Print a list of the regions represented in the filtered list
             # # as an example of extracting a list of unique keys from all items
