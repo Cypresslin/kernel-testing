@@ -58,7 +58,7 @@ class TheApp():
     def fetch_job_details(s, job_name):
         details = None
         for name, instance in s.jenkins.get_jobs():
-            if name == 'boot__Y_amd64__using_amura__for_kernel':
+            if name == job_name:
                 details = json.loads(instance.get_description())
         return details
 
