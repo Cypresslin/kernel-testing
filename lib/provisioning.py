@@ -506,10 +506,13 @@ class Base(object):
         center('Base::enable_ppa')
         s.progress('Enabling PPA')
         s.ssh('\'sudo apt-get -y install software-properties-common\'')
-        if s.ppa.startswith('ppa:'):
-            s.ssh('\'sudo add-apt-repository -y %s\'' % (s.ppa))
-        else:
-            s.ssh('\'sudo add-apt-repository -y ppa:%s\'' % (s.ppa))
+        try:
+            if s.ppa.startswith('ppa:'):
+                s.ssh('\'sudo add-apt-repository -y %s\'' % (s.ppa))
+            else:
+                s.ssh('\'sudo add-apt-repository -y ppa:%s\'' % (s.ppa))
+        except:
+            raise ErrorExit('Failed to add the ppa.')
         s.ssh('sudo apt-get update', ignore_result=True)
         cleave('Base::enable_ppa')
 
@@ -820,6 +823,8 @@ class Metal(Base):
 
         sleep(60 * 5)
 
+        s.fixup_hosts()
+
         # The very first thing we need to do is make our changes to the apt sources and then dist-upgrade
         # the system. Once we do this the kernels that we install should be the right one.
         #
@@ -902,8 +907,6 @@ class Metal(Base):
                 cinfo("Target verification failed.")
             else:
                 retval = True
-
-        s.fixup_hosts()
 
         s.progress('That\'s All Folks!')
 
