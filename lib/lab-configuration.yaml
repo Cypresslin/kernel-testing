@@ -636,6 +636,7 @@
             series-blacklist:
                 - "lucid"
                 - "precise"
+                - "vivid"
         ms10-35-mcdivittB0-kernel:
             class: "sru-testing"
             arch:
@@ -671,6 +672,7 @@
             series-blacklist:
                 - "lucid"
                 - "precise"
+                - "vivid"
 
 
         # --------------------------------------------------------------------------
