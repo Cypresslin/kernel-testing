@@ -72,7 +72,7 @@
     #
     systems:
         naumann:
-            class: "test-development"
+            class: "sru-testing"
             arch:
                 - "amd64"
             provisioner: "maas2"
@@ -97,7 +97,7 @@
                 - "precise"
                 - "trusty"
         secchi:
-            class: "test-development"
+            class: "sru-testing"
             arch:
                 - "amd64"
             provisioner: "maas2"
@@ -186,6 +186,38 @@
                 - "xenial"
                 - "zesty"
             proc-decoration: "zKVM"
+        s2lp6g003:
+            class: "sru-testing"
+            arch:
+                - "s390x.zKVM"
+            provisioner: "manual"
+            jenkins server: "jenkins2"
+            hwe: false
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+            series-blacklist:
+                - "lucid"
+                - "precise"
+                - "trusty"
+                - "utopic"
+                - "vivid"
+                - "wily"
+                - "xenial"
+                - "yakkety"
+            proc-decoration: "zKVM"
         s2lp3:
             class: "sru-testing"
             arch:
@@ -251,7 +283,7 @@
                 - "zesty"
             proc-decoration: "Ubuntu on LPAR"
         # s2lp5:
-        #     class: "sru-testing"
+        #     class: "bogus"
         #     arch:
         #         - "s390x.LPAR"
         #     provisioner: "manual"
@@ -330,22 +362,37 @@
                 - "xenial"
                 - "zesty"
             proc-decoration: "zVM"
-        # kernel03:
-        #     class: "sru-testing"
-        #     arch:
-        #         - "s390x.zVM"
-        #     provisioner: "manual"
-        #     locked: false
-        #     power: []
-        #     role: []
-        #     series-blacklist:
-        #         - "lucid"
-        #         - "precise"
-        #         - "trusty"
-        #         - "utopic"
-        #         - "vivid"
-        #         - "wily"
-        #     proc-decoration: "zVM"
+        kernel03:
+            class: "sru-testing"
+            arch:
+                - "s390x.zVM"
+            provisioner: "manual"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+            series-blacklist:
+                - "lucid"
+                - "precise"
+                - "trusty"
+                - "utopic"
+                - "vivid"
+                - "wily"
+                - "xenial"
+                - "yakkety"
+            proc-decoration: "zVM"
         beketov:
             class: "private"
             arch:
@@ -375,7 +422,7 @@
                     username : "Administrator"
             role: []
         michael:
-            class: "test-development"
+            class: "bogus"
             arch:
                 - "amd64"
             provisioner: "maas2"
@@ -402,7 +449,7 @@
                 - "boot"
                 - "virt"
         rumford:
-            class: "test-development"
+            class: "sru-testing"
             arch:
                 - "amd64"
             provisioner: "maas2"
@@ -429,7 +476,7 @@
                 - "boot"
                 - "virt"
         alkaid:
-            class: "sru-testing"
+            class: "bogus"
             arch:
                 - "amd64"
                 - "i386"
@@ -445,7 +492,7 @@
             role: []
             scratch drive: "/dev/sdb"
         cavac:
-            class: "sru-testing"
+            class: "bogus"
             arch:
                 - "amd64"
                 - "i386"
@@ -460,7 +507,7 @@
                     username : "Administrator"
             role: []
         dwalin:
-            class: "sru-testing"
+            class: "bogus"
             arch:
                 - "amd64"
                 - "i386"
@@ -480,7 +527,7 @@
                 - "sru-2"
             scratch drive: "/dev/sdb"
         onibi:
-            class: "sru-testing"
+            class: "bogus"
             arch:
                 - "amd64"
                 - "i386"
@@ -501,7 +548,7 @@
                 - "sru-3"
                 - "virt"
         onza:
-            class: "sru-testing"
+            class: "bogus"
             arch:
                 - "amd64"
                 - "i386"
@@ -527,8 +574,8 @@
             class: "sru-testing"
             arch:
                 - "ppc64el"
-            provisioner: "maas"
-            jenkins server: "jenkins"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
             locked: false
             power:
                 -
@@ -555,7 +602,7 @@
                 - "lucid"
                 - "precise"
         ms10-34-mcdivittB0-kernel:
-            class: "test-development"
+            class: "sru-testing"
             arch:
                 - "arm64"
             sub-arch: "xgene-uboot"
@@ -729,12 +776,12 @@
                 - "JuJu Controller"
             scratch drive: "/dev/sdb"
         amura:
-            class: "test-development"
+            class: "sru-testing"
             arch:
                 - "amd64"
             provisioner: "maas2"
             jenkins server: "jenkins2"
-            locked: true
+            locked: false
             power:
                 -
                     address  : "10.245.80.210"
@@ -749,7 +796,7 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
         pepe:
-            class: "test-development"
+            class: "sru-testing"
             arch:
                 - "amd64"
                 - "i386"
@@ -769,7 +816,7 @@
                 - "sru"
                 - "sru-1"
         fili:
-            class: "test-development"
+            class: "bogus"
             arch:
                 - "amd64"
                 - "i386"
@@ -787,7 +834,7 @@
                 - "sru"
                 - "sru-2"
         fozzie:
-            class: "test-development"
+            class: "sru-testing"
             arch:
                 - "amd64"
                 - "i386"
@@ -806,7 +853,7 @@
                 - "sru-3"
                 - "boot"
         gonzo:
-            class: "test-development"
+            class: "sru-testing"
             arch:
                 - "amd64"
                 - "i386"
