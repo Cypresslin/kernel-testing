@@ -777,7 +777,7 @@
             role:
                 - "JuJu Controller"
             scratch drive: "/dev/sdb"
-        amura:
+        amaura:
             class: "sru-testing"
             arch:
                 - "amd64"
