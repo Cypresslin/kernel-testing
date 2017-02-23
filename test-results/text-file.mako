@@ -8,7 +8,7 @@ from datetime     import timedelta
         <!-- <meta http-equiv="refresh" content="60" /> -->
         <title>${ title }</title>
         <link rel="stylesheet" href="http://kernel.ubuntu.com/media/kernel-style.css" type="text/css" media="screen" />
-        <style>
+        <style type="text/css">
             div.index-bottom-section {
                  border-radius: 0px;
                     box-shadow: 0 1px 3px rgba(0,0,0,0.3);
@@ -84,7 +84,7 @@ from datetime     import timedelta
                                   <span style="font-size: 10px; color: #aea79f !important">(c) 2012 Canonical Ltd. Ubuntu and Canonical are registered trademarks of Canonical Ltd.</span>
                                 </td>
                                 <td align="right" valign="top">
-                                    <a href="http://ubuntu.com"><img src="http://kernel.ubuntu.com/media/ubuntu-footer-logo.png"></a>
+                                    <a href="http://ubuntu.com"><img src="http://kernel.ubuntu.com/media/ubuntu-footer-logo.png" alt="Home" /></a>
                                 </td>
                             </tr>
                         </table>

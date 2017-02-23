@@ -5,7 +5,7 @@
         <!-- <meta http-equiv="refresh" content="60" /> -->
         <title>Ubuntu - Kernel Team Server</title>
         <link rel="stylesheet" href="http://kernel.ubuntu.com/media/kernel-style.css" type="text/css" media="screen" />
-        <style>
+        <style type="text/css">
             div.index-bottom-section {
                  border-radius: 0px;
                     box-shadow: 0 1px 3px rgba(0,0,0,0.3);
@@ -129,7 +129,7 @@
                     </div> <!-- dash-section -->
 
                     <div class="index-bottom-section">
-                        <table width="100%"> <!-- The section is one big table -->
+                        <table width="100%">
                             <tr>
                                 <td align="left" colspan="5">
                                     ${ timestamp }
@@ -140,11 +140,11 @@
                                   <span style="font-size: 10px; color: #aea79f !important">(c) 2012 Canonical Ltd. Ubuntu and Canonical are registered trademarks of Canonical Ltd.</span>
                                 </td>
                                 <td align="right" valign="top">
-                                    <a href="http://ubuntu.com"><img src="http://kernel.ubuntu.com/media/ubuntu-footer-logo.png"></a>
+                                    <a href="http://ubuntu.com"><img src="http://kernel.ubuntu.com/media/ubuntu-footer-logo.png" alt="Home" /></a>
                                 </td>
                             </tr>
                         </table>
-                    </div> <!-- dash-section -->
+                    </div> <!-- index-bottom-section -->
 
                 </div>
             </div>
