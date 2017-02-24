@@ -452,6 +452,21 @@ class Base(object):
         s.ssh('sudo sed -i -e \\\'/localhost/a 127.0.1.1 %s %s\\\' /etc/hosts' % (s.raw_target, s.target), quiet=False, ignore_result=False)
         cleave('Base::fixup_hosts')
 
+    # remove_90curtin_aptproxy
+    #
+    def remove_90curtin_aptproxy(s):
+        '''
+        '''
+        center('Base::remove_90curtin_aptproxy')
+        s.progress('Remove /etc/apt/apt.conf.d/90curtin-aptproxy')
+
+        # Don't use the proxy that MAAS sets up.
+        #
+        s.ssh('sudo rm -f /etc/apt/apt.conf.d/90curtin-aptproxy', quiet=False)
+
+        s.ssh('sudo apt-get update', ignore_result=True)
+        cleave('Base::remove_90curtin_aptproxy')
+
     # fixup_apt_sources
     #
     def fixup_apt_sources(s):
@@ -829,6 +844,7 @@ class Metal(Base):
         # the system. Once we do this the kernels that we install should be the right one.
         #
         # s.fixup_apt_sources() # This is breaking some systems
+        s.remove_90curtin_aptproxy()
         s.enable_proposed()
         s.enable_src()
         if s.ppa is not None:
