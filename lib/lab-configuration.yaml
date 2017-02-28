@@ -71,6 +71,56 @@
     # to me.
     #
     systems:
+        hainzel:
+            class: "sru-testing"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+                - "virt"
+            series-blacklist:
+                - "precise"
+                - "trusty"
+        archytas:
+            class: "sru-testing"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+                - "virt"
+            series-blacklist:
+                - "precise"
+                - "trusty"
         naumann:
             class: "sru-testing"
             arch:
