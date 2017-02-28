@@ -475,22 +475,6 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
-        alkaid:
-            class: "bogus"
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.219"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role: []
-            scratch drive: "/dev/sdb"
         cavac:
             class: "bogus"
             arch:
@@ -526,13 +510,42 @@
                 - "sru-1"
                 - "sru-2"
             scratch drive: "/dev/sdb"
-        onibi:
-            class: "bogus"
+        alkaid:
+            class: "sru-testing"
             arch:
                 - "amd64"
                 - "i386"
-            provisioner: "maas"
-            jenkins server: "jenkins"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power:
+                -
+                    address  : "10.245.80.219"
+                    password : "insecure"
+                    type     : "ipmi"
+                    username : "admin"
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+                - "virt"
+            scratch drive: "/dev/sdb"
+        onibi:
+            class: "sru-testing"
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
             locked: false
             power:
                 -
@@ -542,18 +555,25 @@
                     username : "admin"
             role:
                 - "ubuntu_boot"
-                - "Personal Testing"
+                - "qrt"
+                - "smoke"
+                - "sru"
                 - "sru-1"
                 - "sru-2"
                 - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
                 - "virt"
         onza:
-            class: "bogus"
+            class: "sru-testing"
             arch:
                 - "amd64"
                 - "i386"
-            provisioner: "maas"
-            jenkins server: "jenkins"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
             locked: false
             power:
                 -
@@ -563,10 +583,16 @@
                     username : "admin"
             role:
                 - "ubuntu_boot"
-                - "Personal Testing"
+                - "qrt"
+                - "smoke"
+                - "sru"
                 - "sru-1"
                 - "sru-2"
                 - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
             scratch drive: "/dev/sdb"
