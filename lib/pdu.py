@@ -23,12 +23,13 @@ class PDU():
         '''
         Fetch the information about mapping from a system to the CDU outlets.
         '''
+        maas_ip = '10.246.72.3'
         center('PDU.__config')
         before = None
         if 'NO_PROXY' in os.environ:
             before = os.environ['NO_PROXY']
-        os.environ['NO_PROXY'] = '10.245.80.31'
-        r = requests.get('http://10.245.80.31/lab-systems-power.yaml')
+        os.environ['NO_PROXY'] = maas_ip
+        r = requests.get('http://' + maas_ip + '/lab-systems-power.yaml')
         retval = yaml.load(r.text)
         if before:
             os.environ['NO_PROXY'] = before
