@@ -79,8 +79,8 @@ set +e
 #
 ${provision}
 if [ $? -ne 0 ]; then
+    echo "Provisioning failed"
     cat provisioning.log
-    $KT/remote ubuntu@$SUT --kernel-test-list="${data['test']}"
 
     # Publish the results. This *MUST* always be the very last thing the job does.
     #
