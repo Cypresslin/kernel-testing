@@ -202,7 +202,6 @@
             provisioner: "manual"
             jenkins server: "jenkins2"
             series: "xenial"
-            hwe: false
             locked: false
             power: []
             role:
@@ -234,7 +233,6 @@
                 - "s390x.zKVM"
             provisioner: "manual"
             jenkins server: "jenkins2"
-            hwe: false
             locked: false
             power: []
             role:
@@ -266,7 +264,6 @@
                 - "s390x.zKVM"
             provisioner: "manual"
             jenkins server: "jenkins2"
-            hwe: false
             locked: false
             power: []
             role:
@@ -298,7 +295,6 @@
                 - "s390x.LPAR"
             provisioner: "manual"
             jenkins server: "jenkins2"
-            hwe: false
             locked: false
             power: []
             role:
@@ -330,7 +326,6 @@
                 - "s390x.LPAR"
             provisioner: "manual"
             jenkins server: "jenkins2"
-            hwe: false
             locked: false
             power: []
             role:
@@ -378,7 +373,6 @@
                 - "s390x.zVM"
             provisioner: "manual"
             jenkins server: "jenkins2"
-            hwe: false
             locked: false
             power: []
             role:
@@ -410,7 +404,6 @@
                 - "s390x.zVM"
             provisioner: "manual"
             jenkins server: "jenkins2"
-            hwe: false
             locked: false
             power: []
             role:
