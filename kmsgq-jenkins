@@ -195,7 +195,7 @@ class JobsFactory(object):
                 try:
                     if series in s.configuration['systems'][system]['series-blacklist']:
                         continue
-                    elif s.jd['hwe'] and 's390x' in s.configuration['systems'][system]['arch']:
+                    elif s.jd['hwe'] and 's390x' in ','.join(s.configuration['systems'][system]['arch']):
                         continue
                 except KeyError:
                     pass
