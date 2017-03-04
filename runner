@@ -67,24 +67,6 @@ class Runner():
                         neo.append(t)
             self.tests_list = neo
 
-        # If a test requires a scratch drive make sure that this system has one. If
-        # not, drop the test.
-        #
-        valid_tests = []
-        for t in self.tests_list:
-            if 'scratch' in TestProfiles[t]:
-                # We require a spare drive for xfstesting. We make an assumption about what that
-                # spare drive is. Look at the device the root device is and assume that the scratch
-                # drive is the 'b' device with that same device root.
-                #
-                node = platform.node()
-                if 'scratch drive' in Configuration['systems'][node] and Configuration['systems'][node]['scratch drive']:
-                    valid_tests.append(t)
-                    self.__scratch_needed = True
-            else:
-                valid_tests.append(t)
-        self.tests_list = valid_tests
-
         if len(self.tests_list) > 0:
             debug('Expanded test list:')
             for t in self.tests_list:
