@@ -65,6 +65,9 @@ status deploy.succeeded
 SUT_IP=`$KT/cl user-and-ip ${data['cloud']} $SUT`
 ${prepare}
 if [ $? -ne 0 ]; then
+    echo "Prep failed"
+    cat provisioning.log
+
     status prepare.failed
     $KT/cl destroy ${data['cloud']} $SUT
     exit -1

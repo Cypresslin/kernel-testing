@@ -9,7 +9,7 @@ from lib.argparse                       import ArgumentParser, RawDescriptionHel
 import json
 import platform
 
-from lib.testsprops                     import TestProfiles, TestCollections
+from lib.testsprops                     import TestCollections
 from lib.test_attributes                import TestAttributes
 from lib.shell                          import sh, ShellError, ShellTimeoutError
 from lib.configuration                  import Configuration
@@ -44,6 +44,7 @@ class Runner():
         self.per_test_logs_root = ''
         self.per_test_results_root = ''
         self.arch = platform.processor()
+        self.test_profiles = {}
 
     # tests_list_expand
     #
@@ -79,6 +80,13 @@ class Runner():
             retval = True
         return retval
 
+    def exists(self, test):
+        retval = False
+        bl = path.join(self.autotest_tests_root, test)
+        if path.exists(bl):
+            retval = True
+        return retval
+
     # tests_list_verify
     #
     def tests_list_verify(self):
@@ -90,9 +98,11 @@ class Runner():
         # we know about.
         #
         for t in self.tests_list:
-            if t not in TestProfiles:
+            if not self.valid(t):
                 error('Test \'%s\' is not recognized.' % t)
                 errors = True
+            elif t not in self.test_profiles:
+                self.test_profiles[t] = {}
 
         # Verify that certain tests have not been blaclisted for the series
         # that we are currently running.
@@ -152,11 +162,14 @@ class Runner():
         for t in self.tests_list:
             debug("Determining correct control file for test: %s" % t)
 
+            if t not in self.test_profiles:
+                self.test_profiles[t] = {}
+
             # Is there control file named 'control.ubuntu.<series>'?
             #
             fid = path.join(self.autotest_tests_root, t, 'control.ubuntu.%s' % self.release_name)
             if path.exists(fid):
-                TestProfiles[t]['control file'] = fid
+                self.test_profiles[t]['control file'] = fid
                 debug("    using: %s" % fid)
                 continue
 
@@ -164,7 +177,7 @@ class Runner():
             #
             fid = path.join(self.autotest_tests_root, t, 'control.ubuntu')
             if path.exists(fid):
-                TestProfiles[t]['control file'] = fid
+                self.test_profiles[t]['control file'] = fid
                 debug("    using: %s" % fid)
                 continue
 
@@ -172,7 +185,7 @@ class Runner():
             #
             fid = path.join(self.autotest_tests_root, t, 'control')
             if path.exists(fid):
-                TestProfiles[t]['control file'] = fid
+                self.test_profiles[t]['control file'] = fid
                 debug("    using: %s" % fid)
                 continue
 
@@ -190,14 +203,14 @@ class Runner():
             fid = path.join(self.autotest_tests_root, t, 'required-pkgs')
             if path.exists(fid):
                 print('FOUND! setup file: %s' % fid)
-                TestProfiles[t]['setup file'] = fid
+                self.test_profiles[t]['setup file'] = fid
                 debug("    using: %s" % fid)
 
                 try:
                     result, output = sh(fid, quiet=True)
-                    TestProfiles[t]['packages'] = {}
-                    TestProfiles[t]['packages']['common'] = output[0].strip().split()
-                    print('>> %s <<' % TestProfiles[t]['packages'])
+                    self.test_profiles[t]['packages'] = {}
+                    self.test_profiles[t]['packages']['common'] = output[0].strip().split()
+                    print('>> %s <<' % self.test_profiles[t]['packages'])
                 except ShellError:
                     print('Failed to execute the \'required-pkgs\' file (%s)' % (fid))
 
@@ -266,14 +279,7 @@ class Runner():
         # Build up the shell command that we are going to run.
         #
         cmd = 'AUTOTEST_PATH=%s sudo -E %s' % (path.join(path.expanduser('~'), 'autotest'), self.autotest_exe_path)
-        if 'atargs' in TestProfiles[test]:
-            cmd += ' --args="'
-            for key, value in TestProfiles[test]['atargs'].iteritems():
-                cmd += '%s=%s ' % (key, value)
-            cmd = cmd.strip() # Remove that last space character
-            cmd += '"'
-
-        cmd += ' --verbose %s' % TestProfiles[test]['control file']
+        cmd += ' --verbose %s' % self.test_profiles[test]['control file']
 
         # Run the command
         #
@@ -356,14 +362,7 @@ class Runner():
                     node = platform.node()
                     if 'scratch drive' in Configuration['systems'][node]:
                         device = Configuration['systems'][node]['scratch']
-                        TestProfiles['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] = device
-
-                # Some tests may require environment variables bet set. Do that.
-                #
-                for t in self.tests_list:
-                    if 'env' in TestProfiles[t]:
-                        for k, v in TestProfiles[t]['env']:
-                            environ[k] = v
+                        self.test_profiles['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] = device
 
             else:
                 self.tests_list = self.args.tests
