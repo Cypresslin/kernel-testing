@@ -129,7 +129,6 @@ class Runner():
 
         self.tests_list = valid_tests
 
-
         # Verify that the tests are valid, autotest tests.
         #
         if not path.exists(self.autotest_tests_root):
@@ -232,8 +231,6 @@ class Runner():
             makedirs(self.per_test_logs_root)
 
         self.per_test_results_root = path.join(tp, 'results')
-        #if not path.exists(self.per_test_results_root):
-        #    makedirs(self.per_test_results_root)
 
     # gather_pretest_information
     #
@@ -265,12 +262,12 @@ class Runner():
             result, output = sh('echo "" | nc -w 2 squid.internal 3128 > /dev/null 2>&1')
             environ['http_proxy']  = 'http://squid.internal:3128'
             environ['https_proxy'] = 'https://squid.internal:3128'
-        except ShellError as e:
+        except ShellError:
             try:
                 result, output = sh('echo "" | nc -w 2 10.245.64.1 3128 > /dev/null 2>&1')
                 environ['http_proxy']  = 'http://10.245.64.1:3128'
                 environ['https_proxy'] = 'https://10.245.64.1:3128'
-            except ShellError as e:
+            except ShellError:
                 pass
 
     # autotest
@@ -431,10 +428,6 @@ class Runner():
         except KeyboardInterrupt:
             pass
 
-        #except KeyError:
-        #    import json
-        #    print(json.dumps(testsprops.profiles, sort_keys=True, indent=4))
-
         except ShellTimeoutError as e:
             error('The command (%s) timed out. (%d)' % (e.cmd, e.timeout))
             raise ErrorExit()
@@ -479,4 +472,3 @@ if __name__ == '__main__':
     exit(status)
 
 # vi:set ts=4 sw=4 expandtab syntax=python:
-
