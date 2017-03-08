@@ -421,7 +421,6 @@ TestCollections = {
     ],
 
     'sru-2' : [
-        'smoke',
         'xfstests',
         'ubuntu_cts_kernel',
         'ubuntu_kernel_selftests',
