@@ -27,11 +27,11 @@ class TheApp():
         center(s.__class__.__name__ + '.create')
 
         cloud = Cloud.construct(s.args.cloud)
-        cloud.create(s.args.instance, s.args.series, s.args.region)
+        retval = cloud.create(s.args.instance, s.args.series, s.args.region)
         stdout.flush()
 
         cleave(s.__class__.__name__ + '.create')
-        return 0
+        return retval
 
     def destroy(s):
         center(s.__class__.__name__ + '.destroy')
