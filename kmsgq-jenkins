@@ -258,11 +258,10 @@ class JobsFactory(object):
     # generate_jobs
     #
     def generate_jobs(s, test, systems, jd):
+        """
+        Generate test cases for the corresponding arches in the test pool.
+        """
         center('TheApp::generate_jobs')
-
-        if 'package' in jd and 'linux-lts-' in jd['package']:
-            jd['series-name'] = jd['package'].replace('linux-lts-', '')
-            jd['hwe'] = True
 
         for system in systems:
             cdebug('system: %s' % system, 'blue')
