@@ -62,19 +62,23 @@ class Results(object):
 
         aggregate = {}
         for fid in args.results:
-            with open(fid, 'r') as f:
-                data = json.load(f)
+            try:
+                with open(fid, 'r') as f:
+                    data = json.load(f)
 
-            kernel  = data['kernel']
-            if args.sru and kernel not in versions:
-                continue
+                kernel  = data['kernel']
+                if args.sru and kernel not in versions:
+                    continue
 
-            series  = data['distro-release-name']
-            flavour = data['kernel-flavour']
+                series  = data['distro-release-name']
+                flavour = data['kernel-flavour']
 
-            if series not in aggregate:
-                aggregate[series] = {}
-            aggregate[series]['%s - %s' % (kernel, flavour)] = data
+                if series not in aggregate:
+                    aggregate[series] = {}
+                aggregate[series]['%s - %s' % (kernel, flavour)] = data
+            except:
+                print('While processing %s' % fid)
+                raise
 
         print(json.dumps(aggregate, sort_keys=True, indent=4))
 

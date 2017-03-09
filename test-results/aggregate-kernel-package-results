@@ -85,42 +85,45 @@ class Results(object):
         retval = {}
         retval['suites-results'] = {}
         for job in s.jobs(args.root):
-            cdebug(os.path.join(job[0], 'results.json'))
-            with open(os.path.join(job[0], 'results.json'), 'r') as f:
-                data = json.load(f)
+            try:
+                cdebug(os.path.join(job[0], 'results.json'))
+                with open(os.path.join(job[0], 'results.json'), 'r') as f:
+                    data = json.load(f)
 
-            retval['distro-release-name'] = data['attributes']['distro-release-name']
-            retval['kernel-flavour']      = data['attributes']['kernel-flavour']
-            retval['kernel']              = data['attributes']['kernel']
+                retval['distro-release-name'] = data['attributes']['distro-release-name']
+                retval['kernel-flavour']      = data['attributes']['kernel-flavour']
+                retval['kernel']              = data['attributes']['kernel']
 
-            suites_results = retval['suites-results']
-            arch = s.arch_from_proc(data['attributes']['platform']['proc'])
-            results = data['results']
-            for suite in results['suites']:
-                name = suite['name'].replace('autotest.', '')
+                suites_results = retval['suites-results']
+                arch = s.arch_from_proc(data['attributes']['platform']['proc'])
+                results = data['results']
+                for suite in results['suites']:
+                    name = suite['name'].replace('autotest.', '')
 
-                if arch not in suites_results:
-                    suites_results[arch] = {}
-                if name not in suites_results[arch]:
-                    suites_results[arch][name] = {}
-                    suites_results[arch][name]['jobs'] = []
-                    suites_results[arch][name]['totals'] = (0, 0)
+                    if arch not in suites_results:
+                        suites_results[arch] = {}
+                    if name not in suites_results[arch]:
+                        suites_results[arch][name] = {}
+                        suites_results[arch][name]['jobs'] = []
+                        suites_results[arch][name]['totals'] = (0, 0)
 
-                # Url which points at the per-suite results
-                #
-                link  = '%s-%s' % (retval['kernel'], retval['kernel-flavour'])
-                link += '/'
-                link += '%s-%s-%s-index.html' % (name, retval['kernel'], arch)
-                suites_results[arch][name]['link'] = link
+                    # Url which points at the per-suite results
+                    #
+                    link  = '%s-%s' % (retval['kernel'], retval['kernel-flavour'])
+                    link += '/'
+                    link += '%s-%s-%s-index.html' % (name, retval['kernel'], arch)
+                    suites_results[arch][name]['link'] = link
 
-                # Test suite totals
-                #
-                passed = suites_results[arch][name]['totals'][0] + suite['tests run'] - suite['tests failed']
-                failed = suites_results[arch][name]['totals'][1] + suite['tests failed']
-                suites_results[arch][name]['totals'] = (passed, failed)
+                    # Test suite totals
+                    #
+                    passed = suites_results[arch][name]['totals'][0] + suite['tests run'] - suite['tests failed']
+                    failed = suites_results[arch][name]['totals'][1] + suite['tests failed']
+                    suites_results[arch][name]['totals'] = (passed, failed)
 
-                hostname = data['attributes']['platform']['hostname']
-                suites_results[arch][name]['jobs'].append((job[1], hostname, suite['tests run'] - suite['tests failed'], suite['tests failed']))
+                    hostname = data['attributes']['platform']['hostname']
+                    suites_results[arch][name]['jobs'].append((job[1], hostname, suite['tests run'] - suite['tests failed'], suite['tests failed']))
+            except:
+                pass
 
         cleave(s.__class__.__name__ + '.aggregate_results')
         return retval
