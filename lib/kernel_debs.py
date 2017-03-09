@@ -4,7 +4,8 @@
 import sys
 import urllib
 from launchpadlib.launchpad             import Launchpad
-from lib.log                            import cdebug, center, cleave, cinfo
+from lib.log                            import cdebug, center, cleave, cinfo, Clog
+from logging                            import error, basicConfig, DEBUG, WARNING
 
 
 # GetPublishedSourcesError
@@ -29,16 +30,28 @@ class KernelDebs:
         self.version = version
         self.abi = version.split('-')[1].split('.')[0]
         self.flavour = flavour
-        cinfo('       arch: %s' % arch)
+        self.hwe = '~' in version
+        self.series = series
+
         cinfo('    version: %s' % version)
+        cinfo('     series: %s' % series)
+        cinfo('       arch: %s' % arch)
+        cinfo('        hwe: %s' % self.hwe)
+        cinfo('    flavour: %s' % flavour)
         cinfo('        abi: %s' % self.abi)
         cleave('KernelDebs.__init__')
 
     def get_binaries(self, source_version, filename_filter):
         center('KernelDebs.get_binaries')
-        cinfo('     source_version: %s' % source_version)
-        cinfo('    filename_filter: %s' % filename_filter)
-        pub_sources = self.main_archive.getPublishedSources(source_name='linux', version=source_version, exact_match=True)
+        cinfo('         source_version: %s' % source_version)
+        cinfo('        filename_filter: %s' % filename_filter)
+
+        sn = 'linux'
+        if self.hwe:
+            if self.series == 'xenial':
+                sn += '-lts-xenial' # Yes hardcoding this is a hack. We'll probably have to support linux-hwe at some point
+
+        pub_sources = self.main_archive.getPublishedSources(source_name=sn, version=source_version, exact_match=True)
         if not pub_sources:
             raise GetPublishedSourcesError("PublishedSources: %s %s not found." % (source_version, self.arch))
 
@@ -88,6 +101,11 @@ class KernelDebs:
         return urls
 
 if __name__ == "__main__":
+    level = DEBUG
+    Clog.dbg = True
+    Clog.color = True
+    basicConfig(filename=None, level=level, format="%(levelname)s - %(message)s")
+
     VERSION = sys.argv[1]
     SERIES = sys.argv[2]
     ARCH = sys.argv[3]
