@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 #
 
+from sys                                import stderr
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import basicConfig, DEBUG, INFO
 from lib.log                            import center, cleave
@@ -77,8 +78,8 @@ class Results(object):
                     aggregate[series] = {}
                 aggregate[series]['%s - %s' % (kernel, flavour)] = data
             except:
-                print('While processing %s' % fid)
-                raise
+                stderr.write('-----------------------------------------------------------------------------------------------------\n')
+                stderr.write('While processing %s\n' % fid)
 
         print(json.dumps(aggregate, sort_keys=True, indent=4))
 
