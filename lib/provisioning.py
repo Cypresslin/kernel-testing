@@ -830,7 +830,23 @@ class Metal(Base):
         if s.ps.type == "manual":
             # s.dist_upgrade()
             s.reboot(progress="Rebooting for dist-upgrade")
-            return True
+            # As we don't run dist_upgrade() here, it's better to verify the kerenl version first
+            if s.hwe:
+                if not s.verify_hwe_target():
+                    cinfo("Target verification failed.")
+                else:
+                    retval = True
+            elif s.xen:
+                if not s.verify_xen_target():
+                    cinfo("Target verification failed.")
+                else:
+                    retval = True
+            else:
+                if not s.verify_target():
+                    cinfo("Target verification failed.")
+                else:
+                    retval = True
+            return retval
 
         s.progress('Provisioner setup')
         if not s.ps.provision():
