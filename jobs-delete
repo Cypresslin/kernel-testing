@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 #
 
-import re
 import fileinput
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import basicConfig, DEBUG, WARNING
