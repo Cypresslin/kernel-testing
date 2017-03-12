@@ -35,7 +35,7 @@ class TheApp(object):
         try:
             cloud = Cloud.construct(args.cloud)
             ip = cloud.lookup_instance_ip(args.target)
-            metal = Target(ip, args.series, args.arch, hwe=args.hwe, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, required_kernel_version=args.required_kernel_version, ssh_options=cloud.ssh_options, ssh_user=cloud.ssh_user)
+            metal = Target(ip, args.series, args.arch, hwe=args.hwe, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, required_kernel_version=args.required_kernel_version, flavour=args.flavour, ssh_options=cloud.ssh_options, ssh_user=cloud.ssh_user)
             if metal.provision():
                 retval = 0
 
@@ -105,6 +105,8 @@ if __name__ == '__main__':
     parser.add_argument('--ppa',      required=False, default=None, help='A ppa name to update packages from')
     parser.add_argument('--kernel',   required=False, default=None, help='The specific kernel version to be installed.')
     parser.add_argument('--lkp',      required=False, action='store_true', default=False, help='Turn on live kernel patching.')
+    parser.add_argument('--lkp-snappy', required=False, action='store_true', default=False, help='Turn on live kernel patching.')
+    parser.add_argument('--flavour',  required=False, default='generic', help='The kernel flavour to be tested (generic | lowlatency).')
     parser.add_argument('--hwe',      required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
     parser.add_argument('--required-kernel-version',   required=False, default=None, help='Fail if this version has not been installed.')
 

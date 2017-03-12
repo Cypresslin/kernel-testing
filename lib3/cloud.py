@@ -530,6 +530,7 @@ class AWS(CloudBase):
 
             s.sh('create-tags --resources %s --tags Key=Name,Value=%s' % (instance_id, instance_name))
             s.sh('create-tags --resources %s --tags Key=Owner,Value=UbuntuKernelTeam' % (instance_id))
+            s.sh('create-tags --resources %s --tags Key=TimeStamp,Value="%s"' % (instance_id, datetime.utcnow().strftime("%m.%d.%Y.%H:%M")))
 
             if s.target is not None:
                 s.wait_for_target()

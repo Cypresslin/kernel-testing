@@ -6,6 +6,7 @@ from logging                            import error
 from datetime                           import datetime
 from time                               import sleep
 import re
+import yaml
 
 from lib.log                            import cdebug, cinfo, center, cleave
 from lib.hwe                            import HWE
@@ -18,7 +19,7 @@ from lib.exceptions                     import ErrorExit
 class Base(object):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, hwe=False, debs=None, ppa=None, dry_run=False, lkp=False, required_kernel_version=None, ssh_options=None, ssh_user='ubuntu'):
+    def __init__(s, target, series, arch, kernel=None, hwe=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, required_kernel_version=None, flavour=None, ssh_options=None, ssh_user='ubuntu'):
         center("Base::__init__")
 
         # If we are installing a HWE kernel, we want to install the correct series first.
@@ -37,6 +38,8 @@ class Base(object):
         s.ppa  = ppa
         s.lkp = lkp
         s.kernel = kernel
+        s.lkp_snappy = lkp_snappy
+        s.flavour = flavour
         s.required_kernel_version = required_kernel_version
         s.dry_run = dry_run
         s.progress_dots = 0
@@ -186,6 +189,51 @@ class Base(object):
 
         cleave("Base::install_hwe_kernel")
 
+    # install_kernel_flavour
+    #
+    def install_kernel_flavour(s):
+        '''
+        '''
+        center("Base::install_kernel_flavour")
+        s.progress('Installing %s Kernel Flavour' % s.flavour)
+
+        extras = {}
+        try:
+            fid = path.join(path.dirname(argv[0]), 'flavour-extras')
+            with open(fid, 'r') as stream:
+                extras = yaml.safe_load(stream)
+        except FileNotFoundError:
+            print('Exception thrown and ignored. Did not find a flavour-extras file.')
+            print(fid)
+            pass # Ignore the error
+
+        if s.flavour in extras:
+            if 'key' in extras[s.flavour]['ppa']:
+                for line in extras[s.flavour]['ppa']['key']:
+                    cmd = '\'echo \"%s\" | sudo tee -a /tmp/%s.key\'' % (line, s.flavour)
+                    s.ssh(cmd)
+                cmd = 'sudo apt-key add /tmp/%s.key' % s.flavour
+                s.ssh(cmd)
+
+            if 'subscription' in extras[s.flavour]['ppa']:
+                for line in extras[s.flavour]['ppa']['subscription']:
+                    cmd = '\'echo \"%s\" | sudo tee -a /etc/apt/sources.list.d/%s.list\'' % (line, s.flavour)
+                    s.ssh(cmd)
+
+            s.ssh('sudo apt-get update', ignore_result=True)
+
+            if 'packages' in extras[s.flavour]:
+                for package in extras[s.flavour]['packages']:
+                    p = package.replace('%v', '.'.join(s.required_kernel_version.split('.')[0:-1]))
+                    cmd = 'sudo apt-get install --yes %s' % p
+                    s.ssh(cmd)
+
+        else: # s.flavour in ['lowlatency', 'aws', 'azure', 'gke']:
+            cmd = 'sudo apt-get install --yes linux-%s' % s.flavour
+            s.ssh(cmd)
+
+        cleave("Base::install_kernel_flavour")
+
     # reboot
     #
     def reboot(s, progress=None, wait=True, quiet=True):
@@ -250,6 +298,7 @@ class Base(object):
         center('Base::enable_proposed')
         s.progress('Enabling Proposed')
         s.ssh('\'grep "%s main" /etc/apt/sources.list | sed s/\ %s\ /\ %s-proposed\ / | sudo tee -a /etc/apt/sources.list\'' % (s.series, s.series, s.series))
+        s.ssh('\'grep "%s universe" /etc/apt/sources.list | sed s/\ %s\ /\ %s-proposed\ / | sudo tee -a /etc/apt/sources.list\'' % (s.series, s.series, s.series))
         s.ssh('sudo apt-get update', ignore_result=True)
         cleave('Base::enable_proposed')
 
@@ -343,10 +392,10 @@ class Base(object):
 class Target(Base):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, hwe=False, debs=None, ppa=None, dry_run=False, lkp=False, required_kernel_version=None, ssh_options=None, ssh_user='ubuntu'):
+    def __init__(s, target, series, arch, kernel=None, hwe=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, required_kernel_version=None, flavour='generic', ssh_options=None, ssh_user='ubuntu'):
         center("Target::__init__")
 
-        Base.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, required_kernel_version=required_kernel_version, ssh_options=ssh_options, ssh_user=ssh_user)
+        Base.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, required_kernel_version=required_kernel_version, flavour=flavour, ssh_options=ssh_options, ssh_user=ssh_user)
 
         cleave("Target::__init__")
 
@@ -465,6 +514,11 @@ class Target(Base):
                     error("*** ERROR:")
                     error("    Was expecting the target kernel version to be (%s) but found it to be (%s) instead." % (s.required_kernel_version, installed_kernel))
                     error("")
+            else:
+                error("")
+                error("*** ERROR:")
+                error("    Required kernel version is None")
+                error("")
 
         cleave('Target::verify_target (%s)' % retval)
         return retval
@@ -525,6 +579,8 @@ class Target(Base):
         reboot = None
         retval = False
 
+        s.fixup_hosts()
+
         # The very first thing we need to do is make our changes to the apt sources and then dist-upgrade
         # the system. Once we do this the kernels that we install should be the right one.
         #
@@ -548,6 +604,10 @@ class Target(Base):
         if s.debs is not None:
             s.install_custom_debs()
             reboot = 'Rebooting for custom debs'
+
+        if s.flavour != 'generic':
+            s.install_kernel_flavour()
+            reboot = 'Rebooting for Kernel flavour %s' % s.flavour
 
         # We *always* enable proposed. However, for development series kernels
         # we only update the kernel packages.
@@ -574,20 +634,11 @@ class Target(Base):
         if s.lkp:
             s.enable_live_kernel_patching()
 
-        # bjf s.progress('Verifying the running kernel version')
-        # bjf if s.hwe:
-        # bjf     if not s.verify_hwe_target():
-        # bjf         cinfo("Target verification failed.")
-        # bjf     else:
-        # bjf         retval = True
-        # bjf else:
-        # bjf     if not s.verify_target():
-        # bjf         cinfo("Target verification failed.")
-        # bjf     else:
-        # bjf         retval = True
-        retval = True
-
-        s.fixup_hosts()
+        s.progress('Verifying the running kernel version')
+        if not s.verify_target():
+            cinfo("Target verification failed.")
+        else:
+            retval = True
 
         s.progress('That\'s All Folks!')
 

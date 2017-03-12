@@ -91,7 +91,7 @@ class RequestHandler(threading.Thread):
 
         # For now all clouds are amd64. sut-arch is required
         #
-        request['sut-arch'] = 'amd64'
+        request['arch'] = 'amd64'
 
         cloud = request['op']
         factory = CloudJobFactory(cloud=cloud, series=request['series-name'], region=s.cfg[cloud]['region'], tests=cloud, request=request)
@@ -215,7 +215,7 @@ class JobFactory(object):
             cfg = {
                 'aws' : {
                     # 'region' : 'us-west-1',
-                    'region' : 'us-east-2',
+                    'region' : 'us-west-1',
                 },
                 'gce' : {
                     'region' : 'us-west1-a',

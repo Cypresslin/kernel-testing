@@ -7,8 +7,16 @@ else:
     kt_root = '/var/lib/jenkins'
 
 deploy  = '$KT/cl create %s $SUT %s "%s"' % (data['cloud'], data['series_name'], data['region'])
-prepare = '$KT/cli-prepare %s $SUT --series %s' % (data['cloud'], data['series_name'])
+prepare = '$KT/cli-prepare %s $SUT --nc --debug --series %s' % (data['cloud'], data['series_name'])
 tester  = '$KT/cli-test %s $SUT %s %s $KT_ROOT' % (data['cloud'], data['series_name'], data['test'])
+
+if data['flavour']:
+    if data['flavour'] != 'generic':
+        prepare += ' --flavour %s' % data['flavour']
+
+if 'version' in data:
+    prepare += ' --required-kernel-version %s' % data['version']
+
 %>
 
 <project>
@@ -59,19 +67,17 @@ ${deploy}
 if [ $? -ne 0 ]; then
     status deploy.failed
     $KT/cl destroy ${data['cloud']} $SUT
-    exit 1
+    exit -1
 fi
 status deploy.succeeded
 
 SUT_IP=`$KT/cl user-and-ip ${data['cloud']} $SUT`
 ${prepare}
 if [ $? -ne 0 ]; then
-    echo "Prep failed"
-    cat provisioning.log
-
     status prepare.failed
+    cat provisioning.log
     $KT/cl destroy ${data['cloud']} $SUT
-    exit 1
+    exit -1
 fi
 
 status testing.started
@@ -79,7 +85,7 @@ ${tester}
 if [ $? -ne 0 ]; then
     status testing.failed
     $KT/cl destroy ${data['cloud']} $SUT
-    exit 1
+    exit -1
 fi
 status testing.completed
 
