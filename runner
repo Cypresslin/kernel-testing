@@ -98,7 +98,7 @@ class Runner():
         # we know about.
         #
         for t in self.tests_list:
-            if not self.valid(t):
+            if not self.exists(t):
                 error('Test \'%s\' is not recognized.' % t)
                 errors = True
             elif t not in self.test_profiles:
