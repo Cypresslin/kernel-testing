@@ -27,6 +27,8 @@ class ErrorExit(Exception):
 #
 class Runner():
     """
+    platform.release().split('-')[2]
+
     """
 
     # __init__
@@ -115,6 +117,10 @@ class Runner():
                 error('Test \'%s\' has been blacklisted for this series (%s)' % (t, self.release_name))
             elif self.blacklisted(t, self.arch):
                 error('Test \'%s\' has been blacklisted for this arch (%s)' % (t, self.arch))
+            elif self.blacklisted(t, self.flavour):
+                error('Test \'%s\' has been blacklisted for this flavour (%s)' % (t, self.flavour))
+            elif self.blacklisted(t, '%s.%s' % (self.release_name, self.flavour)):
+                error('Test \'%s\' has been blacklisted for this flavour (%s) of this series (%s)' % (t, self.flavour, self.release_name))
             else:
                 debug('            valid')
                 valid_tests.append(t)
@@ -155,6 +161,12 @@ class Runner():
                     debug("Release name is %s" % self.__release_name)
                     break
         return self.__release_name
+
+    # flavour
+    #
+    @property
+    def flavour(self):
+        return platform.release().split('-')[2]
 
     # test_list_determine_control_files
     #
