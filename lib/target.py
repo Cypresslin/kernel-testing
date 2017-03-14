@@ -575,7 +575,6 @@ class Target(Base):
     def provision(s):
         center("Target::provision")
 
-        dist_upgrade = None
         reboot = None
         retval = False
 
@@ -586,7 +585,7 @@ class Target(Base):
         #
         s.fixup_apt_sources()
         s.enable_proposed()
-        s.enable_src()
+        # s.enable_src()
         if s.ppa is not None:
             s.enable_ppa()
 
@@ -605,28 +604,17 @@ class Target(Base):
             s.install_custom_debs()
             reboot = 'Rebooting for custom debs'
 
+        if s.flavour == 'generic':
+            s.kernel_upgrade()
+            reboot = 'Reboot for kenel update'
         if s.flavour != 'generic':
             s.install_kernel_flavour()
             reboot = 'Rebooting for Kernel flavour %s' % s.flavour
-
-        # We *always* enable proposed. However, for development series kernels
-        # we only update the kernel packages.
-        #
-        if Ubuntu().is_development_series(s.series):
-            s.kernel_upgrade()
-            reboot = 'Rebooting for development series kernel'
-        else:
-            dist_upgrade = True
 
         s.mainline_firmware_hack()
 
         s.install_python_minimal()
         s.install_required_pkgs()
-
-        if dist_upgrade:
-            s.dist_upgrade()
-            if not reboot:
-                reboot = 'Rebooting for dist-upgrade'
 
         if reboot:
             s.reboot(progress=reboot)
