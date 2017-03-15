@@ -45,8 +45,12 @@ class Runner():
         self.autotest_results_root = path.join(self.autotest_client_root, 'results', 'default')
         self.per_test_logs_root = ''
         self.per_test_results_root = ''
-        self.arch = platform.processor()
         self.test_profiles = {}
+
+        if platform.processor() == 'athlon':
+            self.arch = platform.machine()
+        else:
+            self.arch = platform.processor()
 
     # tests_list_expand
     #
