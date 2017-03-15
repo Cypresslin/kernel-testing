@@ -504,33 +504,40 @@ class Jobber(object):
             valid_ops.append('livepatch-regression-test')
             valid_ops.append('livepatch-snappy-client-payload-test')
 
-        # Determine if the key in the current message is on that
-        # we are going to process.
-        #
-        for key in valid_keys:
-            if not payload['key'].startswith(key):
-                cdebug('Invalid key: %s' % payload['key'])
-                continue
-
-            if payload['op'] not in valid_ops:
-                cdebug('Invalid op: %s' % payload['op'])
-                continue
-
-            if s.args.lkp:
-                if not payload['package'].startswith('livepatch'):
-                    cdebug('Invalid package: %s' % payload['package'])
-                    continue
-            else:
-                if payload['package'] not in s.valid_pkgs:
-                    cdebug('Invalid package: %s' % payload['package'])
+        try:
+            # Determine if the key in the current message is on that
+            # we are going to process.
+            #
+            for key in valid_keys:
+                if not payload['key'].startswith(key):
+                    cdebug('Invalid key: %s' % payload['key'])
                     continue
 
-            # Just assume the 'generic' flavour is nothing is specified
-            if s.args.lkp:
-                if 'flavour' not in payload:
-                    payload['flavour'] = 'generic'
-            s.enqueue(payload)
-            break
+                if payload['op'] not in valid_ops:
+                    cdebug('Invalid op: %s' % payload['op'])
+                    continue
+
+                if s.args.lkp:
+                    if not payload['package'].startswith('livepatch'):
+                        cdebug('Invalid package: %s' % payload['package'])
+                        continue
+                else:
+                    if payload['package'] not in s.valid_pkgs:
+                        cdebug('Invalid package: %s' % payload['package'])
+                        continue
+
+                # Just assume the 'generic' flavour is nothing is specified
+                if s.args.lkp:
+                    if 'flavour' not in payload:
+                        payload['flavour'] = 'generic'
+                s.enqueue(payload)
+                break
+        except KeyError:
+            # Bad payload
+            #
+            sys.stderr('  ** Invalid payload:\n')
+            sys.stderr(json.dumps(payload, sort_keys=True, indent=4))
+            sys.stderr('\n\n')
 
         cleave(s.__class__.__name__ + '.msgq_handler')
 
