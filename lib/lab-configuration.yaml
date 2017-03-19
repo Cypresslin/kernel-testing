@@ -564,26 +564,6 @@
                     type     : "ipmi"
                     username : "Administrator"
             role: []
-        dwalin:
-            class: "bogus"
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "jenkins"
-            locked: false
-            power:
-                -
-                    address  : "10.245.80.225"
-                    password : "odkBlXo1HVRYsxS"
-                    type     : "ipmi"
-                    username : "maas"
-            role:
-                - "ubuntu_boot"
-                - "Personal Testing"
-                - "sru-1"
-                - "sru-2"
-            scratch drive: "/dev/sdb"
         alkaid:
             class: "sru-testing"
             arch:
