@@ -197,7 +197,7 @@ class TheApp():
                 series = "%s " % (payload['series-name'])
 
             if 'test completed' == what:
-                content += '%s' % (series)
+                content += '%s-%s' % (series, payload['flavour'])
                 if 'version' in payload:
                     content += ' %s'     % (payload['version'])
                 content += ' on %s (%s)' % (payload['sut-name'], payload['sut-arch'])
@@ -215,7 +215,7 @@ class TheApp():
                 if payload['hwe']:
                     content += 'lts-'
 
-                content += ' %s %s'     % (series, payload['version'])
+                content += '%s-%s %s' % (series, payload['flavour'], payload['version'])
                 content += ' to -' + payload['pocket']
                 retval.append(content)
             elif 'requested' == what:
