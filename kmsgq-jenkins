@@ -535,9 +535,9 @@ class Jobber(object):
         except KeyError:
             # Bad payload
             #
-            sys.stderr('  ** Invalid payload:\n')
-            sys.stderr(json.dumps(payload, sort_keys=True, indent=4))
-            sys.stderr('\n\n')
+            sys.stderr.write('  ** Invalid payload:\n')
+            sys.stderr.write(json.dumps(payload, sort_keys=True, indent=4))
+            sys.stderr.write('\n\n')
 
         cleave(s.__class__.__name__ + '.msgq_handler')
 
