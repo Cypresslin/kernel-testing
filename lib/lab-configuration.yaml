@@ -474,6 +474,7 @@
                     type     : "ipmi"
                     username : "admin"
             role: []
+            scratch drive: "/dev/sdb"
         lagalla:
             class: "private"
             arch:
@@ -488,6 +489,7 @@
                     type     : "ipmi"
                     username : "Administrator"
             role: []
+            scratch drive: "/dev/sdb"
         michael:
             class: "bogus"
             arch:
@@ -515,6 +517,7 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
+            scratch drive: "/dev/sdb"
         rumford:
             class: "sru-testing"
             arch:
@@ -542,6 +545,7 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
+            scratch drive: "/dev/sdb"
         cavac:
             class: "bogus"
             arch:
@@ -585,6 +589,7 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
+            scratch drive: "/dev/sdb"
         onza:
             class: "sru-testing"
             arch:
@@ -613,7 +618,6 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
-            scratch drive: "/dev/sdb"
         modoc:
             class: "sru-testing"
             arch:
@@ -641,7 +645,12 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
-            scratch drive: "/dev/sdb"
+            scratch drive:
+                - "/dev/sdb"
+                - "/dev/sdc"
+                - "/dev/sdd"
+                - "/dev/sde"
+                - "/dev/sdf"
             series-blacklist:
                 - "lucid"
                 - "precise"
@@ -736,7 +745,6 @@
                 - "livepatch-regression-test"
                 - 'livepatch-snappy-client-payload-test'
                 - "ubuntu_load_livepatch_modules"
-            scratch drive: "/dev/sdb"
             livepatch key: ""
         pignite:
             class: "live"
@@ -757,6 +765,7 @@
                 - "livepatch-regression-test"
                 - 'livepatch-snappy-client-payload-test'
             livepatch key: ""
+            scratch drive: "/dev/sdb"
         snivy:
             class: "live"
             arch:
@@ -776,7 +785,6 @@
                 - "livepatch-regression-test"
                 - 'livepatch-snappy-client-regression-test'
                 - 'livepatch-snappy-client-payload-test'
-            scratch drive: "/dev/sdb"
             livepatch key: ""
 
         # --------------------------------------------------------------------------
@@ -892,6 +900,7 @@
                 - "sru"
                 - "sru-3"
                 - "boot"
+            scratch drive: "/dev/sdb"
         gonzo:
             class: "sru-testing"
             arch:
