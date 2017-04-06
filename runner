@@ -9,7 +9,7 @@ from lib.argparse                       import ArgumentParser, RawDescriptionHel
 import json
 import platform
 
-from lib.testsprops                     import TestCollections
+from lib.testsprops                     import TestCollections, TestProfiles
 from lib.test_attributes                import TestAttributes
 from lib.shell                          import sh, ShellError, ShellTimeoutError
 from lib.configuration                  import Configuration
@@ -45,7 +45,7 @@ class Runner():
         self.autotest_results_root = path.join(self.autotest_client_root, 'results', 'default')
         self.per_test_logs_root = ''
         self.per_test_results_root = ''
-        self.test_profiles = {}
+        self.test_profiles = TestProfiles
 
         if platform.processor() == 'athlon':
             self.arch = platform.machine()
@@ -110,7 +110,7 @@ class Runner():
             elif t not in self.test_profiles:
                 self.test_profiles[t] = {}
 
-        # Verify that certain tests have not been blaclisted for the series
+        # Verify that certain tests have not been blacklisted for the series
         # that we are currently running.
         #
         valid_tests = []
@@ -151,6 +151,29 @@ class Runner():
                 debug('    %s' % t)
 
         debug('Leave tests_list_verify')
+
+    # tests_scratch_check
+    #
+    def tests_scratch_check(self):
+        """Check if a test needs scratch drive to run."""
+        debug('Enter tests_scratch_check')
+
+        tests_to_drop = []
+        for t in self.tests_list:
+            if 'scratch' in self.test_profiles[t] and self.test_profiles[t]['scratch']:
+                node = platform.node()
+                if 'scratch drive' in Configuration['systems'][node]:
+                    device = Configuration['systems'][node]['scratch']
+                    self.test_profiles[t]['atargs']['UBUNTU_SCRATCH_DEVICE'] = device
+                else:
+                    # Remove the test if hw requirement (scratch drive) does not met
+                    tests_to_drop.append(t)
+
+        for t in tests_to_drop:
+            debug('    %s dropped as it needs scratch drive to run' % t)
+            self.tests_list.remove(t)
+
+        debug('Leave tests_scratch_check')
 
     # release_name
     #
@@ -373,13 +396,7 @@ class Runner():
             if not self.args.cloud:
                 self.tests_list_expand()
                 self.tests_list_verify()
-
-                if self.scratch_needed:
-                    node = platform.node()
-                    if 'scratch drive' in Configuration['systems'][node]:
-                        device = Configuration['systems'][node]['scratch']
-                        self.test_profiles['xfstests']['atargs']['UBUNTU_SCRATCH_DEVICE'] = device
-
+                self.tests_scratch_check()
             else:
                 self.tests_list = self.args.tests
 
