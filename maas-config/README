@@ -1,0 +1,2 @@
+This file should be placed in /var/www/html on the MaaS server.
+It will be used by the pdu script when doing power related actions.

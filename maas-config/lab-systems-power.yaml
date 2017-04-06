@@ -1,0 +1,191 @@
+---
+    # cdus
+    #
+    # Each CDU is listed with it's associated password.
+    #
+    cdus:
+        # name                   password
+        "bos01-b-08-fa1.power" : "r3m0t3ly"
+        "bos01-b-08-fb1.power" : "r3m0t3ly"
+        "bos01-b-07-fa1.power" : "r3m0t3ly"
+        "bos01-b-07-fb1.power" : "r3m0t3ly"
+        "bos01-b-02-fa1.power" : "r3m0t3ly"
+        "bos01-b-02-fb1.power" : "r3m0t3ly"
+
+    # systems
+    #
+    # Each system is listed with the associated Outlet names and the CDU which controls
+    # that outlet.
+    #
+    systems:
+        fozzie:
+            fozzie-ps1: "bos01-b-08-fa1.power"
+            fozzie-ps2: "bos01-b-08-fb1.power"
+
+        modoc:
+            modoc-ps1: "bos01-b-07-fa1.power"
+            modoc-ps2: "bos01-b-07-fb1.power"
+
+        sayers:
+            sayers-ps1: "bos01-b-08-fa1.power"
+            sayers-ps2: "bos01-b-08-fb1.power"
+
+        amaura:
+            amaura-ps1: "bos01-b-08-fa1.power"
+            amaura-ps2: "bos01-b-08-fb1.power"
+
+        haase:
+            haase-ps1: "bos01-b-08-fa1.power"
+            haase-ps2: "bos01-b-08-fb1.power"
+
+        milac:
+            milac-ps1: "bos01-b-08-fa1.power"
+            milac-ps2: "bos01-b-08-fb1.power"
+
+        lombre:
+            lombre-ps1: "bos01-b-08-fa1.power"
+            lombre-ps2: "bos01-b-08-fb1.power"
+
+        jatayu:
+            jatayu-ps1: "bos01-b-08-fa1.power"
+            jatayu-ps2: "bos01-b-08-fb1.power"
+
+        takash:
+            takash-ps1: "bos01-b-08-fa1.power"
+            takash-ps2: "bos01-b-08-fb1.power"
+
+        phact:
+            phact: "bos01-b-08-fa1.power"
+
+        alkaid:
+            alkaid: "bos01-b-08-fa1.power"
+
+        tarf:
+            tarf: "bos01-b-08-fa1.power"
+
+        rukbah:
+            rukbah: "bos01-b-08-fa1.power"
+
+        rizzo:
+            rizzo-ps1: "bos01-b-08-fa1.power"
+            rizzo-ps2: "bos01-b-08-fb1.power"
+
+        pepe:
+            pepe-ps1: "bos01-b-08-fa1.power"
+            pepe-ps2: "bos01-b-08-fb1.power"
+
+        jiufeng:
+            jiufeng-ps1: "bos01-b-08-fa1.power"
+            jiufeng-ps2: "bos01-b-08-fb1.power"
+
+        psoglav:
+            psoglav-ps1: "bos01-b-08-fa1.power"
+            psoglav-ps2: "bos01-b-08-fb1.power"
+
+        tangerine:
+            tangerine-ps1: "bos01-b-08-fa1.power"
+            tangerine-ps2: "bos01-b-08-fb1.power"
+
+        statler:
+            palkia-ps1: "bos01-b-08-fa1.power"
+            palkia-ps2: "bos01-b-08-fb1.power"
+
+        gomeisa:
+            gomeisa-ps1: "bos01-b-08-fa1.power"
+
+        gonzo:
+            gonzo: "bos01-b-08-fb1.power"
+
+        zmeu:
+            zmeu: "bos01-b-08-fb1.power"
+
+        zuijin:
+            zuijin: "bos01-b-08-fb1.power"
+
+        onza:
+            onza: "bos01-b-08-fb1.power"
+
+        onibi:
+            onibi: "bos01-b-08-fb1.power"
+
+        klefki:
+            klefki-ps2: "bos01-b-08-fb1.power"
+
+        eureka:
+            eureka-ps1: "bos01-b-07-fa1.power"
+            eureka-ps2: "bos01-b-07-fb1.power"
+
+        powell:
+            powell-ps1: "bos01-b-07-fa1.power"
+            powell-ps2: "bos01-b-07-fb1.power"
+
+        dwalin:
+            dwalin-ps1: "bos01-b-07-fa1.power"
+            dwalin-ps2: "bos01-b-07-fb1.power"
+
+        kili:
+            kili-ps1: "bos01-b-07-fa1.power"
+            kili-ps2: "bos01-b-07-fb1.power"
+
+        fili:
+            fili-ps1: "bos01-b-07-fa1.power"
+            fili-ps2: "bos01-b-07-fb1.power"
+
+        nori:
+            nori-ps1: "bos01-b-07-fa1.power"
+            nori-ps2: "bos01-b-07-fb1.power"
+
+        pops:
+            pops-ps1: "bos01-b-07-fa1.power"
+            pops-ps2: "bos01-b-07-fb1.power"
+
+        zoot:
+            zoot-ps1: "bos01-b-07-fa1.power"
+            zoot-ps2: "bos01-b-07-fb1.power"
+
+        gloin:
+            gloin-ps1: "bos01-b-07-fa1.power"
+            gloin-ps2: "bos01-b-07-fb1.power"
+
+        gimli:
+            gimli-ps1: "bos01-b-07-fa1.power"
+            gimli-ps2: "bos01-b-07-fb1.power"
+
+        janice:
+            janice-ps1: "bos01-b-07-fa1.power"
+            janice-ps2: "bos01-b-07-fb1.power"
+
+        durin:
+            durin: "bos01-b-07-fb1.power"
+        bavor:
+            bavor: "bos01-b-07-fb1.power"
+        pignite:
+            pignite-ps1: "bos01-b-07-fa1.power"
+            pignite-ps2: "bos01-b-07-fb1.power"
+        snivy:
+            snivy-ps1: "bos01-b-07-fa1.power"
+            snivy-ps2: "bos01-b-07-fb1.power"
+        glameow:
+            glameow-ps1: "bos01-b-07-fa1.power"
+            glameow-ps2: "bos01-b-07-fb1.power"
+        beketov:
+            beketov-ps1: "bos01-b-07-fa1.power"
+            beketov-ps2: "bos01-b-07-fb1.power"
+        lagalla:
+            lagalla-ps1: "bos01-b-07-fa1.power"
+            lagalla-ps2: "bos01-b-07-fb1.power"
+        michael:
+            michael-ps1: "bos01-b-07-fa1.power"
+            michael-ps2: "bos01-b-07-fb1.power"
+        rumford:
+            rumford-ps1: "bos01-b-07-fa1.power"
+            rumford-ps2: "bos01-b-07-fb1.power"
+        secchi:
+            secchi-ps1: "bos01-a-08-fa1-20.power"
+            secchi-ps2: "bos01-a-08-fb1-20.power"
+        naumann:
+            naumann-ps1: "bos01-a-08-fa1-18.power"
+            naumann-ps2: "bos01-a-08-fb1-18.power"
+        daedalus:
+            daedalus-ps1: "bos01-a-08-fa1-21.power"
+            daedalus-ps2: "bos01-a-08-fb1-21.power"
