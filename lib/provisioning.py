@@ -700,12 +700,12 @@ class Metal(Base):
                 if 'Warning: Permanently aded' in line: continue
                 if line == '': continue
 
-                m = re.search('(\d+.\d+.\d+)-\d+-.* #(\d+)-Ubuntu.*', line)
+                m = re.search('(\d+.\d+.\d+)-\d+-.* #(\d+[~a-z\d.]*)-Ubuntu.*', line)
                 if m:
                     kv = m.group(1)
                 cdebug('kernel version : ' + kv)
 
-                m = re.search('(\d+.\d+.\d+-\d+)-.* #(\d+)-Ubuntu.*', line)
+                m = re.search('(\d+.\d+.\d+-\d+)-.* #(\d+[~a-z\d.]*)-Ubuntu.*', line)
                 if m:
                     installed_kernel = '%s.%s' % (m.group(1), m.group(2))
                 cdebug('installed kernel version : ' + installed_kernel)
