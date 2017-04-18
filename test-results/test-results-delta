@@ -1,0 +1,147 @@
+#!/usr/bin/env python3
+#
+
+from sys                                import stderr
+from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import basicConfig, DEBUG, INFO
+from lib.log                            import center, cleave
+from lib.ubuntu                         import Ubuntu
+import json
+import requests
+import re
+
+# Results
+#
+class Results(object):
+    '''
+    '''
+
+    # __init__
+    #
+    def __init__(s):
+        '''
+        '''
+        pass
+
+    # deltas
+    #
+    def deltas(s):
+        s.delta = {}
+        # series
+        #
+        for series in s.db:
+            # bjf stderr.write('    %s\n' % series)
+            s.delta[series] = {}
+
+            # flavour
+            #
+            for flavour in s.db[series]:
+                # bjf stderr.write('        %s\n' % flavour)
+                s.delta[series][flavour] = {}
+                pkernel = None
+
+                # kernel
+                #
+                for kernel in sorted(s.db[series][flavour]):
+                    # bjf stderr.write('            %s\n' % kernel)
+                    s.delta[series][flavour][kernel] = {}
+
+                    # arch
+                    #
+                    for arch in s.db[series][flavour][kernel]['suites-results']:
+                        # bjf stderr.write('                %s\n' % arch)
+                        s.delta[series][flavour][kernel]['suites-results'] = {}
+                        s.delta[series][flavour][kernel]['suites-results'][arch] = {}
+
+                        # suite
+                        #
+                        for suite in s.db[series][flavour][kernel]['suites-results'][arch]:
+                            # bjf stderr.write('                    %s\n' % suite)
+                            (passed, failed) = s.db[series][flavour][kernel]['suites-results'][arch][suite]['totals']
+
+
+                            #       series
+                            #               flavour
+                            #                        kernel
+                            #                                'suites-results'
+                            #                                                  arch
+                            #                                                        suite
+
+                            s.delta[series][flavour][kernel]['suites-results'][arch][suite] = s.db[series][flavour][kernel]['suites-results'][arch][suite]['totals']
+
+                            # bjf stderr.write('series: %d; flavours: %d; kernels: %d\n' % (len(s.delta), len(s.delta[series]), len(s.delta[series][flavour])))
+
+                            if pkernel is not None:
+                                try:
+                                    (ppassed, pfailed) = s.delta[series][flavour][pkernel]['suites-results'][arch][suite]
+
+                                    delta = passed - ppassed
+                                    if delta != 0:
+                                        print('%8s %8s %20s %-8s %40s : %3d %3d (%d) (%s)' % (series, flavour, kernel, arch, suite, passed, ppassed, delta, pkernel))
+                                except KeyError:
+                                    ppassed = 0
+                                    pfailed = 0
+                            else:
+                                print('%8s %8s %20s %-8s %40s : %3d' % (series, flavour, kernel, arch, suite, passed))
+                    pkernel  = kernel
+                    print('')
+
+    # main
+    #
+    def main(s, args):
+        center(s.__class__.__name__ + '.main')
+        retval = 0
+        s.db = {}
+        for fid in args.results:
+            # bjf stderr.write('%s\n' % fid)
+            with open(fid, 'r') as f:
+                data = json.load(f)
+            try:
+                if data['distro-release-name'] not in s.db:
+                    s.db[data['distro-release-name']] = {}
+                if data['kernel-flavour'] not in s.db[data['distro-release-name']]:
+                    s.db[data['distro-release-name']][data['kernel-flavour']] = {}
+                s.db[data['distro-release-name']][data['kernel-flavour']][data['kernel']] = data
+                pass
+            except KeyError:
+                # Just ignore it and move along
+                pass
+        s.deltas()
+        # bjf print(json.dumps(s.delta, sort_keys=True, indent=4))
+        cleave(s.__class__.__name__ + '.main (%d)' % retval)
+        return retval
+
+if __name__ == '__main__':
+    retval = -1
+
+    # Command line argument setup and initial processing
+    #
+    app_description = '''
+    '''
+    app_epilog = '''
+    '''
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--debug', action='store_true', default=False, help='')
+    parser.add_argument('results', nargs='+', help='')
+
+    args = parser.parse_args()
+
+    # If logging parameters were set on the command line, handle them
+    # here.
+    #
+    if args.debug:
+        log_format = "%(levelname)s - %(message)s"
+        basicConfig(level=DEBUG, format=log_format)
+    else:
+        log_format = "%(message)s"
+        basicConfig(level=INFO, format=log_format)
+
+    try:
+        app = Results()
+        retval = app.main(args)
+    except KeyboardInterrupt:
+        pass
+
+    exit(retval)
+
+# vi:set ts=4 sw=4 expandtab syntax=python:
