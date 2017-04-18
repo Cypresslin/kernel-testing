@@ -141,7 +141,20 @@
             jenkins server: "jenkins2"
             locked: false
             power: []
-            role: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+                - "virt"
             series-blacklist:
                 - "precise"
                 - "trusty"
