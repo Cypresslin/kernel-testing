@@ -23,68 +23,110 @@ class Results(object):
         '''
         pass
 
+    def current_sru_versions(s):
+        #                              .- package name (group(1))
+        #                             /           .- kernel version (group(2))
+        #                            /           /          .- version/abi separator (group(3))
+        #                           /           /          /
+        ver_rc     = re.compile("(\S+): (\d+\.\d+\.\d+)([-\.])(\d+)\.(\d+)([~a-z\d.]*)")
+        #                                                       /      /       /
+        #                                                      /      /       .- backport extra (m.group(6))
+        #                                                     /      .- upload number (m.group(5))
+        #                                                    .- abi (group(4))
+
+        versions = []
+
+        r = requests.get('http://kernel.ubuntu.com/sru/kernel-sru-workflow.json')
+        trackers = json.loads(r.text)
+
+        for project in ['kernel-development-workflow', 'kernel-sru-workflow']:
+            if project not in trackers['bug-collections']:
+                continue
+            for x in trackers['bug-collections'][project]['bugs']:
+                bug = trackers['bug-collections'][project]['bugs'][x]
+                title = bug['title']
+
+                m = ver_rc.search(title)
+                if m is not None:
+                    version = '%s%s%s.%s%s' % (m.group(2), m.group(3), m.group(4), m.group(5), m.group(6))
+                    versions.append(version)
+
+        return versions
+
+    def add_record(s, series, flavour, kernel, arch, suite, link, passed, pdelta, failed, fdelta):
+        if series not in s.delta:
+            s.delta[series] = {}
+
+        if flavour not in s.delta[series]:
+            s.delta[series][flavour] = {}
+
+        if kernel not in s.delta[series][flavour]:
+            s.delta[series][flavour][kernel] = {}
+
+        if 'suites-results' not in s.delta[series][flavour][kernel]:
+            s.delta[series][flavour][kernel]['suites-results'] = {}
+
+        if arch not in s.delta[series][flavour][kernel]['suites-results']:
+            s.delta[series][flavour][kernel]['suites-results'][arch] = {}
+
+        if suite not in s.delta[series][flavour][kernel]['suites-results'][arch]:
+            s.delta[series][flavour][kernel]['suites-results'][arch][suite] = {}
+
+        s.delta[series][flavour][kernel]['suites-results'][arch][suite]['link'] = link
+        s.delta[series][flavour][kernel]['suites-results'][arch][suite]['passed'] = passed
+        s.delta[series][flavour][kernel]['suites-results'][arch][suite]['pdelta'] = pdelta
+        s.delta[series][flavour][kernel]['suites-results'][arch][suite]['failed'] = failed
+        s.delta[series][flavour][kernel]['suites-results'][arch][suite]['fdelta'] = fdelta
+
     # deltas
     #
     def deltas(s):
+        versions = s.current_sru_versions()
+
         s.delta = {}
         # series
         #
         for series in s.db:
-            # bjf stderr.write('    %s\n' % series)
-            s.delta[series] = {}
-
             # flavour
             #
             for flavour in s.db[series]:
-                # bjf stderr.write('        %s\n' % flavour)
-                s.delta[series][flavour] = {}
                 pkernel = None
 
                 # kernel
                 #
                 for kernel in sorted(s.db[series][flavour]):
-                    # bjf stderr.write('            %s\n' % kernel)
-                    s.delta[series][flavour][kernel] = {}
-
                     # arch
                     #
                     for arch in s.db[series][flavour][kernel]['suites-results']:
-                        # bjf stderr.write('                %s\n' % arch)
-                        s.delta[series][flavour][kernel]['suites-results'] = {}
-                        s.delta[series][flavour][kernel]['suites-results'][arch] = {}
-
                         # suite
                         #
                         for suite in s.db[series][flavour][kernel]['suites-results'][arch]:
-                            # bjf stderr.write('                    %s\n' % suite)
+                            link = s.db[series][flavour][kernel]['suites-results'][arch][suite]['link']
                             (passed, failed) = s.db[series][flavour][kernel]['suites-results'][arch][suite]['totals']
-
-
-                            #       series
-                            #               flavour
-                            #                        kernel
-                            #                                'suites-results'
-                            #                                                  arch
-                            #                                                        suite
-
-                            s.delta[series][flavour][kernel]['suites-results'][arch][suite] = s.db[series][flavour][kernel]['suites-results'][arch][suite]['totals']
-
-                            # bjf stderr.write('series: %d; flavours: %d; kernels: %d\n' % (len(s.delta), len(s.delta[series]), len(s.delta[series][flavour])))
-
                             if pkernel is not None:
                                 try:
-                                    (ppassed, pfailed) = s.delta[series][flavour][pkernel]['suites-results'][arch][suite]
+                                    (ppassed, pfailed) = s.db[series][flavour][pkernel]['suites-results'][arch][suite]['totals']
 
-                                    delta = passed - ppassed
-                                    if delta != 0:
-                                        print('%8s %8s %20s %-8s %40s : %3d %3d (%d) (%s)' % (series, flavour, kernel, arch, suite, passed, ppassed, delta, pkernel))
+                                    fdelta = failed - pfailed
+                                    pdelta = passed - ppassed
+
+                                    if kernel not in versions:
+                                        continue
+
+                                    s.add_record(series, flavour, kernel, arch, suite, link, passed, pdelta, failed, fdelta)
+                                    # if pdelta != 0:
+                                    #     s.add_record(series, flavour, kernel, arch, suite, passed, pdelta, failed, fdelta)
+                                    #     # print('%8s %8s %20s %-8s %40s : %3d %3d (%d) (%s)' % (series, flavour, kernel, arch, suite, passed, ppassed, pdelta, pkernel))
                                 except KeyError:
                                     ppassed = 0
                                     pfailed = 0
                             else:
-                                print('%8s %8s %20s %-8s %40s : %3d' % (series, flavour, kernel, arch, suite, passed))
+                                if kernel not in versions:
+                                    continue
+
+                                s.add_record(series, flavour, kernel, arch, suite, link, passed, 0, failed, 0)
+                                # print('%8s %8s %20s %-8s %40s : %3d' % (series, flavour, kernel, arch, suite, passed))
                     pkernel  = kernel
-                    print('')
 
     # main
     #
@@ -107,7 +149,7 @@ class Results(object):
                 # Just ignore it and move along
                 pass
         s.deltas()
-        # bjf print(json.dumps(s.delta, sort_keys=True, indent=4))
+        print(json.dumps(s.delta, sort_keys=True, indent=4))
         cleave(s.__class__.__name__ + '.main (%d)' % retval)
         return retval
 
