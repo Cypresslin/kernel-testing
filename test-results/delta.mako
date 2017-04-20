@@ -5,6 +5,7 @@
         <!-- <meta http-equiv="refresh" content="60" /> -->
         <title>Ubuntu - Kernel Team Server</title>
         <link rel="stylesheet" href="http://kernel.ubuntu.com/media/kernel-style.css" type="text/css" media="screen" />
+        <link href="https://fonts.googleapis.com/css?family=Rubik+Mono+One" rel="stylesheet">
         <style type="text/css">
             div.index-bottom-section {
                  border-radius: 0px;
@@ -81,24 +82,20 @@
                                                                     % if len(data[ubuntu_series][flavour][kernel_version]['suites-results'][arch]) == 1:
                                                                         <tr>
                                                                             <th width="100">&nbsp;</th>
-                                                                            <th align="center" width="140">Suite</th>
-                                                                            <th align="center" width="50">Passed</th>
-                                                                            <th align="center" width="50">Failed</th>
+                                                                            <th align="center" width="240">Suite</th>
+                                                                            <th align="center" width="100">Status</th>
                                                                             <th width="50">&nbsp;</th>
-                                                                            <th align="center" width="140"></th>
-                                                                            <th align="center" width="50"></th>
-                                                                            <th align="center" width="50"></th>
+                                                                            <th align="center" width="240"></th>
+                                                                            <th align="center" width="100"></th>
                                                                         </tr>
                                                                     % else:
                                                                         <tr>
                                                                             <th width="100">&nbsp;</th>
-                                                                            <th align="center" width="140">Suite</th>
-                                                                            <th align="center" width="50">Passed</th>
-                                                                            <th align="center" width="50">Failed</th>
+                                                                            <th align="center" width="240">Suite</th>
+                                                                            <th align="center" width="100">Status</th>
                                                                             <th width="50">&nbsp;</th>
-                                                                            <th align="center" width="140">Suite</th>
-                                                                            <th align="center" width="50">Passed</th>
-                                                                            <th align="center" width="50">Failed</th>
+                                                                            <th align="center" width="240">Suite</th>
+                                                                            <th align="center" width="100">Status</th>
                                                                         </tr>
                                                                     % endif
                                                                     <tr>
@@ -109,28 +106,40 @@
                                                                                     suite_row += 1
                                                                                     passed = data[ubuntu_series][flavour][kernel_version]['suites-results'][arch][suite]['passed']
                                                                                     pdelta = data[ubuntu_series][flavour][kernel_version]['suites-results'][arch][suite]['pdelta']
-                                                                                    if pdelta > 0:
-                                                                                        pdelta = '(+%d)' % pdelta
-                                                                                    elif pdelta == 0:
-                                                                                        pdelta = '(nc)'
-                                                                                    else:
-                                                                                        pdelta = '(%d)' % pdelta
+                                                                                    # if pdelta > 0:
+                                                                                    #     pdelta = '(+%d)' % pdelta
+                                                                                    # elif pdelta == 0:
+                                                                                    #     pdelta = '(nc)'
+                                                                                    # else:
+                                                                                    #     pdelta = '(%d)' % pdelta
                                                                                     failed = data[ubuntu_series][flavour][kernel_version]['suites-results'][arch][suite]['failed']
                                                                                     fdelta = data[ubuntu_series][flavour][kernel_version]['suites-results'][arch][suite]['fdelta']
-                                                                                    if fdelta > 0:
-                                                                                        fdelta = '(+%d)' % fdelta
-                                                                                    elif fdelta == 0:
-                                                                                        fdelta = '(nc)'
-                                                                                    else:
-                                                                                        fdelta = '(%d)' % fdelta
-                                                                                    link = 'https://null.com/'
+                                                                                    # if fdelta > 0:
+                                                                                    #     fdelta = '(+%d)' % fdelta
+                                                                                    # elif fdelta == 0:
+                                                                                    #     fdelta = '(nc)'
+                                                                                    # else:
+                                                                                    #     fdelta = '(%d)' % fdelta
                                                                                     # (passed, failed) = data[ubuntu_series][flavour][kernel_version]['suites-results'][arch][suite]['totals']
                                                                                     # link =             data[ubuntu_series][flavour][kernel_version]['suites-results'][arch][suite]['link']
+
+                                                                                    stat = ''
+                                                                                    clr = 'green'
+                                                                                    if failed > 0:
+                                                                                        clr = 'red'
+                                                                                        stat = 'FAILED'
+
+                                                                                        if fdelta > 0:
+                                                                                            # stat = 'REGRESSION (%s)' % fdelta
+                                                                                            stat = 'REGRESSION'
+                                                                                    else:
+                                                                                        stat = 'PASSED'
+
                                                                                     link = data[ubuntu_series][flavour][kernel_version]['suites-results'][arch][suite]['link']
+                                                                                    status = '<a href="%s" style="color:%s;font-family: \'Rubik Mono One\', sans-serif;font-size: 10px;">%s</a>' % (link, clr, stat)
                                                                                 %>
                                                                             <td align="left"  ><a href="${ link }">${ suite }</a></td>
-                                                                            <td align="center"><a href="${ link }">${ passed } ${pdelta}</a></td>
-                                                                            <td align="center"><a href="${ link }">${ failed } ${fdelta}</a></td>
+                                                                            <td align="center">${ status }</td>
                                                                             % if suite_row == 2:
                                                                                 <% suite_row = 0 %>
                                                                     </tr>
