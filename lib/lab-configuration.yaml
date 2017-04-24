@@ -96,6 +96,7 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
+                - "xenial"
         archytas:
             class: "sru-testing"
             arch:
@@ -120,7 +121,8 @@
                 - "virt"
             series-blacklist:
                 - "precise"
-                - "trusty"
+                - "yakkety"
+                - "zesty"
         baade:
             class: "sru-testing"
             arch:
