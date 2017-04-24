@@ -81,7 +81,9 @@ class Results(object):
     # deltas
     #
     def deltas(s):
-        versions = s.current_sru_versions()
+
+        if args.sru:
+            versions = s.current_sru_versions()
 
         s.delta = {}
         # series
@@ -110,7 +112,7 @@ class Results(object):
                                     fdelta = failed - pfailed
                                     pdelta = passed - ppassed
 
-                                    if kernel not in versions:
+                                    if args.sru and kernel not in versions:
                                         continue
 
                                     s.add_record(series, flavour, kernel, arch, suite, link, passed, pdelta, failed, fdelta)
@@ -164,6 +166,7 @@ if __name__ == '__main__':
     '''
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
     parser.add_argument('--debug', action='store_true', default=False, help='')
+    parser.add_argument('--sru', action='store_true', default=False, help='')
     parser.add_argument('results', nargs='+', help='')
 
     args = parser.parse_args()
