@@ -504,7 +504,7 @@
             role: []
             scratch drive: "/dev/sdb"
         michael:
-            class: "bogus"
+            class: "sru-testing"
             arch:
                 - "amd64"
             provisioner: "maas2"
@@ -871,13 +871,13 @@
                 - "Infrastructure"
             scratch drive: "/dev/sdb"
         rizzo:
-            class: "dev"
+            class: "sru-testing"
             arch:
                 - "amd64"
                 - "i386"
             provisioner: "maas2"
             jenkins server: "jenkins2"
-            locked: true
+            locked: false
             power:
                 -
                     address  : "10.245.80.210"
@@ -885,7 +885,19 @@
                     type     : "ipmi"
                     username : "admin"
             role:
-                - "JuJu Controller"
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+                - "virt"
             scratch drive: "/dev/sdb"
         amaura:
             class: "sru-testing"
