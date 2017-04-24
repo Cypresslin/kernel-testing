@@ -539,6 +539,9 @@
                 - "boot"
                 - "virt"
             scratch drive: "/dev/sdb"
+            series-blacklist:
+                - "yakkety"
+                - "zesty"
         rumford:
             class: "sru-testing"
             arch:
@@ -567,6 +570,9 @@
                 - "boot"
                 - "virt"
             scratch drive: "/dev/sdb"
+            series-blacklist:
+                - "trusty"
+                - "xenial"
         cavac:
             class: "bogus"
             arch:
