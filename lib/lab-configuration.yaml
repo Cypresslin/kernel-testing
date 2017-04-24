@@ -700,6 +700,8 @@
                 - "lucid"
                 - "precise"
                 - "vivid"
+                - "yakkety"
+                - "zesty"
         ms10-35-mcdivittB0-kernel:
             class: "sru-testing"
             arch:
@@ -732,7 +734,9 @@
             series-blacklist:
                 - "lucid"
                 - "precise"
+                - "trusty"
                 - "vivid"
+                - "xenial"
         starmie-kernel:
             class: "sru-testing"
             arch:
@@ -759,6 +763,8 @@
                 - "lucid"
                 - "precise"
                 - "vivid"
+                - "yakkety"
+                - "zesty"
         wright-kernel:
             class: "sru-testing"
             arch:
@@ -784,7 +790,9 @@
             series-blacklist:
                 - "lucid"
                 - "precise"
+                - "trusty"
                 - "vivid"
+                - "xenial"
 
         # --------------------------------------------------------------------------
         # Livepatch testing
