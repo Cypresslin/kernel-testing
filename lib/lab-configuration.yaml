@@ -160,6 +160,8 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
+                - "yakkety"
+                - "zesty"
         naumann:
             class: "sru-testing"
             arch:
@@ -185,6 +187,8 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
+                - "xenial"
+                - "yakkety"
         secchi:
             class: "sru-testing"
             arch:
@@ -210,6 +214,8 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
+                - "xenial"
+                - "zesty"
         s2lp6g001:
             class: "sru-testing"
             arch:
