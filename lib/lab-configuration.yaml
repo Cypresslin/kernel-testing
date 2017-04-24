@@ -611,6 +611,10 @@
                 - "boot"
                 - "virt"
             scratch drive: "/dev/sdb"
+            series-blacklist:
+                - "xenial"
+                - "yakkety"
+                - "zesty"
         onza:
             class: "sru-testing"
             arch:
@@ -639,6 +643,10 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
+            series-blacklist:
+                - "trusty"
+                - "yakkety"
+                - "zesty"
         modoc:
             class: "sru-testing"
             arch:
@@ -915,6 +923,10 @@
                 - "boot"
                 - "virt"
             scratch drive: "/dev/sdb"
+            series-blacklist:
+                - "trusty"
+                - "xenial"
+                - "yakkety"
         amaura:
             class: "sru-testing"
             arch:
@@ -952,9 +964,23 @@
                     type     : "ipmi"
                     username : "admin"
             role:
+                - "ubuntu_boot"
                 - "qrt"
+                - "smoke"
                 - "sru"
                 - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+                - "virt"
+            series-blacklist:
+                - "trusty"
+                - "xenial"
+                - "zesty"
         fili:
             class: "bogus"
             arch:
