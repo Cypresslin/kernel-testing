@@ -5,6 +5,11 @@ if 'root' in data:
     kt_root = data['root']
 else:
     kt_root = '/var/lib/jenkins'
+
+if 'priority' in data:
+    priority = data['priority']
+else:
+    priority = 3 # This is the default
 %>
 
 <project>
@@ -23,6 +28,10 @@ ${data['description']}
             <throttleEnabled>true</throttleEnabled>
             <throttleOption>category</throttleOption>
         </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+        <jenkins.advancedqueue.priority.strategy.PriorityJobProperty plugin="PrioritySorter@3.5.0">
+            <useJobPriority>true</useJobPriority>
+            <priority>${priority}</priority>
+        </jenkins.advancedqueue.priority.strategy.PriorityJobProperty>
     </properties>
     <scm class="hudson.scm.NullSCM"/>
     <assignedNode>master</assignedNode>
