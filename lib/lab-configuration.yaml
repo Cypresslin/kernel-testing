@@ -237,7 +237,6 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
-                - "boot"
             series-blacklist:
                 - "lucid"
                 - "precise"
@@ -268,7 +267,6 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
-                - "boot"
             series-blacklist:
                 - "lucid"
                 - "precise"
@@ -299,7 +297,6 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
-                - "boot"
             series-blacklist:
                 - "lucid"
                 - "precise"
@@ -330,7 +327,6 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
-                - "boot"
             series-blacklist:
                 - "lucid"
                 - "precise"
@@ -361,7 +357,6 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
-                - "boot"
             series-blacklist:
                 - "lucid"
                 - "precise"
@@ -408,7 +403,6 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
-                - "boot"
             series-blacklist:
                 - "lucid"
                 - "precise"
@@ -439,7 +433,6 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
-                - "boot"
             series-blacklist:
                 - "lucid"
                 - "precise"
@@ -470,7 +463,6 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
-                - "boot"
             series-blacklist:
                 - "lucid"
                 - "precise"
