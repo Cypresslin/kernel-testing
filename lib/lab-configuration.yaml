@@ -574,6 +574,7 @@
                 - "virt"
             scratch drive: "/dev/sdb"
             series-blacklist:
+                - "precise"
                 - "trusty"
                 - "xenial"
                 - "artful"
@@ -622,6 +623,7 @@
                 - "virt"
             scratch drive: "/dev/sdb"
             series-blacklist:
+                - "precise"
                 - "xenial"
                 - "yakkety"
                 - "zesty"
@@ -654,6 +656,7 @@
                 - "boot"
                 - "virt"
             series-blacklist:
+                - "precise"
                 - "trusty"
                 - "yakkety"
                 - "zesty"
@@ -992,6 +995,7 @@
                 - "boot"
                 - "virt"
             series-blacklist:
+                - "precise"
                 - "trusty"
                 - "xenial"
                 - "zesty"
