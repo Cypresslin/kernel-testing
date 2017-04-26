@@ -97,6 +97,7 @@
                 - "precise"
                 - "trusty"
                 - "xenial"
+                - "artful"
         archytas:
             class: "sru-testing"
             arch:
@@ -189,6 +190,7 @@
                 - "trusty"
                 - "xenial"
                 - "yakkety"
+                - "artful"
         secchi:
             class: "sru-testing"
             arch:
@@ -216,6 +218,7 @@
                 - "trusty"
                 - "xenial"
                 - "zesty"
+                - "artful"
         s2lp6g001:
             class: "sru-testing"
             arch:
@@ -246,6 +249,7 @@
                 - "wily"
                 - "yakkety"
                 - "zesty"
+                - "artful"
             proc-decoration: "zKVM"
         s2lp6g002:
             class: "sru-testing"
@@ -276,6 +280,7 @@
                 - "wily"
                 - "xenial"
                 - "zesty"
+                - "artful"
             proc-decoration: "zKVM"
         s2lp6g003:
             class: "sru-testing"
@@ -306,6 +311,7 @@
                 - "wily"
                 - "xenial"
                 - "yakkety"
+                - "artful"
             proc-decoration: "zKVM"
         s2lp3:
             class: "sru-testing"
@@ -336,6 +342,7 @@
                 - "wily"
                 - "yakkety"
                 - "zesty"
+                - "artful"
             proc-decoration: "Ubuntu on LPAR"
         s2lp4:
             class: "sru-testing"
@@ -366,6 +373,7 @@
                 - "wily"
                 - "xenial"
                 - "zesty"
+                - "artful"
             proc-decoration: "Ubuntu on LPAR"
         # s2lp5:
         #     class: "bogus"
@@ -412,6 +420,7 @@
                 - "wily"
                 - "yakkety"
                 - "zesty"
+                - "artful"
             proc-decoration: "zVM"
         kernel02:
             class: "sru-testing"
@@ -442,6 +451,7 @@
                 - "wily"
                 - "xenial"
                 - "zesty"
+                - "artful"
             proc-decoration: "zVM"
         kernel03:
             class: "sru-testing"
@@ -472,6 +482,7 @@
                 - "wily"
                 - "xenial"
                 - "yakkety"
+                - "artful"
             proc-decoration: "zVM"
         beketov:
             class: "private"
@@ -565,6 +576,7 @@
             series-blacklist:
                 - "trusty"
                 - "xenial"
+                - "artful"
         cavac:
             class: "bogus"
             arch:
@@ -645,6 +657,7 @@
                 - "trusty"
                 - "yakkety"
                 - "zesty"
+                - "artful"
         modoc:
             class: "sru-testing"
             arch:
@@ -751,6 +764,7 @@
                 - "trusty"
                 - "vivid"
                 - "xenial"
+                - "artful"
         starmie-kernel:
             class: "sru-testing"
             arch:
@@ -807,6 +821,7 @@
                 - "trusty"
                 - "vivid"
                 - "xenial"
+                - "artful"
 
         # --------------------------------------------------------------------------
         # Livepatch testing
@@ -925,6 +940,7 @@
                 - "trusty"
                 - "xenial"
                 - "yakkety"
+                - "artful"
         amaura:
             class: "sru-testing"
             arch:
@@ -979,6 +995,7 @@
                 - "trusty"
                 - "xenial"
                 - "zesty"
+                - "artful"
         fili:
             class: "bogus"
             arch:
