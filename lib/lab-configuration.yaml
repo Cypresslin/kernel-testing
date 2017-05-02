@@ -767,7 +767,7 @@
             class: "sru-testing"
             arch:
                 - "arm64"
-            sub-arch: "xgene-uboot"
+            sub-arch: "generic"
             provisioner: "hyper-maas"
             jenkins server: "jenkins2"
             locked: false
@@ -795,7 +795,7 @@
             class: "sru-testing"
             arch:
                 - "arm64"
-            sub-arch: "xgene-uboot"
+            sub-arch: "generic"
             provisioner: "hyper-maas"
             jenkins server: "jenkins2"
             locked: false
