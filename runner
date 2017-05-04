@@ -163,7 +163,7 @@ class Runner():
             if 'scratch' in self.test_profiles[t] and self.test_profiles[t]['scratch']:
                 node = platform.node()
                 if 'scratch drive' in Configuration['systems'][node]:
-                    device = Configuration['systems'][node]['scratch']
+                    device = Configuration['systems'][node]['scratch drive']
                     self.test_profiles[t]['atargs']['UBUNTU_SCRATCH_DEVICE'] = device
                 else:
                     # Remove the test if hw requirement (scratch drive) does not met

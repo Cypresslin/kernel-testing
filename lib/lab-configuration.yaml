@@ -688,12 +688,7 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
-            scratch drive:
-                - "/dev/sdb"
-                - "/dev/sdc"
-                - "/dev/sdd"
-                - "/dev/sde"
-                - "/dev/sdf"
+            scratch drive: "/dev/sdb"
             series-blacklist:
                 - "lucid"
                 - "precise"
