@@ -520,14 +520,40 @@ class Base(object):
         '''
         center('Base::enable_ppa')
         s.progress('Enabling PPA')
-        s.ssh('\'sudo apt-get -y install software-properties-common\'')
+
+        extras = {}
         try:
-            if s.ppa.startswith('ppa:'):
-                s.ssh('\'sudo add-apt-repository -y %s\'' % (s.ppa))
-            else:
-                s.ssh('\'sudo add-apt-repository -y ppa:%s\'' % (s.ppa))
-        except:
-            raise ErrorExit('Failed to add the ppa.')
+            fid = path.join(path.dirname(argv[0]), 'ppa-extras')
+            with open(fid, 'r') as stream:
+                extras = yaml.safe_load(stream)
+        except FileNotFoundError as e:
+            print('Exception thrown and ignored. Did not find a flavour-extras file.')
+            print(fid)
+            pass # Ignore the error
+
+        if s.ppa in extras:
+            if 'key' in extras[s.ppa]:
+                cmd = "sudo touch /tmp/ppa.key"
+                s.ssh(cmd)
+                for line in extras[s.ppa]['key']:
+                    cmd = '\'echo \"%s\" | sudo tee -a /tmp/ppa.key\'' % (line)
+                    s.ssh(cmd)
+                cmd = 'sudo apt-key add /tmp/ppa.key'
+                s.ssh(cmd)
+
+            if 'subscription' in extras[s.ppa]:
+                for line in extras[s.ppa]['subscription']:
+                    cmd = '\'echo \"%s\" | sudo tee -a /etc/apt/sources.list.d/%s.list\'' % (line, s.flavour)
+                    s.ssh(cmd)
+        else:
+            s.ssh('\'sudo apt-get -y install software-properties-common\'')
+            try:
+                if s.ppa.startswith('ppa:'):
+                    s.ssh('\'sudo add-apt-repository -y %s\'' % (s.ppa))
+                else:
+                    s.ssh('\'sudo add-apt-repository -y ppa:%s\'' % (s.ppa))
+            except:
+                raise ErrorExit('Failed to add the ppa.')
         s.ssh('sudo apt-get update', ignore_result=True)
         cleave('Base::enable_ppa')
 
