@@ -246,6 +246,10 @@ class Base(object):
 
         s.ssh('sudo reboot', quiet=quiet)
         if wait:
+            # Bad, bad hack. The problem is that on Azure I can trigger a reboot and then for some
+            # amount of time still get ssh output back before it has fully shutdown.
+            #
+            sleep(60 * 5) # Give it 5 minutes to "settle"
             s.wait_for_target()
         cleave('Base::reboot')
 
