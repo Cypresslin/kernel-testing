@@ -7,7 +7,7 @@ from logging                            import error, basicConfig, DEBUG, WARNIN
 
 from lib.log                            import Clog, center, cleave
 from lib.shell                          import ShellError, ShellTimeoutError
-from lib.target                         import Target
+from lib.target                         import Target, GCETarget
 from lib.exceptions                     import ErrorExit
 from lib3.cloud                         import Cloud
 
@@ -35,8 +35,11 @@ class TheApp(object):
         try:
             cloud = Cloud.construct(args.cloud)
             ip = cloud.lookup_instance_ip(args.target)
-            metal = Target(ip, args.series, args.arch, hwe=args.hwe, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, required_kernel_version=args.required_kernel_version, flavour=args.flavour, ssh_options=cloud.ssh_options, ssh_user=cloud.ssh_user)
-            if metal.provision():
+            if args.cloud == 'gce':
+                instance = GCETarget(ip, args.series, args.arch, hwe=args.hwe, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, required_kernel_version=args.required_kernel_version, flavour=args.flavour, ssh_options=cloud.ssh_options, ssh_user=cloud.ssh_user)
+            else:
+                instance = Target(ip, args.series, args.arch, hwe=args.hwe, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, required_kernel_version=args.required_kernel_version, flavour=args.flavour, ssh_options=cloud.ssh_options, ssh_user=cloud.ssh_user)
+            if instance.provision():
                 retval = 0
 
         except ErrorExit as e:
