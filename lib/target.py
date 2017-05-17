@@ -207,6 +207,8 @@ class Base(object):
             print(fid)
             pass # Ignore the error
 
+        s.remove_hwe()
+
         if s.flavour in extras:
             if 'key' in extras[s.flavour]['ppa']:
                 for line in extras[s.flavour]['ppa']['key']:
@@ -336,17 +338,24 @@ class Base(object):
 
         cleave('Base::dist_upgrade')
 
+    # remove_hwe
+    #
+    def remove_hwe(s):
+        center(s.__class__.__name__ + '.remove_hwe')
+        cleave(s.__class__.__name__ + '.remove_hwe')
+
     # kernel_upgrade
     #
     def kernel_upgrade(s):
         '''
         Perform a update of the kernels on a remote system.
         '''
-        center('Base::kernel_upgrade')
+        center(s.__class__.__name__ + '.kernel_upgrade')
         s.progress('Kernel Upgrade')
+        s.remove_hwe()
         s.ssh('sudo apt-get update', ignore_result=True)
         s.ssh('sudo apt-get --yes install linux-image-generic linux-headers-generic')
-        cleave('Base::kernel_upgrade')
+        cleave(s.__class__.__name__ + '.kernel_upgrade')
 
     # install_python_minimal
     #
@@ -389,9 +398,6 @@ class Base(object):
 
 
 # Target
-#
-# Every SUT has a 'bare-metal' component. Most of the time that _is_ the SUT and there
-# is no other component. Sometimes the SUT is a VM which runs on 'bare-metal'.
 #
 class Target(Base):
     # __init__
@@ -577,7 +583,7 @@ class Target(Base):
     # provision
     #
     def provision(s):
-        center("Target::provision")
+        center(s.__class__.__name__ + 'provision')
 
         reboot = None
         retval = False
@@ -634,7 +640,48 @@ class Target(Base):
 
         s.progress('That\'s All Folks!')
 
-        cleave("Target::provision (%s)" % (retval))
+        cleave(s.__class__.__name__ + 'provision (%s)' % retval)
         return retval
+
+# GCETarget
+#
+class GCETarget(Target):
+    # __init__
+    #
+    def __init__(s, target, series, arch, kernel=None, hwe=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, required_kernel_version=None, flavour='generic', ssh_options=None, ssh_user='ubuntu'):
+        center(s.__class__.__name__ + '.__init__')
+        Target.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, required_kernel_version=required_kernel_version, flavour=flavour, ssh_options=ssh_options, ssh_user=ssh_user)
+        cleave(s.__class__.__name__ + '.__init__')
+
+    # remove_hwe
+    #
+    def remove_hwe(s):
+        '''
+        Remove all the packages that have to do with hwe kernels
+        '''
+        center(s.__class__.__name__ + '.remove_hwe')
+        s.ssh('\'dpkg -l | grep linux- | grep "\-hwe-" | tr -s " " | cut -f 2 -d " " | sudo xargs apt-get --yes --assume-yes purge\'')
+        s.ssh('\'dpkg -l | grep linux- | grep "~" | tr -s " " | cut -f 2 -d " " | sudo xargs apt-get --yes --assume-yes purge\'')
+        cleave(s.__class__.__name__ + '.remove_hwe')
+
+# AzureTarget
+#
+class AzureTarget(Target):
+    # __init__
+    #
+    def __init__(s, target, series, arch, kernel=None, hwe=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, required_kernel_version=None, flavour='generic', ssh_options=None, ssh_user='ubuntu'):
+        center(s.__class__.__name__ + '.__init__')
+        Target.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, required_kernel_version=required_kernel_version, flavour=flavour, ssh_options=ssh_options, ssh_user=ssh_user)
+        cleave(s.__class__.__name__ + '.__init__')
+
+# AWSTarget
+#
+class AWSTarget(Target):
+    # __init__
+    #
+    def __init__(s, target, series, arch, kernel=None, hwe=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, required_kernel_version=None, flavour='generic', ssh_options=None, ssh_user='ubuntu'):
+        center(s.__class__.__name__ + '__init__')
+        Target.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, required_kernel_version=required_kernel_version, flavour=flavour, ssh_options=ssh_options, ssh_user=ssh_user)
+        cleave(s.__class__.__name__ + '__init__')
 
 # vi:set ts=4 sw=4 expandtab syntax=python:
