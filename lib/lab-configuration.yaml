@@ -491,12 +491,7 @@
             provisioner: "maas2"
             jenkins server: "jenkins2"
             locked: true
-            power:
-                -
-                    address  : "10.245.80.210"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
+            power: []
             role: []
             scratch drive: "/dev/sdb"
         lagalla:
@@ -506,12 +501,7 @@
             provisioner: "maas2"
             jenkins server: "jenkins2"
             locked: true
-            power:
-                -
-                    address  : "192.168.228.93"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "Administrator"
+            power: []
             role: []
             scratch drive: "/dev/sdb"
         michael:
@@ -521,12 +511,7 @@
             provisioner: "maas2"
             jenkins server: "jenkins2"
             locked: false
-            power:
-                -
-                    address  : "192.168.228.94"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "Administrator"
+            power: []
             role:
                 - "ubuntu_boot"
                 - "qrt"
@@ -552,12 +537,7 @@
             provisioner: "maas2"
             jenkins server: "jenkins2"
             locked: false
-            power:
-                -
-                    address  : "192.168.228.95"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "Administrator"
+            power: []
             role:
                 - "ubuntu_boot"
                 - "qrt"
@@ -586,12 +566,7 @@
             provisioner: "maas"
             jenkins server: "jenkins"
             locked: false
-            power:
-                -
-                    address  : "192.168.228.83"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "Administrator"
+            power: []
             role: []
         onibi:
             class: "sru-testing"
@@ -601,12 +576,7 @@
             provisioner: "maas2"
             jenkins server: "jenkins2"
             locked: false
-            power:
-                -
-                    address  : "10.245.80.205"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
+            power: []
             role:
                 - "ubuntu_boot"
                 - "qrt"
@@ -635,12 +605,7 @@
             provisioner: "maas2"
             jenkins server: "jenkins2"
             locked: false
-            power:
-                -
-                    address  : "10.245.80.207"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
+            power: []
             role:
                 - "ubuntu_boot"
                 - "qrt"
@@ -668,12 +633,7 @@
             provisioner: "maas2"
             jenkins server: "jenkins2"
             locked: false
-            power:
-                -
-                    address  : "192.168.228.20"
-                    password : "admin"
-                    type     : "ipmi"
-                    username : ""
+            power: []
             role:
                 - "ubuntu_boot"
                 - "qrt"
@@ -700,13 +660,7 @@
             provisioner: "hyper-maas"
             jenkins server: "jenkins2"
             locked: false
-            power:
-                -
-                    address  : "10.229.65.1"
-                    node: "c34n1"
-                    password : "password"
-                    type     : "ipmi"
-                    username : "Administrator"
+            power: []
             role:
                 - "ubuntu_boot"
                 - "qrt"
@@ -735,13 +689,7 @@
             provisioner: "hyper-maas"
             jenkins server: "jenkins2"
             locked: false
-            power:
-                -
-                    address  : "10.229.65.1"
-                    node: "c35n1"
-                    password : "password"
-                    type     : "ipmi"
-                    username : "Administrator"
+            power: []
             role:
                 - "ubuntu_boot"
                 - "qrt"
@@ -831,12 +779,7 @@
             provisioner: "maas"
             jenkins server: "jenkins-lkp"
             locked: false
-            power:
-                -
-                    address  : "192.168.228.50"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
+            power: []
             role:
                 - "lkp-1"
                 - "lkp-2"
@@ -852,13 +795,8 @@
             provisioner: "maas"
             jenkins server: "jenkins-lkp"
             locked: false
-            power:
-                -
-                    address  : "192.168.228.51"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
-            role: 
+            power: []
+            role:
                 - "lkp-1"
                 - "lkp-ecryptfs"
                 - "livepatch-regression-test"
@@ -872,12 +810,7 @@
             provisioner: "maas"
             jenkins server: "jenkins-lkp"
             locked: false
-            power:
-                -
-                    address  : "192.168.228.52"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
+            power: []
             role:
                 - "lkp-2"
                 - "lkp-xfstests"
@@ -896,12 +829,7 @@
             provisioner: "maas2"
             jenkins server: "jenkins"
             locked: true
-            power:
-                -
-                    address  : "10.245.80.209"
-                    password : "kodw6gcl"
-                    type     : "ipmi"
-                    username : "maas"
+            power: []
             role:
                 - "Infrastructure"
             scratch drive: "/dev/sdb"
@@ -913,12 +841,7 @@
             provisioner: "maas2"
             jenkins server: "jenkins2"
             locked: false
-            power:
-                -
-                    address  : "10.245.80.210"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
+            power: []
             role:
                 - "ubuntu_boot"
                 - "qrt"
@@ -946,12 +869,7 @@
             provisioner: "maas2"
             jenkins server: "jenkins2"
             locked: false
-            power:
-                -
-                    address  : "10.245.80.210"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
+            power: []
             role:
                 - "ubuntu_boot"
                 - "sru-1"
@@ -969,12 +887,7 @@
             domain: "maas"
             jenkins server: "jenkins2"
             locked: false
-            power:
-                -
-                    address  : "10.245.80.213"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
+            power: []
             role:
                 - "ubuntu_boot"
                 - "qrt"
@@ -1003,12 +916,7 @@
             provisioner: "maas2"
             jenkins server: "jenkins2"
             locked: false
-            power:
-                -
-                    address  : "10.98.5.226"
-                    password : "gEktYeGpC"
-                    type     : "ipmi"
-                    username : "maas"
+            power: []
             role:
                 - "ubuntu_boot"
                 - "sru"
@@ -1021,12 +929,7 @@
             provisioner: "maas2"
             jenkins server: "jenkins2"
             locked: false
-            power:
-                -
-                    address  : "10.245.80.211"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
+            power: []
             role:
                 - "ubuntu_boot"
                 - "sru"
@@ -1041,12 +944,7 @@
             provisioner: "maas2"
             jenkins server: "jenkins2"
             locked: false
-            power:
-                -
-                    address  : "10.245.80.227"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "admin"
+            power: []
             role:
                 - "ubuntu_boot"
                 - "smoke"
@@ -1068,12 +966,7 @@
             provisioner: "maas"
             jenkins server: "jenkins"
             locked: false
-            power:
-                -
-                    address  : "10.245.81.144"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "root"
+            power: []
             role: []
         tarf:
             arch:
@@ -1082,12 +975,7 @@
             provisioner: "maas"
             jenkins server: "jenkins"
             locked: false
-            power:
-                -
-                    address  : "10.245.80.222"
-                    password : "mBZpvBcB8sQeo"
-                    type     : "ipmi"
-                    username : "maas"
+            power: []
             role:
                 - "dead"
             scratch drive: "/dev/sdb"
@@ -1098,12 +986,7 @@
             provisioner: "maas"
             jenkins server: "jenkins"
             locked: false
-            power:
-                -
-                    address  : "10.245.81.142"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "root"
+            power: []
             role: []
         etnyre:
             arch:
@@ -1112,12 +995,7 @@
             provisioner: "maas"
             jenkins server: "jenkins"
             locked: false
-            power:
-                -
-                    address  : "192.168.228.84"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "Administrator"
+            power: []
             role: []
         haase:
             arch:
@@ -1126,12 +1004,7 @@
             provisioner: "maas"
             jenkins server: "jenkins"
             locked: false
-            power:
-                -
-                    address  : "10.245.81.143"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "root"
+            power: []
             role: []
         rainier:
             arch:
@@ -1140,12 +1013,7 @@
             provisioner: "maas"
             jenkins server: "jenkins"
             locked: false
-            power:
-                -
-                    address  : "192.168.228.91"
-                    password : "insecure"
-                    type     : "ipmi"
-                    username : "Administrator"
+            power: []
             role:
                 - "dead"
 
@@ -1159,12 +1027,7 @@
             provisioner: "maas"
             jenkins server: "jenkins"
             locked: false
-            power:
-                -
-                    address  : "10.245.80.212"
-                    password : "SeqjBEPS6FeZaW"
-                    type     : "ipmi"
-                    username : "maas"
+            power: []
             role:
                 - "arges"
         #statler is now an infrastructure system so it would be very bad were it to be deployed.
@@ -1176,12 +1039,7 @@
             provisioner: "maas"
             jenkins server: "jenkins"
             locked: true
-            power:
-                -
-                    address  : "10.245.81.158"
-                    password : "j23x8zWbrPT"
-                    type     : "ipmi"
-                    username : "maas"
+            power: []
             role: []
             scratch drive: ""
         gloin:
@@ -1191,19 +1049,7 @@
             provisioner: "maas"
             jenkins server: "jenkins"
             locked: true
-            power:
-                -
-                    address  : "10.98.4.30"
-                    password : "K3rn3!"
-                    port     : "gloin_ps1"
-                    type     : "cdu"
-                    username : "kernel"
-                -
-                    address  : "10.98.4.31"
-                    password : "K3rn3!"
-                    port     : "gloin_ps2"
-                    type     : "cdu"
-                    username : "kernel"
+            power: []
             role: []
 
 # vi:set ts=4 sw=4 expandtab syntax=yaml:
