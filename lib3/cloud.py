@@ -192,7 +192,7 @@ class Azure(CloudBase):
 
     # create
     #
-    def create(s, instance_name, series, region='West US'):
+    def create(s, instance_name, series, region='West US', instance_type='unknown'):
         center(s.__class__.__name__ + '.create')
 
         retval = 0
@@ -339,7 +339,7 @@ class GCE(CloudBase):
     #
     # https://cloud.google.com/compute/docs/regions-zones/regions-zones
     #
-    def create(s, instance_name, series, region='us-west1'):
+    def create(s, instance_name, series, region='us-west1', instance_type='unknown'):
         center(s.__class__.__name__ + '.create')
         cdebug('    instance_name: %s' % instance_name)
         cdebug('           series: %s' % series)
@@ -489,7 +489,7 @@ class AWS(CloudBase):
 
     # create
     #
-    def create(s, instance_name, series, region):
+    def create(s, instance_name, series, region, instance_type='t2.micro'):
         center(s.__class__.__name__ + '.create')
 
         retval = 1
@@ -510,7 +510,7 @@ class AWS(CloudBase):
                 break
 
         if ami is not None:
-            cmd = 'run-instances --image-id %s --key-name cloud-figg --instance-type t2.micro --security-groups figg-security-group' % (ami)
+            cmd = 'run-instances --image-id %s --key-name cloud-figg --instance-type %s --security-groups figg-security-group' % (ami, instance_type)
             response = s.sh(cmd)
             reservation_id = response['ReservationId']
 
