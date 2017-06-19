@@ -746,6 +746,7 @@
             provisioner: "hyper-maas"
             jenkins server: "jenkins2"
             locked: false
+            power: []
             role:
                 - "ubuntu_boot"
                 - "qrt"
@@ -774,6 +775,7 @@
             provisioner: "hyper-maas"
             jenkins server: "jenkins2"
             locked: false
+            power: []
             role:
                 - "ubuntu_boot"
                 - "qrt"
