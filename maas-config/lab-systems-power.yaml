@@ -5,6 +5,8 @@
     #
     cdus:
         # name                   password
+        "bos01-a-08-fa1.power" : "r3m0t3ly"
+        "bos01-a-08-fb1.power" : "r3m0t3ly"
         "bos01-b-08-fa1.power" : "r3m0t3ly"
         "bos01-b-08-fb1.power" : "r3m0t3ly"
         "bos01-b-07-fa1.power" : "r3m0t3ly"
@@ -67,6 +69,7 @@
             rukbah: "bos01-b-08-fa1.power"
 
         rizzo:
+            rizzo_psu1: "bos01-b-08-fa1.power"
             rizzo_psu2: "bos01-b-08-fb1.power"
 
         pepe:
@@ -181,14 +184,14 @@
             rumford_psu1: "bos01-b-07-fa1.power"
             rumford_psu2: "bos01-b-07-fb1.power"
         secchi:
-            secchi-ps1: "bos01-a-08-fa1-20.power"
-            secchi-ps2: "bos01-a-08-fb1-20.power"
+            secchi-ps1: "bos01-a-08-fa1.power"
+            secchi-ps2: "bos01-a-08-fb1.power"
         naumann:
-            naumann-ps1: "bos01-a-08-fa1-18.power"
-            naumann-ps2: "bos01-a-08-fb1-18.power"
+            naumann-ps1: "bos01-a-08-fa1.power"
+            naumann-ps2: "bos01-a-08-fb1.power"
         daedalus:
-            daedalus-ps1: "bos01-a-08-fa1-21.power"
-            daedalus-ps2: "bos01-a-08-fb1-21.power"
+            daedalus-ps1: "bos01-a-08-fa1.power"
+            daedalus-ps2: "bos01-a-08-fb1.power"
         lodygin:
             lodygin_psu1: "bos01-b-07-fa1.power"
             lodygin_psu2: "bos01-b-07-fb1.power"
