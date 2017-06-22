@@ -506,7 +506,6 @@ TestCollections = {
 # is processing SRU email.
 #
 SRU_TestsList = [
-    'boot',
     'smoke',
     'qrt',
     'sru-1',
