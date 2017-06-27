@@ -236,6 +236,9 @@ class Base(object):
 
         cleave("Base::install_kernel_flavour")
 
+    def reboot_settle(s):
+        return
+
     # reboot
     #
     def reboot(s, progress=None, wait=True, quiet=True):
@@ -248,10 +251,7 @@ class Base(object):
 
         s.ssh('sudo reboot', quiet=quiet)
         if wait:
-            # Bad, bad hack. The problem is that on Azure I can trigger a reboot and then for some
-            # amount of time still get ssh output back before it has fully shutdown.
-            #
-            sleep(60 * 5) # Give it 5 minutes to "settle"
+            s.reboot_settle()
             s.wait_for_target()
         cleave('Base::reboot')
 
@@ -588,6 +588,8 @@ class Target(Base):
         reboot = None
         retval = False
 
+        s.wait_for_target() # Make sure the instance is up before we try to modify it.
+
         s.fixup_hosts()
 
         # The very first thing we need to do is make our changes to the apt sources and then dist-upgrade
@@ -673,6 +675,13 @@ class AzureTarget(Target):
         center(s.__class__.__name__ + '.__init__')
         Target.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, required_kernel_version=required_kernel_version, flavour=flavour, ssh_options=ssh_options, ssh_user=ssh_user)
         cleave(s.__class__.__name__ + '.__init__')
+
+    def reboot_settle(s):
+        # Bad, bad hack. The problem is that on Azure I can trigger a reboot and then for some
+        # amount of time still get ssh output back before it has fully shutdown.
+        #
+        s.progress('Settling...')
+        sleep(60 * 1) # Give it 5 minutes to "settle"
 
 # AWSTarget
 #
