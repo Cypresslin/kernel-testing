@@ -67,7 +67,7 @@ ${deploy}
 if [ $? -ne 0 ]; then
     status deploy.failed
     $KT/cl destroy ${data['cloud']} $SUT
-    exit -1
+    exit 1
 fi
 status deploy.succeeded
 
@@ -77,7 +77,7 @@ if [ $? -ne 0 ]; then
     status prepare.failed
     cat provisioning.log
     $KT/cl destroy ${data['cloud']} $SUT
-    exit -1
+    exit 1
 fi
 
 status testing.started
@@ -85,7 +85,7 @@ ${tester}
 if [ $? -ne 0 ]; then
     status testing.failed
     $KT/cl destroy ${data['cloud']} $SUT
-    exit -1
+    exit 1
 fi
 status testing.completed
 
