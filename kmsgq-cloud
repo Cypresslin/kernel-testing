@@ -68,6 +68,7 @@ class RequestHandler(threading.Thread):
         msg['timestamp'] = request['date']
         msg['package'] = request['package']
         msg['series-name'] = request['series-name']
+        msg['hwe'] = request['hwe']
         file_name  = ''
         file_name += request['series-name']
         file_name += '__'
@@ -92,6 +93,9 @@ class RequestHandler(threading.Thread):
         # For now all clouds are amd64. sut-arch is required
         #
         request['arch'] = 'amd64'
+
+        if request['op'] == 'gke':
+            request['op'] = 'gce'
 
         cloud = request['op']
         factory = CloudJobFactory(cloud=cloud, series=request['series-name'], region=s.cfg[cloud]['region'], tests=cloud, request=request)
@@ -174,7 +178,7 @@ class JobFactory(object):
         center(s.__class__.__name__ + '.msgq_handler')
 
         valid_keys = ['kernel.testing.request', 'kernel.publish']
-        valid_ops  = ['aws', 'gce', 'azure']
+        valid_ops  = ['aws', 'gce', 'azure', 'gke']
         valid_pkgs = ['linux', 'linux-aws', 'linux-azure', 'linux-gke']
 
         # Determine if the key in the current message is on that
