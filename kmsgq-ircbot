@@ -200,7 +200,14 @@ class TheApp():
                 content += '%s-%s' % (series, payload['flavour'])
                 if 'version' in payload:
                     content += ' %s'     % (payload['version'])
-                content += ' on %s (%s)' % (payload['sut-name'], payload['sut-arch'])
+                try:
+                    content += ' on %s' % (payload['sut-name'])
+                except KeyError:
+                    content += ' on unknown'
+                try:
+                    content += ' (%s)' % (payload['sut-arch'])
+                except KeyError:
+                    content += ' (unknown)'
 
                 if 'bug-id' in payload:
                     content += ';  LP: #%d\n' % (payload['bug-id'])
