@@ -9,6 +9,7 @@ from lib.exceptions                     import ErrorExit
 from lib.log                            import center, cleave, cinfo, cdebug
 from lib3.shell                         import sh, Shell, ShellError
 from datetime                           import datetime
+import yaml
 
 from simplestreams import filters
 from simplestreams import mirrors
@@ -694,6 +695,94 @@ class CloudJobFactory(object):
         s.create_jobs()
 
         cleave(s.__class__.__name__ + '.main (%s)' % retval)
+        return retval
+
+# AWSJobFactory
+#
+class AWSJobFactory(CloudJobFactory):
+    # __init__
+    #
+    def __init__(s, cloud, series, region, tests, request):
+        '''
+        '''
+        center(s.__class__.__name__ + '.__init__')
+        super(AWSJobFactory, s).__init__(cloud=cloud, series=series, region=region, tests=tests, request=request)
+
+        # Find and load the aws config file. We expect it to be in the same directory as this
+        # module.
+        #
+        base = os.path.dirname(__file__)
+        p = os.path.join(base, 'aws.yaml')
+        with open(p, 'r') as stream:
+            s.aws = yaml.safe_load(stream)
+
+        cleave(s.__class__.__name__ + '.__init__')
+
+    # job_name
+    #
+    def job_name(s, test, instance_type, root_store):
+        center(s.__class__.__name__ + '.job_name')
+
+        # Cloud specific parts of the name.
+        #
+        retval = s.cloud
+        retval += '-'
+        retval += instance_type
+        retval += '-'
+        retval += root_store
+        retval += '--'
+
+        # The job name starts with some form of the test name(s)
+        #
+        retval += test
+        retval += '--'
+
+        retval += s.series
+
+        cleave(s.__class__.__name__ + '.job_name (%s)' % retval)
+        return retval
+
+    def create_jobs(s):
+        center(s.__class__.__name__ + '.create_jobs')
+
+        retval = {}
+        cl = Cloud.construct(s.cloud)
+        tests = s.expand(s.tests)
+        root_store = 'ssd'
+        for test in tests:
+            for instance_type in s.aws['instances']:
+                job_name = s.job_name(test, instance_type, root_store)
+                job_data = {
+                    'job_name'      : job_name,
+                    'series_name'   : s.series,
+                    'cloud'         : s.cloud,
+                    'test'          : test,
+                    'region'        : s.region,
+                    'sut-name'      : job_name.replace('_', '-'),
+                    'sut-arch'      : 'amd64',
+                    'ssh_options'   : cl.ssh_options,
+                    'instance_type' : instance_type,
+                    'root_store'    : root_store,
+                }
+                for k in s.request:
+                    job_data[k] = s.request[k]
+
+                # The description is used by test-results-announce
+                #
+                job_data['description'] = json.dumps(job_data, sort_keys=True, indent=4)
+
+                s.job_template = s.load_template('aws-jenkins-test-job.mako')
+                job_xml = s.job_template.render(data=job_data)
+
+                try:
+                    s.jenkins.delete_job(job_name)
+                except:
+                    pass
+
+                s.jenkins.create_job(job_name, job_xml)
+                retval[job_data['job_name']] = job_data
+
+        cleave(s.__class__.__name__ + '.create_jobs')
         return retval
 
 # FilterMirror

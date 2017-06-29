@@ -23,7 +23,7 @@ import threading
 import queue
 from lib.log                            import center, cleave, Clog, cinfo, cdebug
 from lib3.msgq                          import MsgQueue
-from lib3.cloud                         import CloudJobFactory
+from lib3.cloud                         import CloudJobFactory, AWSJobFactory
 
 # Exit
 #
@@ -98,7 +98,11 @@ class RequestHandler(threading.Thread):
             request['op'] = 'gce'
 
         cloud = request['op']
-        factory = CloudJobFactory(cloud=cloud, series=request['series-name'], region=s.cfg[cloud]['region'], tests=cloud, request=request)
+
+        if cloud == 'aws':
+            factory = AWSJobFactory(cloud=cloud, series=request['series-name'], region=s.cfg[cloud]['region'], tests=cloud, request=request)
+        else:
+            factory = CloudJobFactory(cloud=cloud, series=request['series-name'], region=s.cfg[cloud]['region'], tests=cloud, request=request)
 
         jobs = factory.create_jobs()
         msg = s.store_jobs(request, jobs)
@@ -219,7 +223,7 @@ class JobFactory(object):
             cfg = {
                 'aws' : {
                     # 'region' : 'us-west-1',
-                    'region' : 'us-west-1',
+                    'region' : 'us-west-2',
                 },
                 'gce' : {
                     'region' : 'us-west1-a',

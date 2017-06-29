@@ -27,7 +27,10 @@ class TheApp():
         center(s.__class__.__name__ + '.create')
 
         cloud = Cloud.construct(s.args.cloud)
-        retval = cloud.create(s.args.instance, s.args.series, s.args.region)
+        if s.args.type:
+            retval = cloud.create(s.args.instance, s.args.series, s.args.region, instance_type=s.args.type)
+        else:
+            retval = cloud.create(s.args.instance, s.args.series, s.args.region)
         stdout.flush()
 
         cleave(s.__class__.__name__ + '.create')
@@ -122,10 +125,11 @@ if __name__ == '__main__':
     sub = subparsers.add_parser('create')
     sub.set_defaults(func=TheApp.create)
     sub.add_argument('--debug', action='store_true', default=False, help='Print out a lot of messages about what is going on.')
-    sub.add_argument('cloud',  metavar='CLOUD',  type=str, help='')
+    sub.add_argument('--type', help='The instance type to create')
+    sub.add_argument('cloud',    metavar='CLOUD',    type=str, help='')
     sub.add_argument('instance', metavar='INSTANCE', type=str, help='')
-    sub.add_argument('series', metavar='SERIES', type=str, help='')
-    sub.add_argument('region', metavar='REGION', help='')
+    sub.add_argument('series',   metavar='SERIES',   type=str, help='')
+    sub.add_argument('region',   metavar='REGION',   help='')
 
     sub = subparsers.add_parser('destroy')
     sub.set_defaults(func=TheApp.destroy)
