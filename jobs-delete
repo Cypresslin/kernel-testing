@@ -30,6 +30,7 @@ class CloudJobFactory(object):
             name = line.strip()
             if name in jobs:
                 del jobs[name]
+                print(name)
 
         return retval
 
