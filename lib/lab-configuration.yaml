@@ -651,8 +651,8 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
+                - "vivid"
                 - "xenial"
-                - "artful"
         modoc:
             class: "sru-testing"
             arch:
