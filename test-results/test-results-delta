@@ -123,7 +123,7 @@ class Results(object):
                                     ppassed = 0
                                     pfailed = 0
                             else:
-                                if kernel not in versions:
+                                if args.sru and kernel not in versions:
                                     continue
 
                                 s.add_record(series, flavour, kernel, arch, suite, link, passed, 0, failed, 0)
