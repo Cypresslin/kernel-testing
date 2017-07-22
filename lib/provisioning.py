@@ -736,24 +736,6 @@ class Metal(Base):
                     installed_kernel = '%s.%s' % (m.group(1), m.group(2))
                 cdebug('installed kernel version : ' + installed_kernel)
 
-            print('         kernel: ' + installed_kernel)
-            retval = True
-            if kv is not None:
-                installed_series = Ubuntu().lookup(kv)['name']
-
-                if installed_series == s.series:
-                    retval = True
-                else:
-                    error("")
-                    error("*** ERROR:")
-                    error("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, installed_series))
-                    error("")
-            else:
-                error("")
-                error("*** ERROR:")
-                error("    Unable to find the kernel version in any line.")
-                error("")
-
             if s.required_kernel_version is not None:
                 if installed_kernel == s.required_kernel_version:
                     retval = True
@@ -776,40 +758,40 @@ class Metal(Base):
         # Are we running the series correct kernel?
         #
         cdebug('Verifying hwe kernel:')
-        if retval:
-            retval = False
-            kv = None
-            result, kernel = s.ssh(r'uname -vr')
-            for line in kernel:
-                line = line.strip()
-                cdebug('uname -vr : ' + line)
+        # if retval:
+        #     retval = False
+        #     kv = None
+        #     result, kernel = s.ssh(r'uname -vr')
+        #     for line in kernel:
+        #         line = line.strip()
+        #         cdebug('uname -vr : ' + line)
 
-                if 'Warning: Permanently aded' in line: continue
-                if line == '': continue
+        #         if 'Warning: Permanently aded' in line: continue
+        #         if line == '': continue
 
-                m = re.search('(\d+.\d+.\d+)-\d+-.* #(\d+)\~\S+-Ubuntu.*', line)
-                if m:
-                    kv = m.group(1)
-                    cdebug('kernel version : ' + kv)
+        #         m = re.search('(\d+.\d+.\d+)-\d+-.* #(\d+)\~\S+-Ubuntu.*', line)
+        #         if m:
+        #             kv = m.group(1)
+        #             cdebug('kernel version : ' + kv)
 
-            if kv is not None:
-                installed_series = Ubuntu().lookup(kv)['name']
+        #     if kv is not None:
+        #         installed_series = Ubuntu().lookup(kv)['name']
 
-                if installed_series == s.hwe_series:
-                    retval = True
-                else:
-                    error("")
-                    error("*** ERROR:")
-                    error("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, installed_series))
-                    error("")
-            else:
-                error("")
-                error("*** ERROR:")
-                error("    Unable to find the kernel version in any line.")
-                error("")
-                for line in kernel:
-                    line = line.strip()
-                    error("    line: %s" % line)
+        #         if installed_series == s.hwe_series:
+        #             retval = True
+        #         else:
+        #             error("")
+        #             error("*** ERROR:")
+        #             error("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, installed_series))
+        #             error("")
+        #     else:
+        #         error("")
+        #         error("*** ERROR:")
+        #         error("    Unable to find the kernel version in any line.")
+        #         error("")
+        #         for line in kernel:
+        #             line = line.strip()
+        #             error("    line: %s" % line)
 
         cleave('Metal::verify_hwe_target (%s)' % retval)
         return retval
