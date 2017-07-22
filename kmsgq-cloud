@@ -63,7 +63,7 @@ class RequestHandler(threading.Thread):
         msg['key']  = 'kernel.testing.jobs.created'
         msg['bug-id'] = request['bug-id']
         msg['series-name'] = request['series-name']
-        msg['kernel-version'] = request['version']
+        msg['kernel-version'] = request['kernel-version']
         msg['jobs'] = jobs
         msg['timestamp'] = request['date']
         msg['package'] = request['package']
@@ -72,7 +72,7 @@ class RequestHandler(threading.Thread):
         file_name  = ''
         file_name += request['series-name']
         file_name += '__'
-        file_name += request['version']
+        file_name += request['kernel-version']
         file_name += '__'
         file_name += request['op']
         file_name += '.msg'

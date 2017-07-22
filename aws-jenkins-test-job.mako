@@ -17,8 +17,8 @@ if data['flavour']:
     if data['flavour'] != 'generic':
         prepare += ' --flavour %s' % data['flavour']
 
-if 'version' in data:
-    prepare += ' --required-kernel-version %s' % data['version']
+if 'kernel-version' in data:
+    prepare += ' --required-kernel-version %s' % data['kernel-version']
 
 %>
 

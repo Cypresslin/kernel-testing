@@ -66,11 +66,8 @@ if data['flavour']:
 if data['kernel']:
     provision += ' --kernel=%s' % data['kernel']
 
-if 'version' in data:
-    if data['lkp']:
-        provision += ' --required-kernel-version=%s' % data['kernel-version']
-    else:
-        provision += ' --required-kernel-version=%s' % data['version']
+if 'kernel-version' in data:
+    provision += ' --required-kernel-version=%s' % data['kernel-version']
 
 provision += ' $SUT'
 %>
