@@ -141,12 +141,20 @@ class JobsFactory(object):
 
         if 'sru' == s.jd['op']:
             s.jd['tests'] = SRU_TestsList
+            if 'priority' not in s.jd:
+                s.jd['priority'] = 3
         elif 'boot' == s.jd['op']:
             s.jd['tests'] = BOOT_TestsList
+            if 'priority' not in s.jd:
+                s.jd['priority'] = 4
         elif s.cfg.lkp:
             s.jd['tests'] = LKP_TestsList
+            if 'priority' not in s.jd:
+                s.jd['priority'] = 3
         else:
             s.jd['tests'] = ['default']
+            if 'priority' not in s.jd:
+                s.jd['priority'] = 3
 
         cleave(s.__class__.__name__ + '.determine_tests')
 
