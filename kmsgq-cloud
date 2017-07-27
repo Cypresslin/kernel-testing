@@ -94,10 +94,12 @@ class RequestHandler(threading.Thread):
         #
         request['arch'] = 'amd64'
 
-        if request['op'] == 'gke':
-            request['op'] = 'gce'
-
-        cloud = request['op']
+        if 'cloud' in request:
+            cloud = request['cloud']
+        else:
+            cloud = request['flavour']
+            if cloud in ('gke', 'gcp'):
+                cloud = 'gce'
 
         if cloud == 'aws':
             factory = AWSJobFactory(cloud=cloud, series=request['series-name'], region=s.cfg[cloud]['region'], tests=cloud, request=request)
