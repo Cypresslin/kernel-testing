@@ -61,7 +61,6 @@ class RequestHandler(threading.Thread):
             del jobs[j]['who']
         msg = {}
         msg['key']  = 'kernel.testing.jobs.created'
-        msg['bug-id'] = request['bug-id']
         msg['series-name'] = request['series-name']
         msg['kernel-version'] = request['kernel-version']
         msg['jobs'] = jobs
