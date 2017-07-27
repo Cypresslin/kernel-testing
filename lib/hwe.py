@@ -41,6 +41,11 @@ HWE = {
     },
     'zesty' : {
         'series' : 'xenial',
+        'package' : 'linux-generic-hwe-16.04',
+        'ppa' : True
+    },
+    'artful' : {
+        'series' : 'xenial',
         'package' : 'linux-generic-hwe-16.04-edge',
         'ppa' : True
     },
