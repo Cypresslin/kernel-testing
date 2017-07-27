@@ -2,7 +2,7 @@
 #
 
 import sys
-sys.path.insert(0, 'py2')
+sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), 'py2')))
 
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import basicConfig, DEBUG, WARNING
