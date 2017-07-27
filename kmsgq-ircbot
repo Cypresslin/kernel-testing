@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 #
 
+import sys
+sys.path.insert(0, 'py2')
+
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import basicConfig, DEBUG, WARNING
 import socket
@@ -42,6 +45,7 @@ class IrcClient(threading.Thread):
         self.alive = threading.Event()
         self.alive.set()
         self.socket = None
+        self.joined = False
 
         self.handlers = {
             IrcClientCommand.EXIT:    self._handle_EXIT,
@@ -92,12 +96,13 @@ class IrcClient(threading.Thread):
                         sent_pong = True
 
                     if ' JOIN :' in line:
-                            who = line.split('!')[0].replace(':', '')
-                            if who == s.cfg['nick']:
-                                cdebug('I just joined')
-                                sent = s.client_ssl_socket.send('JOIN ' + s.cfg['channel'] + '\r\n')
-                            else:
-                                cdebug('%s just joined' % who)
+                        who = line.split('!')[0].replace(':', '')
+                        if who == s.cfg['nick']:
+                            cdebug('I just joined')
+                            sent = s.client_ssl_socket.send('JOIN ' + s.cfg['channel'] + '\r\n')
+                        else:
+                            cdebug('%s just joined' % who)
+                        s.joined = True
 
                     cdebug(line)
             except ssl.SSLError:
@@ -138,7 +143,8 @@ class IrcClient(threading.Thread):
     #
     def _handle_SEND(s, cmd):
         cdebug('Enter IrcClient::_handle_SEND')
-        sent = s.client_ssl_socket.send('PRIVMSG #kmsgq :%s\r\n' % (cmd.data))
+        if s.joined:
+            sent = s.client_ssl_socket.send('PRIVMSG #kmsgq :%s\r\n' % (cmd.data))
         cdebug('Leave IrcClient::_handle_SEND')
 
 # TheApp
