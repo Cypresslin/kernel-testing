@@ -76,7 +76,7 @@ if data['kernel']:
     provision += ' --kernel=%s' % data['kernel']
 
 if 'kernel-version' in data:
-    provision += ' --required-kernel-version=%s' % data['version']
+    provision += ' --required-kernel-version=%s' % data['kernel-version']
 
 provision += ' $SUT'
 %>
