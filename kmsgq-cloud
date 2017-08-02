@@ -183,8 +183,10 @@ class JobFactory(object):
         center(s.__class__.__name__ + '.msgq_handler')
 
         valid_keys = ['kernel.testing.request', 'kernel.publish']
-        valid_ops  = ['aws', 'gce', 'azure', 'gke']
-        valid_pkgs = ['linux', 'linux-aws', 'linux-azure', 'linux-gke']
+        #valid_ops  = ['aws', 'gce', 'azure', 'gke']
+        #valid_pkgs = ['linux', 'linux-aws', 'linux-azure', 'linux-gke']
+        valid_ops  = ['sru']
+        valid_pkgs = ['linux-azure', 'linux-gke', 'linux-aws', 'linux-gcp']
 
         # Determine if the key in the current message is on that
         # we are going to process.
