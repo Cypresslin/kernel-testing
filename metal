@@ -184,7 +184,7 @@ examples:
     parser.add_argument('--xen',      required=False, action='store_true', default=False, help='The bare-metal should be a Xen host.')
     parser.add_argument('--required-kernel-version',   required=False, default=None, help='Fail if this version has not been installed.')
 
-    parser.add_argument('--nolog',    required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
+    parser.add_argument('--nolog',    required=False, action='store_true', default=False, help='Do not keep any log.')
 
     parser.add_argument('target', metavar='TARGET', type=str, nargs=1, help='The name of the system to be provisioned.')
 
