@@ -52,7 +52,6 @@ class JobsFactory(object):
             'who'            : None,
             'op'             : 'bogus',
             'date'           : '1960.11.02_08.00.00',
-            'hwe'            : False,
             'ppa'            : None,
             'url'            : None,
             'decoration'     : None,
@@ -195,7 +194,8 @@ class JobsFactory(object):
     def valid_systems(s, key, series):
         '''
         Check if the SUT is blacked listed for the desired release. Or if it's
-        hwe kernel for s390x, as we can't re-deploy s390x systems with MaaS now.
+        hwe kernel (which has a '~' in kernel version) for s390x, as we can't
+        re-deploy s390x systems with MaaS now.
         And a special case to drop T-hwe on ARM64, no arm64 image for Precise.
         '''
         retval = []
@@ -204,7 +204,7 @@ class JobsFactory(object):
                 try:
                     if series in s.configuration['systems'][system]['series-blacklist']:
                         continue
-                    elif s.jd['hwe']:
+                    elif '~' in s.jd['kernel']:
                         arch = ','.join(s.configuration['systems'][system]['arch'])
                         if 's390x' in arch:
                             continue
@@ -380,7 +380,7 @@ class JobsFactory(object):
             retval += jd['package']
         else:
             retval += jd['series-name'].title()[0]  # Only want the first character
-        if jd['hwe']:
+        if '~' in s.jd['kernel']:
             retval += '-hwe'
 
         if 'series-decoration' in jd and jd['series-decoration'] is not None:
