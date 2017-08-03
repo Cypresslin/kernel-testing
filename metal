@@ -18,7 +18,6 @@ from lib.log                            import cdebug, Clog, center, cleave
 from lib.shell                          import ShellError, ShellTimeoutError
 from lib.provisioning                   import Metal
 from lib.exceptions                     import ErrorExit
-from lib.hwe                            import HWE
 
 from lib.ubuntu                         import Ubuntu
 
@@ -89,10 +88,6 @@ class MetalApp(object):
         #if args.series not in supported:
         #    raise ErrorExit('The series (%s) is not a recognized, supported series. Valid series are:\n    %s' % (args.series, '\n    '.join(supported)))
 
-        if args.hwe:
-            if HWE[args.series]['series'] is None:
-                raise ErrorExit('The series (%s) does not have a HWE version.' % (args.series))
-
         cdebug("    Leave MetalApp::validate_args")
 
     # main
@@ -102,7 +97,7 @@ class MetalApp(object):
         retval = 1
         try:
             s.validate_args(args)
-            metal = Metal(args.name, args.series, args.arch, hwe=args.hwe, xen=args.xen, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, required_kernel_version=args.required_kernel_version, lkp_snappy=args.lkp_snappy, flavour=args.flavour)
+            metal = Metal(args.name, args.series, args.arch, xen=args.xen, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, required_kernel_version=args.required_kernel_version, lkp_snappy=args.lkp_snappy, flavour=args.flavour)
             if metal.provision():
                 retval = 0
 
@@ -170,11 +165,6 @@ examples:
 
         Install packages from a ppa:
           metal nuc1 --sut=real --sut-series=precise --sut-arch=i386 --ppa=ppa:canonical-kernel-team/ppa
-
-    lts-hwe
-    -------
-        Install the latest HWE kernel that is in -proposed:
-          metal nuc1  --series=trusty --arch=amd64 --hwe
     '''
 
     parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
@@ -183,7 +173,7 @@ examples:
     parser.add_argument('--debug',    action='store_true', default=False, help='Print out lots of stuff.')
     parser.add_argument('--nc',       action='store_true', default=False, help='Debut output should not be colored.')
 
-    parser.add_argument('--series',   required=True,  help='The series that is to be installed on the SUT. lts-hwe-<series> denotes that a lts-hwe kernel is to be run on the appropriate lts series.')
+    parser.add_argument('--series',   required=True,  help='The series that is to be installed on the SUT.')
     parser.add_argument('--arch',     required=False, default='amd64', choices=['amd64', 'i386', 'arm64', 'ppc64el', 's390x.zKVM', 's390x.LPAR', 's390x.zVM'], help='The architecture (amd64, i386, arm64 or ppc64el) that is to be installed on the SUT. (amd64 is the default)')
     parser.add_argument('--debs-url', required=False, default=None, help='A pointer to a set of kernel deb packages that are to be installed.')
     parser.add_argument('--ppa',      required=False, default=None, help='A ppa name to update packages from')
@@ -191,7 +181,6 @@ examples:
     parser.add_argument('--flavour',  required=False, default='generic', help='The kernel flavour to be tested (generic | lowlatency).')
     parser.add_argument('--lkp',      required=False, action='store_true', default=False, help='Turn on live kernel patching.')
     parser.add_argument('--lkp-snappy', required=False, action='store_true', default=False, help='Turn on live kernel patching.')
-    parser.add_argument('--hwe',      required=False, action='store_true', default=False, help='The series is for a hwe or backport kernel series.')
     parser.add_argument('--xen',      required=False, action='store_true', default=False, help='The bare-metal should be a Xen host.')
     parser.add_argument('--required-kernel-version',   required=False, default=None, help='Fail if this version has not been installed.')
 
