@@ -57,9 +57,6 @@ provision += ' --series=%s --arch=%s' % (data['series-name'], data['sut-arch'])
 if 'debs' in data:
     provision += ' --debs-url=%s' % data['debs']
 
-if data['hwe']:
-    provision += ' --hwe'
-
 if data['ppa']:
     provision += ' --ppa=%s' % data['ppa']
 
