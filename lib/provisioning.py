@@ -11,7 +11,6 @@ import yaml
 import json
 
 from lib.log                            import cdebug, cinfo, center, cleave
-from lib.hwe                            import HWE
 from lib3.shell                         import ShellError, Shell
 from lib.ubuntu                         import Ubuntu
 from lib.exceptions                     import ErrorExit
@@ -74,14 +73,20 @@ class PS(object):
 class Base(object):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, required_kernel_version=None, flavour=None):
+    def __init__(s, target, series, arch, kernel=None, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, required_kernel_version=None, flavour=None):
         center("Base::__init__")
 
         # If we are installing a HWE kernel, we want to install the correct series first.
         #
-        if hwe:
-            s.hwe_series = series
-            series = HWE[series]['series']
+        if '~' in required_kernel_version:
+            # For T-hwe, the kernel version looks like this: "3.13.0-126.175~precise1"
+            # Since X-hwe, they will follow this format:     "4.4.0-88.111~14.04.1"
+            if 'precise' in required_kernel_version:
+                series = 'precise'
+            else:
+                series_ver = required_kernel_version.split('~')[1]
+                series_ver = re.match('\d+\.\d+', series_ver).group(0)
+                series = Ubuntu().lookup(series_ver)['name']
 
         s.ps = PS(target, series, arch)
 
@@ -95,7 +100,6 @@ class Base(object):
 
         s.series = series
         s.arch = arch
-        s.hwe = hwe
         s.xen = xen
         s.debs = debs
         s.ppa  = ppa
@@ -395,6 +399,7 @@ class Base(object):
         center("Base::install_hwe_kernel")
         s.progress('Installing HWE Kernel')
 
+        # This part needs to be fixed
         hwe_package = HWE[s.hwe_series]['package']
         s.ssh('sudo apt-get update', ignore_result=True)
         s.ssh('sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=1 apt-get install --yes %s' % (hwe_package))
@@ -629,10 +634,10 @@ class Base(object):
 class Metal(Base):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, hwe=False, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, required_kernel_version=None, flavour='generic'):
+    def __init__(s, target, series, arch, kernel=None, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, required_kernel_version=None, flavour='generic'):
         center("Metal::__init__")
 
-        Base.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, xen=xen, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, required_kernel_version=required_kernel_version, flavour=flavour)
+        Base.__init__(s, target, series, arch, kernel=kernel, xen=xen, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, required_kernel_version=required_kernel_version, flavour=flavour)
 
         cleave("Metal::__init__")
 
@@ -843,7 +848,7 @@ class Metal(Base):
             # s.dist_upgrade()
             s.reboot(progress="Rebooting for dist-upgrade")
             # As we don't run dist_upgrade() here, it's better to verify the kerenl version first
-            if s.hwe:
+            if '~' in required_kernel_version:
                 if not s.verify_hwe_target():
                     cinfo("Target verification failed.")
                 else:
@@ -888,7 +893,7 @@ class Metal(Base):
         # If we want an HWE kernel installed on the bare metal then at this point the correct
         # LTS kernel has been installed and it's time to install the HWE kernel.
         #
-        if s.hwe:
+        if '~' in s.required_kernel_version:
             s.install_hwe_kernel()
             reboot = 'Rebooting for HWE Kernel'
 
@@ -936,7 +941,7 @@ class Metal(Base):
             s.enable_snappy_client_live_kernel_patching()
 
         s.progress('Verifying the running kernel version')
-        if s.hwe:
+        if '~' in required_kernel_version:
             if not s.verify_hwe_target():
                 cinfo("Target verification failed.")
             else:
