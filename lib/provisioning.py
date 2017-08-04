@@ -754,53 +754,6 @@ class Metal(Base):
         cleave('Metal::verify_target (%s)' % retval)
         return retval
 
-    # verify_hwe_target
-    #
-    def verify_hwe_target(s):
-        center('Metal::verify_hwe_target')
-        retval = True
-        s.progress('Verifying HWE install')
-        # Are we running the series correct kernel?
-        #
-        cdebug('Verifying hwe kernel:')
-        # if retval:
-        #     retval = False
-        #     kv = None
-        #     result, kernel = s.ssh(r'uname -vr')
-        #     for line in kernel:
-        #         line = line.strip()
-        #         cdebug('uname -vr : ' + line)
-
-        #         if 'Warning: Permanently aded' in line: continue
-        #         if line == '': continue
-
-        #         m = re.search('(\d+.\d+.\d+)-\d+-.* #(\d+)\~\S+-Ubuntu.*', line)
-        #         if m:
-        #             kv = m.group(1)
-        #             cdebug('kernel version : ' + kv)
-
-        #     if kv is not None:
-        #         installed_series = Ubuntu().lookup(kv)['name']
-
-        #         if installed_series == s.hwe_series:
-        #             retval = True
-        #         else:
-        #             error("")
-        #             error("*** ERROR:")
-        #             error("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, installed_series))
-        #             error("")
-        #     else:
-        #         error("")
-        #         error("*** ERROR:")
-        #         error("    Unable to find the kernel version in any line.")
-        #         error("")
-        #         for line in kernel:
-        #             line = line.strip()
-        #             error("    line: %s" % line)
-
-        cleave('Metal::verify_hwe_target (%s)' % retval)
-        return retval
-
     # verify_xen_target
     #
     def verify_xen_target(s):
@@ -848,12 +801,7 @@ class Metal(Base):
             # s.dist_upgrade()
             s.reboot(progress="Rebooting for dist-upgrade")
             # As we don't run dist_upgrade() here, it's better to verify the kerenl version first
-            if '~' in required_kernel_version:
-                if not s.verify_hwe_target():
-                    cinfo("Target verification failed.")
-                else:
-                    retval = True
-            elif s.xen:
+            if s.xen:
                 if not s.verify_xen_target():
                     cinfo("Target verification failed.")
                 else:
@@ -941,12 +889,7 @@ class Metal(Base):
             s.enable_snappy_client_live_kernel_patching()
 
         s.progress('Verifying the running kernel version')
-        if '~' in required_kernel_version:
-            if not s.verify_hwe_target():
-                cinfo("Target verification failed.")
-            else:
-                retval = True
-        elif s.xen:
+        if s.xen:
             if not s.verify_xen_target():
                 cinfo("Target verification failed.")
             else:
