@@ -72,6 +72,9 @@ if data['flavour']:
 if 'kernel-version' in data:
     provision += ' --required-kernel-version=%s' % data['kernel-version']
 
+if 'pkg-name' in data:
+    provision += ' --pkg-name=%s' % data['pkg-name']
+
 provision += ' $SUT'
 %>
 set +e
