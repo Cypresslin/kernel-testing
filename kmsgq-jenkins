@@ -55,7 +55,7 @@ class JobsFactory(object):
             'ppa'            : None,
             'url'            : None,
             'decoration'     : None,
-            'kernel'         : None,
+            'kernel-version' : None,
             'lkp'            : False
         }
         # Anything / everything in the payload overrides the defaults.
@@ -204,7 +204,7 @@ class JobsFactory(object):
                 try:
                     if series in s.configuration['systems'][system]['series-blacklist']:
                         continue
-                    elif '~' in s.jd['kernel']:
+                    elif '~' in s.jd['kernel-version']:
                         arch = ','.join(s.configuration['systems'][system]['arch'])
                         if 's390x' in arch:
                             continue
@@ -380,7 +380,7 @@ class JobsFactory(object):
             retval += jd['package']
         else:
             retval += jd['series-name'].title()[0]  # Only want the first character
-        if '~' in s.jd['kernel']:
+        if '~' in s.jd['kernel-version']:
             retval += '-hwe'
 
         if 'series-decoration' in jd and jd['series-decoration'] is not None:

@@ -69,9 +69,6 @@ if data['lkp']:
 if data['flavour']:
     provision += ' --flavour=%s' % data['flavour']
 
-if data['kernel']:
-    provision += ' --kernel=%s' % data['kernel']
-
 if 'kernel-version' in data:
     provision += ' --required-kernel-version=%s' % data['kernel-version']
 
