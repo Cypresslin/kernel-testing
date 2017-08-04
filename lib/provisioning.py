@@ -73,7 +73,7 @@ class PS(object):
 class Base(object):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, required_kernel_version=None, flavour=None):
+    def __init__(s, target, series, arch, kernel=None, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, pkg_name=None, required_kernel_version=None, flavour=None):
         center("Base::__init__")
 
         # If we are installing a HWE kernel, we want to install the correct series first.
@@ -107,6 +107,7 @@ class Base(object):
         s.lkp_snappy = lkp_snappy
         s.kernel = kernel
         s.flavour = flavour
+        s.pkg_name = pkg_name
         s.required_kernel_version = required_kernel_version
         s.dry_run = dry_run
         s.progress_dots = 0
@@ -399,10 +400,8 @@ class Base(object):
         center("Base::install_hwe_kernel")
         s.progress('Installing HWE Kernel')
 
-        # This part needs to be fixed
-        hwe_package = HWE[s.hwe_series]['package']
         s.ssh('sudo apt-get update', ignore_result=True)
-        s.ssh('sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=1 apt-get install --yes %s' % (hwe_package))
+        s.ssh('sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=1 apt-get install --yes %s' % (s.pkg_name))
 
         cleave("Base::install_hwe_kernel")
 
@@ -634,10 +633,10 @@ class Base(object):
 class Metal(Base):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, required_kernel_version=None, flavour='generic'):
+    def __init__(s, target, series, arch, kernel=None, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, pkg_name=None, required_kernel_version=None, flavour='generic'):
         center("Metal::__init__")
 
-        Base.__init__(s, target, series, arch, kernel=kernel, xen=xen, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, required_kernel_version=required_kernel_version, flavour=flavour)
+        Base.__init__(s, target, series, arch, kernel=kernel, xen=xen, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, pkg_name=pkg_name, required_kernel_version=required_kernel_version, flavour=flavour)
 
         cleave("Metal::__init__")
 
