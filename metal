@@ -97,7 +97,7 @@ class MetalApp(object):
         retval = 1
         try:
             s.validate_args(args)
-            metal = Metal(args.name, args.series, args.arch, xen=args.xen, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, required_kernel_version=args.required_kernel_version, lkp_snappy=args.lkp_snappy, flavour=args.flavour)
+            metal = Metal(args.name, args.series, args.arch, xen=args.xen, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, pkg_name=args.pkg_name, required_kernel_version=args.required_kernel_version, lkp_snappy=args.lkp_snappy, flavour=args.flavour)
             if metal.provision():
                 retval = 0
 
