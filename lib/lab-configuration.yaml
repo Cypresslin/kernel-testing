@@ -313,6 +313,37 @@
                 - "yakkety"
                 - "artful"
             proc-decoration: "zKVM"
+        s2lp6g004:
+            class: "sru-testing"
+            arch:
+                - "s390x.zKVM"
+            provisioner: "manual"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+            series-blacklist:
+                - "lucid"
+                - "precise"
+                - "trusty"
+                - "utopic"
+                - "vivid"
+                - "wily"
+                - "xenial"
+                - "yakkety"
+                - "zesty"
+            proc-decoration: "zKVM"
         s2lp3:
             class: "sru-testing"
             arch:
@@ -372,8 +403,8 @@
                 - "vivid"
                 - "wily"
                 - "xenial"
+                - "yakkety"
                 - "zesty"
-                - "artful"
             proc-decoration: "Ubuntu on LPAR"
         # s2lp5:
         #     class: "bogus"
@@ -483,6 +514,37 @@
                 - "xenial"
                 - "yakkety"
                 - "artful"
+            proc-decoration: "zVM"
+        kernel04:
+            class: "sru-testing"
+            arch:
+                - "s390x.zVM"
+            provisioner: "manual"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "xfstests"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+            series-blacklist:
+                - "lucid"
+                - "precise"
+                - "trusty"
+                - "utopic"
+                - "vivid"
+                - "wily"
+                - "xenial"
+                - "yakkety"
+                - "zesty"
             proc-decoration: "zVM"
         beketov:
             class: "private"
