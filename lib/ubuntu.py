@@ -33,6 +33,7 @@ class Ubuntu:
     # directory on kernel.ubuntu.com.
     #
     url = 'https://git.launchpad.net/~canonical-kernel/+git/kteam-tools/plain/ktl/kernel-series-info.yaml'
+    # url = 'file:///home/work/kteam-tools/ktl/kernel-series-info.yaml'
     response = urlopen(url)
     content = response.read()
     if type(content) != str:
@@ -42,7 +43,12 @@ class Ubuntu:
 
     index_by_kernel_version = {}
     for v in db:
-        index_by_kernel_version[db[v]['kernel']] = db[v]
+        if 'kernels' in db[v]:
+            for version in db[v]['kernels']:
+                index_by_kernel_version[version] = db[v]
+            db[v]['kernel'] = db[v]['kernels'][0]
+        else:
+            index_by_kernel_version[db[v]['kernel']] = db[v]
 
     index_by_series_name = {}
     for v in db:
@@ -117,6 +123,24 @@ class Ubuntu:
 
         return retval
 
+    # development_series_version
+    #
+    @property
+    def development_series_version(self):
+        """
+        Assume there is one, and only one, development series.
+        """
+        retval = None
+        for series in self.db:
+            try:
+                if self.db[series]['development']:
+                    retval = series
+                    break
+            except KeyError:
+                    pass
+
+        return retval
+
     # last_release
     #
     @property
@@ -151,6 +175,20 @@ class Ubuntu:
 
         return retval
 
+    # supported_series_version
+    #
+    @property
+    def supported_series_version(self):
+        """
+        A list of all the currently supported series names.
+        """
+        retval = []
+        for series in self.db:
+            if self.db[series]['supported']:
+                retval.append(series)
+
+        return retval
+
     # active_packages
     #
     @property
@@ -175,7 +213,7 @@ class Ubuntu:
         """
         retval = None
 
-        if package.startswith('linux-lts-'):
+        if package.startswith('linux-lts-') or package.startswith('linux-hwe'):
             for entry in self.db.values():
                 # starting with trusty, the lts packages now include the series
                 # version instead of the series name, e.g: 3.16.0-23.31~14.04.2
@@ -185,8 +223,27 @@ class Ubuntu:
                     retval = entry['name']
         else:
             for entry in self.db.values():
-                if version.startswith(entry['kernel']):
-                    retval = entry['name']
+                if 'kernels' in entry:
+                    for kversion in entry['kernels']:
+                        if version.startswith(kversion):
+                            retval = entry['name']
+                            series_version = entry['series_version']
+                            break
+                else:
+                    if version.startswith(entry['kernel']):
+                        retval = entry['name']
+                        series_version = entry['series_version']
+
+            # linux-azure is a backport that doesn't contain the 'upstream'
+            # series number on the package name, so we need to look for it
+            # first and then look for the target series.
+            if package.startswith('linux-azure'):
+                for entry in self.db.values():
+                    try:
+                        if len(set(['linux', series_version]) & set(entry['backport-packages'][package])) == 2:
+                            retval = entry['name']
+                    except KeyError:
+                        pass
 
         return retval
 
