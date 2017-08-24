@@ -537,53 +537,6 @@ class Target(Base):
         cleave('Target::verify_target (%s)' % retval)
         return retval
 
-    # verify_hwe_target
-    #
-    def verify_hwe_target(s):
-        center('Target::verify_hwe_target')
-        retval = True
-        s.progress('Verifying HWE install')
-        # Are we running the series correct kernel?
-        #
-        cdebug('Verifying hwe kernel:')
-        if retval:
-            retval = False
-            kv = None
-            result, kernel = s.ssh(r'uname -vr', additional_ssh_options="-o LogLevel=quiet")
-            for line in kernel:
-                line = line.strip()
-                cdebug('uname -vr : ' + line)
-
-                if 'Warning: Permanently aded' in line: continue
-                if line == '': continue
-
-                m = re.search('(\d+.\d+.\d+)-\d+-.* #(\d+)\~\S+-Ubuntu.*', line)
-                if m:
-                    kv = m.group(1)
-                    cdebug('kernel version : ' + kv)
-
-            if kv is not None:
-                installed_series = Ubuntu().lookup(kv)['name']
-
-                if installed_series == s.hwe_series:
-                    retval = True
-                else:
-                    error("")
-                    error("*** ERROR:")
-                    error("    Was expecting the target to be (%s) but found it to be (%s) instead." % (s.series, installed_series))
-                    error("")
-            else:
-                error("")
-                error("*** ERROR:")
-                error("    Unable to find the kernel version in any line.")
-                error("")
-                for line in kernel:
-                    line = line.strip()
-                    error("    line: %s" % line)
-
-        cleave('Target::verify_hwe_target (%s)' % retval)
-        return retval
-
     # provision
     #
     def provision(s):
