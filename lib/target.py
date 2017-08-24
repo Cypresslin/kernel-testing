@@ -9,7 +9,6 @@ import re
 import yaml
 
 from lib.log                            import cdebug, cinfo, center, cleave
-from lib.hwe                            import HWE
 from lib3.shell                         import ShellError, Shell
 from lib.ubuntu                         import Ubuntu
 from lib.exceptions                     import ErrorExit
@@ -19,21 +18,26 @@ from lib.exceptions                     import ErrorExit
 class Base(object):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, hwe=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, pkg_name=None, required_kernel_version=None, flavour=None, ssh_options=None, ssh_user='ubuntu'):
+    def __init__(s, target, series, arch, kernel=None, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, pkg_name=None, required_kernel_version=None, flavour=None, ssh_options=None, ssh_user='ubuntu'):
         center("Base::__init__")
 
         # If we are installing a HWE kernel, we want to install the correct series first.
         #
-        if hwe:
-            s.hwe_series = series
-            series = HWE[series]['series']
+        if '~' in required_kernel_version:
+            # For T-hwe, the kernel version looks like this: "3.13.0-126.175~precise1"
+            # Since X-hwe, they will follow this format:     "4.4.0-88.111~14.04.1"
+            if 'precise' in required_kernel_version:
+                series = 'precise'
+            else:
+                series_ver = required_kernel_version.split('~')[1]
+                series_ver = re.match('\d+\.\d+', series_ver).group(0)
+                series = Ubuntu().lookup(series_ver)['name']
 
         s.target = target
         s.raw_target = target
 
         s.series = series
         s.arch = arch
-        s.hwe = hwe
         s.debs = debs
         s.ppa  = ppa
         s.lkp = lkp
@@ -402,10 +406,10 @@ class Base(object):
 class Target(Base):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, hwe=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, pkg_name=None, required_kernel_version=None, flavour='generic', ssh_options=None, ssh_user='ubuntu'):
+    def __init__(s, target, series, arch, kernel=None, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, pkg_name=None, required_kernel_version=None, flavour='generic', ssh_options=None, ssh_user='ubuntu'):
         center("Target::__init__")
 
-        Base.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, pkg_name=pkg_name, required_kernel_version=required_kernel_version, flavour=flavour, ssh_options=ssh_options, ssh_user=ssh_user)
+        Base.__init__(s, target, series, arch, kernel=kernel, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, pkg_name=pkg_name, required_kernel_version=required_kernel_version, flavour=flavour, ssh_options=ssh_options, ssh_user=ssh_user)
 
         cleave("Target::__init__")
 
@@ -650,9 +654,9 @@ class Target(Base):
 class GCETarget(Target):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, hwe=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, pkg_name=None, required_kernel_version=None, flavour='generic', ssh_options=None, ssh_user='ubuntu'):
+    def __init__(s, target, series, arch, kernel=None, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, pkg_name=None, required_kernel_version=None, flavour='generic', ssh_options=None, ssh_user='ubuntu'):
         center(s.__class__.__name__ + '.__init__')
-        Target.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, pkg_name=pkg_name, required_kernel_version=required_kernel_version, flavour=flavour, ssh_options=ssh_options, ssh_user=ssh_user)
+        Target.__init__(s, target, series, arch, kernel=kernel, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, pkg_name=pkg_name, required_kernel_version=required_kernel_version, flavour=flavour, ssh_options=ssh_options, ssh_user=ssh_user)
         cleave(s.__class__.__name__ + '.__init__')
 
     # remove_hwe
@@ -671,9 +675,9 @@ class GCETarget(Target):
 class AzureTarget(Target):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, hwe=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, pkg_name=None, required_kernel_version=None, flavour='generic', ssh_options=None, ssh_user='ubuntu'):
+    def __init__(s, target, series, arch, kernel=None, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, pkg_name=None, required_kernel_version=None, flavour='generic', ssh_options=None, ssh_user='ubuntu'):
         center(s.__class__.__name__ + '.__init__')
-        Target.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, pkg_name=pkg_name, required_kernel_version=required_kernel_version, flavour=flavour, ssh_options=ssh_options, ssh_user=ssh_user)
+        Target.__init__(s, target, series, arch, kernel=kernel, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, pkg_name=pkg_name, required_kernel_version=required_kernel_version, flavour=flavour, ssh_options=ssh_options, ssh_user=ssh_user)
         cleave(s.__class__.__name__ + '.__init__')
 
     def reboot_settle(s):
@@ -688,9 +692,9 @@ class AzureTarget(Target):
 class AWSTarget(Target):
     # __init__
     #
-    def __init__(s, target, series, arch, kernel=None, hwe=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, pkg_name=None, required_kernel_version=None, flavour='generic', ssh_options=None, ssh_user='ubuntu'):
+    def __init__(s, target, series, arch, kernel=None, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, pkg_name=None, required_kernel_version=None, flavour='generic', ssh_options=None, ssh_user='ubuntu'):
         center(s.__class__.__name__ + '__init__')
-        Target.__init__(s, target, series, arch, kernel=kernel, hwe=hwe, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, pkg_name=pkg_name, required_kernel_version=required_kernel_version, flavour=flavour, ssh_options=ssh_options, ssh_user=ssh_user)
+        Target.__init__(s, target, series, arch, kernel=kernel, debs=debs, ppa=ppa, dry_run=dry_run, lkp=lkp, lkp_snappy=lkp_snappy, pkg_name=pkg_name, required_kernel_version=required_kernel_version, flavour=flavour, ssh_options=ssh_options, ssh_user=ssh_user)
         cleave(s.__class__.__name__ + '__init__')
 
 # vi:set ts=4 sw=4 expandtab syntax=python:
