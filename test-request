@@ -6,7 +6,6 @@ from logging                            import basicConfig, INFO, DEBUG, warning
 from lib.ubuntu                         import Ubuntu
 from lib.log                            import cdebug, Clog
 from lib.configuration                  import Configuration
-from lib.hwe                            import HWE
 from lib.testsprops                     import TestProfiles, TestCollections
 from lib.msgq                           import MsgQueue
 from datetime                           import datetime
@@ -54,7 +53,6 @@ class TheApp():
             msg = {
                 'key'            : 'kernel.testing.request',
                 'op'             : 'request',
-                'hwe'            : False,
             }
 
             if args.lkp:
@@ -131,17 +129,6 @@ class TheApp():
                         raise Exit
 
                 msg['arches'] = arches
-
-            # ----------------------------------------------------------------------
-            # hwe
-            #
-            cdebug('hwe: ' + str(args.hwe))
-            if args.hwe:
-                if HWE[args.series]['series'] is not None:
-                    msg['hwe'] = True
-                else:
-                    print('  *** Error: The series specified (%s) is not a backport kernel.' % args.series)
-                    raise Exit
 
             # ----------------------------------------------------------------------
             # systems
@@ -282,14 +269,6 @@ Ex.
 
     '''
 
-    help_hwe = '''\
-The test request is for a HWE kernel (lts-backport).
-
-Ex.
-    --hwe\
-
-    '''
-
     help_debug = '''\
 Print out a lot of messages about what is going on.\
 
@@ -305,7 +284,6 @@ directories. This is usefull if you are debugging changes to the kernel-testing 
     parser.add_argument('--debug',    action='store_true', default=False,                   help=help_debug)
     parser.add_argument('--series',   required=True,                                        help=help_series)
     parser.add_argument('--arch',     required=False,                                       help=help_arch)
-    parser.add_argument('--hwe',      required=False, action='store_true', default=False,   help=help_hwe)
     parser.add_argument('--systems',  required=False,                                       help=help_systems)
     parser.add_argument('--tests',    required=False,                                       help=help_tests)
     parser.add_argument('--url',      required=False,                                       help=help_url)
