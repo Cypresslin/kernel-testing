@@ -182,11 +182,12 @@ class JobFactory(object):
     def msgq_handler(s, payload):
         center(s.__class__.__name__ + '.msgq_handler')
 
+        for k in sorted(payload):
+            cdebug('%15s: %s' % (('"%s"' % k), ('"%s"' % payload[k])))
+
         valid_keys = ['kernel.testing.request', 'kernel.publish']
-        #valid_ops  = ['aws', 'gce', 'azure', 'gke']
-        #valid_pkgs = ['linux', 'linux-aws', 'linux-azure', 'linux-gke']
-        valid_ops  = ['sru']
-        valid_pkgs = ['linux-azure', 'linux-gke', 'linux-aws', 'linux-gcp']
+        valid_ops  = ['aws', 'gce', 'azure', 'gke', 'gcp', 'boot', 'sru']
+        valid_pkgs = ['linux', 'linux-aws', 'linux-azure', 'linux-gke', 'linux-gcp']
 
         # Determine if the key in the current message is on that
         # we are going to process.
