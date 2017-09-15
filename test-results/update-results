@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+
+set -x
+TR=/var/lib/jenkins/kernel-testing/test-results
+for FID in $($TR/results-needing-updating .); do
+    if [ -d "$FID" ]; then
+        $TR/aggregate-kernel-package-results $FID > $FID/aggregate-test-results.json
+        (
+            cd $FID
+            $TR/separate-per-suite-results aggregate-test-results.json
+
+            for JSON in *-suite-results.json; do
+                if [ -f "$JSON" ]; then
+                    HTML=`echo "$JSON" | sed -e 's/suite-results.json/index.html/'`
+                    $TR/render "$JSON" $TR/suite-index.mako > "$HTML"
+                fi
+            done
+        )
+    fi
+done
+
+$TR/aggregate-all-results */aggregate-test-results.json > aggregate-results.json
+$TR/aggregate-all-results --sru */aggregate-test-results.json > aggregate-sru-results.json
+$TR/render aggregate-results.json $TR/index.mako > index.html
+$TR/render aggregate-sru-results.json $TR/index.mako > tracker-index.html
+$TR/test-results-delta */aggregate-test-results.json > full-delta.json
+$TR/render full-delta.json $TR/delta.mako > delta.html
+$TR/test-results-delta --sru */aggregate-test-results.json > sru-delta.json
+$TR/render sru-delta.json $TR/delta.mako > trackers-delta.html
