@@ -562,13 +562,6 @@ class Target(Base):
         #
         s.disable_apt_periodic_updates()
 
-        # If we want an HWE kernel installed on the bare metal then at this point the correct
-        # LTS kernel has been installed and it's time to install the HWE kernel.
-        #
-        if s.hwe:
-            s.install_hwe_kernel()
-            reboot = 'Rebooting for HWE Kernel'
-
         if s.debs is not None:
             s.install_custom_debs()
             reboot = 'Rebooting for custom debs'
@@ -576,6 +569,7 @@ class Target(Base):
         if s.flavour == 'generic':
             s.kernel_upgrade()
             reboot = 'Reboot for kenel update'
+
         if s.flavour != 'generic':
             s.install_kernel_flavour()
             reboot = 'Rebooting for Kernel flavour %s' % s.flavour
