@@ -824,7 +824,9 @@ class Metal(Base):
         # the system. Once we do this the kernels that we install should be the right one.
         #
         # s.fixup_apt_sources() # This is breaking some systems
-        s.remove_90curtin_aptproxy()
+        # Do not remove 90curtin_aptproxy on hyper-maas, it will break the route to outer world
+        if Configuration['systems'][s.raw_target]['provisioner'] != 'hyper-maas':
+            s.remove_90curtin_aptproxy()
         s.enable_proposed()
         s.enable_src()
         if s.ppa is not None:
