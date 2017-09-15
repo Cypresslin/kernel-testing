@@ -36,11 +36,11 @@ class TheApp(object):
             cloud = Cloud.construct(args.cloud)
             ip = cloud.lookup_instance_ip(args.target)
             if args.cloud == 'gce':
-                instance = GCETarget(ip, args.series, args.arch, hwe=args.hwe, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, required_kernel_version=args.required_kernel_version, flavour=args.flavour, ssh_options=cloud.ssh_options, ssh_user=cloud.ssh_user)
+                instance = GCETarget(ip, args.series, args.arch, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, required_kernel_version=args.required_kernel_version, flavour=args.flavour, ssh_options=cloud.ssh_options, ssh_user=cloud.ssh_user)
             elif args.cloud == 'azure':
-                instance = AzureTarget(ip, args.series, args.arch, hwe=args.hwe, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, required_kernel_version=args.required_kernel_version, flavour=args.flavour, ssh_options=cloud.ssh_options, ssh_user=cloud.ssh_user)
+                instance = AzureTarget(ip, args.series, args.arch, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, required_kernel_version=args.required_kernel_version, flavour=args.flavour, ssh_options=cloud.ssh_options, ssh_user=cloud.ssh_user)
             else:
-                instance = Target(ip, args.series, args.arch, hwe=args.hwe, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, required_kernel_version=args.required_kernel_version, flavour=args.flavour, ssh_options=cloud.ssh_options, ssh_user=cloud.ssh_user)
+                instance = Target(ip, args.series, args.arch, debs=args.debs_url, ppa=args.ppa, dry_run=args.dry_run, kernel=args.kernel, lkp=args.lkp, required_kernel_version=args.required_kernel_version, flavour=args.flavour, ssh_options=cloud.ssh_options, ssh_user=cloud.ssh_user)
             if instance.provision():
                 retval = 0
 
