@@ -1,0 +1,83 @@
+#!/usr/bin/env python3
+#
+# In the test-results directory tree there are directories which correspond
+# to the kernel version and flavour that was tested. In each of those directories
+# are the results under the jenkins job name for each job.
+#
+# This script looks at the date on the test-results.json file in each jenkins
+# job results directory and compares it with the aggregate-test-results.json
+# file in the root of that kernel version directory. If we find even a single
+# test-results.json file with a newer date timestamp on it thank the aggregate
+# results file we print the root directory name indicating that it's aggregate
+# file needs updating.
+#
+from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+import os
+from logging                            import basicConfig, DEBUG, INFO
+from lib.log                            import center, cleave
+
+def dlist(root):
+    center('jobs')
+    retval = []
+    for fid in os.listdir(root):
+        if os.path.isdir(os.path.join(root, fid)):
+            retval.append(os.path.join(root, fid))
+    cleave('jobs')
+    return retval
+
+def needs_updating(root, compare_time):
+    center('needs_updating')
+    retval = False
+    try:
+        mt = os.path.getmtime(os.path.join(root, 'results.json'))
+        if mt > compare_time:
+            retval = True
+    except FileNotFoundError:
+        pass
+    cleave('needs_updating')
+    return retval
+
+
+if __name__ == '__main__':
+    # Command line argument setup and initial processing
+    #
+    app_description = '''
+I'm a application skeleton, your job is to make me into something useful.
+    '''
+    app_epilog = '''
+examples:
+    process --help
+    '''
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--debug', action='store_true', default=False, help='')
+    parser.add_argument('root', help='')
+    args = parser.parse_args()
+
+    # If logging parameters were set on the command line, handle them
+    # here.
+    #
+    if args.debug:
+        log_format = "%(levelname)s - %(message)s"
+        basicConfig(level=DEBUG, format=log_format)
+    else:
+        log_format = "%(message)s"
+        basicConfig(level=INFO, format=log_format)
+
+    try:
+        for kernel in dlist(args.root):
+            try:
+                mt = os.path.getmtime(os.path.join(kernel, 'aggregate-test-results.json'))
+                for job in dlist(kernel):
+                    if needs_updating(job, mt):
+                        print(kernel)
+                        break # If one job results is newer that's all we need to know
+            except FileNotFoundError:
+                print(kernel)
+
+    # Handle the user presses <ctrl-C>.
+    #
+    except KeyboardInterrupt:
+        pass
+
+
+# vi:set ts=4 sw=4 expandtab:
