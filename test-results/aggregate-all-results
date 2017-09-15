@@ -79,7 +79,7 @@ class Results(object):
                 aggregate[series]['%s - %s' % (kernel, flavour)] = data
             except:
                 stderr.write('-----------------------------------------------------------------------------------------------------\n')
-                stderr.write('While processing %s\n' % fid)
+                stderr.write('Exception while processing %s\n' % fid)
 
         print(json.dumps(aggregate, sort_keys=True, indent=4))
 
