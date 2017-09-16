@@ -243,6 +243,7 @@ TestProfiles = {
     'ubuntu_bpf' : {},
     'ubuntu_blktrace_smoke_test' : {},
     'ubuntu_sysdig_smoke_test' : {},
+    'ubuntu_ltp' : {},
 }
 
 # Test Collections may be defined, and will run the list of autotest tests in them
