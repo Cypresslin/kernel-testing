@@ -561,21 +561,18 @@
             power: []
             role:
                 - "ubuntu_boot"
-                - "qrt"
-                - "smoke"
                 - "sru"
                 - "sru-1"
                 - "sru-2"
-                - "sru-3"
-                - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
             scratch drive: "/dev/sdb"
             series-blacklist:
+                - "precise"
+                - "trusty"
                 - "yakkety"
-                - "zesty"
         rumford:
             class: "sru-testing"
             arch:
@@ -589,20 +586,15 @@
                 - "qrt"
                 - "smoke"
                 - "sru"
-                - "sru-1"
-                - "sru-2"
                 - "sru-3"
                 - "ubuntu_ecryptfs"
-                - "ubuntu_zfs_fstest"
-                - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
             scratch drive: "/dev/sdb"
             series-blacklist:
                 - "precise"
                 - "trusty"
-                - "xenial"
-                - "artful"
+                - "yakkety"
         cavac:
             class: "bogus"
             arch:
