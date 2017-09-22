@@ -137,7 +137,6 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
-                - "yakkety"
         naumann:
             class: "sru-testing"
             arch:
@@ -163,7 +162,6 @@
                 - "precise"
                 - "trusty"
                 - "xenial"
-                - "yakkety"
                 - "artful"
         secchi:
             class: "sru-testing"
@@ -185,7 +183,6 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
-                - "yakkety"
         s2lp6g001:
             class: "sru-testing"
             arch:
@@ -207,13 +204,9 @@
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
             series-blacklist:
-                - "lucid"
                 - "precise"
                 - "trusty"
-                - "utopic"
                 - "vivid"
-                - "wily"
-                - "yakkety"
                 - "zesty"
                 - "artful"
             proc-decoration: "zKVM"
@@ -237,12 +230,9 @@
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
             series-blacklist:
-                - "lucid"
                 - "precise"
                 - "trusty"
-                - "utopic"
                 - "vivid"
-                - "wily"
                 - "xenial"
                 - "zesty"
                 - "artful"
@@ -267,14 +257,10 @@
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
             series-blacklist:
-                - "lucid"
                 - "precise"
                 - "trusty"
-                - "utopic"
                 - "vivid"
-                - "wily"
                 - "xenial"
-                - "yakkety"
                 - "artful"
             proc-decoration: "zKVM"
         s2lp6g004:
@@ -297,14 +283,10 @@
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
             series-blacklist:
-                - "lucid"
                 - "precise"
                 - "trusty"
-                - "utopic"
                 - "vivid"
-                - "wily"
                 - "xenial"
-                - "yakkety"
                 - "zesty"
             proc-decoration: "zKVM"
         s2lp3:
@@ -327,13 +309,9 @@
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
             series-blacklist:
-                - "lucid"
                 - "precise"
                 - "trusty"
-                - "utopic"
                 - "vivid"
-                - "wily"
-                - "yakkety"
                 - "zesty"
                 - "artful"
             proc-decoration: "Ubuntu on LPAR"
@@ -357,14 +335,10 @@
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
             series-blacklist:
-                - "lucid"
                 - "precise"
                 - "trusty"
-                - "utopic"
                 - "vivid"
-                - "wily"
                 - "xenial"
-                - "yakkety"
                 - "zesty"
             proc-decoration: "Ubuntu on LPAR"
         # s2lp5:
@@ -376,12 +350,9 @@
         #     power: []
         #     role: []
         #     series-blacklist:
-        #         - "lucid"
         #         - "precise"
         #         - "trusty"
-        #         - "utopic"
         #         - "vivid"
-        #         - "wily"
         #     proc-decoration: "Ubuntu on LPAR"
         kernel01:
             class: "sru-testing"
@@ -403,13 +374,9 @@
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
             series-blacklist:
-                - "lucid"
                 - "precise"
                 - "trusty"
-                - "utopic"
                 - "vivid"
-                - "wily"
-                - "yakkety"
                 - "zesty"
                 - "artful"
             proc-decoration: "zVM"
@@ -433,12 +400,9 @@
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
             series-blacklist:
-                - "lucid"
                 - "precise"
                 - "trusty"
-                - "utopic"
                 - "vivid"
-                - "wily"
                 - "xenial"
                 - "zesty"
                 - "artful"
@@ -463,14 +427,10 @@
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
             series-blacklist:
-                - "lucid"
                 - "precise"
                 - "trusty"
-                - "utopic"
                 - "vivid"
-                - "wily"
                 - "xenial"
-                - "yakkety"
                 - "artful"
             proc-decoration: "zVM"
         kernel04:
@@ -493,14 +453,10 @@
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
             series-blacklist:
-                - "lucid"
                 - "precise"
                 - "trusty"
-                - "utopic"
                 - "vivid"
-                - "wily"
                 - "xenial"
-                - "yakkety"
                 - "zesty"
             proc-decoration: "zVM"
         beketov:
@@ -544,7 +500,6 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
-                - "yakkety"
         rumford:
             class: "sru-testing"
             arch:
@@ -566,7 +521,6 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
-                - "yakkety"
         cavac:
             class: "bogus"
             arch:
@@ -603,7 +557,6 @@
             series-blacklist:
                 - "precise"
                 - "xenial"
-                - "yakkety"
                 - "zesty"
         onza:
             class: "sru-testing"
@@ -630,7 +583,6 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
-                - "yakkety"
                 - "zesty"
                 - "artful"
         lodygin:
@@ -682,7 +634,6 @@
                 - "virt"
             scratch drive: "/dev/sdb"
             series-blacklist:
-                - "lucid"
                 - "precise"
         ms10-34-mcdivittB0-kernel:
             class: "sru-testing"
@@ -707,10 +658,8 @@
                 - "boot"
                 - "virt"
             series-blacklist:
-                - "lucid"
                 - "precise"
                 - "vivid"
-                - "yakkety"
                 - "zesty"
         ms10-35-mcdivittB0-kernel:
             class: "sru-testing"
@@ -735,7 +684,6 @@
                 - "boot"
                 - "virt"
             series-blacklist:
-                - "lucid"
                 - "precise"
                 - "trusty"
                 - "vivid"
@@ -764,10 +712,8 @@
                 - "boot"
                 - "virt"
             series-blacklist:
-                - "lucid"
                 - "precise"
                 - "vivid"
-                - "yakkety"
                 - "zesty"
         wright-kernel:
             class: "sru-testing"
@@ -792,7 +738,6 @@
                 - "boot"
                 - "virt"
             series-blacklist:
-                - "lucid"
                 - "precise"
                 - "trusty"
                 - "vivid"
@@ -889,7 +834,6 @@
             series-blacklist:
                 - "trusty"
                 - "xenial"
-                - "yakkety"
                 - "artful"
         amaura:
             class: "sru-testing"
