@@ -837,6 +837,8 @@
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
+            series-blacklist:
+                - "precise"
         pepe:
             class: "sru-testing"
             arch:
