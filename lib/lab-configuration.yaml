@@ -646,13 +646,9 @@
             power: []
             role:
                 - "ubuntu_boot"
-                - "qrt"
-                - "smoke"
                 - "sru"
                 - "sru-1"
                 - "sru-2"
-                - "sru-3"
-                - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
@@ -660,7 +656,6 @@
             series-blacklist:
                 - "precise"
                 - "vivid"
-                - "zesty"
         ms10-35-mcdivittB0-kernel:
             class: "sru-testing"
             arch:
@@ -675,20 +670,13 @@
                 - "qrt"
                 - "smoke"
                 - "sru"
-                - "sru-1"
-                - "sru-2"
                 - "sru-3"
                 - "ubuntu_ecryptfs"
-                - "ubuntu_zfs_fstest"
-                - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
             series-blacklist:
                 - "precise"
-                - "trusty"
                 - "vivid"
-                - "xenial"
-                - "artful"
         starmie-kernel:
             class: "sru-testing"
             arch:
