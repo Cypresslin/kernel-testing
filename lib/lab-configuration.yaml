@@ -84,19 +84,10 @@
                 - "qrt"
                 - "smoke"
                 - "sru"
-                - "sru-1"
-                - "sru-2"
                 - "sru-3"
                 - "ubuntu_ecryptfs"
-                - "ubuntu_zfs_fstest"
-                - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
-            series-blacklist:
-                - "precise"
-                - "trusty"
-                - "xenial"
-                - "artful"
         archytas:
             class: "sru-testing"
             arch:
@@ -107,21 +98,13 @@
             power: []
             role:
                 - "ubuntu_boot"
-                - "qrt"
-                - "smoke"
                 - "sru"
                 - "sru-1"
                 - "sru-2"
-                - "sru-3"
-                - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
-            series-blacklist:
-                - "precise"
-                - "yakkety"
-                - "zesty"
         baade:
             class: "sru-testing"
             arch:
