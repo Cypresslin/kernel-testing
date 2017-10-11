@@ -117,26 +117,26 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
-        daedalus:
-            class: "sru-testing"
-            arch:
-                - "amd64"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: false
-            power: []
-            role:
-                - "ubuntu_boot"
-                - "sru"
-                - "sru-1"
-                - "sru-2"
-                - "ubuntu_zfs_fstest"
-                - "ubuntu_zfs_xfs_generic"
-                - "boot"
-                - "virt"
-            series-blacklist:
-                - "precise"
-                - "trusty"
+#        daedalus:
+#            class: "sru-testing"
+#            arch:
+#                - "amd64"
+#            provisioner: "maas2"
+#            jenkins server: "jenkins2"
+#            locked: false
+#            power: []
+#            role:
+#                - "ubuntu_boot"
+#                - "sru"
+#                - "sru-1"
+#                - "sru-2"
+#                - "ubuntu_zfs_fstest"
+#                - "ubuntu_zfs_xfs_generic"
+#                - "boot"
+#                - "virt"
+#            series-blacklist:
+#                - "precise"
+#                - "trusty"
 #        naumann:
 #            class: "sru-testing"
 #            arch:
