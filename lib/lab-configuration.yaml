@@ -137,32 +137,32 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
-        naumann:
-            class: "sru-testing"
-            arch:
-                - "amd64"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: false
-            power: []
-            role:
-                - "ubuntu_boot"
-                - "qrt"
-                - "smoke"
-                - "sru"
-                - "sru-1"
-                - "sru-2"
-                - "sru-3"
-                - "ubuntu_ecryptfs"
-                - "ubuntu_zfs_fstest"
-                - "ubuntu_zfs_xfs_generic"
-                - "boot"
-                - "virt"
-            series-blacklist:
-                - "precise"
-                - "trusty"
-                - "xenial"
-                - "artful"
+#        naumann:
+#            class: "sru-testing"
+#            arch:
+#                - "amd64"
+#            provisioner: "maas2"
+#            jenkins server: "jenkins2"
+#            locked: false
+#            power: []
+#            role:
+#                - "ubuntu_boot"
+#                - "qrt"
+#                - "smoke"
+#                - "sru"
+#                - "sru-1"
+#                - "sru-2"
+#                - "sru-3"
+#                - "ubuntu_ecryptfs"
+#                - "ubuntu_zfs_fstest"
+#                - "ubuntu_zfs_xfs_generic"
+#                - "boot"
+#                - "virt"
+#            series-blacklist:
+#                - "precise"
+#                - "trusty"
+#                - "xenial"
+#                - "artful"
         secchi:
             class: "sru-testing"
             arch:
