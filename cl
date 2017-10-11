@@ -4,7 +4,7 @@
 from sys                                import stdout
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import basicConfig, WARNING, DEBUG
-from lib.log                            import center, cleave
+from lib.log                            import center, cleave, Clog
 from lib3.cloud                         import Cloud, CloudImages
 
 # TheApp
@@ -126,6 +126,7 @@ if __name__ == '__main__':
     sub.set_defaults(func=TheApp.create)
     sub.add_argument('--debug', action='store_true', default=False, help='Print out a lot of messages about what is going on.')
     sub.add_argument('--type', help='The instance type to create')
+    sub.add_argument('--nc',       action='store_true', default=False, help='Debut output should not be colored.')
     sub.add_argument('cloud',    metavar='CLOUD',    type=str, help='')
     sub.add_argument('instance', metavar='INSTANCE', type=str, help='')
     sub.add_argument('series',   metavar='SERIES',   type=str, help='')
@@ -176,6 +177,8 @@ if __name__ == '__main__':
     log_format = "%(levelname)s - %(message)s"
     if args.debug:
         basicConfig(level=DEBUG, format=log_format)
+        Clog.dbg = True
+        Clog.color = not args.nc
     else:
         basicConfig(level=WARNING, format=log_format)
 
