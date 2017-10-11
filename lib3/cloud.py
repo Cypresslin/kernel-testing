@@ -9,6 +9,7 @@ from lib.exceptions                     import ErrorExit
 from lib.log                            import center, cleave, cinfo, cdebug
 from lib3.shell                         import sh, Shell, ShellError
 from datetime                           import datetime
+from lib.ubuntu                         import Ubuntu
 import yaml
 
 from simplestreams import filters
@@ -404,7 +405,7 @@ class AWS(CloudBase):
         try:
             retval = json.loads('\n'.join(o))
         except:
-            pass
+            retval = o
         return retval
 
     @property
@@ -488,6 +489,16 @@ class AWS(CloudBase):
         cleave(s.__class__.__name__ + '.images')
         return retval
 
+    def find_ami(s, series, region):
+        center(s.__class__.__name__ + '.find_ami')
+        cursor = Ubuntu().lookup(series)
+        series_version = cursor['series_version']
+        cmd = 'describe-images --region %s --filters Name=name,Values=ubuntu/images/hvm-ssd/ubuntu-%s-%s-amd64* --query \'Images[*].[ImageId,CreationDate]\' --output text | sort -k2 -r' % (region, series, series_version)
+        response = s.sh(cmd)
+        (ami, date) = response[0].split()
+        cleave(s.__class__.__name__ + '.find_ami (%s)' % ami)
+        return ami
+
     # create
     #
     def create(s, instance_name, series, region, instance_type='t2.micro'):
@@ -510,6 +521,7 @@ class AWS(CloudBase):
                 ami = image['id']
                 break
 
+        ami = s.find_ami(series, region)
         if ami is not None:
             cmd = 'run-instances --image-id %s --key-name cloud-figg --instance-type %s --security-groups figg-security-group' % (ami, instance_type)
             response = s.sh(cmd)
