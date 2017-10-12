@@ -558,10 +558,6 @@
                 - "boot"
                 - "virt"
             scratch drive: "/dev/sdb"
-            series-blacklist:
-                - "precise"
-                - "xenial"
-                - "zesty"
         onza:
             class: "sru-testing"
             arch:
@@ -584,11 +580,6 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
-            series-blacklist:
-                - "precise"
-                - "trusty"
-                - "zesty"
-                - "artful"
         lodygin:
             class: "sru-testing"
             arch:
@@ -823,10 +814,6 @@
                 - "boot"
                 - "virt"
             scratch drive: "/dev/sdb"
-            series-blacklist:
-                - "trusty"
-                - "xenial"
-                - "artful"
         amaura:
             class: "sru-testing"
             arch:
@@ -867,12 +854,6 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
-            series-blacklist:
-                - "precise"
-                - "trusty"
-                - "xenial"
-                - "zesty"
-                - "artful"
         fili:
             class: "bogus"
             arch:
