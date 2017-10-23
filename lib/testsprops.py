@@ -244,6 +244,7 @@ TestProfiles = {
     'ubuntu_blktrace_smoke_test' : {},
     'ubuntu_sysdig_smoke_test' : {},
     'ubuntu_ltp' : {},
+    'ubuntu_kvm_smoke_test' : {},
 }
 
 # Test Collections may be defined, and will run the list of autotest tests in them
