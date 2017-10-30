@@ -105,6 +105,22 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
+        groucho:
+            class: "sru-testing"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role: ["kvm"]
+            series-blacklist: []
+                - "precise"
+                - "trusty"
+                - "xenial"
+                - "zesty"
+                - "artful"
+                - "bionic"
         baade:
             class: "sru-testing"
             arch:
