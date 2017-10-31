@@ -105,6 +105,22 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
+        chico:
+            class: "sru-testing"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role: ["kvm"]
+            series-blacklist:
+                - "precise"
+                - "trusty"
+                - "xenial"
+                - "zesty"
+                - "artful"
+                - "bionic"
         groucho:
             class: "sru-testing"
             arch:
@@ -114,7 +130,55 @@
             locked: false
             power: []
             role: ["kvm"]
-            series-blacklist: []
+            series-blacklist:
+                - "precise"
+                - "trusty"
+                - "xenial"
+                - "zesty"
+                - "artful"
+                - "bionic"
+        harpo:
+            class: "sru-testing"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role: ["kvm"]
+            series-blacklist:
+                - "precise"
+                - "trusty"
+                - "xenial"
+                - "zesty"
+                - "artful"
+                - "bionic"
+        zeppo:
+            class: "sru-testing"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role: ["kvm"]
+            series-blacklist:
+                - "precise"
+                - "trusty"
+                - "xenial"
+                - "zesty"
+                - "artful"
+                - "bionic"
+        gummo:
+            class: "sru-testing"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role: ["kvm"]
+            series-blacklist:
                 - "precise"
                 - "trusty"
                 - "xenial"
