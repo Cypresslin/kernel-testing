@@ -251,7 +251,7 @@ class Base(object):
                     cmd = 'sudo apt-get install --yes %s' % p
                     s.ssh(cmd)
 
-        elif s.flavour == 'lowlatency':
+        elif s.flavour in ['lowlatency', 'kvm']:
             cmd = 'sudo apt-get install --yes linux-%s' % s.flavour
             s.ssh(cmd)
 
@@ -722,6 +722,7 @@ class Metal(Base):
         if retval:
             retval = False
             kv = None
+            installed_kernel = None
             result, kernel = s.ssh(r'uname -vr')
             for line in kernel:
                 line = line.strip()
@@ -730,25 +731,32 @@ class Metal(Base):
                 if 'Warning: Permanently aded' in line: continue
                 if line == '': continue
 
-                m = re.search('(\d+.\d+.\d+)-\d+-.* #(\d+[~a-z\d.]*)-Ubuntu.*', line)
+                m = re.search('(\d+.\d+.\d+)-\d+-.* #(\d+[+~a-z\d.]*)-Ubuntu.*', line)
                 if m:
                     kv = m.group(1)
                 cdebug('kernel version : ' + kv)
 
-                m = re.search('(\d+.\d+.\d+-\d+)-.* #(\d+[~a-z\d.]*)-Ubuntu.*', line)
+                m = re.search('(\d+.\d+.\d+-\d+)-.* #(\d+[+~a-z\d.]*)-Ubuntu.*', line)
                 if m:
                     installed_kernel = '%s.%s' % (m.group(1), m.group(2))
                 cdebug('installed kernel version : ' + installed_kernel)
 
-            if s.required_kernel_version is not None:
-                if installed_kernel == s.required_kernel_version:
-                    retval = True
-                else:
-                    retval = False
-                    error("")
-                    error("*** ERROR:")
-                    error("    Was expecting the target kernel version to be (%s) but found it to be (%s) instead." % (s.required_kernel_version, installed_kernel))
-                    error("")
+            if installed_kernel is not None:
+                if s.required_kernel_version is not None:
+                    if installed_kernel == s.required_kernel_version:
+                        retval = True
+                    else:
+                        retval = False
+                        error("")
+                        error("*** ERROR:")
+                        error("    Was expecting the target kernel version to be (%s) but found it to be (%s) instead." % (s.required_kernel_version, installed_kernel))
+                        error("")
+            else:
+                retval = False
+                error("")
+                error("*** ERROR:")
+                error("    Unable to determine the installed kernel version.")
+                error("")
 
         cleave('Metal::verify_target (%s)' % retval)
         return retval
