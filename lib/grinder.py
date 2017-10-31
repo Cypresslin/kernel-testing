@@ -368,11 +368,21 @@ class TestResultsRepository():
             for root, dirs, files in walk(dest):
                 for fid in files:
                     if fid.endswith('.DEBUG'):
+                        fixed = []
+                        print(path.join(root, fid))
                         with open(path.join(root, fid), 'r') as f:
                             content = f.read().split('\n')
+                        for l in content:
+                            try:
+                                l = l.replace("\xc0", '')
+                                l = l.replace("\xe5", '')
+                                fixed.append(l)
+                            except:
+                                print(l)
+                                raise
 
                         d = path.join(root, '%s.html' % fid)
-                        template = self.text_file_template.render(title = fid, content = content)
+                        template = self.text_file_template.render(title=fid, content=fixed)
                         with open(d, 'w') as f:
                             f.write(template)
 
@@ -393,8 +403,18 @@ class TestResultsRepository():
             with open(fid, 'r') as f:
                 content = f.read().split('\n')
 
+            fixed = []
+            for l in content:
+                try:
+                    l = l.replace("\xc0", '')
+                    l = l.replace("\xe5", '')
+                    fixed.append(l)
+                except:
+                    print(l)
+                    raise
+
             d = '%s.html' % fid
-            template = self.text_file_template.render(title = fid, content = content)
+            template = self.text_file_template.render(title=fid, content=fixed)
             with open(d, 'w') as f:
                 f.write(template)
 
