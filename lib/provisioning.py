@@ -332,6 +332,27 @@ class Base(object):
 
         cleave('Base::enable_live_kernel_patching')
 
+    def customize_rc_local(s):
+        center("Base::customize_rc_local")
+        rc = [
+            '#!/bin/sh -e',
+            '#',
+            '',
+            'systemctl mask apt-daily.service',
+            'systemctl mask apt-daily.timer',
+            'systemctl mask apt-daily-upgrade.service',
+            'systemctl mask apt-daily-upgrade.timer',
+            'exit 0',
+        ]
+
+        s.ssh('sudo rm /etc/rc.local')
+        s.ssh('sudo touch /etc/rc.local')
+        for l in rc:
+            s.ssh('\'echo \"%s\" | sudo tee -a /etc/rc.local\'' % l)
+        s.ssh('sudo chmod 0755 /etc/rc.local')
+
+        cleave("Base::customize_rc_local")
+
     def enable_snappy_client_live_kernel_patching(s):
         center("Base::enable_snappy_client_live_kernel_patching")
         s.progress('Enabling Live Kernel Snap Client Patching')
@@ -841,6 +862,7 @@ class Metal(Base):
             s.enable_ppa()
             dist_upgrade = True
 
+        s.customize_rc_local()
         s.reboot(progress="for the pure love of rebooting")
 
         # Disable APT from periodicly running and trying to update the systems.
