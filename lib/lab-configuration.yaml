@@ -618,6 +618,7 @@
         onibi:
             class: "sru-testing"
             arch:
+                - "amd64"
                 - "i386"
             provisioner: "maas2"
             jenkins server: "jenkins2"
@@ -625,11 +626,11 @@
             power: []
             role:
                 - "ubuntu_boot"
+                - "qrt"
                 - "sru"
-                - "sru-2"
+                - "sru-3"
                 - "boot"
                 - "virt"
-            scratch drive: "/dev/sdb"
         onza:
             class: "sru-testing"
             arch:
@@ -911,7 +912,6 @@
         fozzie:
             class: "sru-testing"
             arch:
-                - "amd64"
                 - "i386"
             provisioner: "maas2"
             jenkins server: "jenkins2"
@@ -919,9 +919,8 @@
             power: []
             role:
                 - "ubuntu_boot"
-                - "qrt"
                 - "sru"
-                - "sru-3"
+                - "sru-2"
                 - "boot"
             scratch drive: "/dev/sdb"
         gonzo:
