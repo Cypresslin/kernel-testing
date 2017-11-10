@@ -94,17 +94,9 @@
                 - "amd64"
             provisioner: "maas2"
             jenkins server: "jenkins2"
-            locked: false
+            locked: true
             power: []
-            role:
-                - "ubuntu_boot"
-                - "sru"
-                - "sru-1"
-                - "sru-2"
-                - "ubuntu_zfs_fstest"
-                - "ubuntu_zfs_xfs_generic"
-                - "boot"
-                - "virt"
+            role: []
         chico:
             class: "sru-testing"
             arch:
