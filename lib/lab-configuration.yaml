@@ -71,24 +71,16 @@
     # to me.
     #
     systems:
-        hainzel:
+        hainzel:                          # Azure Jenkins Server
             class: "sru-testing"
             arch:
                 - "amd64"
             provisioner: "maas2"
             jenkins server: "jenkins2"
-            locked: false
+            locked: true
             power: []
-            role:
-                - "ubuntu_boot"
-                - "qrt"
-                - "smoke"
-                - "sru"
-                - "sru-3"
-                - "ubuntu_ecryptfs"
-                - "boot"
-                - "virt"
-        archytas:
+            role: []
+        archytas:                         # AWS Jenkins Server
             class: "sru-testing"
             arch:
                 - "amd64"
