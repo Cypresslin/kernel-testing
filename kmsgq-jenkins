@@ -510,7 +510,7 @@ class Jobber(object):
         for k in db:
             if 'backport-packages' in db[k]:
                 for bp in db[k]['backport-packages']:
-                    if bp not in ['linux-azure', 'linux-gke', 'linux-aws', 'linux-gcp']:
+                    if bp not in ['linux-azure', 'linux-azure-edge', 'linux-gke', 'linux-aws', 'linux-gcp']:
                         retval.append(bp)
         return retval
 
