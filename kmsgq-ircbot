@@ -226,9 +226,6 @@ class TheApp():
                     retval.append(content)
 
             elif 'published' == what:
-                if payload['hwe']:
-                    content += 'lts-'
-
                 content += '%s-%s %s' % (series, payload['flavour'], payload['kernel-version'])
                 content += ' to -' + payload['pocket']
                 retval.append(content)
