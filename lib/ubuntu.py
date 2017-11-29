@@ -9,6 +9,8 @@ except ImportError:
 
 import yaml
 
+from ktl.kernel_series import convert_v2_to_v1
+
 #
 # Warning - using the following dictionary to get the series name from the kernel version works for the linux package,
 # but not for some others (some ARM packages are known to be wrong). This is because the ARM kernels used for some
@@ -32,21 +34,23 @@ class Ubuntu:
     # file you need to update the kteam-tools.kernel.ubuntu.com repo in the ~kernel-ppa
     # directory on kernel.ubuntu.com.
     #
-    url = 'https://git.launchpad.net/~canonical-kernel/+git/kteam-tools/plain/ktl/kernel-series-info.yaml'
-    # url = 'file:///home/work/kteam-tools/ktl/kernel-series-info.yaml'
+    #url = 'https://git.launchpad.net/~canonical-kernel/+git/kteam-tools/plain/ktl/kernel-series-info.yaml'
+    url = 'https://git.launchpad.net/~canonical-kernel/+git/kteam-tools/plain/info/kernel-series.yaml'
+    # url = 'file:///home/apw/git2/kteam-tools/info/kernel-series.yaml'
     response = urlopen(url)
     content = response.read()
     if type(content) != str:
         content = content.decode('utf-8')
     data = yaml.load(content)
-    db = data
+
+    db = convert_v2_to_v1(data)
 
     index_by_kernel_version = {}
     for v in db:
         if 'kernels' in db[v]:
             for version in db[v]['kernels']:
                 index_by_kernel_version[version] = db[v]
-            db[v]['kernel'] = db[v]['kernels'][0]
+            db[v]['kernel'] = db[v]['kernels'][-1]
         else:
             index_by_kernel_version[db[v]['kernel']] = db[v]
 
@@ -56,9 +60,10 @@ class Ubuntu:
 
     kernel_source_packages = []
     for v in db:
-        for p in db[v]['packages']:
-            if p not in kernel_source_packages:
-                kernel_source_packages.append(p)
+        if 'packages' in db[v]:
+            for p in db[v]['packages']:
+                if p not in kernel_source_packages:
+                    kernel_source_packages.append(p)
 
     # lookup
     #
