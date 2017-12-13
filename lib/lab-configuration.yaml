@@ -262,6 +262,7 @@
                 - "vivid"
                 - "zesty"
                 - "artful"
+                - "bionic"
             proc-decoration: "zKVM"
         s2lp6g002:
             class: "sru-testing"
@@ -289,6 +290,7 @@
                 - "xenial"
                 - "zesty"
                 - "artful"
+                - "bionic"
             proc-decoration: "zKVM"
         s2lp6g003:
             class: "sru-testing"
@@ -315,6 +317,7 @@
                 - "vivid"
                 - "xenial"
                 - "artful"
+                - "bionic"
             proc-decoration: "zKVM"
         s2lp6g004:
             class: "sru-testing"
@@ -341,6 +344,7 @@
                 - "vivid"
                 - "xenial"
                 - "zesty"
+                - "bionic"
             proc-decoration: "zKVM"
         s2lp3:
             class: "sru-testing"
@@ -367,6 +371,7 @@
                 - "vivid"
                 - "zesty"
                 - "artful"
+                - "bionic"
             proc-decoration: "Ubuntu on LPAR"
         s2lp4:
             class: "sru-testing"
@@ -393,6 +398,7 @@
                 - "vivid"
                 - "xenial"
                 - "zesty"
+                - "bionic"
             proc-decoration: "Ubuntu on LPAR"
         # s2lp5:
         #     class: "bogus"
@@ -432,6 +438,7 @@
                 - "vivid"
                 - "zesty"
                 - "artful"
+                - "bionic"
             proc-decoration: "zVM"
         kernel02:
             class: "sru-testing"
@@ -459,6 +466,7 @@
                 - "xenial"
                 - "zesty"
                 - "artful"
+                - "bionic"
             proc-decoration: "zVM"
         kernel03:
             class: "sru-testing"
@@ -485,6 +493,7 @@
                 - "vivid"
                 - "xenial"
                 - "artful"
+                - "bionic"
             proc-decoration: "zVM"
         kernel04:
             class: "sru-testing"
@@ -511,6 +520,7 @@
                 - "vivid"
                 - "xenial"
                 - "zesty"
+                - "bionic"
             proc-decoration: "zVM"
         beketov:
             class: "private"
