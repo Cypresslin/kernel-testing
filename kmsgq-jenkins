@@ -393,10 +393,11 @@ class JobsFactory(object):
 
         if s.cfg.lkp:
             retval += jd['package']
+            if '~' in s.jd['kernel-version']:
+                retval += '-hwe'
         else:
             retval += jd['series-name'].title()[0]  # Only want the first character
-        if '~' in s.jd['kernel-version']:
-            retval += '-hwe'
+            retval += jd['package'].replace('linux','')
 
         if 'series-decoration' in jd and jd['series-decoration'] is not None:
             retval += '_%s' % jd['series-decoration']
