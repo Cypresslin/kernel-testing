@@ -211,7 +211,6 @@ class JobsFactory(object):
         Check if the SUT is blacked listed for the desired release. Or if it's
         hwe kernel (which has a '~' in kernel version) for s390x, as we can't
         re-deploy s390x systems with MaaS now.
-        And a special case to drop T-hwe on ARM64, no arm64 image for Precise.
         '''
         retval = []
         try:
@@ -222,8 +221,6 @@ class JobsFactory(object):
                     elif '~' in s.jd['kernel-version']:
                         arch = ','.join(s.configuration['systems'][system]['arch'])
                         if 's390x' in arch:
-                            continue
-                        elif 'arm64' in arch and s.jd['series-name'] == 'trusty':
                             continue
                 except KeyError:
                     pass
