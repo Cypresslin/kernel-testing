@@ -11,6 +11,7 @@ def main(argv):
 
         fixed = content.decode("utf-8").replace(u"\u0008", "*").encode("utf-8")
         fixed = fixed.decode("utf-8").replace(u"\u0000", "*").encode("utf-8")
+        fixed = fixed.decode("utf-8").replace(u"\u001b", "*").encode("utf-8")
         print(fixed)
 
 if __name__ == '__main__':
