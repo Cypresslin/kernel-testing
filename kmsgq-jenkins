@@ -82,6 +82,10 @@ class JobsFactory(object):
         s._configuration = None
         s._sut_pool = None
         s.cfg = cfg
+        try:
+            s._request_systems = s.jd['systems'] if s.jd['systems'] else None
+        except KeyError:
+            s._request_systems = None
 
         if cfg.lkp:
             s.system_class = 'live'
@@ -128,7 +132,8 @@ class JobsFactory(object):
             # Create a dictionary of the lab HW keyed by role.
             #
             s._sut_pool = {}
-            for sut in s.configuration['systems']:
+            targets = s._request_systems if s._request_systems else s.configuration['systems']
+            for sut in targets:
                 try:
                     if s.configuration['systems'][sut]['class'] == s.system_class:
                         for role in s.configuration['systems'][sut]['role']:
