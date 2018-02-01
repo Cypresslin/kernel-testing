@@ -286,11 +286,8 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
-                - "vivid"
                 - "xenial"
-                - "zesty"
                 - "artful"
-                - "bionic"
             proc-decoration: "zKVM"
         s2lp6g003:
             class: "sru-testing"
@@ -395,10 +392,8 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
-                - "vivid"
                 - "xenial"
-                - "zesty"
-                - "bionic"
+                - "artful"
             proc-decoration: "Ubuntu on LPAR"
         # s2lp5:
         #     class: "bogus"
@@ -462,11 +457,8 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
-                - "vivid"
                 - "xenial"
-                - "zesty"
                 - "artful"
-                - "bionic"
             proc-decoration: "zVM"
         kernel03:
             class: "sru-testing"
