@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+#
+
+import fileinput
+from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
+from logging                            import basicConfig, DEBUG, WARNING
+
+from lib3.jenkins_server_local          import JenkinsServerLocal
+
+# CloudJobFactory
+#
+class CloudJobFactory(object):
+    '''
+    '''
+
+    # __init__
+    #
+    def __init__(s):
+        '''
+        '''
+        s.jenkins = JenkinsServerLocal.connect()
+
+    # main
+    #
+    def main(s, args):
+        retval = 0
+
+        jobs = s.jenkins.jobs
+        for line in fileinput.input():
+            name = line.strip()
+            if name in jobs:
+                s.jenkins.build_job(name)
+                print(name)
+
+        return retval
+
+if __name__ == '__main__':
+    retval = -1
+
+    # Command line argument setup and initial processing
+    #
+    app_description = '''
+    '''
+    app_epilog = '''
+    '''
+    parser = ArgumentParser(description=app_description, epilog=app_epilog, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('--debug', action='store_true', default=False, help='')
+
+    args = parser.parse_args()
+
+    # If logging parameters were set on the command line, handle them
+    # here.
+    #
+    if args.debug:
+        log_format = "%(levelname)s - %(message)s"
+        basicConfig(level=DEBUG, format=log_format)
+    else:
+        log_format = "%(message)s"
+        basicConfig(level=WARNING, format=log_format)
+
+    try:
+        app = CloudJobFactory()
+        retval = app.main(args)
+    except KeyboardInterrupt:
+        pass
+
+    exit(retval)
+
+# vi:set ts=4 sw=4 expandtab syntax=python:
