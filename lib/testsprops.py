@@ -246,6 +246,7 @@ TestProfiles = {
     'ubuntu_ltp' : {},
     'ubuntu_kvm_smoke_test' : {},
     'ubuntu_docker_smoke_test' : {},
+    'ubuntu_zram_smoke_test' : {},
 }
 
 # Test Collections may be defined, and will run the list of autotest tests in them
@@ -386,6 +387,7 @@ TestCollections = {
         'ubuntu_sysdig_smoke_test',
         'ubuntu_kvm_smoke_test',
         'ubuntu_docker_smoke_test',
+        'ubuntu_zram_smoke_test',
     ],
 
     'boot' : [
