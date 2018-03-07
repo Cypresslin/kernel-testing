@@ -77,9 +77,12 @@
                                                         % for i in range(0, len(data['jobs'])):
                                                             <%
                                                             (jname, host, passed, failed) = data['jobs'][i]
-                                                            (j, k, timestamp) = jname.split('__')
-                                                            ran = passed + failed
-                                                            link = '%s/%s-test-suite.html' % (jname, data['suite'])
+                                                            try:
+                                                                (j, k, timestamp) = jname.split('__')
+                                                                ran = passed + failed
+                                                                link = '%s/%s-test-suite.html' % (jname, data['suite'])
+                                                            except ValueError:
+                                                                continue
                                                             %>
                                                             <tr>
                                                                 <td><a href="${ host }.html">${ host }</a></td>
