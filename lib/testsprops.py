@@ -429,7 +429,6 @@ TestCollections = {
     ],
 
     'sru-2' : [
-        'xfstests',
         'ubuntu_cts_kernel',
         'ubuntu_kernel_selftests',
         'ubuntu_unionmount_overlayfs_suite',
@@ -523,6 +522,7 @@ SRU_TestsList = [
     'ubuntu_btrfs_kernel_fixes',
     'ubuntu_zfs_fstest',
     'ubuntu_zfs_xfs_generic',
+    'xfstests',
 ]
 
 LKP_TestsList = [
