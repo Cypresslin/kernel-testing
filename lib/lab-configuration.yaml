@@ -735,6 +735,7 @@
                 - "precise"
                 - "trusty"
                 - "vivid"
+            scratch drive: "/dev/sdb"
         wright-kernel:
             class: "sru-testing"
             arch:
