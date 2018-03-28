@@ -13,7 +13,7 @@
     # Kernel Team's Live-Patching Jenkins server
     #
     jenkins-lkp:
-        server_url: "http://10.245.81.169:8080/"
+        server_url: "http://10.246.72.5:8080/"
 
     # We have 2 McDivitt chartridges on the hyperscale MAAS server.
     #
@@ -766,7 +766,7 @@
             class: "live"
             arch:
                 - "amd64"
-            provisioner: "maas"
+            provisioner: "maas2"
             jenkins server: "jenkins-lkp"
             locked: false
             power: []
@@ -782,7 +782,7 @@
             class: "live"
             arch:
                 - "amd64"
-            provisioner: "maas"
+            provisioner: "maas2"
             jenkins server: "jenkins-lkp"
             locked: false
             power: []
@@ -797,7 +797,7 @@
             class: "live"
             arch:
                 - "amd64"
-            provisioner: "maas"
+            provisioner: "maas2"
             jenkins server: "jenkins-lkp"
             locked: false
             power: []
