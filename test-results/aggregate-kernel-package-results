@@ -90,7 +90,7 @@ class Results(object):
                 with open(os.path.join(job[0], 'results.json'), 'r') as f:
                     data = json.load(f)
 
-                retval['distro-release-name'] = data['attributes']['distro-release-name']
+                retval['distro-release-name'] = data['attributes']['distro-release-name'].strip()
                 retval['kernel-flavour']      = data['attributes']['kernel-flavour']
                 retval['kernel']              = data['attributes']['kernel']
 
