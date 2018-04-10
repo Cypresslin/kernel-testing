@@ -78,7 +78,7 @@
                                                             <%
                                                             (jname, host, passed, failed) = data['jobs'][i]
                                                             try:
-                                                                (j, k, timestamp) = jname.split('__')
+                                                                timestamp = data['timestamp']
                                                                 ran = passed + failed
                                                                 link = '%s/%s-test-suite.html' % (jname, data['suite'])
                                                             except ValueError:

@@ -38,6 +38,7 @@ class Results(object):
             seed['arch'] = arch
 
             for suite in data['suites-results'][arch]:
+                seed['timestamp'] = data['suites-results'][arch][suite]['timestamp']
                 seed['suite'] = suite
                 seed['jobs'] = data['suites-results'][arch][suite]['jobs']
 

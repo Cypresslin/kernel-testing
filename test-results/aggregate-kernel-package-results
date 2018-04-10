@@ -4,6 +4,7 @@
 from argparse                           import ArgumentParser, RawDescriptionHelpFormatter
 from logging                            import basicConfig, DEBUG, INFO
 from lib.log                            import center, cleave, cdebug, cinfo
+from lib.utils                          import string_to_date
 import re
 import os
 import json
@@ -119,6 +120,10 @@ class Results(object):
                     passed = suites_results[arch][name]['totals'][0] + suite['tests run'] - suite['tests failed']
                     failed = suites_results[arch][name]['totals'][1] + suite['tests failed']
                     suites_results[arch][name]['totals'] = (passed, failed)
+
+                    # Timestamp
+                    #
+                    suites_results[arch][name]['timestamp'] = string_to_date(data['attributes']['timestamp']).strftime('%Y-%m-%d_%H-%M-%S')
 
                     hostname = data['attributes']['platform']['hostname']
                     suites_results[arch][name]['jobs'].append((job[1], hostname, suite['tests run'] - suite['tests failed'], suite['tests failed']))
