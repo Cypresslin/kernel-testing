@@ -295,12 +295,12 @@ class Runner():
         try:
             result, output = sh('echo "" | nc -w 2 squid.internal 3128 > /dev/null 2>&1')
             environ['http_proxy']  = 'http://squid.internal:3128'
-            environ['https_proxy'] = 'https://squid.internal:3128'
+            environ['https_proxy'] = 'http://squid.internal:3128'
         except ShellError:
             try:
                 result, output = sh('echo "" | nc -w 2 10.245.64.1 3128 > /dev/null 2>&1')
                 environ['http_proxy']  = 'http://10.245.64.1:3128'
-                environ['https_proxy'] = 'https://10.245.64.1:3128'
+                environ['https_proxy'] = 'http://10.245.64.1:3128'
             except ShellError:
                 pass
 
