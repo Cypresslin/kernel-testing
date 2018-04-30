@@ -27,6 +27,16 @@
         domain   : "1ss"
         api      : "2.0"
 
+    server-maas:
+        server   : "10.245.71.3" # Hostname/address of the MAAS server
+        profile  : "kernel"       # The MAAS profile to use
+        creds    : X5MKnk5sea7Hn9ySys:JTgwbqWVAMnKqmDWHM:yedKytAMdJcgDRBNrqMAtSQC7XRYKWwE
+        user     : "phlin"       # When ssh'ing to the MAAS server, use this user
+        type     : "maas"         # This _is_ a MAAS server (as opposed to a cobbler server)
+        sut_user : "ubuntu"       # The user on the test system after it's been provisioned
+        domain   : "maas"
+        api      : "2.0"
+
     # The Kernel Team's MAAS server
     #
     maas:
@@ -758,6 +768,30 @@
                 - "precise"
                 - "trusty"
                 - "vivid"
+        entei:
+            class: "sru-testing"
+            arch:
+                - "ppc64el"
+            provisioner: "server-maas"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+                - "virt"
+            scratch drive: "/dev/sdb"
+            series-blacklist:
+                - "precise"
 
         # --------------------------------------------------------------------------
         # Livepatch testing
