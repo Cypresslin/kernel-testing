@@ -792,6 +792,32 @@
             scratch drive: "/dev/sdb"
             series-blacklist:
                 - "precise"
+        baltar:
+            class: "sru-testing"
+            arch:
+                - "ppc64el"
+            provisioner: "server-maas"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+                - "virt"
+            series-blacklist:
+                - "precise"
+                - "trusty"
+                - "xenial"
+                - "artful"
 
         # --------------------------------------------------------------------------
         # Livepatch testing
