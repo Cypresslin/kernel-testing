@@ -6,6 +6,8 @@ try:
 except ImportError:
     from urllib2 import urlopen
 
+import os
+import sys
 import yaml
 
 
@@ -22,7 +24,7 @@ def convert_v2_to_v1(data):
             if series.get(key, False):
                 series_v1[key] = series[key]
 
-        if 'sources' not in series:
+        if 'sources' not in series or not series['sources']:
             continue
 
         for source_key, source in series['sources'].items():
@@ -106,7 +108,7 @@ class KernelRepoEntry:
         return self._data.get('branch', None)
 
     def __str__(self):
-        return "{} {}".format(self.repo, self.branch)
+        return "{} {}".format(self.url, self.branch)
 
 
 class KernelSnapEntry:
@@ -191,7 +193,7 @@ class KernelPackageEntry:
 
     @property
     def type(self):
-        return self._data.get('type', 'prime')
+        return self._data.get('type', None)
 
     @property
     def repo(self):
@@ -246,6 +248,14 @@ class KernelSourceEntry:
         return self._data.get('supported', False)
 
     @property
+    def severe_only(self):
+        return self._data.get('severe-only', False)
+
+    @property
+    def stakeholder(self):
+        return self._data.get('stakeholder', None)
+
+    @property
     def packages(self):
         # XXX: should this return None when empty
         result = []
@@ -256,10 +266,10 @@ class KernelSourceEntry:
         return result
 
     def lookup_package(self, package_key):
-        package = self._data.get('packages', {}).get(package_key, False)
-        if package is False:
-            raise KeyError("package {} not found in source {}".format(package_key, self))
-        return KernelPackageEntry(self._ks, self, package_key, package)
+        packages = self._data.get('packages')
+        if not packages or package_key not in packages:
+            return None
+        return KernelPackageEntry(self._ks, self, package_key, packages[package_key])
 
     @property
     def snaps(self):
@@ -272,10 +282,10 @@ class KernelSourceEntry:
         return result
 
     def lookup_snap(self, snap_key):
-        snap = self._data.get('snaps', {}).get(snap_key, False)
-        if snap == False:
-            raise KeyError("snap {} not found in source {}".format(snap_key, self))
-        return KernelSnapEntry(self._ks, self, snap_key, snap)
+        snaps = self._data.get('snaps')
+        if not snaps or snap_key not in snaps:
+            return None
+        return KernelSnapEntry(self._ks, self, snap_key, snaps[snap_key])
 
     @property
     def derived_from(self):
@@ -290,12 +300,38 @@ class KernelSourceEntry:
         return source
 
     @property
+    def testable_flavours(self):
+        retval = []
+        if 'testing' in self._data:
+            for flavour in self._data['testing']['flavours'].keys():
+                f = self._data['testing']['flavours'][flavour]
+                retval.append(KernelSourceTestingFlavourEntry(flavour, f['arches'], f['clouds']))
+        return retval
+
+    @property
     def copy_forward(self):
         return self._data.get('copy-forward', False)
 
     def __str__(self):
         return "{} {}".format(self.series.name, self.name)
 
+class KernelSourceTestingFlavourEntry:
+    def __init__(self, name, arches, clouds):
+        self._name = name
+        self._arches = arches
+        self._clouds = clouds
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def arches(self):
+        return self._arches
+
+    @property
+    def clouds(self):
+        return self._clouds
 
 class KernelSeriesEntry:
     def __init__(self, ks, name, data):
@@ -347,29 +383,40 @@ class KernelSeriesEntry:
         return result
 
     def lookup_source(self, source_key):
-        sources = self._data.get('sources', {})
+        sources = self._data.get('sources')
         if not sources or source_key not in sources:
-            raise KeyError("source {} not found in series {}".format(source_key, self.name))
-        source = sources[source_key]
-        return KernelSourceEntry(self._ks, self, source_key, source)
+            return None
+        return KernelSourceEntry(self._ks, self, source_key, sources[source_key])
 
 
 # KernelSeries
 #
 class KernelSeries:
     _url = 'https://git.launchpad.net/~canonical-kernel/+git/kteam-tools/plain/info/kernel-series.yaml'
+    _url_local = 'file://' + os.path.realpath(os.path.join(os.path.dirname(__file__), '..', 'info', 'kernel-series.yaml'))
     #_url = 'file:///home/apw/git2/kteam-tools/info/kernel-series.yaml'
+    #_url = 'file:///home/work/kteam-tools/info/kernel-series.yaml'
+    _data = None
 
-    def __init__(self, url=None, data=None):
-        if not data:
-            if not url:
-                url = self._url
+    @classmethod
+    def __load_once(cls, url):
+        if not cls._data:
             response = urlopen(url)
             data = response.read()
+            if type(data) != str:
+                data = data.decode('utf-8')
+            cls._data = yaml.load(data)
 
-        if type(data) != str:
-            data = data.decode('utf-8')
-        self._data = yaml.load(data)
+    def __init__(self, url=None, data=None, use_local=False):
+        if data or url:
+            if url:
+                response = urlopen(url)
+                data = response.read()
+            if type(data) != str:
+                data = data.decode('utf-8')
+            self._data = yaml.load(data)
+        else:
+            self.__load_once(self._url_local if use_local else self._url)
 
         self._development_series = None
         self._codename_to_series = {}
@@ -392,18 +439,17 @@ class KernelSeries:
 
     def lookup_series(self, series=None, codename=None, development=False):
         if not series and not codename and not development:
-            raise KeyError("series/codename/development required")
+            raise ValueError("series/codename/development required")
         if not series and codename:
             if codename not in self._codename_to_series:
-                raise KeyError("series codename {} not found".format(codename))
+                return None
             series = self._codename_to_series[codename]
         if not series and development:
             if not self._development_series:
-                raise KeyError("development series not defined")
+                return None
             series = self._development_series
-        if series:
-            if series not in self._data:
-                raise KeyError("series {} not found".format(series))
+        if series and series not in self._data:
+            return None
         return KernelSeriesEntry(self, series, self._data[series])
 
 
