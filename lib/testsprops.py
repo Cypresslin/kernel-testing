@@ -246,7 +246,12 @@ TestProfiles = {
     'ubuntu_ltp' : {},
     'ubuntu_kvm_smoke_test' : {},
     'ubuntu_docker_smoke_test' : {},
+
     'ubuntu_zram_smoke_test' : {},
+    'ubuntu_nbd_smoke_test' : {},
+    'ubuntu_quota_smoke_test' : {},
+    'ubuntu_ramfs_stress' : {},
+    'ubuntu_vfat_stress' : {},
 }
 
 # Test Collections may be defined, and will run the list of autotest tests in them
@@ -363,6 +368,11 @@ TestCollections = {
         # 'ubuntu_fan_smoke_test',
         'ubuntu_squashfs_smoke_test',
         'ubuntu_cve_kernel',
+        'ubuntu_zram_smoke_test',
+        'ubuntu_nbd_smoke_test',
+        'ubuntu_quota_smoke_test',
+        'ubuntu_ramfs_stress',
+        'ubuntu_vfat_stress',
     ],
 
     # The set of tests that Ubuntu Engineering QA run.
@@ -387,7 +397,10 @@ TestCollections = {
         'ubuntu_sysdig_smoke_test',
         'ubuntu_kvm_smoke_test',
         'ubuntu_docker_smoke_test',
+        'ubuntu_cve_kernel',
         'ubuntu_zram_smoke_test',
+        'ubuntu_nbd_smoke_test',
+        'ubuntu_quota_smoke_test',
     ],
 
     'boot' : [
