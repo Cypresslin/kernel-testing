@@ -333,8 +333,7 @@ class Base(object):
             'exit 0',
         ]
 
-        s.ssh('sudo rm /etc/rc.local')
-        s.ssh('sudo touch /etc/rc.local')
+        s.ssh('sudo rm -f /etc/rc.local')
         for l in rc:
             s.ssh('\'echo \"%s\" | sudo tee -a /etc/rc.local\'' % l)
         s.ssh('sudo chmod 0755 /etc/rc.local')
