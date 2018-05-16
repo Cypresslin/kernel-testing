@@ -760,6 +760,9 @@ class Metal(Base):
                         error("*** ERROR:")
                         error("    Was expecting the target kernel version to be (%s) but found it to be (%s) instead." % (s.required_kernel_version, installed_kernel))
                         error("")
+                else:
+                    retval = True
+                    cdebug("Didn't ask for a specific kernel, skipping the version check.")
             else:
                 retval = False
                 error("")
@@ -860,7 +863,7 @@ class Metal(Base):
         # If we want an HWE kernel installed on the bare metal then at this point the correct
         # LTS kernel has been installed and it's time to install the HWE kernel.
         #
-        if '~' in s.required_kernel_version:
+        if s.required_kernel_version and '~' in s.required_kernel_version:
             s.install_hwe_kernel()
             reboot = 'Rebooting for HWE Kernel'
 
