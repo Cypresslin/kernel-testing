@@ -76,18 +76,6 @@ class Base(object):
     def __init__(s, target, series, arch, kernel=None, xen=False, debs=None, ppa=None, dry_run=False, lkp=False, lkp_snappy=False, pkg_name=None, required_kernel_version=None, flavour=None):
         center("Base::__init__")
 
-        # If we are installing a HWE kernel, we want to install the correct series first.
-        #
-        if '~' in required_kernel_version:
-            # For T-hwe, the kernel version looks like this: "3.13.0-126.175~precise1"
-            # Since X-hwe, they will follow this format:     "4.4.0-88.111~14.04.1"
-            if 'precise' in required_kernel_version:
-                series = 'precise'
-            else:
-                series_ver = required_kernel_version.split('~')[1]
-                series_ver = re.match('\d+\.\d+', series_ver).group(0)
-                series = Ubuntu().lookup(series_ver)['name']
-
         s.ps = PS(target, series, arch)
 
         sp = Configuration['systems'][target]['provisioner']
