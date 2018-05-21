@@ -1,4 +1,15 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%
+from lib3.kernel_series                  import KernelSeries
+
+supported_releases = {}
+ks = KernelSeries()
+for series in ks.series:
+    if series.development:
+        supported_releases[series.name] = series.codename
+    if series.supported:
+        supported_releases[series.name] = series.codename
+%>
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -56,67 +67,72 @@
                             <tr>
                                 <td width="100%" valign="top">
                                     <table width="100%" style="font-size: 0.9em"> <!-- SRU Data -->
-                                        % for ubuntu_series in sorted(data, reverse=True):
-                                        <tr>
-                                            <td style="background: #ffff99;"><strong>${ubuntu_series}</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td width="100%">
-                                                <table id="" width="100%" border="0">
-                                                    <tbody>
-                                                        % for kernel_version in sorted(data[ubuntu_series], reverse=True):
-                                                        <tr>
-                                                            <td align="left" width="150" colspan="7">${ kernel_version }</td> <td> </td>
-                                                        </tr>
-                                                            % for arch in sorted(data[ubuntu_series][kernel_version]['suites-results']):
+                                        % for supported_release in sorted(supported_releases, reverse=True):
+                                            <%
+                                                ubuntu_series = supported_releases[supported_release]
+                                            %>
+                                            % if ubuntu_series in data:
+                                                <tr>
+                                                    <td style="background: #ffff99;"><strong>${supported_release} &nbsp;&nbsp; (${ubuntu_series})</strong></td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="100%">
+                                                        <table id="" width="100%" border="0">
+                                                            <tbody>
+                                                                % for kernel_version in sorted(data[ubuntu_series], reverse=True):
                                                                 <tr>
-                                                                    <th width="100">&nbsp;</th>
-                                                                    <td align="center" colspan="7" style="background: #e9e7e5;">${ arch } </td>
+                                                                    <td align="left" width="150" colspan="7">${ kernel_version }</td> <td> </td>
                                                                 </tr>
-                                                                <tr>
-                                                                    <th width="100">&nbsp;</th>
-                                                                    <th align="center" width="150">Suite</th>
-                                                                    <th align="center" width="45">Passed</th>
-                                                                    <th align="center" width="45">Failed</th>
-                                                                    <th width="50">&nbsp;</th>
-                                                                    <th align="center" width="150">Suite</th>
-                                                                    <th align="center" width="45">Passed</th>
-                                                                    <th align="center" width="45">Failed</th>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td width="100">&nbsp;</td>
-                                                                    <% suite_row = 0 %>
-                                                                    % for suite in sorted(data[ubuntu_series][kernel_version]['suites-results'][arch]):
-                                                                            <%
-                                                                                suite_row += 1
-                                                                                (passed, failed) = data[ubuntu_series][kernel_version]['suites-results'][arch][suite]['totals']
-                                                                                link = data[ubuntu_series][kernel_version]['suites-results'][arch][suite]['link']
-                                                                            %>
-                                                                    <td align="left"  ><a href="${ link }">${ suite }</a></td>
-                                                                    <td align="center"><a href="${ link }">${ passed }    </a></td>
-                                                                    <td align="center"><a href="${ link }">${ failed }    </a></td>
-                                                                        % if suite_row == 2:
+                                                                    % for arch in sorted(data[ubuntu_series][kernel_version]['suites-results']):
+                                                                        <tr>
+                                                                            <th width="100">&nbsp;</th>
+                                                                            <td align="center" colspan="7" style="background: #e9e7e5;">${ arch } </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th width="100">&nbsp;</th>
+                                                                            <th align="center" width="150">Suite</th>
+                                                                            <th align="center" width="45">Passed</th>
+                                                                            <th align="center" width="45">Failed</th>
+                                                                            <th width="50">&nbsp;</th>
+                                                                            <th align="center" width="150">Suite</th>
+                                                                            <th align="center" width="45">Passed</th>
+                                                                            <th align="center" width="45">Failed</th>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td width="100">&nbsp;</td>
                                                                             <% suite_row = 0 %>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td width="100">&nbsp;</td>
-                                                                        % else:
-                                                                    <td width="50">&nbsp;</td>
-                                                                        % endif
+                                                                            % for suite in sorted(data[ubuntu_series][kernel_version]['suites-results'][arch]):
+                                                                                    <%
+                                                                                        suite_row += 1
+                                                                                        (passed, failed) = data[ubuntu_series][kernel_version]['suites-results'][arch][suite]['totals']
+                                                                                        link = data[ubuntu_series][kernel_version]['suites-results'][arch][suite]['link']
+                                                                                    %>
+                                                                            <td align="left"  ><a href="${ link }">${ suite }</a></td>
+                                                                            <td align="center"><a href="${ link }">${ passed }    </a></td>
+                                                                            <td align="center"><a href="${ link }">${ failed }    </a></td>
+                                                                                % if suite_row == 2:
+                                                                                    <% suite_row = 0 %>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td width="100">&nbsp;</td>
+                                                                                % else:
+                                                                            <td width="50">&nbsp;</td>
+                                                                                % endif
+                                                                            % endfor
+                                                                            % if suite_row == 1:
+                                                                        <tr>
+                                                                            <td>&nbsp;</td>
+                                                                        </tr>
+                                                                            % endif
+                                                                            </tr>
+                                                                        </tr>
                                                                     % endfor
-                                                                    % if suite_row == 1:
-                                                                <tr>
-                                                                    <td>&nbsp;</td>
-                                                                </tr>
-                                                                    % endif
-                                                                    </tr>
-                                                                </tr>
-                                                            % endfor
-                                                        % endfor
-                                                    </tbody>
-                                                </table>
-                                            </td>
-                                        </tr>
+                                                                % endfor
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            % endif
                                         % endfor
                                     </table>
                                 </td>
