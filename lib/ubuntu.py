@@ -9,7 +9,73 @@ except ImportError:
 
 import yaml
 
-from lib3.kernel_series import convert_v2_to_v1
+
+def convert_v2_to_v1(data):
+    data_v1 = {}
+    for series_key, series in data.items():
+        series_v1 = data_v1.setdefault(series_key, {})
+
+        series_v1['series_version'] = series_key
+        series_v1['name'] = series['codename']
+        for key in ('development', 'supported'):
+            series_v1[key] = series.get(key, False)
+        for key in ('lts', 'esm'):
+            if series.get(key, False):
+                series_v1[key] = series[key]
+
+        if 'sources' not in series or not series['sources']:
+            continue
+
+        for source_key, source in series['sources'].items():
+            if 'versions' in source:
+                series_v1['kernels'] = source['versions']
+                series_v1['kernel'] = series_v1['kernels'][-1]
+                break
+
+        series_v1['derivative-packages'] = {}
+        series_v1['packages'] = []
+        series_v1['derivative-packages']['linux'] = []
+        for source_key, source in series['sources'].items():
+            if source.get('supported', False) and not source.get('copy-forward', False):
+                if 'derived-from' in source:
+                    (derived_series, derived_package) = source['derived-from']
+                    if derived_series == series_key:
+                        derivative_packages = series_v1['derivative-packages'].setdefault(derived_package, [])
+                        derivative_packages.append(source_key)
+                    else:
+                        backport_packages = series_v1.setdefault('backport-packages', {})
+                        backport_packages[source_key] = [ derived_package, derived_series ]
+
+                else:
+                    series_v1['derivative-packages'].setdefault(source_key, [])
+
+            for package_key, package in source['packages'].items():
+                if source.get('supported', False) and not source.get('copy-forward', False):
+                    series_v1['packages'].append(package_key)
+
+                if not package:
+                    continue
+
+                dependent_packages = series_v1.setdefault('dependent-packages', {})
+                dependent_packages_package = dependent_packages.setdefault(source_key, {})
+
+                if 'type' in package:
+                    dependent_packages_package[package['type']] = package_key
+
+            if 'snaps' in source:
+                for snap_key, snap in source['snaps'].items():
+                    if snap and 'primary' in snap:
+                        dependent_snaps = series_v1.setdefault('dependent-snaps', {})
+                        dependent_snaps_source = dependent_snaps.setdefault(source_key, snap)
+                        dependent_snaps_source['snap'] = snap_key
+                        del dependent_snaps_source['primary']
+                        del dependent_snaps_source['repo']
+                    else:
+                        derivative_snaps = series_v1.setdefault('derivative-snaps', {})
+                        derivative_snaps.setdefault(source_key, []).append(snap_key)
+
+    return data_v1
+
 
 #
 # Warning - using the following dictionary to get the series name from the kernel version works for the linux package,
@@ -51,7 +117,7 @@ class Ubuntu:
             for version in db[v]['kernels']:
                 index_by_kernel_version[version] = db[v]
             db[v]['kernel'] = db[v]['kernels'][-1]
-        else:
+        elif 'kernel' in db[v]:
             index_by_kernel_version[db[v]['kernel']] = db[v]
 
     index_by_series_name = {}
@@ -234,7 +300,7 @@ class Ubuntu:
                             retval = entry['name']
                             series_version = entry['series_version']
                             break
-                else:
+                elif 'kernel' in entry:
                     if version.startswith(entry['kernel']):
                         retval = entry['name']
                         series_version = entry['series_version']
