@@ -244,6 +244,7 @@ TestProfiles = {
     'ubuntu_blktrace_smoke_test' : {},
     'ubuntu_sysdig_smoke_test' : {},
     'ubuntu_ltp' : {},
+    'ubuntu_ltp_syscalls' : {},
     'ubuntu_kvm_smoke_test' : {},
     'ubuntu_docker_smoke_test' : {},
 
@@ -299,7 +300,7 @@ TestCollections = {
         'rtc',
         'hwclock',
         # 'isic',
-        'scrashme',
+        'ubuntu_ltp_syscalls',
     ],
 
     'lkp-apparmor' : [
@@ -350,7 +351,7 @@ TestCollections = {
         'rtc',
         'hwclock',
         # 'isic',
-        'scrashme',
+        'ubuntu_ltp_syscalls',
     ],
 
     # These are the tests that get run as DEP8 tests
@@ -465,7 +466,7 @@ TestCollections = {
         # 'regression',
         'rmaptest',
         'rtc',
-        'scrashme',
+        'ubuntu_ltp_syscalls',
         'signaltest',
         'synctest',
         'wb_kupdate',
@@ -502,7 +503,7 @@ TestCollections = {
         'monotonic_time',
         'rmaptest',
         'rtc',
-        'scrashme',
+        'ubuntu_ltp_syscalls',
         'signaltest',
         'synctest',
         'wb_kupdate',
