@@ -394,6 +394,8 @@ class Base(object):
             'python-yaml',
             'gdb',
         ]
+        if s.arch == 'ppc64el':
+            pkgs.append('ppc64-diag')
         s.ssh('sudo apt-get install --yes %s' % ' '.join(pkgs))
 
         cleave("Base::install_required_pkgs")
