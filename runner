@@ -374,15 +374,15 @@ class Runner():
         # Get rid of all the crash directories. These suck up a bunch of space and if anyone
         # is digging into a problem they can rerun the test by hand.
         #
-        sh('find . -name \'crash.*\' -type d | xargs sudo rm -rf')
+        sh('sudo find . -name \'crash.*\' -type d | xargs sudo rm -rf')
 
         # Remove any/all reboot_current log directories. They add up...
         #
-        sh('find . -name reboot_current -type d | xargs sudo rm -rf')
+        sh('sudo find . -name reboot_current -type d | xargs sudo rm -rf')
 
         # Remove any/all copies of the kernel trees which some test results have in them.
         #
-        sh('find . -name linux -type d | xargs sudo rm -rf')
+        sh('sudo find . -name linux -type d | xargs sudo rm -rf')
 
         return
 
