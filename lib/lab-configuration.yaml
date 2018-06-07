@@ -681,6 +681,7 @@
             scratch drive: "/dev/sdb"
             series-blacklist:
                 - "precise"
+            proc-decoration: "P8"
         ms10-34-mcdivittB0-kernel:
             class: "sru-testing"
             arch:
@@ -792,6 +793,7 @@
             scratch drive: "/dev/sdb"
             series-blacklist:
                 - "precise"
+            proc-decoration: "P8"
         baltar:
             class: "sru-testing"
             arch:
@@ -818,6 +820,7 @@
                 - "trusty"
                 - "xenial"
                 - "artful"
+            proc-decoration: "P9"
 
         # --------------------------------------------------------------------------
         # Livepatch testing
