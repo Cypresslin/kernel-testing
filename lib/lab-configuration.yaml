@@ -30,8 +30,8 @@
     server-maas:
         server   : "10.245.71.3" # Hostname/address of the MAAS server
         profile  : "kernel"       # The MAAS profile to use
-        creds    : X5MKnk5sea7Hn9ySys:JTgwbqWVAMnKqmDWHM:yedKytAMdJcgDRBNrqMAtSQC7XRYKWwE
-        user     : "phlin"       # When ssh'ing to the MAAS server, use this user
+        creds    : 7PRs3fDNVTWKqefrMc:N3wFjM7XfuSvJnq77j:pJN8skZ96FPHqEPJB4KJwxRDBm4Ujhf3
+        user     : "kernel"       # When ssh'ing to the MAAS server, use this user
         type     : "maas"         # This _is_ a MAAS server (as opposed to a cobbler server)
         sut_user : "ubuntu"       # The user on the test system after it's been provisioned
         domain   : "maas"
