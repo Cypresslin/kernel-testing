@@ -273,10 +273,9 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
-                - "vivid"
-                - "zesty"
                 - "artful"
                 - "bionic"
+                - "cosmic"
             proc-decoration: "zKVM"
         s2lp6g002:
             class: "sru-testing"
@@ -302,6 +301,7 @@
                 - "trusty"
                 - "xenial"
                 - "artful"
+                - "cosmic"
             proc-decoration: "zKVM"
         s2lp6g003:
             class: "sru-testing"
@@ -325,10 +325,10 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
-                - "vivid"
                 - "xenial"
                 - "artful"
                 - "bionic"
+                - "cosmic"
             proc-decoration: "zKVM"
         s2lp6g004:
             class: "sru-testing"
@@ -352,10 +352,9 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
-                - "vivid"
                 - "xenial"
-                - "zesty"
                 - "bionic"
+                - "cosmic"
             proc-decoration: "zKVM"
         s2lp3:
             class: "sru-testing"
@@ -379,10 +378,9 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
-                - "vivid"
-                - "zesty"
                 - "artful"
                 - "bionic"
+                - "cosmic"
             proc-decoration: "Ubuntu on LPAR"
         s2lp4:
             class: "sru-testing"
@@ -408,6 +406,7 @@
                 - "trusty"
                 - "xenial"
                 - "artful"
+                - "cosmic"
             proc-decoration: "Ubuntu on LPAR"
         # s2lp5:
         #     class: "bogus"
@@ -444,10 +443,9 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
-                - "vivid"
-                - "zesty"
                 - "artful"
                 - "bionic"
+                - "cosmic"
             proc-decoration: "zVM"
         kernel02:
             class: "sru-testing"
@@ -473,6 +471,7 @@
                 - "trusty"
                 - "xenial"
                 - "artful"
+                - "cosmic"
             proc-decoration: "zVM"
         kernel03:
             class: "sru-testing"
@@ -496,10 +495,10 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
-                - "vivid"
                 - "xenial"
                 - "artful"
                 - "bionic"
+                - "cosmic"
             proc-decoration: "zVM"
         kernel04:
             class: "sru-testing"
@@ -523,10 +522,9 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
-                - "vivid"
                 - "xenial"
-                - "zesty"
                 - "bionic"
+                - "cosmic"
             proc-decoration: "zVM"
         beketov:
             class: "private"
