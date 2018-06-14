@@ -112,9 +112,9 @@
                 - "precise"
                 - "trusty"
                 - "xenial"
-                - "zesty"
                 - "artful"
                 - "bionic"
+                - "cosmic"
         groucho:
             class: "sru-testing"
             arch:
@@ -128,9 +128,9 @@
                 - "precise"
                 - "trusty"
                 - "xenial"
-                - "zesty"
                 - "artful"
                 - "bionic"
+                - "cosmic"
         harpo:
             class: "sru-testing"
             arch:
@@ -144,9 +144,9 @@
                 - "precise"
                 - "trusty"
                 - "xenial"
-                - "zesty"
                 - "artful"
                 - "bionic"
+                - "cosmic"
         zeppo:
             class: "sru-testing"
             arch:
@@ -160,9 +160,9 @@
                 - "precise"
                 - "trusty"
                 - "xenial"
-                - "zesty"
                 - "artful"
                 - "bionic"
+                - "cosmic"
         gummo:
             class: "sru-testing"
             arch:
@@ -176,9 +176,9 @@
                 - "precise"
                 - "trusty"
                 - "xenial"
-                - "zesty"
                 - "artful"
                 - "bionic"
+                - "cosmic"
         baade:
             class: "sru-testing"
             arch:
