@@ -11,78 +11,13 @@ import sys
 import yaml
 
 
-def convert_v2_to_v1(data):
-    data_v1 = {}
-    for series_key, series in data.items():
-        series_v1 = data_v1.setdefault(series_key, {})
-
-        series_v1['series_version'] = series_key
-        series_v1['name'] = series['codename']
-        for key in ('development', 'supported'):
-            series_v1[key] = series.get(key, False)
-        for key in ('lts', 'esm'):
-            if series.get(key, False):
-                series_v1[key] = series[key]
-
-        if 'sources' not in series or not series['sources']:
-            continue
-
-        for source_key, source in series['sources'].items():
-            if 'versions' in source:
-                series_v1['kernels'] = source['versions']
-                series_v1['kernel'] = series_v1['kernels'][-1]
-                break
-
-        series_v1['derivative-packages'] = {}
-        series_v1['packages'] = []
-        series_v1['derivative-packages']['linux'] = []
-        for source_key, source in series['sources'].items():
-            if source.get('supported', False) and not source.get('copy-forward', False):
-                if 'derived-from' in source:
-                    (derived_series, derived_package) = source['derived-from']
-                    if derived_series == series_key:
-                        derivative_packages = series_v1['derivative-packages'].setdefault(derived_package, [])
-                        derivative_packages.append(source_key)
-                    else:
-                        backport_packages = series_v1.setdefault('backport-packages', {})
-                        backport_packages[source_key] = [ derived_package, derived_series ]
-
-                else:
-                    series_v1['derivative-packages'].setdefault(source_key, [])
-
-            for package_key, package in source['packages'].items():
-                if source.get('supported', False) and not source.get('copy-forward', False):
-                    series_v1['packages'].append(package_key)
-
-                if not package:
-                    continue
-
-                dependent_packages = series_v1.setdefault('dependent-packages', {})
-                dependent_packages_package = dependent_packages.setdefault(source_key, {})
-
-                if 'type' in package:
-                    dependent_packages_package[package['type']] = package_key
-
-            if 'snaps' in source:
-                for snap_key, snap in source['snaps'].items():
-                    if snap and 'primary' in snap:
-                        dependent_snaps = series_v1.setdefault('dependent-snaps', {})
-                        dependent_snaps_source = dependent_snaps.setdefault(source_key, snap)
-                        dependent_snaps_source['snap'] = snap_key
-                        del dependent_snaps_source['primary']
-                        del dependent_snaps_source['repo']
-                    else:
-                        derivative_snaps = series_v1.setdefault('derivative-snaps', {})
-                        derivative_snaps.setdefault(source_key, []).append(snap_key)
-
-    return data_v1
-
-
 class KernelRepoEntry:
     def __init__(self, ks, owner, data):
         if isinstance(data, list):
             new_data = { 'url': data[0] }
-            if len(data) == 2:
+            if len(data) == 1:
+                new_data['branch'] = 'master'
+            elif len(data) == 2:
                 new_data['branch'] = data[1]
             data = new_data
 
@@ -97,7 +32,12 @@ class KernelRepoEntry:
     # XXX: should this object have a name ?
 
     def __eq__(self, other):
-        return self.url == other.url and self.branch == other.branch
+        if isinstance(self, other.__class__):
+            return self.url == other.url and self.branch == other.branch
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     @property
     def url(self):
@@ -119,7 +59,12 @@ class KernelSnapEntry:
         self._data = data if data else {}
 
     def __eq__(self, other):
-        return self._name == other._name
+        if isinstance(self, other.__class__):
+            return self._name == other._name and self._source == other._source
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     @property
     def series(self):
@@ -177,7 +122,12 @@ class KernelPackageEntry:
         self._data = data if data else {}
 
     def __eq__(self, other):
-        return self._name == other._name
+        if isinstance(self, other.__class__):
+            return self._name == other._name and self._source == other._source
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     @property
     def series(self):
@@ -214,7 +164,12 @@ class KernelSourceEntry:
         self._data = data if data else {}
 
     def __eq__(self, other):
-        return self.name == other.name
+        if isinstance(self, other.__class__):
+            return self.name == other.name and self._series == other._series
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     @property
     def name(self):
@@ -302,15 +257,48 @@ class KernelSourceEntry:
     @property
     def testable_flavours(self):
         retval = []
-        if 'testing' in self._data:
+        if (self._data.get('testing') != None and
+            self._data['testing'].get('flavours') != None
+           ):
             for flavour in self._data['testing']['flavours'].keys():
                 f = self._data['testing']['flavours'][flavour]
-                retval.append(KernelSourceTestingFlavourEntry(flavour, f['arches'], f['clouds']))
+                # If we have neither arches nor clouds we represent a noop
+                if not f:
+                    continue
+                arches = f.get('arches')
+                arches = arches if arches != None else []
+                clouds = f.get('clouds')
+                clouds = clouds if clouds != None else []
+                retval.append(KernelSourceTestingFlavourEntry(flavour, arches, clouds))
+        return retval
+
+    @property
+    def invalid_tasks(self):
+        retval = self._data.get('invalid-tasks', [])
+        if retval == None:
+            retval = []
         return retval
 
     @property
     def copy_forward(self):
-        return self._data.get('copy-forward', False)
+        if 'copy-forward' not in self._data:
+            return None
+
+        # XXX: backwards compatibility.
+        if self._data['copy-forward'] == False:
+            return None
+        if self._data['copy-forward'] == True:
+            derived_from = self.derived_from
+            if derived_from == None:
+                return True
+            return self.derived_from
+
+        (series_key, source_key) = self._data['copy-forward']
+
+        series = self._ks.lookup_series(series_key)
+        source = series.lookup_source(source_key)
+
+        return source
 
     def __str__(self):
         return "{} {}".format(self.series.name, self.name)
@@ -340,7 +328,12 @@ class KernelSeriesEntry:
         self._data = data if data else {}
 
     def __eq__(self, other):
-        return self._name == other._name
+        if isinstance(self, other.__class__):
+            return self._name == other._name
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     @property
     def name(self):
@@ -352,7 +345,25 @@ class KernelSeriesEntry:
 
     @property
     def opening(self):
-        return self._data.get('opening', False)
+        if 'opening' in self._data:
+            if self._data['opening'] != False:
+                return True
+        return False
+
+    def opening_ready(self, *flags):
+        if 'opening' not in self._data:
+            return True
+        allow = self._data['opening']
+        if allow == None:
+            return False
+        elif allow in (True, False):
+            return not allow
+        for flag in flags:
+            flag_allow = allow.get(flag, False)
+            if flag_allow == None or flag_allow == False:
+                return False
+        return True
+    opening_allow = opening_ready
 
     @property
     def development(self):
