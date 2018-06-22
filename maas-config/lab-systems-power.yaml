@@ -13,6 +13,8 @@
         "bos01-b-07-fb1.power" : "r3m0t3ly"
         "bos01-b-02-fa1.power" : "r3m0t3ly"
         "bos01-b-02-fb1.power" : "r3m0t3ly"
+        "bos01-a-01-fa1.power" : "r3m0t3ly"
+        "bos01-a-01-fb1.power" : "r3m0t3ly"
 
     # systems
     #
@@ -195,3 +197,9 @@
         lodygin:
             lodygin_psu1: "bos01-b-07-fa1.power"
             lodygin_psu2: "bos01-b-07-fb1.power"
+        baltar:
+            baltar_psu1: "bos01-b-07-fa1.power"
+            baltar_psu1: "bos01-b-07-fb1.power"
+        entei:
+            entei_psu1: "bos01-a-01-fa1.power"
+            entei_psu2: "bos01-a-01-fb1.power"
