@@ -333,7 +333,6 @@
                 - "xenial"
                 - "artful"
                 - "bionic"
-                - "cosmic"
             proc-decoration: "zKVM"
         s2lp6g004:
             class: "sru-testing"
@@ -509,7 +508,6 @@
                 - "xenial"
                 - "artful"
                 - "bionic"
-                - "cosmic"
             proc-decoration: "zVM"
         kernel04:
             class: "sru-testing"
