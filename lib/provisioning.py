@@ -239,10 +239,6 @@ class Base(object):
                     cmd = 'sudo apt-get install --yes %s' % p
                     s.ssh(cmd)
 
-        elif s.flavour in ['lowlatency', 'kvm']:
-            cmd = 'sudo apt-get install --yes linux-%s' % s.flavour
-            s.ssh(cmd)
-
         cleave("Base::install_kernel_flavour")
 
     # install_specific_kernel_version
