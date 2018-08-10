@@ -470,7 +470,6 @@ TestCollections = {
         # 'regression',
         'rmaptest',
         'rtc',
-        'ubuntu_ltp_syscalls',
         'signaltest',
         'synctest',
         'wb_kupdate',
@@ -540,6 +539,7 @@ SRU_TestsList = [
     'ubuntu_btrfs_kernel_fixes',
     'ubuntu_zfs_fstest',
     'ubuntu_zfs_xfs_generic',
+    'ubuntu_ltp_syscalls',
     'xfstests',
 ]
 
