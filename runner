@@ -384,6 +384,10 @@ class Runner():
         #
         sh('sudo find . -name linux -type d | xargs sudo rm -rf')
 
+        # Remove any/all copies of the filesystem dump file (lp:1787076)
+        #
+        sh('sudo find . -name mnt -type d | xargs sudo rm -rf')
+
         return
 
     # main
