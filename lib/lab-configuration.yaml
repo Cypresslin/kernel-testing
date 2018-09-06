@@ -667,6 +667,31 @@
                 - "trusty"
                 - "vivid"
                 - "xenial"
+        modoc:
+            class: "sru-testing"
+            arch:
+                - "ppc64el"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+                - "virt"
+            scratch drive: "/dev/sdb"
+            series-blacklist:
+                - "precise"
+            proc-decoration: "P8"
         ms10-34-mcdivittB0-kernel:
             class: "sru-testing"
             arch:
