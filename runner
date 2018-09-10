@@ -114,11 +114,14 @@ class Runner():
         # that we are currently running.
         #
         valid_tests = []
-        debug('    blacklist checking (%s) (%s)' % (self.release_name, self.arch))
+        major_kernel_version = platform.uname()[2].split('-')[0]
+        debug('    blacklist checking (%s) (%s) (%s)' % (self.release_name, major_kernel_version, self.arch))
         for t in self.tests_list:
             debug('        \'%s\'' % t)
             if self.blacklisted(t, self.release_name):
                 error('Test \'%s\' has been blacklisted for this series (%s)' % (t, self.release_name))
+            elif self.blacklisted(t, major_kernel_version):
+                error('Test \'%s\' has been blacklisted for this kernel (%s)' % (t, major_kernel_version))
             elif self.blacklisted(t, self.arch):
                 error('Test \'%s\' has been blacklisted for this arch (%s)' % (t, self.arch))
             elif self.blacklisted(t, self.flavour):
