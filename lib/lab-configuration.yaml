@@ -385,7 +385,6 @@
                 - "precise"
                 - "trusty"
                 - "artful"
-                - "bionic"
                 - "cosmic"
             proc-decoration: "Ubuntu on LPAR"
         s2lp4:
@@ -413,7 +412,7 @@
                 - "trusty"
                 - "xenial"
                 - "artful"
-                - "cosmic"
+                - "bionic"
             proc-decoration: "Ubuntu on LPAR"
         # s2lp5:
         #     class: "bogus"
