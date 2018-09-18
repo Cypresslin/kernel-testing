@@ -814,6 +814,21 @@ class Metal(Base):
         # go ahead and dist-upgrade it.
         #
         if s.ps.type == "manual":
+            # Special case for s2lp3, which is dual-booting with X/B
+            if s.target == "s2lp3":
+                result, codename = s.ssh(r"lsb_release --codename | awk {'print$2'}", quiet=True)
+                codename = codename[0].strip()
+                if codename != s.series:
+                    cmd = "ls -l /dev/disk/by-label/ | grep %s | awk -F'/' '{print$NF}' | tr -d 1" % s.series
+                    result, hdd = s.ssh(cmd, quiet=True)
+                    hdd = hdd[0].strip()
+                    cmd = "lsdasd -b | grep %s | awk '{print$1}'" % hdd
+                    result, bus_id = s.ssh(cmd, quiet=True)
+                    if bus_id:
+                        s.progress('Switching to %s on s2lp3' % s.series)
+                        bus_id = bus_id[0].strip()
+                        cmd = "sudo chreipl " + bus_id
+                        s.ssh(cmd, quiet=False)
             # s.dist_upgrade()
             s.reboot(progress="Rebooting for dist-upgrade")
             # As we don't run dist_upgrade() here, it's better to verify the kerenl version first
