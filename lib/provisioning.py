@@ -829,8 +829,8 @@ class Metal(Base):
                         bus_id = bus_id[0].strip()
                         cmd = "sudo chreipl " + bus_id
                         s.ssh(cmd, quiet=False)
+                        s.reboot(progress="Reboot to target release")
             # s.dist_upgrade()
-            s.reboot(progress="Rebooting for dist-upgrade")
             # As we don't run dist_upgrade() here, it's better to verify the kerenl version first
             if s.xen:
                 if not s.verify_xen_target():
