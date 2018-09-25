@@ -830,8 +830,13 @@ class Metal(Base):
                         cmd = "sudo chreipl " + bus_id
                         s.ssh(cmd, quiet=False)
                         s.reboot(progress="Reboot to target release")
-            # s.dist_upgrade()
-            # As we don't run dist_upgrade() here, it's better to verify the kerenl version first
+            # Special case for s390x, only update them if the kernel version does not match
+            if s.arch.startswith('s390x'):
+                if not s.verify_target():
+                    cinfo("Kernel version does not match, running dist-upgrade")
+                    s.dist_upgrade()
+                    s.reboot(progress="Rebooting for dist-upgrade")
+            # Verify the kernel version when everything settles
             if s.xen:
                 if not s.verify_xen_target():
                     cinfo("Target verification failed.")
