@@ -440,6 +440,7 @@ TestCollections = {
         'ubuntu_32_on_64',
         'ubuntu_bpf_jit',
         'ubuntu_bpf',
+        'ubuntu_vfat_stress',
     ],
 
     'sru-2' : [
