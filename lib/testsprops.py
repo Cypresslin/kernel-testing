@@ -253,6 +253,7 @@ TestProfiles = {
     'ubuntu_quota_smoke_test' : {},
     'ubuntu_ramfs_stress' : {},
     'ubuntu_vfat_stress' : {},
+    'ubuntu_blkdev_directio' : {},
 }
 
 # Test Collections may be defined, and will run the list of autotest tests in them
@@ -374,6 +375,7 @@ TestCollections = {
         'ubuntu_quota_smoke_test',
         'ubuntu_ramfs_stress',
         'ubuntu_vfat_stress',
+        'ubuntu_blkdev_directio',
     ],
 
     # The set of tests that Ubuntu Engineering QA run.
@@ -447,6 +449,7 @@ TestCollections = {
         'ubuntu_cts_kernel',
         'ubuntu_kernel_selftests',
         'ubuntu_unionmount_overlayfs_suite',
+        'ubuntu_blkdev_directio',
     ],
 
     'sru-3' : [
