@@ -340,28 +340,14 @@ class Base(object):
         center("Base::enable_snappy_client_live_kernel_patching")
         s.progress('Enabling Live Kernel Snap Client Patching')
 
-        # teach snapd about the proxys
-        s.ssh('cp /etc/environment /tmp/environment.tmp')
-        s.ssh('\'echo http_proxy=\"http://squid.internal:3128\" >> /tmp/environment.tmp\'')
-        s.ssh('\'echo https_proxy=\"http://squid.internal:3128\" >> /tmp/environment.tmp\'')
-        s.ssh('sudo cp /tmp/environment.tmp /etc/environment')
-        s.ssh('sudo service snapd restart')
-
         # grab livepatch client from snap store
-        (result, output) = s.ssh('sudo snap install --beta canonical-livepatch')
+        (result, output) = s.ssh('sudo snap install canonical-livepatch')
         if result != 0:
             raise ErrorExit("Failed to install canonical-livepatch snap")
 
-        # Ensure all interfaces are connected
-        s.ssh('sudo snap connect canonical-livepatch:kernel-module-control ubuntu-core:kernel-module-control')
-        s.ssh('sudo snap connect canonical-livepatch:hardware-observe ubuntu-core:hardware-observe')
-        s.ssh('sudo snap connect canonical-livepatch:system-observe ubuntu-core:system-observe')
-        s.ssh('sudo snap connect canonical-livepatch:network-control ubuntu-core:network-control')
-        s.ssh('sudo service snap.canonical-livepatch.canonical-livepatchd restart')
-
         # Get the auth key and enable it
         key = Configuration['systems'][s.raw_target]['livepatch key']
-        (result, output) = s.ssh('sudo canonical-livepatch enable %s' % key)
+        (result, output) = s.ssh('sudo canonical-livepatch enable %s proposed' % key)
         if result != 0:
             raise ErrorExit("Failed to enable canonical-livepatch key for %s" % s.raw_target)
         sleep(60)
@@ -369,11 +355,10 @@ class Base(object):
         (result, output) = s.ssh('lsmod')
         found_module = False
         for l in output:
-            cdebug(l)
             if 'livepatch' in l:
                 found_module = True
                 break
-        if found_module == False:
+        if not found_module:
             raise ErrorExit("Could not find livepatch kernel module")
 
         cleave("Base::enable_snappy_client_live_kernel_patching")
