@@ -17,7 +17,6 @@ from lib.exceptions                     import ErrorExit
 from lib.maas                           import MAAS
 from lib.juju                           import JuJu
 from .configuration                     import Configuration
-from .kernel_debs                       import KernelDebs
 
 
 def logging_off():
@@ -243,11 +242,12 @@ class Base(object):
 
     # install_specific_kernel_version
     #
-    def install_specific_kernel_version(s):
+    def install_specific_kernel_version(s, target_kernel):
         '''
         '''
         center("Base::install_specific_kernel_version")
         s.progress('Installing Specific Kernel Version')
+        from .kernel_debs import KernelDebs
 
         kd = KernelDebs(s.kernel, s.series, s.arch, s.flavour)
         urls = kd.get_urls()
@@ -266,7 +266,7 @@ class Base(object):
             # Remove all other kernels
             #
             purge_list = []
-            m = re.search('(\d+.\d+.\d+-\d+).*', s.kernel)
+            m = re.search('(\d+.\d+.\d+-\d+).*', target_kernel)
             target = m.group(1)
             cdebug('target: %s' % target, 'cyan')
             result, output = s.ssh('dpkg -l \\\'linux-*\\\'', quiet=True)
@@ -340,8 +340,12 @@ class Base(object):
         center("Base::enable_snappy_client_live_kernel_patching")
         s.progress('Enabling Live Kernel Snap Client Patching')
 
-        # grab livepatch client from snap store
-        (result, output) = s.ssh('sudo snap install canonical-livepatch')
+        # Grab livepatch client from snap store. We are using the -beta channel to
+        # make sure we are pulling the livepatches from the test set.
+        #
+        cmd = 'sudo snap install canonical-livepatch'
+        cmd += ' --beta'
+        (result, output) = s.ssh(cmd)
         if result != 0:
             raise ErrorExit("Failed to install canonical-livepatch snap")
 
@@ -355,7 +359,7 @@ class Base(object):
         (result, output) = s.ssh('lsmod')
         found_module = False
         for l in output:
-            if 'livepatch' in l:
+            if 'lkp_' in l:
                 found_module = True
                 break
         if not found_module:
@@ -901,8 +905,12 @@ class Metal(Base):
             reboot = 'Rebooting for Kernel flavour %s' % s.flavour
 
         if s.kernel:
-            s.install_specific_kernel_version()
+            s.install_specific_kernel_version(s.kernel)
             reboot = 'Rebooting for Kernel version %s' % s.kernel
+
+        if s.required_kernel_version and (s.lkp or s.lkp_snappy):
+            s.install_specific_kernel_version(s.required_kernel_version)
+            reboot = 'Rebooting for Kernel version %s' % s.required_kernel_version
 
         if reboot:
             s.reboot(progress=reboot)
