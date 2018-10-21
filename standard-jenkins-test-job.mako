@@ -90,7 +90,7 @@ if [ $? -ne 0 ]; then
     if [ ! -e $ARCHIVE/no-tests ]; then
         $KT/test-results/mk-ingest-job --job-name=$JOB_NAME --build-id=$BUILD_ID
     fi
-    exit -1
+    exit 1
 fi
 
 % if 'no-test' not in data:
