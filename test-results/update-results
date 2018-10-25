@@ -23,7 +23,21 @@ done
 $TR/aggregate-all-results */aggregate-test-results.json > aggregate-results.json
 $TR/aggregate-all-results --sru */aggregate-test-results.json > aggregate-sru-results.json
 $TR/render aggregate-results.json $TR/index.mako > index.html
-$TR/render aggregate-sru-results.json $TR/index.mako > tracker-index.html
+
+FILENAME=tracker-index.tmp
+$TR/render aggregate-sru-results.json $TR/index.mako > "$FILENAME"
+
+SIZE=$(du -sb ./"$FILENAME" | awk '{ print $1 }')
+
+if [ $SIZE = 3805 ] ; then
+    echo "Nothing to update"
+    mv "$FILENAME" trackers.noupdate
+    exit 1;
+else
+    echo "Updating"
+    mv "$FILENAME" tracker-index.html
+fi
+
 $TR/test-results-delta */aggregate-test-results.json > full-delta.json
 $TR/render full-delta.json $TR/delta.mako > delta.html
 $TR/test-results-delta --sru */aggregate-test-results.json > sru-delta.json
