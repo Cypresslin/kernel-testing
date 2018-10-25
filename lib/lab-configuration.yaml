@@ -869,22 +869,24 @@
                 - 'livepatch-snappy-client-payload-test'
             livepatch key: ""
             scratch drive: "/dev/sdb"
-        snivy:
-            class: "live"
-            arch:
-                - "amd64"
-            provisioner: "maas2"
-            jenkins server: "jenkins-lkp"
-            locked: false
-            power: []
-            role:
-                - "lkp-2"
-                - "lkp-xfstests"
-                - "livepatch-regression-test"
-                - 'livepatch-snappy-client-regression-test'
-                - 'livepatch-snappy-client-payload-test'
-            livepatch key: ""
 
+            # sfeole commented this out, Snivy is the Jenkins Server for Oracle
+            #        snivy:
+            #            class: "live"
+            #            arch:
+            #                - "amd64"
+            #            provisioner: "maas2"
+            #            jenkins server: "jenkins-lkp"
+            #            locked: false
+            #            power: []
+            #            role:
+            #                - "lkp-2"
+            #                - "lkp-xfstests"
+            #                - "livepatch-regression-test"
+            #                - 'livepatch-snappy-client-regression-test'
+            #                - 'livepatch-snappy-client-payload-test'
+            #            livepatch key: ""
+            #
         # --------------------------------------------------------------------------
         # Testing Development
         #
