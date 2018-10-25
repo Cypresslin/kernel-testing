@@ -256,7 +256,7 @@
         s2lp6g001:
             class: "sru-testing"
             arch:
-                - "s390x.zKVM"
+                - "s390x.KVM"
             provisioner: "manual"
             jenkins server: "jenkins2"
             series: "xenial"
@@ -281,11 +281,11 @@
                 - "artful"
                 - "bionic"
                 - "cosmic"
-            proc-decoration: "zKVM"
+            proc-decoration: "KVM"
         s2lp6g002:
             class: "sru-testing"
             arch:
-                - "s390x.zKVM"
+                - "s390x.KVM"
             provisioner: "manual"
             jenkins server: "jenkins2"
             locked: false
@@ -309,11 +309,11 @@
                 - "xenial"
                 - "artful"
                 - "cosmic"
-            proc-decoration: "zKVM"
+            proc-decoration: "KVM"
         s2lp6g003:
             class: "sru-testing"
             arch:
-                - "s390x.zKVM"
+                - "s390x.KVM"
             provisioner: "manual"
             jenkins server: "jenkins2"
             locked: false
@@ -337,11 +337,11 @@
                 - "xenial"
                 - "artful"
                 - "bionic"
-            proc-decoration: "zKVM"
+            proc-decoration: "KVM"
         s2lp6g004:
             class: "sru-testing"
             arch:
-                - "s390x.zKVM"
+                - "s390x.KVM"
             provisioner: "manual"
             jenkins server: "jenkins2"
             locked: false
@@ -365,7 +365,7 @@
                 - "xenial"
                 - "bionic"
                 - "cosmic"
-            proc-decoration: "zKVM"
+            proc-decoration: "KVM"
         s2lp3:
             class: "sru-testing"
             arch:
