@@ -83,7 +83,7 @@ rsync -e "ssh $SSH_OPTIONS" -ar --exclude=.git $KT_ROOT/autotest-client-virt-tes
 rsync -e "ssh $SSH_OPTIONS" -ar --exclude=.git $KT_ROOT/kernel-testing/ $SUT:./kernel-testing/
 
 export TIMESTAMP="\"`date +'%A, %e. %B %Y %H:%M %Z'`\"" # Need the time reported in a specific format for final reporting
-export NOW="\"`date`\""                                 # Set the date on the SUT to the same as jenkins
+export NOW="\"`date --iso-8601=seconds`\""                                 # Set the date on the SUT to the same as jenkins
 ssh $SSH_OPTIONS $SUT sudo date -s "$NOW"
 
 # The following is a HACK to get the btrfs tests working for Wily. Colin
