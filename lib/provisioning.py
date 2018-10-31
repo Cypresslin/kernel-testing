@@ -835,6 +835,7 @@ class Metal(Base):
                 if not s.verify_target():
                     cinfo("Target verification failed.")
                 else:
+                    s.reboot(progress="Reboot to cleanup DKMS modules #1800784")
                     retval = True
             return retval
 
