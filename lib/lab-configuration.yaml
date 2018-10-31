@@ -566,28 +566,30 @@
             power: []
             role: []
             scratch drive: "/dev/sdb"
-        michael:
-            class: "sru-testing"
-            arch:
-                - "amd64"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: false
-            power: []
-            role:
-                - "ubuntu_boot"
-                - "sru"
-                - "sru-1"
-                - "sru-2"
-                - "ubuntu_zfs_fstest"
-                - "ubuntu_zfs_xfs_generic"
-                - "boot"
-                - "virt"
-                - "xfstests"
-            scratch drive: "/dev/sdb"
-            series-blacklist:
-                - "precise"
-                - "trusty"
+            #   Removing michael from the SRU Cycle of testing
+            #   Jeurig is doing mellanox testing on this
+            #        michael:
+            #            class: "sru-testing"
+            #            arch:
+            #                - "amd64"
+            #            provisioner: "maas2"
+            #            jenkins server: "jenkins2"
+            #            locked: false
+            #            power: []
+            #            role:
+            #                - "ubuntu_boot"
+            #                - "sru"
+            #                - "sru-1"
+            #                - "sru-2"
+            #                - "ubuntu_zfs_fstest"
+            #                - "ubuntu_zfs_xfs_generic"
+            #                - "boot"
+            #                - "virt"
+            #                - "xfstests"
+            #            scratch drive: "/dev/sdb"
+            #            series-blacklist:
+            #                - "precise"
+            #                - "trusty"
         rumford:
             class: "sru-testing"
             arch:
