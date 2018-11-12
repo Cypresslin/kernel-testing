@@ -508,12 +508,14 @@ class Jobber(object):
     @property
     def valid_pkgs(s):
         retval = ['linux', 'linux-fips']
+        # Filter out every backported packages with cloud names
+        excludes = ['aws', 'azure', 'gcp', 'gke']
 
         db = Ubuntu().db
         for k in db:
             if 'backport-packages' in db[k]:
                 for bp in db[k]['backport-packages']:
-                    if bp not in ['linux-azure', 'linux-azure-edge', 'linux-gke', 'linux-aws', 'linux-aws-edge', 'linux-gcp']:
+                    if not any([x in bp for x in excludes]):
                         retval.append(bp)
         return retval
 
