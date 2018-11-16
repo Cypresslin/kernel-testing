@@ -174,7 +174,7 @@ examples:
     parser.add_argument('--nc',       action='store_true', default=False, help='Debut output should not be colored.')
 
     parser.add_argument('--series',   required=True,  help='The series that is to be installed on the SUT.')
-    parser.add_argument('--arch',     required=False, default='amd64', choices=['amd64', 'i386', 'arm64', 'ppc64el', 's390x.zKVM', 's390x.LPAR', 's390x.zVM'], help='The architecture (amd64, i386, arm64 or ppc64el) that is to be installed on the SUT. (amd64 is the default)')
+    parser.add_argument('--arch',     required=False, default='amd64', choices=['amd64', 'i386', 'arm64', 'ppc64el', 's390x.KVM', 's390x.LPAR', 's390x.zVM'], help='The architecture (amd64, i386, arm64 or ppc64el) that is to be installed on the SUT. (amd64 is the default)')
     parser.add_argument('--debs-url', required=False, default=None, help='A pointer to a set of kernel deb packages that are to be installed.')
     parser.add_argument('--ppa',      required=False, default=None, help='A ppa name to update packages from')
     parser.add_argument('--kernel',   required=False, default=None, help='The specific kernel version to be installed.')

@@ -701,7 +701,7 @@ class Metal(Base):
             #
             elif s.arch == 'ppc64el' and installed_arch == 'ppc64le':
                 retval = True
-            # Specical case for s390x (s390x.zVM, s390x.zKVM)
+            # Specical case for s390x (s390x.zVM, s390x.KVM)
             #
             elif s.arch.startswith(installed_arch) and installed_arch == 's390x':
                 retval = True
