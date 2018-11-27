@@ -78,11 +78,11 @@
                                                             <%
                                                             (jname, host, passed, failed) = data['jobs'][i]
                                                             try:
+                                                                timestamp = jname.split('__')[2]
+                                                            except IndexError:
                                                                 timestamp = data['timestamp']
-                                                                ran = passed + failed
-                                                                link = '%s/%s-test-suite.html' % (jname, data['suite'])
-                                                            except ValueError:
-                                                                continue
+                                                            ran = passed + failed
+                                                            link = '%s/%s-test-suite.html' % (jname, data['suite'])
                                                             %>
                                                             <tr>
                                                                 <td>${ host }</td>
