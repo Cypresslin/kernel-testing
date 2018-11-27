@@ -85,7 +85,7 @@
                                                                 continue
                                                             %>
                                                             <tr>
-                                                                <td><a href="${ host }.html">${ host }</a></td>
+                                                                <td>${ host }</td>
                                                                 <td align="center">${timestamp}</a></td>
                                                                 <td align="center"><a href="${link}">${ran}</a></td>
                                                                 <td align="center"><a href="${link}">${passed}</a></td>
