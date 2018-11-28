@@ -112,24 +112,6 @@
         "memory" : "1GB"
     },
 
-    "vm-rizzo" : {
-        "platform" : "Virtual Machine running on <a href=\"rizzo.html\">rizzo</a>.",
-        "processors" : "1",
-        "memory" : "1GB"
-    },
-
-    "vm-gonzo" : {
-        "platform" : "Virtual Machine running on <a href=\"gonzo.html\">gonzo</a>.",
-        "processors" : "1",
-        "memory" : "1GB"
-    },
-
-    "vm-fozzie" : {
-        "platform" : "Virtual Machine running on <a href=\"fozzie.html\">fozzie</a>.",
-        "processors" : "1",
-        "memory" : "1GB"
-    },
-
     "bifur" : {
         "platform" : "Intel Grantley",
         "processors" : "2 x Intel xx-xxxx; 14 cores each; +hyper-threaded (56 effective processors)",
