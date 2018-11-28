@@ -31,7 +31,17 @@
     },
     "modoc" : {
         "platform" : "IBM Power8 S822L",
-        "processors" : "",
+        "processors" : "(160 Cores)",
+        "memory" : "128GB"
+    },
+    "entei" : {
+        "platform" : "IBM Power8",
+        "processors" : "(128 Cores)",
+        "memory" : "32GB"
+    },
+    "baltar" : {
+        "platform" : "IBM Power9",
+        "processors" : "(160 Cores)",
         "memory" : "128GB"
     },
     "cavac" : {
@@ -165,6 +175,16 @@
         "processors" : "8 cores",
         "memory" : "64GB"
     },
+    "starmie" : {
+        "platform" : "Cavium-ThunderX",
+        "processors" : "(48 Cores)",
+        "memory" : "128GB"
+    },
+    "wright" : {
+        "platform" : "Cavium-ThunderX",
+        "processors" : "(96 Cores)",
+        "memory" : "128GB"
+    },
     "bavor" : {
         "platform" : "HP Proliant DL160 Gen9",
         "processors" : "6 cores",
@@ -194,5 +214,30 @@
         "platform" : "ProLiant DL360 Gen9",
         "processors" : "16 cores",
         "memory" : "32GB"
+    },
+    "amaura" : {
+        "platform" : "Intel SDP - Denlow",
+        "processors" : "Intel(R) Xeon(R) CPU E3-1285L v4 (8 Cores)",
+        "memory" : "16GB"
+    },
+    "daedalus" : {
+        "platform" : "Intel Purley 2S",
+        "processors" : "(112 Cores)",
+        "memory" : "64GB"
+    },
+    "lodygin" : {
+        "platform" : "AMD Speedway Naples 2U",
+        "processors" : "(128 Cores)",
+        "memory" : "256GB"
+    },
+    "pepe" : {
+        "platform" : "Dell PowerEdge R310",
+        "processors" : "Intel(R) Xeon(R) CPU X3470 (8 Cores)",
+        "memory" : "8GB"
+    },
+    "secchi" : {
+        "platform" : "Intel Purley 2S",
+        "processors" : "(112 Cores)",
+        "memory" : "64GB"
     }
 }
