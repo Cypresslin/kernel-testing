@@ -695,11 +695,8 @@
                 - "qrt"
                 - "smoke"
                 - "sru"
-                - "sru-1"
                 - "sru-2"
-                - "sru-3"
                 - "ubuntu_ecryptfs"
-                - "ubuntu_zfs_fstest"
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
@@ -808,19 +805,11 @@
             locked: false
             power: []
             role:
-                - "ubuntu_boot"
-                - "qrt"
-                - "smoke"
                 - "sru"
                 - "sru-1"
-                - "sru-2"
                 - "sru-3"
-                - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_fstest"
-                - "ubuntu_zfs_xfs_generic"
-                - "boot"
                 - "virt"
-                - "ubuntu_ltp_syscalls"
                 - "xfstests"
             scratch drive: "/dev/sdb"
             series-blacklist:
