@@ -202,11 +202,14 @@ class JobsFactory(object):
         '''
         center(s.__class__.__name__ + '.determine_arches')
         s.jd['arches'] = []
-        for system in s.jd['systems']:
-            for a in s.configuration['systems'][system]['arch']:
-                if a not in s.jd['arches']:
-                    s.jd['arches'].append(a)
-                    cdebug('appending : %s' % a)
+        if s.jd['package'] == 'linux-oem':
+            s.jd['arches'].append('amd64')
+        else:
+            for system in s.jd['systems']:
+                for a in s.configuration['systems'][system]['arch']:
+                    if a not in s.jd['arches']:
+                        s.jd['arches'].append(a)
+                        cdebug('appending : %s' % a)
         cleave(s.__class__.__name__ + '.determine_arches')
 
     # valid_systems
