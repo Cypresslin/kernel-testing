@@ -510,7 +510,7 @@ class Jobber(object):
     #
     @property
     def valid_pkgs(s):
-        retval = ['linux', 'linux-fips']
+        retval = ['linux', 'linux-fips', 'linux-oem']
         # Filter out every backported packages with cloud names
         excludes = ['aws', 'azure', 'gcp', 'gke']
 
