@@ -385,20 +385,19 @@ class Base(object):
 
         cleave("Base::install_required_pkgs")
 
-    # install_hwe_kernel
+    # install_kernel_meta_pkg
     #
-    def install_hwe_kernel(s):
+    def install_kernel_meta_pkg(s):
         '''
-        On the SUT, configure it to use a HWE kernel and then install the HWE
-        kernel.
+        On the SUT, install the kernel meta package
         '''
-        center("Base::install_hwe_kernel")
-        s.progress('Installing HWE Kernel')
+        center("Base::install_kernel_meta_pkg")
+        s.progress('Installing Kernel Meta Package')
 
         s.ssh('sudo apt-get update', ignore_result=True)
         s.ssh('sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=1 apt-get install --yes %s' % (s.pkg_name))
 
-        cleave("Base::install_hwe_kernel")
+        cleave("Base::install_kernel_meta_pkg")
 
     # install_xen
     #
@@ -867,12 +866,12 @@ class Metal(Base):
         #
         s.disable_apt_periodic_updates()
 
-        # If we want an HWE kernel installed on the bare metal then at this point the correct
-        # LTS kernel has been installed and it's time to install the HWE kernel.
+        # If we want something other than generic / lowlatency (these two were handled
+        # by the MaaS server) it's time to install it.
         #
-        if s.required_kernel_version and '~' in s.required_kernel_version:
-            s.install_hwe_kernel()
-            reboot = 'Rebooting for HWE Kernel'
+        if s.pkg_name not in ['linux-generic', 'linux-lowlatency']:
+            s.install_kernel_meta_pkg()
+            reboot = 'Rebooting for installed Kernel meta package'
 
         if s.xen:
             s.install_xen()
