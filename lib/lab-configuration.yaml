@@ -52,7 +52,7 @@
     # The Kernel Team's MAAS 2.0 server
     #
     maas2:
-        server   : "10.246.72.3"         # Hostname/address of the MAAS server
+        server   : "10.246.72.3:5240"    # Hostname/address of the MAAS server
         profile  : "jenkins"             # The MAAS profile to use
         creds    : Nkqj7nY6aBg2p56sj2:FSuqbcDgEWCT3gMt4H:6Q9xDtCH5nvx6CxnY7mcZdWfdqH3u5uf
         user     : "jenkins"             # When ssh'ing to the MAAS server, use this user
