@@ -250,9 +250,24 @@
                 - "amd64"
             provisioner: "maas2"
             jenkins server: "jenkins2"
-            locked: true
+            locked: false
             power: []
-            role: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+                - "virt"
+            series-blacklist:
+                - "precise"
+                - "trusty"
         s2lp6g001:
             class: "sru-testing"
             arch:
