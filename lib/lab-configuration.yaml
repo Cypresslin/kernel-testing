@@ -660,25 +660,27 @@
                 - "ubuntu_boot"
                 - "qrt"
                 - "sru"
+                - "ubuntu_ecryptfs"
                 - "sru-3"
                 - "boot"
                 - "virt"
                 - "ubuntu_ltp_syscalls"
-        onza:
-            class: "sru-testing"
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: false
-            power: []
-            role:
-                - "ubuntu_boot"
-                - "sru"
-                - "ubuntu_ecryptfs"
-                - "boot"
-                - "virt"
+# For cking's test, 2018 Dec.10
+#        onza:
+#            class: "sru-testing"
+#            arch:
+#                - "amd64"
+#                - "i386"
+#            provisioner: "maas2"
+#            jenkins server: "jenkins2"
+#            locked: false
+#            power: []
+#            role:
+#                - "ubuntu_boot"
+#                - "sru"
+#                - "ubuntu_ecryptfs"
+#                - "boot"
+#                - "virt"
         lodygin:
             class: "sru-testing"
             arch:
