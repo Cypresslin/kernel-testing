@@ -296,6 +296,7 @@
                 - "artful"
                 - "bionic"
                 - "cosmic"
+                - "disco"
             proc-decoration: "KVM"
         s2lp6g002:
             class: "sru-testing"
@@ -324,6 +325,7 @@
                 - "xenial"
                 - "artful"
                 - "cosmic"
+                - "disco"
             proc-decoration: "KVM"
         s2lp6g003:
             class: "sru-testing"
@@ -352,6 +354,7 @@
                 - "xenial"
                 - "artful"
                 - "bionic"
+                - "disco"
             proc-decoration: "KVM"
         s2lp6g004:
             class: "sru-testing"
@@ -380,6 +383,7 @@
                 - "xenial"
                 - "bionic"
                 - "cosmic"
+                - "disco"
             proc-decoration: "KVM"
         s2lp3:
             class: "sru-testing"
@@ -407,6 +411,7 @@
                 - "trusty"
                 - "artful"
                 - "cosmic"
+                - "disco"
             proc-decoration: "Ubuntu on LPAR"
         s2lp4:
             class: "sru-testing"
@@ -435,6 +440,7 @@
                 - "xenial"
                 - "artful"
                 - "bionic"
+                - "disco"
             proc-decoration: "Ubuntu on LPAR"
         # s2lp5:
         #     class: "bogus"
@@ -476,6 +482,7 @@
                 - "artful"
                 - "bionic"
                 - "cosmic"
+                - "disco"
             proc-decoration: "zVM"
         kernel02:
             class: "sru-testing"
@@ -504,6 +511,7 @@
                 - "xenial"
                 - "artful"
                 - "cosmic"
+                - "disco"
             proc-decoration: "zVM"
         kernel03:
             class: "sru-testing"
@@ -532,6 +540,7 @@
                 - "xenial"
                 - "artful"
                 - "bionic"
+                - "disco"
             proc-decoration: "zVM"
         kernel04:
             class: "sru-testing"
@@ -560,6 +569,7 @@
                 - "xenial"
                 - "bionic"
                 - "cosmic"
+                - "disco"
             proc-decoration: "zVM"
         beketov:
             class: "private"
