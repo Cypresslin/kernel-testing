@@ -23,7 +23,7 @@ class PDU():
         '''
         Fetch the information about mapping from a system to the CDU outlets.
         '''
-        maas_ip = '10.246.72.3'
+        maas_ip = '10.246.72.3:5240'
         center('PDU.__config')
         before = None
         if 'NO_PROXY' in os.environ:
