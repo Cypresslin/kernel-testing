@@ -1,6 +1,7 @@
 import os
 import requests
 import pexpect
+import sys
 import yaml
 import platform
 from time                               import sleep
@@ -23,16 +24,9 @@ class PDU():
         '''
         Fetch the information about mapping from a system to the CDU outlets.
         '''
-        maas_ip = '10.246.72.3:5240'
         center('PDU.__config')
-        before = None
-        if 'NO_PROXY' in os.environ:
-            before = os.environ['NO_PROXY']
-        os.environ['NO_PROXY'] = maas_ip
-        r = requests.get('http://' + maas_ip + '/lab-systems-power.yaml')
-        retval = yaml.load(r.text)
-        if before:
-            os.environ['NO_PROXY'] = before
+        with open(os.path.join(os.path.dirname(sys.argv[0]), 'lib', 'lab-systems-power.yaml'), 'r') as f:
+            retval = yaml.load(f)
         cleave('PDU.__config')
         return retval
 
