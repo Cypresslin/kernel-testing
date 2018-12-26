@@ -81,24 +81,6 @@
     # to me.
     #
     systems:
-        hainzel:                          # Azure Jenkins Server
-            class: "sru-testing"
-            arch:
-                - "amd64"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: true
-            power: []
-            role: []
-        archytas:                         # AWS Jenkins Server
-            class: "sru-testing"
-            arch:
-                - "amd64"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: true
-            power: []
-            role: []
         chico:
             class: "sru-testing"
             arch:
@@ -116,6 +98,22 @@
                 - "bionic"
                 - "cosmic"
         groucho:
+            class: "sru-testing"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role: ["kvm"]
+            series-blacklist:
+                - "precise"
+                - "trusty"
+                - "xenial"
+                - "artful"
+                - "bionic"
+                - "cosmic"
+        gummo:
             class: "sru-testing"
             arch:
                 - "amd64"
@@ -163,7 +161,7 @@
                 - "artful"
                 - "bionic"
                 - "cosmic"
-        gummo:
+        amaura:
             class: "sru-testing"
             arch:
                 - "amd64"
@@ -171,26 +169,14 @@
             jenkins server: "jenkins2"
             locked: false
             power: []
-            role: ["kvm"]
+            role:
+                - "ubuntu_boot"
+                - "sru-1"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
             series-blacklist:
                 - "precise"
-                - "trusty"
-                - "xenial"
-                - "artful"
-                - "bionic"
-                - "cosmic"
-        baade:
-            class: "sru-testing"
-            arch:
-                - "amd64"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: false
-            power: []
-            role: []
-            series-blacklist:
-                - "precise"
-                - "trusty"
         daedalus:
             class: "sru-testing"
             arch:
@@ -217,33 +203,177 @@
             series-blacklist:
                 - "precise"
                 - "trusty"
-#        naumann:
-#            class: "sru-testing"
-#            arch:
-#                - "amd64"
-#            provisioner: "maas2"
-#            jenkins server: "jenkins2"
-#            locked: false
-#            power: []
-#            role:
-#                - "ubuntu_boot"
-#                - "qrt"
-#                - "smoke"
-#                - "sru"
-#                - "sru-1"
-#                - "sru-2"
-#                - "sru-3"
-#                - "ubuntu_ecryptfs"
-#                - "ubuntu_zfs_fstest"
-#                - "ubuntu_zfs_xfs_generic"
-#                - "boot"
-#                - "virt"
-#                - "xfstests"
-#            series-blacklist:
-#                - "precise"
-#                - "trusty"
-#                - "xenial"
-#                - "artful"
+        fozzie:
+            class: "sru-testing"
+            arch:
+                - "i386"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "sru"
+                - "sru-2"
+                - "boot"
+                - "xfstests"
+            scratch drive: "/dev/sdb"
+        gonzo:
+            class: "sru-testing"
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "smoke"
+                - "sru"
+                - "ubuntu_zfs_fstest"
+                - "boot"
+            scratch drive: "/dev/sdb"
+        lodygin:
+            class: "sru-testing"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_fstest"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+                - "virt"
+                - "ubuntu_ltp_syscalls"
+                - "xfstests"
+            series-blacklist:
+                - "precise"
+                - "trusty"
+                - "vivid"
+                - "xenial"
+            #   Removing michael from the SRU Cycle of testing
+            #   Jeurig is doing mellanox testing on this
+            #        michael:
+            #            class: "sru-testing"
+            #            arch:
+            #                - "amd64"
+            #            provisioner: "maas2"
+            #            jenkins server: "jenkins2"
+            #            locked: false
+            #            power: []
+            #            role:
+            #                - "ubuntu_boot"
+            #                - "sru"
+            #                - "sru-1"
+            #                - "sru-2"
+            #                - "ubuntu_zfs_fstest"
+            #                - "ubuntu_zfs_xfs_generic"
+            #                - "boot"
+            #                - "virt"
+            #                - "xfstests"
+            #            scratch drive: "/dev/sdb"
+            #            series-blacklist:
+            #                - "precise"
+            #                - "trusty"
+        onibi:
+            class: "sru-testing"
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "sru"
+                - "sru-3"
+                - "boot"
+                - "virt"
+                - "ubuntu_ltp_syscalls"
+        onza:
+            class: "sru-testing"
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "sru"
+                - "ubuntu_ecryptfs"
+                - "boot"
+                - "virt"
+        pepe:
+            class: "sru-testing"
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas2"
+            cloud: "kernel-maas"
+            domain: "maas"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "sru"
+                - "sru-1"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+                - "virt"
+        rizzo:
+            class: "sru-testing"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "sru"
+                - "sru-2"
+                - "boot"
+                - "virt"
+                - "xfstests"
+            scratch drive: "/dev/sdb"
+        rumford:
+            class: "sru-testing"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-3"
+                - "ubuntu_ecryptfs"
+                - "boot"
+                - "virt"
+                - "ubuntu_ltp_syscalls"
+            scratch drive: "/dev/sdb"
+            series-blacklist:
+                - "precise"
+                - "trusty"
         secchi:
             class: "sru-testing"
             arch:
@@ -571,165 +701,6 @@
                 - "cosmic"
                 - "disco"
             proc-decoration: "zVM"
-        beketov:
-            class: "private"
-            arch:
-                - "amd64"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: true
-            power: []
-            role: []
-            scratch drive: "/dev/sdb"
-        lagalla:
-            class: "private"
-            arch:
-                - "amd64"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: true
-            power: []
-            role: []
-            scratch drive: "/dev/sdb"
-            #   Removing michael from the SRU Cycle of testing
-            #   Jeurig is doing mellanox testing on this
-            #        michael:
-            #            class: "sru-testing"
-            #            arch:
-            #                - "amd64"
-            #            provisioner: "maas2"
-            #            jenkins server: "jenkins2"
-            #            locked: false
-            #            power: []
-            #            role:
-            #                - "ubuntu_boot"
-            #                - "sru"
-            #                - "sru-1"
-            #                - "sru-2"
-            #                - "ubuntu_zfs_fstest"
-            #                - "ubuntu_zfs_xfs_generic"
-            #                - "boot"
-            #                - "virt"
-            #                - "xfstests"
-            #            scratch drive: "/dev/sdb"
-            #            series-blacklist:
-            #                - "precise"
-            #                - "trusty"
-        rumford:
-            class: "sru-testing"
-            arch:
-                - "amd64"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: false
-            power: []
-            role:
-                - "ubuntu_boot"
-                - "qrt"
-                - "smoke"
-                - "sru"
-                - "sru-3"
-                - "ubuntu_ecryptfs"
-                - "boot"
-                - "virt"
-                - "ubuntu_ltp_syscalls"
-            scratch drive: "/dev/sdb"
-            series-blacklist:
-                - "precise"
-                - "trusty"
-        cavac:
-            class: "bogus"
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas"
-            jenkins server: "jenkins"
-            locked: false
-            power: []
-            role: []
-        onibi:
-            class: "sru-testing"
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: false
-            power: []
-            role:
-                - "ubuntu_boot"
-                - "qrt"
-                - "sru"
-                - "sru-3"
-                - "boot"
-                - "virt"
-                - "ubuntu_ltp_syscalls"
-        onza:
-            class: "sru-testing"
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: false
-            power: []
-            role:
-                - "ubuntu_boot"
-                - "sru"
-                - "ubuntu_ecryptfs"
-                - "boot"
-                - "virt"
-        lodygin:
-            class: "sru-testing"
-            arch:
-                - "amd64"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: false
-            power: []
-            role:
-                - "ubuntu_boot"
-                - "qrt"
-                - "smoke"
-                - "sru"
-                - "sru-1"
-                - "sru-2"
-                - "sru-3"
-                - "ubuntu_ecryptfs"
-                - "ubuntu_zfs_fstest"
-                - "ubuntu_zfs_xfs_generic"
-                - "boot"
-                - "virt"
-                - "ubuntu_ltp_syscalls"
-                - "xfstests"
-            series-blacklist:
-                - "precise"
-                - "trusty"
-                - "vivid"
-                - "xenial"
-        modoc:
-            class: "sru-testing"
-            arch:
-                - "ppc64el"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: false
-            power: []
-            role:
-                - "ubuntu_boot"
-                - "qrt"
-                - "smoke"
-                - "sru"
-                - "sru-2"
-                - "ubuntu_ecryptfs"
-                - "ubuntu_zfs_xfs_generic"
-                - "boot"
-                - "virt"
-                - "ubuntu_ltp_syscalls"
-            scratch drive: "/dev/sdb"
-            series-blacklist:
-                - "precise"
-            proc-decoration: "P8"
         ms10-34-mcdivittB0-kernel:
             class: "sru-testing"
             arch:
@@ -840,6 +811,29 @@
             series-blacklist:
                 - "precise"
             proc-decoration: "P8"
+        modoc:
+            class: "sru-testing"
+            arch:
+                - "ppc64el"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-2"
+                - "ubuntu_ecryptfs"
+                - "ubuntu_zfs_xfs_generic"
+                - "boot"
+                - "virt"
+                - "ubuntu_ltp_syscalls"
+            scratch drive: "/dev/sdb"
+            series-blacklist:
+                - "precise"
+            proc-decoration: "P8"
         baltar:
             class: "sru-testing"
             arch:
@@ -936,56 +930,6 @@
             role:
                 - "Infrastructure"
             scratch drive: "/dev/sdb"
-        rizzo:
-            class: "sru-testing"
-            arch:
-                - "amd64"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: false
-            power: []
-            role:
-                - "ubuntu_boot"
-                - "sru"
-                - "sru-2"
-                - "boot"
-                - "virt"
-                - "xfstests"
-            scratch drive: "/dev/sdb"
-        amaura:
-            class: "sru-testing"
-            arch:
-                - "amd64"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: false
-            power: []
-            role:
-                - "ubuntu_boot"
-                - "sru-1"
-                - "ubuntu_zfs_fstest"
-                - "ubuntu_zfs_xfs_generic"
-                - "boot"
-            series-blacklist:
-                - "precise"
-        pepe:
-            class: "sru-testing"
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas2"
-            cloud: "kernel-maas"
-            domain: "maas"
-            jenkins server: "jenkins2"
-            locked: false
-            power: []
-            role:
-                - "ubuntu_boot"
-                - "sru"
-                - "sru-1"
-                - "ubuntu_zfs_xfs_generic"
-                - "boot"
-                - "virt"
         fili:
             class: "bogus"
             arch:
@@ -1000,37 +944,6 @@
                 - "sru"
                 - "sru-2"
                 - "xfstests"
-        fozzie:
-            class: "sru-testing"
-            arch:
-                - "i386"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: false
-            power: []
-            role:
-                - "ubuntu_boot"
-                - "sru"
-                - "sru-2"
-                - "boot"
-                - "xfstests"
-            scratch drive: "/dev/sdb"
-        gonzo:
-            class: "sru-testing"
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: false
-            power: []
-            role:
-                - "ubuntu_boot"
-                - "smoke"
-                - "sru"
-                - "ubuntu_zfs_fstest"
-                - "boot"
-            scratch drive: "/dev/sdb"
 
         # --------------------------------------------------------------------------
         # Not useable
@@ -1093,6 +1006,54 @@
             power: []
             role:
                 - "dead"
+        baade:
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role: []
+            series-blacklist:
+                - "precise"
+                - "trusty"
+#        naumann:
+#            class: "sru-testing"
+#            arch:
+#                - "amd64"
+#            provisioner: "maas2"
+#            jenkins server: "jenkins2"
+#            locked: false
+#            power: []
+#            role:
+#                - "ubuntu_boot"
+#                - "qrt"
+#                - "smoke"
+#                - "sru"
+#                - "sru-1"
+#                - "sru-2"
+#                - "sru-3"
+#                - "ubuntu_ecryptfs"
+#                - "ubuntu_zfs_fstest"
+#                - "ubuntu_zfs_xfs_generic"
+#                - "boot"
+#                - "virt"
+#                - "xfstests"
+#            series-blacklist:
+#                - "precise"
+#                - "trusty"
+#                - "xenial"
+#                - "artful"
+        cavac:
+            class: "bogus"
+            arch:
+                - "amd64"
+                - "i386"
+            provisioner: "maas"
+            jenkins server: "jenkins"
+            locked: false
+            power: []
+            role: []
 
     reserved-systems:
         # livepatch developers system
@@ -1128,5 +1089,43 @@
             locked: true
             power: []
             role: []
+        hainzel:                          # Azure Jenkins Server
+            class: "sru-testing"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: true
+            power: []
+            role: []
+        archytas:                         # AWS Jenkins Server
+            class: "sru-testing"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: true
+            power: []
+            role: []
+        beketov:                          # KVM pod
+            class: "private"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: true
+            power: []
+            role: []
+            scratch drive: "/dev/sdb"
+        lagalla:
+            class: "private"
+            arch:
+                - "amd64"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: true
+            power: []
+            role: []
+            scratch drive: "/dev/sdb"
 
 # vi:set ts=4 sw=4 expandtab syntax=yaml:
