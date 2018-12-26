@@ -448,7 +448,6 @@ TestCollections = {
     'sru-2' : [
         'ubuntu_cts_kernel',
         'ubuntu_kernel_selftests',
-        'ubuntu_unionmount_overlayfs_suite',
         'ubuntu_blkdev_directio',
     ],
 
@@ -456,8 +455,6 @@ TestCollections = {
         'aiostress',
         # 'dma_memtest',
         'ebizzy',
-        'fs_mark',
-        'fsx',
         'hwclock',
         'iosched_bugs',
         'iperf',
@@ -475,6 +472,14 @@ TestCollections = {
         'wb_kupdate',
         # 'xmtest',
         'aio_dio_bugs',
+    ],
+
+    'sru-fs-stable' : [
+        'fs_mark',
+        'fsx',
+        'ubuntu_btrfs_kernel_fixes',
+        'ubuntu_unionmount_overlayfs_suite',
+        'ubuntu_zfs_fstest',
     ],
 
     # Cloud tests
@@ -535,9 +540,8 @@ SRU_TestsList = [
     'sru-1',
     'sru-2',
     'sru-3',
+    'sru-fs-stable',
     'ubuntu_ecryptfs',
-    'ubuntu_btrfs_kernel_fixes',
-    'ubuntu_zfs_fstest',
     'ubuntu_zfs_xfs_generic',
     'ubuntu_ltp_syscalls',
     'xfstests',
