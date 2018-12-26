@@ -61,6 +61,18 @@
         domain   : "maas"
         api      : "2.0"
 
+    # The Kernel Team's MAAS 2.0 server For Precise
+    #
+    maas2precise:
+        server   : "10.246.72.216"       # Hostname/address of the MAAS server
+        profile  : "jenkins"             # The MAAS profile to use
+        creds    : 6Bu2zFxw6eAHG8CZSn:VrRNnPpcNWdvKzxmjF:ZaJuGdpyC5kbb9MKR4B64xCrNVtKApeF
+        user     : "jenkins"             # When ssh'ing to the MAAS server, use this user
+        type     : "maas"                # This _is_ a MAAS server (as opposed to a cobbler server)
+        sut_user : "ubuntu"              # The user on the test system after it's been provisioned
+        domain   : "maas"
+        api      : "2.0"
+
     # Systems that are hand crafted and never re-provisioned.
     #
     manual:
@@ -145,6 +157,32 @@
                 - "artful"
                 - "bionic"
                 - "cosmic"
+        precisetesting:
+            class: "sru-testing"
+            arch:
+                - "i386"
+            provisioner: "maas2precise"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "smoke"
+                - "sru"
+                - "sru-1"
+                - "sru-2"
+                - "sru-3"
+                - "sru-fs-stable"
+                - "ubuntu_ecryptfs"
+                - "boot"
+                - "virt"
+            series-blacklist:
+                - "trusty"
+                - "xenial"
+                - "bionic"
+                - "cosmic"
+                - "disco"
         zeppo:
             class: "sru-testing"
             arch:
