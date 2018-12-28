@@ -477,7 +477,6 @@ TestCollections = {
     'sru-fs-stable' : [
         'fs_mark',
         'fsx',
-        'ubuntu_btrfs_kernel_fixes',
         'ubuntu_unionmount_overlayfs_suite',
         'ubuntu_zfs_fstest',
     ],
@@ -541,6 +540,7 @@ SRU_TestsList = [
     'sru-2',
     'sru-3',
     'sru-fs-stable',
+    'ubuntu_btrfs_kernel_fixes',
     'ubuntu_ecryptfs',
     'ubuntu_zfs_xfs_generic',
     'ubuntu_ltp_syscalls',
