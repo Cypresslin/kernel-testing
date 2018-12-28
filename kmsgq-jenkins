@@ -70,8 +70,9 @@ class JobsFactory(object):
         # Package naming is different between lts and hwe kernel, hacks needed
         # e.g. linux-generic-lts-xenial / linux-generic-hwe-16.04-edge
         s.jd['meta-pkg'] = s.jd['package']
-        if s.jd['package'] != 'linux-oem':
-            # Insert the flavour (except linux-oem, it does not have it)
+        # Clouds, kvm, oem and fips does not have the generic / lowlatency flavour
+        if ['aws', 'azure', 'gcp', 'gke', 'oracle', 'kvm', 'oem', 'fips'] not in s.jd['package']:
+            # Insert the flavour
             pkg = 'linux-' + s.jd['package'].replace('linux', s.jd['flavour'])
             if '~' in s.jd['kernel-version']:
                 # Insert the version number for HWE package
@@ -205,7 +206,7 @@ class JobsFactory(object):
         '''
         center(s.__class__.__name__ + '.determine_arches')
         s.jd['arches'] = []
-        if s.jd['package'] == 'linux-oem':
+        if ['aws', 'azure', 'gcp', 'gke', 'oracle', 'kvm', 'oem', 'fips'] in s.jd['package']:
             s.jd['arches'].append('amd64')
         else:
             for system in s.jd['systems']:
