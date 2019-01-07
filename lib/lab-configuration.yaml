@@ -767,9 +767,11 @@
             role:
                 - "ubuntu_boot"
                 - "sru"
+                - "smoke"
                 - "sru-1"
                 - "sru-2"
                 - "sru-fs-stable"
+                - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_xfs_generic"
                 - "virt"
             series-blacklist:
@@ -787,11 +789,9 @@
             role:
                 - "ubuntu_boot"
                 - "qrt"
-                - "smoke"
                 - "sru"
                 - "sru-3"
                 - "ubuntu_btrfs_kernel_fixes"
-                - "ubuntu_ecryptfs"
                 - "virt"
                 - "ubuntu_ltp_syscalls"
             series-blacklist:
