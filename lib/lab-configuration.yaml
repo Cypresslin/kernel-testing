@@ -225,18 +225,12 @@
             power: []
             role:
                 - "ubuntu_boot"
-                - "qrt"
-                - "smoke"
                 - "sru"
                 - "sru-1"
-                - "sru-2"
                 - "sru-3"
-                - "sru-fs-stable"
                 - "ubuntu_btrfs_kernel_fixes"
-                - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_xfs_generic"
                 - "virt"
-                - "ubuntu_ltp_syscalls"
             series-blacklist:
                 - "precise"
                 - "trusty"
@@ -443,13 +437,10 @@
                 - "qrt"
                 - "smoke"
                 - "sru"
-                - "sru-1"
                 - "sru-2"
-                - "sru-3"
                 - "sru-fs-stable"
-                - "ubuntu_btrfs_kernel_fixes"
                 - "ubuntu_ecryptfs"
-                - "ubuntu_zfs_xfs_generic"
+                - "ubuntu_ltp_syscalls"
                 - "virt"
             series-blacklist:
                 - "precise"
