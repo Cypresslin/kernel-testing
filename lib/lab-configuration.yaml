@@ -160,6 +160,7 @@
         precisetesting:
             class: "sru-testing"
             arch:
+                - "amd64"
                 - "i386"
             provisioner: "maas2precise"
             jenkins server: "jenkins2"
@@ -260,6 +261,8 @@
                 - "boot"
                 - "xfstests"
             scratch drive: "/dev/sdb"
+            series-blacklist:
+                - "precise"
         gonzo:
             class: "sru-testing"
             arch:
@@ -277,6 +280,8 @@
                 - "ubuntu_btrfs_kernel_fixes"
                 - "boot"
             scratch drive: "/dev/sdb"
+            series-blacklist:
+                - "precise"
         lodygin:
             class: "sru-testing"
             arch:
@@ -350,6 +355,8 @@
                 - "boot"
                 - "virt"
                 - "ubuntu_ltp_syscalls"
+            series-blacklist:
+                - "precise"
         onza:
             class: "sru-testing"
             arch:
@@ -367,6 +374,8 @@
                 - "ubuntu_ecryptfs"
                 - "boot"
                 - "virt"
+            series-blacklist:
+                - "precise"
         pepe:
             class: "sru-testing"
             arch:
@@ -387,6 +396,8 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "boot"
                 - "virt"
+            series-blacklist:
+                - "precise"
         rizzo:
             class: "sru-testing"
             arch:
@@ -405,6 +416,8 @@
                 - "virt"
                 - "xfstests"
             scratch drive: "/dev/sdb"
+            series-blacklist:
+                - "precise"
         rumford:
             class: "sru-testing"
             arch:
