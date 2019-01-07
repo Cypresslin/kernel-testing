@@ -176,7 +176,6 @@
                 - "sru-3"
                 - "sru-fs-stable"
                 - "ubuntu_ecryptfs"
-                - "boot"
                 - "virt"
             series-blacklist:
                 - "trusty"
@@ -214,7 +213,6 @@
                 - "sru-fs-stable"
                 - "ubuntu_btrfs_kernel_fixes"
                 - "ubuntu_zfs_xfs_generic"
-                - "boot"
             series-blacklist:
                 - "precise"
         daedalus:
@@ -237,7 +235,6 @@
                 - "ubuntu_btrfs_kernel_fixes"
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_xfs_generic"
-                - "boot"
                 - "virt"
                 - "ubuntu_ltp_syscalls"
                 - "xfstests"
@@ -258,7 +255,6 @@
                 - "sru-2"
                 - "sru-fs-stable"
                 - "ubuntu_btrfs_kernel_fixes"
-                - "boot"
                 - "xfstests"
             scratch drive: "/dev/sdb"
             series-blacklist:
@@ -278,7 +274,6 @@
                 - "sru"
                 - "sru-fs-stable"
                 - "ubuntu_btrfs_kernel_fixes"
-                - "boot"
             scratch drive: "/dev/sdb"
             series-blacklist:
                 - "precise"
@@ -302,7 +297,6 @@
                 - "ubuntu_btrfs_kernel_fixes"
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_xfs_generic"
-                - "boot"
                 - "virt"
                 - "ubuntu_ltp_syscalls"
                 - "xfstests"
@@ -329,7 +323,6 @@
             #                - "sru-fs-stable"
             #                - "ubuntu_btrfs_kernel_fixes"
             #                - "ubuntu_zfs_xfs_generic"
-            #                - "boot"
             #                - "virt"
             #                - "xfstests"
             #            scratch drive: "/dev/sdb"
@@ -352,7 +345,6 @@
                 - "sru-3"
                 - "sru-fs-stable"
                 - "ubuntu_btrfs_kernel_fixes"
-                - "boot"
                 - "virt"
                 - "ubuntu_ltp_syscalls"
             series-blacklist:
@@ -372,7 +364,6 @@
                 - "sru-fs-stable"
                 - "ubuntu_btrfs_kernel_fixes"
                 - "ubuntu_ecryptfs"
-                - "boot"
                 - "virt"
             series-blacklist:
                 - "precise"
@@ -394,7 +385,6 @@
                 - "sru-fs-stable"
                 - "ubuntu_btrfs_kernel_fixes"
                 - "ubuntu_zfs_xfs_generic"
-                - "boot"
                 - "virt"
             series-blacklist:
                 - "precise"
@@ -412,7 +402,6 @@
                 - "sru-2"
                 - "sru-fs-stable"
                 - "ubuntu_btrfs_kernel_fixes"
-                - "boot"
                 - "virt"
                 - "xfstests"
             scratch drive: "/dev/sdb"
@@ -435,7 +424,6 @@
                 - "sru-fs-stable"
                 - "ubuntu_btrfs_kernel_fixes"
                 - "ubuntu_ecryptfs"
-                - "boot"
                 - "virt"
                 - "ubuntu_ltp_syscalls"
             scratch drive: "/dev/sdb"
@@ -462,7 +450,6 @@
                 - "ubuntu_btrfs_kernel_fixes"
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_xfs_generic"
-                - "boot"
                 - "virt"
             series-blacklist:
                 - "precise"
@@ -796,7 +783,6 @@
                 - "sru-2"
                 - "sru-fs-stable"
                 - "ubuntu_zfs_xfs_generic"
-                - "boot"
                 - "virt"
                 - "xfstests"
             series-blacklist:
@@ -819,7 +805,6 @@
                 - "sru-3"
                 - "ubuntu_btrfs_kernel_fixes"
                 - "ubuntu_ecryptfs"
-                - "boot"
                 - "virt"
                 - "ubuntu_ltp_syscalls"
             series-blacklist:
@@ -841,7 +826,6 @@
                 - "sru-2"
                 - "sru-fs-stable"
                 - "ubuntu_zfs_xfs_generic"
-                - "boot"
                 - "virt"
                 - "xfstests"
             series-blacklist:
@@ -866,7 +850,6 @@
                 - "sru-3"
                 - "ubuntu_btrfs_kernel_fixes"
                 - "ubuntu_ecryptfs"
-                - "boot"
                 - "virt"
                 - "ubuntu_ltp_syscalls"
             series-blacklist:
@@ -909,7 +892,6 @@
                 - "ubuntu_btrfs_kernel_fixes"
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_xfs_generic"
-                - "boot"
                 - "virt"
                 - "ubuntu_ltp_syscalls"
             scratch drive: "/dev/sdb"
@@ -936,7 +918,6 @@
                 - "ubuntu_btrfs_kernel_fixes"
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_xfs_generic"
-                - "boot"
                 - "virt"
                 - "ubuntu_ltp_syscalls"
                 - "xfstests"
@@ -1119,7 +1100,6 @@
 #                - "ubuntu_ecryptfs"
 #                - "ubuntu_zfs_fstest"
 #                - "ubuntu_zfs_xfs_generic"
-#                - "boot"
 #                - "virt"
 #                - "xfstests"
 #            series-blacklist:

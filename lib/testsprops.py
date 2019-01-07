@@ -406,10 +406,6 @@ TestCollections = {
         'ubuntu_quota_smoke_test',
     ],
 
-    'boot' : [
-        'ubuntu_boot',
-    ],
-
     # This is the set of tests that will run if no KERNEL_TEST_LIST variable is set.
     # (QA runs this set)
     #
@@ -556,7 +552,7 @@ LKP_TestsList = [
 ]
 
 BOOT_TestsList = [
-    'boot',
+    'ubuntu_boot',
 ]
 
 LivepatchSnappyClientPayloadTests = [
