@@ -405,29 +405,31 @@
             scratch drive: "/dev/sdb"
             series-blacklist:
                 - "precise"
-        rumford:
-            class: "sru-testing"
-            arch:
-                - "amd64"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: false
-            power: []
-            role:
-                - "ubuntu_boot"
-                - "qrt"
-                - "smoke"
-                - "sru"
-                - "sru-3"
-                - "sru-fs-stable"
-                - "ubuntu_btrfs_kernel_fixes"
-                - "ubuntu_ecryptfs"
-                - "virt"
-                - "ubuntu_ltp_syscalls"
-            scratch drive: "/dev/sdb"
-            series-blacklist:
-                - "precise"
-                - "trusty"
+# This node does not exist in the MaaS2 server pool, based on Sean's mail:
+# "Mellanox Testing Machines", seem that it's removed for Mellanox testing.
+#        rumford:
+#            class: "sru-testing"
+#            arch:
+#                - "amd64"
+#            provisioner: "maas2"
+#            jenkins server: "jenkins2"
+#            locked: false
+#            power: []
+#            role:
+#                - "ubuntu_boot"
+#                - "qrt"
+#                - "smoke"
+#                - "sru"
+#                - "sru-3"
+#                - "sru-fs-stable"
+#                - "ubuntu_btrfs_kernel_fixes"
+#                - "ubuntu_ecryptfs"
+#                - "virt"
+#                - "ubuntu_ltp_syscalls"
+#            scratch drive: "/dev/sdb"
+#            series-blacklist:
+#                - "precise"
+#                - "trusty"
         secchi:
             class: "sru-testing"
             arch:
