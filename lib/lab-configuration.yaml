@@ -209,10 +209,10 @@
             power: []
             role:
                 - "ubuntu_boot"
-                - "sru-1"
-                - "sru-fs-stable"
+                - "sru-2"
                 - "ubuntu_btrfs_kernel_fixes"
-                - "ubuntu_zfs_xfs_generic"
+                - "ubuntu_ltp_syscalls"
+                - "virt"
             series-blacklist:
                 - "precise"
         daedalus:
@@ -245,9 +245,8 @@
             role:
                 - "ubuntu_boot"
                 - "sru"
-                - "sru-2"
-                - "sru-fs-stable"
-                - "ubuntu_btrfs_kernel_fixes"
+                - "ubuntu_zfs_xfs_generic"
+                - "virt"
                 - "xfstests"
             scratch drive: "/dev/sdb"
             series-blacklist:
@@ -266,7 +265,6 @@
                 - "smoke"
                 - "sru"
                 - "sru-fs-stable"
-                - "ubuntu_btrfs_kernel_fixes"
             scratch drive: "/dev/sdb"
             series-blacklist:
                 - "precise"
@@ -325,6 +323,22 @@
             class: "sru-testing"
             arch:
                 - "amd64"
+            provisioner: "maas2"
+            jenkins server: "jenkins2"
+            locked: false
+            power: []
+            role:
+                - "ubuntu_boot"
+                - "qrt"
+                - "sru-1"
+                - "sru-3"
+                - "ubuntu_ecryptfs"
+                - "virt"
+            series-blacklist:
+                - "precise"
+        onza:
+            class: "sru-testing"
+            arch:
                 - "i386"
             provisioner: "maas2"
             jenkins server: "jenkins2"
@@ -333,28 +347,8 @@
             role:
                 - "ubuntu_boot"
                 - "qrt"
-                - "sru"
+                - "sru-1"
                 - "sru-3"
-                - "sru-fs-stable"
-                - "ubuntu_btrfs_kernel_fixes"
-                - "virt"
-                - "ubuntu_ltp_syscalls"
-            series-blacklist:
-                - "precise"
-        onza:
-            class: "sru-testing"
-            arch:
-                - "amd64"
-                - "i386"
-            provisioner: "maas2"
-            jenkins server: "jenkins2"
-            locked: false
-            power: []
-            role:
-                - "ubuntu_boot"
-                - "sru"
-                - "sru-fs-stable"
-                - "ubuntu_btrfs_kernel_fixes"
                 - "ubuntu_ecryptfs"
                 - "virt"
             series-blacklist:
@@ -362,7 +356,6 @@
         pepe:
             class: "sru-testing"
             arch:
-                - "amd64"
                 - "i386"
             provisioner: "maas2"
             cloud: "kernel-maas"
@@ -372,11 +365,9 @@
             power: []
             role:
                 - "ubuntu_boot"
-                - "sru"
-                - "sru-1"
-                - "sru-fs-stable"
+                - "sru-2"
                 - "ubuntu_btrfs_kernel_fixes"
-                - "ubuntu_zfs_xfs_generic"
+                - "ubuntu_ltp_syscalls"
                 - "virt"
             series-blacklist:
                 - "precise"
@@ -391,10 +382,8 @@
             role:
                 - "ubuntu_boot"
                 - "sru"
-                - "sru-2"
-                - "sru-fs-stable"
-                - "ubuntu_btrfs_kernel_fixes"
                 - "virt"
+                - "ubuntu_zfs_xfs_generic"
                 - "xfstests"
             scratch drive: "/dev/sdb"
             series-blacklist:
