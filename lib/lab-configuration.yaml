@@ -170,7 +170,6 @@
                 - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
-                - "sru"
                 - "sru-1"
                 - "sru-2"
                 - "sru-3"
@@ -225,7 +224,6 @@
             power: []
             role:
                 - "ubuntu_boot"
-                - "sru"
                 - "sru-1"
                 - "sru-3"
                 - "ubuntu_btrfs_kernel_fixes"
@@ -244,7 +242,6 @@
             power: []
             role:
                 - "ubuntu_boot"
-                - "sru"
                 - "ubuntu_zfs_xfs_generic"
                 - "virt"
                 - "xfstests"
@@ -263,7 +260,6 @@
             role:
                 - "ubuntu_boot"
                 - "smoke"
-                - "sru"
                 - "sru-fs-stable"
             scratch drive: "/dev/sdb"
             series-blacklist:
@@ -280,7 +276,6 @@
                 - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
-                - "sru"
                 - "sru-1"
                 - "sru-2"
                 - "sru-3"
@@ -307,7 +302,6 @@
             #            power: []
             #            role:
             #                - "ubuntu_boot"
-            #                - "sru"
             #                - "sru-1"
             #                - "sru-2"
             #                - "sru-fs-stable"
@@ -381,7 +375,6 @@
             power: []
             role:
                 - "ubuntu_boot"
-                - "sru"
                 - "virt"
                 - "ubuntu_zfs_xfs_generic"
                 - "xfstests"
@@ -402,7 +395,6 @@
 #                - "ubuntu_boot"
 #                - "qrt"
 #                - "smoke"
-#                - "sru"
 #                - "sru-3"
 #                - "sru-fs-stable"
 #                - "ubuntu_btrfs_kernel_fixes"
@@ -425,7 +417,6 @@
                 - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
-                - "sru"
                 - "sru-2"
                 - "sru-fs-stable"
                 - "ubuntu_ecryptfs"
@@ -447,7 +438,6 @@
                 - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
-                - "sru"
                 - "sru-1"
                 - "sru-2"
                 - "sru-3"
@@ -476,7 +466,6 @@
                 - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
-                - "sru"
                 - "sru-1"
                 - "sru-2"
                 - "sru-3"
@@ -505,7 +494,6 @@
                 - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
-                - "sru"
                 - "sru-1"
                 - "sru-2"
                 - "sru-3"
@@ -534,7 +522,6 @@
                 - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
-                - "sru"
                 - "sru-1"
                 - "sru-2"
                 - "sru-3"
@@ -563,7 +550,6 @@
                 - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
-                - "sru"
                 - "sru-1"
                 - "sru-2"
                 - "sru-3"
@@ -591,7 +577,6 @@
                 - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
-                - "sru"
                 - "sru-1"
                 - "sru-2"
                 - "sru-3"
@@ -633,7 +618,6 @@
                 - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
-                - "sru"
                 - "sru-1"
                 - "sru-2"
                 - "sru-3"
@@ -662,7 +646,6 @@
                 - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
-                - "sru"
                 - "sru-1"
                 - "sru-2"
                 - "sru-3"
@@ -691,7 +674,6 @@
                 - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
-                - "sru"
                 - "sru-1"
                 - "sru-2"
                 - "sru-3"
@@ -720,7 +702,6 @@
                 - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
-                - "sru"
                 - "sru-1"
                 - "sru-2"
                 - "sru-3"
@@ -748,7 +729,6 @@
             power: []
             role:
                 - "ubuntu_boot"
-                - "sru"
                 - "smoke"
                 - "sru-1"
                 - "sru-2"
@@ -771,7 +751,6 @@
             role:
                 - "ubuntu_boot"
                 - "qrt"
-                - "sru"
                 - "sru-3"
                 - "ubuntu_btrfs_kernel_fixes"
                 - "virt"
@@ -790,7 +769,6 @@
             power: []
             role:
                 - "ubuntu_boot"
-                - "sru"
                 - "sru-1"
                 - "sru-2"
                 - "sru-fs-stable"
@@ -815,7 +793,6 @@
                 - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
-                - "sru"
                 - "sru-3"
                 - "ubuntu_btrfs_kernel_fixes"
                 - "ubuntu_ecryptfs"
@@ -834,7 +811,6 @@
             locked: false
             power: []
             role:
-                - "sru"
                 - "sru-1"
                 - "sru-3"
                 - "sru-fs-stable"
@@ -856,7 +832,6 @@
                 - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
-                - "sru"
                 - "sru-2"
                 - "ubuntu_btrfs_kernel_fixes"
                 - "ubuntu_ecryptfs"
@@ -879,7 +854,6 @@
                 - "ubuntu_boot"
                 - "qrt"
                 - "smoke"
-                - "sru"
                 - "sru-1"
                 - "sru-2"
                 - "sru-3"
@@ -973,7 +947,6 @@
             power: []
             role:
                 - "ubuntu_boot"
-                - "sru"
                 - "sru-2"
                 - "xfstests"
 
@@ -1061,7 +1034,6 @@
 #                - "ubuntu_boot"
 #                - "qrt"
 #                - "smoke"
-#                - "sru"
 #                - "sru-1"
 #                - "sru-2"
 #                - "sru-3"
