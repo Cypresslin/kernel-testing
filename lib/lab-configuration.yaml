@@ -237,7 +237,6 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "virt"
                 - "ubuntu_ltp_syscalls"
-                - "xfstests"
             series-blacklist:
                 - "precise"
                 - "trusty"
@@ -299,7 +298,6 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "virt"
                 - "ubuntu_ltp_syscalls"
-                - "xfstests"
             series-blacklist:
                 - "precise"
                 - "trusty"
@@ -476,7 +474,6 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_xfs_generic"
                 - "ubuntu_ltp_syscalls"
-                - "xfstests"
             series-blacklist:
                 - "precise"
                 - "trusty"
@@ -506,7 +503,6 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_xfs_generic"
                 - "ubuntu_ltp_syscalls"
-                - "xfstests"
             series-blacklist:
                 - "precise"
                 - "trusty"
@@ -536,7 +532,6 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_xfs_generic"
                 - "ubuntu_ltp_syscalls"
-                - "xfstests"
             series-blacklist:
                 - "precise"
                 - "trusty"
@@ -566,7 +561,6 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_xfs_generic"
                 - "ubuntu_ltp_syscalls"
-                - "xfstests"
             series-blacklist:
                 - "precise"
                 - "trusty"
@@ -596,7 +590,6 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_xfs_generic"
                 - "ubuntu_ltp_syscalls"
-                - "xfstests"
             series-blacklist:
                 - "precise"
                 - "trusty"
@@ -625,7 +618,6 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_xfs_generic"
                 - "ubuntu_ltp_syscalls"
-                - "xfstests"
             series-blacklist:
                 - "precise"
                 - "trusty"
@@ -668,7 +660,6 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_xfs_generic"
                 - "ubuntu_ltp_syscalls"
-                - "xfstests"
             series-blacklist:
                 - "precise"
                 - "trusty"
@@ -698,7 +689,6 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_xfs_generic"
                 - "ubuntu_ltp_syscalls"
-                - "xfstests"
             series-blacklist:
                 - "precise"
                 - "trusty"
@@ -728,7 +718,6 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_xfs_generic"
                 - "ubuntu_ltp_syscalls"
-                - "xfstests"
             series-blacklist:
                 - "precise"
                 - "trusty"
@@ -758,7 +747,6 @@
                 - "ubuntu_ecryptfs"
                 - "ubuntu_zfs_xfs_generic"
                 - "ubuntu_ltp_syscalls"
-                - "xfstests"
             series-blacklist:
                 - "precise"
                 - "trusty"
@@ -784,7 +772,6 @@
                 - "sru-fs-stable"
                 - "ubuntu_zfs_xfs_generic"
                 - "virt"
-                - "xfstests"
             series-blacklist:
                 - "precise"
                 - "vivid"
@@ -920,7 +907,6 @@
                 - "ubuntu_zfs_xfs_generic"
                 - "virt"
                 - "ubuntu_ltp_syscalls"
-                - "xfstests"
             series-blacklist:
                 - "precise"
                 - "trusty"
@@ -1101,7 +1087,6 @@
 #                - "ubuntu_zfs_fstest"
 #                - "ubuntu_zfs_xfs_generic"
 #                - "virt"
-#                - "xfstests"
 #            series-blacklist:
 #                - "precise"
 #                - "trusty"
